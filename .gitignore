@@ -1,0 +1,12 @@
+# gnuboard5 런타임 데이터 (업로드/캐시/세션/DB설정)
+/data/
+
+# 로그/임시
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# 에디터/IDE
+.vscode/
+.idea/

@@ -1,0 +1,29 @@
+RewriteEngine On
+Options -Indexes +FollowSymLinks
+
+# 1) PHP 직접 접근 차단 — 정적자산 폴더 + 라이브러리 폴더 안의 .php 는 절대 실행되면 안 됨
+#    plugin/ 은 캡차·결제·소셜로그인·본인확인 등 외부 호출이 필요한 first-party 엔드포인트가 들어있어 차단 대상에서 제외
+RewriteRule ^(theme|skin|extend|lib|js|css|img|mobile)/.+\.(php|phtml|phar)$ - [F,L]
+
+# 2) /app/* 직접접근 전면 차단
+RewriteRule ^app(/|$) - [F,L]
+
+# 3) data/ 안에서 PHP/스크립트/HTML 실행 차단 (업로드 우회 방지)
+RewriteRule ^data/.+\.(php|phtml|phar|html?|cgi|pl|py|jsp|asp|sh)$ - [F,L]
+
+# 4) 정적 자산 폴더는 app/ 밑 실제 위치로 내부 매핑 (URL 은 root 기준)
+#    data/ 는 app 밖으로 분리되어 docroot 에 직접 존재하므로 매핑 대상에서 제외
+RewriteRule ^(theme|skin|img|js|css|mobile|plugin)/(.*)$ app/$1/$2 [END]
+
+# 5) 실제 파일/디렉토리는 그대로 (favicon, robots.txt 등)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 6) 그 외 모든 URL → 프런트 컨트롤러
+RewriteRule ^ index.php [QSA,L]
+
+# 7) 민감 파일 차단
+<FilesMatch "(^\.|composer\.(json|lock)|\.env|\.git|\.md|\.sql|\.log)$">
+    Require all denied
+</FilesMatch>
