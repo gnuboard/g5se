@@ -172,7 +172,21 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 .m-search-row {
     display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
 }
+/* gnuboard 가 만드는 #gr_id select 도 모던 .m-input 스타일로 — 클래스를 못 박아서 id 로 매김 */
+.m-search-row #gr_id,
 .m-search-row select { width: auto; min-width: 110px; }
+.m-search-row #gr_id {
+    padding: 10px 12px; box-sizing: border-box;
+    background: var(--m-surface); color: var(--m-text);
+    border: 1px solid var(--m-border-hover); border-radius: var(--m-radius);
+    font-size: var(--m-text-md); font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+.m-search-row #gr_id:focus {
+    border-color: var(--m-primary);
+    box-shadow: 0 0 0 3px var(--m-primary-soft);
+}
 .m-search-input { flex: 1; min-width: 200px; }
 .m-search-select { flex: 0 0 auto; }
 .m-search-btn {
