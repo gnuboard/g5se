@@ -148,7 +148,7 @@ $_ol_login_back_url   = isset($urlencode) ? $urlencode : urlencode($_SERVER['REQ
                 <span class="m-ol-stat-label">쪽지</span>
                 <span class="m-ol-stat-value"><?php echo $_ol_memo ?></span>
             </a></li>
-            <li><a href="<?php echo G5_BBS_URL ?>/scrap.php" class="m-ol-stat" title="스크랩">
+            <li><a href="/scrap" class="m-ol-stat" title="스크랩">
                 <span class="m-ol-stat-label">스크랩</span>
                 <span class="m-ol-stat-value"><?php echo $_ol_scrap ?></span>
             </a></li>
