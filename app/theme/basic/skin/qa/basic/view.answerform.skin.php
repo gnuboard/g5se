@@ -10,7 +10,7 @@ if (!defined('_GNUBOARD_')) exit;
         <span class="m-qa-answer-form-hint">관리자 권한으로 답변을 작성합니다.</span>
     </header>
 
-    <form name="fanswer" method="post" action="<?php echo G5_BBS_URL ?>/qawrite_update.php" onsubmit="return fwrite_submit(this);" enctype="multipart/form-data" autocomplete="off" class="m-qa-answer-form">
+    <form name="fanswer" method="post" action="/qa/write_update" onsubmit="return fwrite_submit(this);" enctype="multipart/form-data" autocomplete="off" class="m-qa-answer-form">
         <input type="hidden" name="qa_id" value="<?php echo (int)$view['qa_id'] ?>">
         <input type="hidden" name="w"     value="a">
         <input type="hidden" name="sca"   value="<?php echo get_text($sca) ?>">

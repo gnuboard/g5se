@@ -138,7 +138,8 @@ if(is_file($skin_file)) {
 
     $list_href = G5_BBS_URL.'/qalist.php'.preg_replace('/^&amp;/', '?', $qstr);
 
-    $action_url = https_url(G5_BBS_DIR).'/qawrite_update.php';
+    // 클린 URL — 라우터에 /qa/write_update 가 등록돼 있어 POST 가 그대로 bbs/qawrite_update.php 로 전달됨
+    $action_url = '/qa/write_update';
 
     include_once($skin_file);
 } else {
