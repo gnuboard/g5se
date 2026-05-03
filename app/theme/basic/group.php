@@ -12,6 +12,9 @@ if (!$is_admin && $group['gr_device'] == 'mobile')
 $g5['title'] = $group['gr_subject'];
 
 require_once(G5_THEME_PATH.'/modern/_head.inc.php');
+// head.php 가 호출되어야 add_stylesheet 큐 (modern 토큰 + Pretendard 등) 가
+// 실제 <head> 안에 출력된다. 빠뜨리면 마크업 클래스만 깔리고 스타일이 안 먹는다.
+include_once(G5_THEME_PATH.'/head.php');
 include_once(G5_LIB_PATH.'/latest.lib.php');
 
 // 그룹에 속한 게시판 카운트
@@ -169,3 +172,5 @@ $board_count = count($boards);
 }
 </style>
 <!-- } 그룹 페이지 끝 -->
+<?php
+include_once(G5_THEME_PATH.'/tail.php');
