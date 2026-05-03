@@ -124,7 +124,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                     </div>
                 </section>
 
-                <?php echo $write_pages ?>
+                <div class="m-pagination"><?php echo $write_pages ?></div>
 
                 <?php if ($is_admin && count($list)) { ?>
                 <div class="m-new-bulk-row m-new-bulk-bottom">

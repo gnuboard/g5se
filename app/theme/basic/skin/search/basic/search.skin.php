@@ -138,7 +138,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 </section>
                 <?php } ?>
 
-                <?php echo $write_pages ?>
+                <div class="m-pagination"><?php echo $write_pages ?></div>
 
                 <?php } else { ?>
                 <section class="m-card m-search-empty">

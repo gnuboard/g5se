@@ -381,6 +381,29 @@ html, body {
 .profile_img { display: inline-flex; align-items: center; line-height: 0; }
 .profile_img img { display: inline-block; vertical-align: middle; }
 
+/* gnuboard 페이지네이션 (.pg_*) — get_paging() 출력을 토큰 기반으로 재스타일.
+   default.css 가 .pg_start/.pg_prev/.pg_next/.pg_end 에 sprite GIF 배경 + text-indent:-999px 를
+   걸어놔서 화살표 라벨이 보이지 않으므로 같이 리셋. 모든 스킨에서 <?= $write_pages ?> 만 출력하면 적용됨. */
+.m-pagination { margin-top: 24px; display: flex; justify-content: center; }
+.pg_wrap { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.pg_wrap .pg { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.pg_page, .pg_current,
+.pg_start, .pg_prev, .pg_next, .pg_end {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 36px; height: 36px; padding: 0 10px;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    color: var(--m-text-soft); text-decoration: none; font-size: var(--m-text-base);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    text-indent: 0; overflow: visible; background-image: none;
+}
+a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:hover {
+    background: var(--m-surface-2); border-color: var(--m-border-hover); color: var(--m-text);
+}
+.pg_current {
+    background: var(--m-primary); border-color: var(--m-primary); color: #fff; font-weight: 600;
+}
+
 /* sideview 팝업 메뉴 (.sv_wrap .sv) — gnuboard 기본 #333 검정 박스 → 모던 카드 */
 .sv_wrap .sv {
     margin-top: 8px !important;
