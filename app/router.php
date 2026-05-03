@@ -56,6 +56,12 @@ class Router
 
         // 포인트 내역
         '/point'                  => 'bbs/point.php',
+
+        // 스크랩
+        '/scrap'                  => 'bbs/scrap.php',
+        '/scrap_delete'           => 'bbs/scrap_delete.php',
+        '/scrap_popin'            => 'bbs/scrap_popin.php',
+        '/scrap_popin_update'     => 'bbs/scrap_popin_update.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
