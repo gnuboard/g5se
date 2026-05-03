@@ -48,7 +48,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             </div>
         </div>
 
-        <div class="m-formmail-field">
+        <div class="m-formmail-field m-formmail-content">
             <label for="content" class="m-label">내용 <span class="m-label-req">필수</span></label>
             <textarea name="content" id="content" required class="m-input m-formmail-textarea"></textarea>
         </div>
@@ -108,7 +108,9 @@ function fformmail_submit(f) {
 </script>
 
 <style>
-.m-formmail { display: flex; flex-direction: column; gap: 8px; }
+/* popup 전체를 flex column 으로 만들어 textarea 가 남는 공간을 차지하도록 */
+.m-popup:has(.m-formmail) { display: flex; flex-direction: column; }
+.m-formmail { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
 .m-formmail-field { display: flex; flex-direction: column; gap: 3px; }
 .m-formmail-field .m-label { margin-bottom: 0; }
 .m-formmail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -122,9 +124,12 @@ function fformmail_submit(f) {
 }
 .m-formmail-radio input { accent-color: var(--m-primary); }
 
+/* 내용 필드가 남는 세로 공간을 모두 차지 → textarea 자동 확장 */
+.m-formmail-content { flex: 1; min-height: 0; }
 .m-formmail-textarea {
-    min-height: 100px; max-height: 30vh;
-    padding: 8px 10px; font-family: inherit; resize: vertical;
+    width: 100%; height: 100%; box-sizing: border-box;
+    min-height: 80px;
+    padding: 10px; font-family: inherit; resize: none;
     line-height: var(--m-leading);
 }
 

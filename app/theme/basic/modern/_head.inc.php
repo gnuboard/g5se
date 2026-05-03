@@ -462,6 +462,7 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
     overflow: auto;
     padding: 14px 16px;
     box-sizing: border-box;
+    min-height: 100vh;
 }
 .m-popup-head { margin-bottom: 8px; }
 .m-popup-title {
