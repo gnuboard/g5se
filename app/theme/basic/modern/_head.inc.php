@@ -199,13 +199,16 @@ html, body {
    Buttons
    ────────────────────────────────────────────── */
 .m-btn {
-    display: inline-block; box-sizing: border-box;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    box-sizing: border-box;
     padding: 11px 16px; border: 0; border-radius: var(--m-radius);
     font-size: var(--m-text-md); font-weight: 600;
     cursor: pointer; text-decoration: none; text-align: center;
     transition: background 0.15s, border-color 0.15s, color 0.15s;
     font-family: inherit;
 }
+/* UnoCSS reset 이 SVG 를 block 으로 만들어 m-btn 안에서 줄바꿈됨 — 인라인 정렬 강제 */
+.m-btn svg { display: inline-block; flex-shrink: 0; }
 .m-btn-primary { background: var(--m-primary); color: white; width: 100%; }
 .m-btn-primary:hover { background: var(--m-primary-hover); }
 
