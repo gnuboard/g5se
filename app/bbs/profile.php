@@ -9,6 +9,11 @@ if (!$member['mb_open'] && $is_admin != 'super' && $member['mb_id'] != $mb_id)
 
 $mb_id = isset($mb_id) ? $mb_id : '';
 
+// /profile 에 mb_id 가 없으면 현재 로그인 회원 본인 프로필로 폴백
+if ($mb_id === '' && !empty($member['mb_id'])) {
+    $mb_id = $member['mb_id'];
+}
+
 $mb = get_member($mb_id);
 
 if (!$mb['mb_id'])
