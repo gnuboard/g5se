@@ -25,13 +25,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     <form name="fmemoform" action="<?php echo $memo_action_url; ?>" onsubmit="return fmemoform_submit(this);" method="post" autocomplete="off" class="m-memo-form">
         <div class="m-memo-field">
             <label for="me_recv_mb_id" class="m-label">받는 회원아이디 <span class="m-label-req">필수</span></label>
-            <input type="text" name="me_recv_mb_id" value="<?php echo $me_recv_mb_id; ?>" id="me_recv_mb_id" required class="m-input" placeholder="회원아이디 입력 (여러 명은 ',' 로 구분)">
-            <p class="m-memo-hint">여러 회원에게 보낼때는 컴마(,)로 구분하세요.</p>
-            <?php if ($config['cf_memo_send_point']) { ?>
-            <p class="m-memo-hint m-memo-hint-warn">
-                쪽지 보낼때 회원당 <strong><?php echo number_format($config['cf_memo_send_point']); ?></strong>점의 포인트를 차감합니다.
+            <input type="text" name="me_recv_mb_id" value="<?php echo $me_recv_mb_id; ?>" id="me_recv_mb_id" required class="m-input" placeholder="회원아이디 (여러 명은 ',' 로 구분)">
+            <p class="m-memo-hint">
+                여러 명은 컴마(,)로 구분<?php if ($config['cf_memo_send_point']) { ?> · 회원당 <strong><?php echo number_format($config['cf_memo_send_point']); ?></strong>점 차감<?php } ?>
             </p>
-            <?php } ?>
         </div>
 
         <div class="m-memo-field">
@@ -39,13 +36,11 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             <textarea name="me_memo" id="me_memo" required class="m-input m-memo-textarea"><?php echo $content ?></textarea>
         </div>
 
-        <div class="m-memo-field">
-            <?php echo captcha_html(); ?>
-        </div>
+        <div class="m-memo-captcha"><?php echo captcha_html(); ?></div>
 
         <div class="m-popup-actions">
-            <button type="submit" id="btn_submit" class="m-btn" style="width:auto; padding:10px 22px;">보내기</button>
-            <button type="button" onclick="window.close();" class="m-btn m-btn-ghost" style="width:auto; padding:9px 20px;">창닫기</button>
+            <button type="submit" id="btn_submit" class="m-btn" style="width:auto; padding:8px 20px;">보내기</button>
+            <button type="button" onclick="window.close();" class="m-btn m-btn-ghost" style="width:auto; padding:7px 18px;">창닫기</button>
         </div>
     </form>
 </div>
@@ -59,15 +54,24 @@ function fmemoform_submit(f)
 </script>
 
 <style>
-.m-memo-form { display: flex; flex-direction: column; gap: 16px; }
-.m-memo-field { display: flex; flex-direction: column; gap: 6px; }
+/* memo_form 전용 — popup 공통은 _head.inc.php */
+.m-memo-form { display: flex; flex-direction: column; gap: 10px; }
+.m-memo-field { display: flex; flex-direction: column; gap: 4px; }
 .m-label-req {
     font-size: var(--m-text-xs); font-weight: 500;
     color: var(--m-primary); margin-left: 4px;
 }
-.m-memo-hint { margin: 4px 0 0; font-size: var(--m-text-xs); color: var(--m-text-muted); }
-.m-memo-hint-warn { color: var(--m-text-soft); }
-.m-memo-hint-warn strong { color: var(--m-primary); font-weight: 600; }
-.m-memo-textarea { min-height: 200px; padding: 12px; font-family: inherit; resize: vertical; line-height: var(--m-leading-relaxed); }
+.m-memo-hint {
+    margin: 2px 0 0; font-size: var(--m-text-xs); color: var(--m-text-muted);
+}
+.m-memo-hint strong { color: var(--m-primary); font-weight: 600; }
+.m-memo-textarea {
+    min-height: 110px; max-height: 30vh;
+    padding: 10px; font-family: inherit; resize: vertical;
+    line-height: var(--m-leading-relaxed);
+}
+
+/* 캡챠 공통 스타일은 _head.inc.php (#captcha) — 여기서는 spacing 만 */
+.m-memo-captcha { margin-top: 2px; }
 </style>
 <!-- } 쪽지 보내기 끝 -->
