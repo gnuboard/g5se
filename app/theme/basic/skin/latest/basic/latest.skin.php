@@ -1,50 +1,49 @@
 <?php
-if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
+if (!defined('_GNUBOARD_')) exit;
 
-// add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
-add_stylesheet('<link rel="stylesheet" href="'.$latest_skin_url.'/style.css">', 0);
 $list_count = (is_array($list) && $list) ? count($list) : 0;
 ?>
 
-<div class="lat">
-    <h2 class="lat_title"><a href="<?php echo get_pretty_url($bo_table); ?>"><?php echo $bo_subject ?></a></h2>
-    <ul>
-    <?php for ($i=0; $i<$list_count; $i++) {  ?>
-        <li class="basic_li">
-            <?php
-            if ($list[$i]['icon_secret']) echo "<i class=\"fa fa-lock\" aria-hidden=\"true\"></i><span class=\"sound_only\">비밀글</span> ";
+<section class="m-latest">
+    <header class="m-latest-head">
+        <h2 class="m-latest-title">
+            <a href="<?php echo get_pretty_url($bo_table); ?>"><?php echo $bo_subject ?></a>
+        </h2>
+        <a href="<?php echo get_pretty_url($bo_table); ?>" class="m-latest-more">
+            더보기
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </header>
 
-            echo "<a href=\"".get_pretty_url($bo_table, $list[$i]['wr_id'])."\"> ";
-            if ($list[$i]['is_notice'])
-                echo "<strong>".$list[$i]['subject']."</strong>";
-            else
-                echo $list[$i]['subject'];
-
-            echo "</a>";
-			
-			if ($list[$i]['icon_hot']) echo "<span class=\"hot_icon\"><i class=\"fa fa-heart\" aria-hidden=\"true\"></i><span class=\"sound_only\">인기글</span></span>";
-			if ($list[$i]['icon_new']) echo "<span class=\"new_icon\">N<span class=\"sound_only\">새글</span></span>";
-            // if ($list[$i]['link']['count']) { echo "[{$list[$i]['link']['count']}]"; }
-            // if ($list[$i]['file']['count']) { echo "<{$list[$i]['file']['count']}>"; }
-
-            echo $list[$i]['icon_reply']." ";
-           	if (isset($list[$i]['icon_file']) && $list[$i]['icon_file']) echo " <i class=\"fa fa-download\" aria-hidden=\"true\"></i>" ;
-            if ($list[$i]['icon_link']) echo " <i class=\"fa fa-link\" aria-hidden=\"true\"></i>" ;
-
-            if ($list[$i]['comment_cnt'])  echo "
-            <span class=\"lt_cmt\"><span class=\"sound_only\">댓글</span>".$list[$i]['comment_cnt']."</span>";
-
-            ?>
-            <div class="lt_info">
-				<span class="lt_nick"><?php echo $list[$i]['name'] ?></span>
-            	<span class="lt_date"><?php echo $list[$i]['datetime2'] ?></span>              
+    <ul class="m-latest-list">
+        <?php for ($i = 0; $i < $list_count; $i++) { ?>
+        <li class="m-latest-item">
+            <a href="<?php echo get_pretty_url($bo_table, $list[$i]['wr_id']); ?>" class="m-latest-link">
+                <?php if ($list[$i]['icon_secret']) { ?>
+                <svg class="m-latest-secret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <?php } ?>
+                <span class="m-latest-subject<?php echo $list[$i]['is_notice'] ? ' is-notice' : '' ?>"><?php echo $list[$i]['subject'] ?></span>
+                <?php if ($list[$i]['comment_cnt']) { ?>
+                <span class="m-latest-cmt"><?php echo $list[$i]['comment_cnt'] ?></span>
+                <?php } ?>
+                <?php if ($list[$i]['icon_new']) { ?><span class="m-latest-tag m-latest-tag-new">N</span><?php } ?>
+                <?php if ($list[$i]['icon_hot']) { ?><span class="m-latest-tag m-latest-tag-hot">HOT</span><?php } ?>
+                <?php if (!empty($list[$i]['icon_file'])) { ?>
+                <svg class="m-latest-mark" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <?php } ?>
+                <?php if (!empty($list[$i]['icon_link'])) { ?>
+                <svg class="m-latest-mark" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <?php } ?>
+            </a>
+            <div class="m-latest-meta">
+                <span class="m-latest-name"><?php echo $list[$i]['name'] ?></span>
+                <span class="m-latest-date"><?php echo $list[$i]['datetime2'] ?></span>
             </div>
         </li>
-    <?php }  ?>
-    <?php if ($list_count == 0) { //게시물이 없을 때  ?>
-    <li class="empty_li">게시물이 없습니다.</li>
-    <?php }  ?>
-    </ul>
-    <a href="<?php echo get_pretty_url($bo_table); ?>" class="lt_more"><span class="sound_only"><?php echo $bo_subject ?></span>더보기</a>
+        <?php } ?>
 
-</div>
+        <?php if ($list_count == 0) { ?>
+        <li class="m-latest-empty">게시물이 없습니다.</li>
+        <?php } ?>
+    </ul>
+</section>
