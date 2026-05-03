@@ -380,6 +380,46 @@ html, body {
 .sv_member, .sv_guest { display: inline-flex; align-items: center; gap: 4px; }
 .profile_img { display: inline-flex; align-items: center; line-height: 0; }
 .profile_img img { display: inline-block; vertical-align: middle; }
+
+/* sideview 팝업 메뉴 (.sv_wrap .sv) — gnuboard 기본 #333 검정 박스 → 모던 카드 */
+.sv_wrap .sv {
+    margin-top: 8px !important;
+    min-width: 140px;
+    padding: 6px;
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    box-shadow: var(--m-shadow-md) !important;
+    font-size: var(--m-text-sm);
+    overflow: hidden;
+}
+.sv_wrap .sv:before {
+    border-bottom-color: var(--m-border) !important;
+    top: -7px !important;
+}
+.sv_wrap .sv:after {
+    content: ""; position: absolute;
+    top: -5px; left: 16px; width: 0; height: 0;
+    border-style: solid; border-width: 0 5px 5px 5px;
+    border-color: transparent transparent var(--m-surface) transparent;
+}
+.sv_wrap .sv a {
+    width: auto !important; min-width: 120px;
+    line-height: 1 !important;
+    padding: 9px 12px !important;
+    border-radius: var(--m-radius-sm);
+    color: var(--m-text-soft) !important;
+    font-size: var(--m-text-sm) !important;
+    transition: background 0.15s, color 0.15s;
+}
+.sv_wrap .sv a:hover {
+    background: var(--m-primary-soft) !important;
+    color: var(--m-primary) !important;
+}
+.sv_on {
+    top: calc(100% + 2px) !important;
+    left: 0 !important;
+}
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
