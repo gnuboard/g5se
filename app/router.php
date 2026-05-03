@@ -45,6 +45,12 @@ class Router
         // 글쓰기 토큰 발급 (common.js 의 form[name=fwrite] submit 시 호출)
         '#^/write_token\.php$#' => 'bbs/write_token.php',
 
+        // /bbs/*.php 직접 passthrough — gnuboard 내부에서
+        // `https_url(G5_BBS_DIR).'/write_update.php'` 형태로 form action 을 만들고
+        // POST 가 들어오므로 (GET 이면 legacy redirect 로 클린 URL 변환됨) 우리는
+        // 단순히 bbs/{name}.php 로 라우팅한다.
+        '#^/bbs/([a-z0-9_]+\.php)$#i' => 'bbs/{1}',
+
         // 게시판 — /board/{bo_table}[/{wr_id}] + 액션
         // bo_table 은 영문/숫자/_ 만 허용 (gnuboard 표준)
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/?$#'                                     => 'bbs/board.php',
