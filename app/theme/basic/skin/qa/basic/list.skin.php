@@ -152,6 +152,61 @@ if ($is_checkbox) $colspan++;
 </div>
 
 <style>
+/* board-common 레이아웃 규칙 — board/basic/list.skin 에만 있던 것을 여기서 재사용 위해 복제 */
+.m-board-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.m-board-head h1 { margin: 0; }
+.m-board-actions { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.m-board-actions .m-icon-btn { width: 36px; height: 36px; padding: 0; }
+.m-board-actions .m-btn { display: inline-flex; align-items: center; }
+
+.m-board-search-drawer {
+    margin: 0 0 14px; padding: 14px 16px;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+}
+.m-board-search-form {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.m-board-search-form .m-input { flex: 1; min-width: 180px; }
+
+.m-board-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.m-board-table thead th {
+    padding: 12px 10px; text-align: center; font-weight: 600;
+    font-size: 12px; color: var(--m-text-muted);
+    background: var(--m-surface-2); border-bottom: 1px solid var(--m-border);
+    text-transform: uppercase; letter-spacing: 0.04em;
+}
+.m-board-table tbody tr { border-bottom: 1px solid var(--m-border); transition: background 0.1s; }
+.m-board-table tbody tr:hover { background: var(--m-surface-2); }
+.m-board-table tbody tr:last-child { border-bottom: 0; }
+.m-board-table td { padding: 14px 10px; vertical-align: middle; text-align: center; }
+.m-board-table thead th.m-col-subject,
+.m-board-table tbody td.m-col-subject { text-align: left; padding-left: 16px; }
+.m-board-table thead th.m-col-name,
+.m-board-table tbody td.m-col-name { text-align: left; }
+
+.m-col-chk { width: 36px; }
+.m-col-num { width: 70px; color: var(--m-text-faint); font-size: 13px; }
+.m-col-name { width: 110px; color: var(--m-text-soft); font-size: 13px; }
+.m-col-date { width: 110px; color: var(--m-text-faint); font-size: 12px; }
+.m-board-subject { color: var(--m-text); text-decoration: none; font-weight: 500; }
+.m-board-subject:hover { color: var(--m-primary); }
+.m-icon-mini { color: var(--m-text-faint); display: inline-flex; vertical-align: -2px; margin-left: 4px; }
+.m-empty { padding: 0 !important; }
+
+.m-bulk-btn {
+    padding: 6px 12px;
+    background: transparent; border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+    cursor: pointer;
+}
+.m-bulk-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
+
 /* 카테고리 nav (gnuboard 의 ul/li 마크업을 토큰 pill 로 재스타일) */
 .m-qa-cates ul { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .m-qa-cates li { margin: 0; }
