@@ -88,15 +88,9 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 </header>
 
                 <section class="m-view-body">
-                    <?php if (file_exists(G5_SNS_PATH."/view.sns.skin.php") || $scrap_href) { ?>
+                    <?php if (file_exists(G5_SNS_PATH."/view.sns.skin.php")) { ?>
                     <div class="m-view-share">
                         <?php @include_once(G5_SNS_PATH."/view.sns.skin.php"); ?>
-                        <?php if ($scrap_href) { ?>
-                        <a href="<?php echo $scrap_href ?>" target="_blank" class="m-icon-btn" onclick="win_scrap(this.href); return false;" title="스크랩">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                            <span>스크랩</span>
-                        </a>
-                        <?php } ?>
                     </div>
                     <?php } ?>
 
@@ -114,6 +108,15 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
                     <?php if ($is_signature) { ?>
                     <div class="m-view-signature"><?php echo $signature ?></div>
+                    <?php } ?>
+
+                    <?php if ($scrap_href) { ?>
+                    <div class="m-view-scrap">
+                        <a href="<?php echo $scrap_href ?>" target="_blank" class="m-icon-btn" onclick="win_scrap(this.href); return false;" title="스크랩">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            <span>스크랩</span>
+                        </a>
+                    </div>
                     <?php } ?>
 
                     <?php if ($good_href || $nogood_href) { ?>
@@ -268,6 +271,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 .m-view-actions {
     display: flex; flex-wrap: wrap; gap: 6px;
     margin-top: 14px;
+    justify-content: flex-end;
 }
 .m-view-actions .m-icon-btn {
     width: auto; padding: 6px 12px;
@@ -308,6 +312,13 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 .m-view-share .m-icon-btn { width: auto; padding: 6px 12px; gap: 4px; }
 .m-view-share .m-icon-btn span { font-size: var(--m-text-sm); }
+
+.m-view-scrap {
+    display: flex; justify-content: flex-end;
+    margin: 14px 0 0;
+}
+.m-view-scrap .m-icon-btn { width: auto; padding: 6px 12px; gap: 4px; font-size: var(--m-text-sm); color: var(--m-text-soft); }
+.m-view-scrap .m-icon-btn span { font-size: var(--m-text-sm); }
 
 .m-view-images {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
