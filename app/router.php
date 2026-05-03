@@ -62,6 +62,13 @@ class Router
         '/scrap_delete'           => 'bbs/scrap_delete.php',
         '/scrap_popin'            => 'bbs/scrap_popin.php',
         '/scrap_popin_update'     => 'bbs/scrap_popin_update.php',
+
+        // 1:1 문의 (QA)
+        '/qa'                     => 'bbs/qalist.php',
+        '/qa/write'               => 'bbs/qawrite.php',
+        '/qa/write_update'        => 'bbs/qawrite_update.php',
+        '/qa/delete'              => 'bbs/qadelete.php',
+        '/qa/download'            => 'bbs/qadownload.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
@@ -86,6 +93,11 @@ class Router
 
         // 그룹 — /group/{gr_id}
         '#^/group/(?P<gr_id>[a-zA-Z0-9_-]+)/?$#' => 'bbs/group.php',
+
+        // 1:1 문의 단일 보기 — /qa/{qa_id}
+        '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
+        // 1:1 문의 수정 — /qa/write/{qa_id}
+        '#^/qa/write/(?P<qa_id>\d+)/?$#'  => 'bbs/qawrite.php',
 
         // 게시판 — /board/{bo_table}[/{wr_id}] + 액션
         // bo_table 은 영문/숫자/_ 만 허용 (gnuboard 표준)
