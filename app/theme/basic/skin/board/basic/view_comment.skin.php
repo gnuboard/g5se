@@ -269,7 +269,7 @@ $(function() {
 }
 .m-comments-head {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 24px;
+    padding: 18px 32px;
     border-bottom: 1px solid var(--m-border);
 }
 .m-comments-title {
@@ -279,11 +279,11 @@ $(function() {
 }
 .m-comments-title strong { color: var(--m-primary); font-weight: 700; }
 
-.m-comments-body { padding: 4px 24px; }
+.m-comments-body { padding: 4px 32px 12px; }
 
 .m-comments-empty {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    padding: 32px 16px; margin: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 48px 16px; margin: 0;
     color: var(--m-text-faint); font-size: var(--m-text-sm); text-align: center;
 }
 
@@ -355,7 +355,7 @@ $(function() {
     background: var(--m-surface);
     border: 1px solid var(--m-border);
     border-radius: var(--m-radius-lg);
-    padding: 24px 28px 26px;
+    padding: 28px 32px 30px;
 }
 .m-comment-write-title {
     font-size: var(--m-text-base); font-weight: 600;
