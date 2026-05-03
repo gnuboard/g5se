@@ -9,14 +9,21 @@ if (defined('_MODERN_HEAD_LOADED_')) return;
 define('_MODERN_HEAD_LOADED_', true);
 
 // CDN: 폰트 + UnoCSS reset + UnoCSS runtime
-add_stylesheet('<link rel="preconnect" href="https://fonts.googleapis.com">', -10);
-add_stylesheet('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>', -9);
-add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">', -8);
+// FOUT(Flash Of Unstyled Text) 방지를 위해 preconnect + preload 로 폰트 다운로드를 paint 전에 끝냄.
+// Pretendard 는 variable 폰트(단일 파일) 로 가져오면 한 번의 다운로드로 모든 weight 사용 가능.
+add_stylesheet('<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>', -11);
+add_stylesheet('<link rel="preload" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">', -10);
+add_stylesheet('<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2">', -9);
+add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">', -8);
 add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">', -7);
 add_javascript('<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>', -1);
 
 // 다크모드 FOUC 방지: localStorage / 시스템 설정으로 페인트 전에 data-theme 적용
 add_javascript('<script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})();</script>', -100);
+
+// 메인 디자인 토큰 + 컴포넌트 스타일을 add_stylesheet 큐로 등록 → gnuboard default.css 이후에 삽입되도록.
+// (그렇지 않으면 default.css 의 `body { font-family: 'Malgun Gothic' ... }` 가 우리 Pretendard 설정을 덮어써 자간/렌더 차이 발생)
+ob_start();
 ?>
 <style>
 /* ──────────────────────────────────────────────
@@ -57,6 +64,19 @@ add_javascript('<script>(function(){try{var t=localStorage.getItem("m-theme");if
     --m-leading:       1.5;
     --m-leading-relaxed: 1.7;
 
+    /* 컨테이너 max-width 스케일 — Tailwind / UnoCSS 표준 (rem 기반) */
+    --m-max-xs:   20rem;   /* 320px  */
+    --m-max-sm:   24rem;   /* 384px  */
+    --m-max-md:   28rem;   /* 448px  */
+    --m-max-lg:   32rem;   /* 512px  */
+    --m-max-xl:   36rem;   /* 576px  */
+    --m-max-2xl:  42rem;   /* 672px  */
+    --m-max-3xl:  48rem;   /* 768px  */
+    --m-max-4xl:  56rem;   /* 896px  */
+    --m-max-5xl:  64rem;   /* 1024px */
+    --m-max-6xl:  72rem;   /* 1152px */
+    --m-max-7xl:  80rem;   /* 1280px */
+
     color-scheme:     light;
 }
 
@@ -86,10 +106,13 @@ html, body {
     margin: 0;
     background: var(--m-bg);
     color: var(--m-text);
-    font-family: 'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    /* Pretendard Variable 우선, 미지원 브라우저는 정적 Pretendard 또는 시스템 폰트로 fallback */
+    font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Malgun Gothic',sans-serif;
     font-size: var(--m-text-md);  /* 기본 본문 사이즈 — 자식이 별도 지정 안 하면 14px */
     line-height: var(--m-leading);
     overflow: hidden;  /* m-shell 이 자체 스크롤 — body 스크롤바 중복 방지 */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ──────────────────────────────────────────────
@@ -104,7 +127,7 @@ html, body {
     display: flex; flex-direction: column;
     min-height: 100vh;
 }
-.m-container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.m-container { width: 100%; max-width: var(--m-max-7xl); margin: 0 auto; padding: 0 20px; }
 .m-center { display: grid; place-items: center; flex: 1; padding: 48px 16px; }
 
 /* ──────────────────────────────────────────────
@@ -206,11 +229,11 @@ html, body {
 }
 .m-nav-inner {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px; max-width: 1100px; margin: 0 auto;
+    padding: 14px 20px; max-width: var(--m-max-7xl); margin: 0 auto;
 }
 .m-brand {
     font-size: var(--m-text-xl); font-weight: 700; color: var(--m-text);
-    text-decoration: none; letter-spacing: -0.01em;
+    text-decoration: none;
 }
 .m-nav-actions { display: flex; align-items: center; gap: 8px; }
 
@@ -247,6 +270,10 @@ html, body {
 [data-theme="dark"] .m-theme-toggle .m-icon-moon { display: none; }
 </style>
 <?php
+// 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
+$_modern_main_css = ob_get_clean();
+add_stylesheet($_modern_main_css, 50);
+
 // ──────────────────────────────────────────────
 // 토글 버튼을 모든 .m-nav-actions 에 자동 주입 + 클릭 핸들러
 // (각 페이지 스킨을 수정하지 않아도 됨)

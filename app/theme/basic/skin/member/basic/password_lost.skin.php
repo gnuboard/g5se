@@ -14,14 +14,7 @@ $has_cert = $config['cf_cert_use'] != 0 && $config['cf_cert_find'] != 0
 <!-- 회원정보 찾기 시작 { -->
 <div class="m-shell">
 
-    <header class="m-nav">
-        <div class="m-nav-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand">gnu5se</a>
-            <nav class="m-nav-actions">
-                <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
-            </nav>
-        </div>
-    </header>
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
     <main class="m-center">
         <div style="width: 100%; max-width: <?php echo $has_cert ? '720px' : '440px' ?>;">
@@ -106,6 +99,7 @@ $has_cert = $config['cf_cert_use'] != 0 && $config['cf_cert_find'] != 0
 
         </div>
     </main>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
 <style>

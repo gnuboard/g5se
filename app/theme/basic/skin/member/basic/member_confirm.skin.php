@@ -7,14 +7,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 <!-- 회원 비밀번호 확인 시작 { -->
 <div class="m-shell">
 
-    <header class="m-nav">
-        <div class="m-nav-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand">gnu5se</a>
-            <nav class="m-nav-actions">
-                <a href="<?php echo G5_URL ?>" class="m-btn m-btn-ghost">취소</a>
-            </nav>
-        </div>
-    </header>
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
     <main class="m-center">
         <div class="m-card m-card-narrow" style="max-width: 420px;">
@@ -69,6 +62,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             </p>
         </div>
     </main>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
 <script>
