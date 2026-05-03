@@ -413,6 +413,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     flex-basis: 100%; font-size: var(--m-text-xs); color: var(--m-text-faint);
     margin-left: 22px;
 }
+/* 관련링크는 URL 옆에 클릭수가 같은 줄에 — wrap 해제 */
+.m-view-link .m-view-file-meta {
+    flex-basis: auto; margin-left: auto;
+}
 
 .m-view-nav {
     display: grid; grid-template-columns: 1fr 1fr; gap: 0;
