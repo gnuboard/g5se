@@ -46,6 +46,10 @@ class Router
         '/memo_form_update'       => 'bbs/memo_form_update.php',
         '/memo_view'              => 'bbs/memo_view.php',
         '/memo_delete'            => 'bbs/memo_delete.php',
+
+        // 메일보내기 (popup)
+        '/formmail'               => 'bbs/formmail.php',
+        '/formmail_send'          => 'bbs/formmail_send.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
