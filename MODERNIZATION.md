@@ -565,7 +565,75 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 1. `app/theme/<name>/` 디렉토리 생성, 기본은 `theme/basic` 의 구조를 그대로 유지 (skin/, modern/, head.php, tail.php, group.php, index.php, head.sub.php).
 2. `theme/<name>/modern/_head.inc.php` 의 토큰 블록만 새 팔레트로 변경.
 3. 필요하면 `_nav.inc.php`/`_footer.inc.php` 의 layout 도 변경.
-4. 스킨 파일은 symlink (`ln -s ../../basic/skin theme/<name>/skin`) 하거나 카피해서 부분 변형.
+4. 스킨 파일은 **반드시 cp -r 로 복사** (symlink 금지 — 격리 깨짐, git 이슈).
 5. `cf_theme` 을 새 이름으로 바꾸면 즉시 전환 — 다른 DB 변경 없음.
 
 `m-*` 클래스/변수 네임 컨벤션을 깨지 않으면 스킨은 100% 재사용 가능.
+
+---
+
+## 12. 추가 라운드 — 멀티테마 / 동적 메뉴 / QA / 폴리시
+
+### 멀티 테마 4종
+- `basic` (cool blue, 청회), `forest` (sage green, 자연), `aurora` (lavender violet, 보라), `sunset` (peach amber, 노을)
+- 각각 `theme/basic` 을 cp -r 로 통째 복사 (symlink 금지) 한 뒤 `modern/_head.inc.php` 의 토큰 블록만 팔레트로 교체
+- 라이트/다크 둘 다 토큰 정의, shadow 톤도 팔레트에 맞게 조정 (e.g. forest 는 (20,40,20) 녹 그림자)
+- `UPDATE g5_config SET cf_theme='<name>'` 한 줄로 즉시 전환
+
+### 상단 nav 2-row 구조 (gnuboard 원본 패턴 따라)
+- **Row 1** (top utility bar): 브랜드 · 커뮤니티/쇼핑몰 segment · 돋보기 (검색 페이지 직링크) · FAQ · Q&A · 새글 · 접속자 · 다크모드 토글 · 로그인 · 햄버거(모바일)
+- **Row 2** (메인 nav, surface bg): 홈 + g5_menu 1차 + 하위 hover 드롭다운
+- **`get_menu_db()` 동적 렌더링** — 관리자 → 환경설정 → 메뉴설정 의 g5_menu 항목을 그대로 1차 nav 로 출력. 외부 도메인 링크는 자동 _blank, 같은 호스트는 path/query 만 추출
+- `G5_COMMUNITY_USE && G5_USE_SHOP` 둘 다 켜진 경우만 segment 토글 노출 (현재 path 가 /shop 으로 시작하면 쇼핑몰 active)
+- 880px 이하: row 2 + utility 모두 햄버거 드로어로 흡수, 사이드바 outlogin 도 hide
+- 모바일 드로어에 5개 유틸 링크 + g5_menu + segment 모두 노출
+
+### path-style clean URL
+- `/content?co_id=X` → **`/content/X`** (extraRoute + 정규화 redirect)
+- `/group?gr_id=X` → **`/group/X`**
+- `/qa/{qa_id}` (보기), **`/qa/{qa_id}/edit`** (수정 — resource-first), `/qa/write` (새 글)
+- 라우터의 정규화 redirect 를 lookup 테이블로 일반화: `/content` → co_id, `/group` → gr_id (앞으로 같은 패턴 추가 시 한 줄)
+- extraRoute target 이 `'bbs/foo.php?key=val'` 형태면 매칭 시 ?key=val 도 $_GET 에 자동 주입 — `/qa/{qa_id}/edit` 가 `w=u` 를 자동으로 가짐
+- DB g5_menu 의 외부 데모 링크 (clcode.gnuboard.net) 도 모두 path-style 클린 URL 로 업데이트
+
+### 1:1 문의 (QA) 모듈 모던화
+- `g5_qa_config.qa_skin` = `theme/basic`
+- 라우터: `/qa` (목록) · `/qa/{N}` (보기) · `/qa/write` (작성) · `/qa/{N}/edit` (수정) · `/qa/write_update` · `/qa/delete` · `/qa/download`
+- 레거시 `.php` 5종 (qalist/qaview/qawrite/qadelete/qadownload/qawrite_update) 모두 GET/HEAD 시 클린 URL 로 301 (POST 는 패스스루)
+- 5개 스킨 모던화: list (카테고리 pill + 검색 drawer + 답변완료/대기 status pill + 빈 상태) / view (카테고리 태그 + 메타 + status pill + 본문 + 추가질문 + 답변(또는 답변폼) include + prev/next + 연관질문 카드) / view.answer (primary 그라디언트 헤더 + 답변 카드) / view.answerform (관리자=등록 폼, 일반=답변 준비중) / write (분류/연락처/제목/내용/첨부 5단 카드)
+- `bbs/qawrite.php` 의 `$action_url` 도 `/qa/write_update` 클린 URL 로
+- list/view/write skin 에 `.m-board-head`, `.m-write-section`, `.m-view-*`, `.m-icon-btn` 등 board-common CSS 복제 (board skin 에만 있어 /qa 에선 미적용이던 문제)
+
+### 추가 모던화
+- **현재 접속자 `/connect`** (current_connect.skin) — 사람 아이콘 + 카운트 + grid auto-fill 카드 (회원=primary border-left + 프로필 / 비회원=guest svg 칩) + lo_url 클릭 (super admin)
+- **outlogin 관리자 톱니** — 프로필 헤더 우측에 32px 톱니 chip, hover 시 45° 회전. 이전의 풀폭 "관리자" 버튼 제거하고 로그아웃이 풀-row 차지
+
+### 폴리시
+- 게시판 list 칼럼 정렬 — 텍스트(제목·글쓴이) 좌측 / 숫자·날짜 가운데 (specificity 매칭한 셀렉터로 default thead th 가운데를 덮음)
+- 이전/다음 글 nav 를 grid 2-col → flex column 의 2행 가로 layout (제목 ellipsis + 날짜)
+- 모바일에서 m-view-actions(목록·답변·글쓰기·케밥) flex-wrap nowrap + padding/font 축소로 한 줄에 들어가도록
+- 모바일 글쓰기 관련링크 chip 아이콘 숨김 (40px 가 input 옆에 들어가지 못해 줄바꿈되던 문제)
+- 새글 list, search.skin 의 #gr_id select 를 .m-input 스타일로 (id-scoped 셀렉터)
+- search 의 게시판 필터 URL 을 `/search?...` 직접 박음 (`$_SERVER['SCRIPT_NAME']` = `/index.php` 였던 것)
+- search 의 cnt_cmt 카운트 뱃지를 surface-2 round pill 로
+- captcha 스피커/리프레시 — gnuboard sprite 무력화 + inline-SVG (Feather volume-2 / rotate-cw) 를 background-image data-URI 로 그려 양 모드 모두 동일한 흰 알약 + 다크 아이콘
+- alert/confirm fallback noscript 마크업도 m-shell + m-card-narrow 카드로 (이전 라운드)
+- viewport meta 무조건 출력 (`G5_IS_MOBILE` 분기 제거)
+- 페이지네이션 `.pg_*` 토큰 스타일을 `_head.inc.php` 글로벌로 hoist
+- 댓글/스크랩/메모/포인트/그룹/콘텐츠 등 모든 popup 스킨도 `.m-popup` 패턴 통일
+
+### 직접 수정한 gnuboard 코어 파일 (이번 라운드)
+- `app/bbs/qawrite.php` — `$action_url` 을 `/qa/write_update` 로
+- `app/bbs/search.php` — `$str_board_list` 와 `$write_pages` URL 을 `/search` 로
+
+### DB 변경 (이번 라운드)
+- `cf_qa_skin` / `cf_mobile_qa_skin` / `cf_connect_skin` / `cf_mobile_connect_skin` = `theme/basic`
+- g5_menu: 데모 외부 도메인 → path-style 클린 URL
+- g5_qa_config.qa_title 그대로 (1:1문의)
+
+### 메모리 추가
+- `feedback_no_symlinks.md` — 새 테마 등 만들 때 symlink 금지, cp -r 로 실제 복사
+
+---
+
+다음 세션에서는 시스템(관리자 영역 `/adm/*`) 모던화나 사용자 플로우 실 사용 검증, 잔여 마이크로 폴리시(다크모드 토글 위치 미세조정 등) 진행 가능.
