@@ -127,6 +127,9 @@ html, body {
     display: flex; flex-direction: column;
     min-height: 100vh;
 }
+/* sticky footer 패턴: m-shell 직속 main 이 남는 공간을 차지해 footer 가 viewport 하단에 붙도록 */
+.m-shell > main { flex: 1 0 auto; }
+.m-shell > .m-footer { flex-shrink: 0; }
 .m-container { width: 100%; max-width: var(--m-max-7xl); margin: 0 auto; padding: 0 20px; }
 .m-center { display: grid; place-items: center; flex: 1; padding: 48px 16px; }
 
