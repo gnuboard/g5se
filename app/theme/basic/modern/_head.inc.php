@@ -133,6 +133,20 @@ html, body {
 .m-container { width: 100%; max-width: var(--m-max-7xl); margin: 0 auto; padding: 0 20px; }
 .m-center { display: grid; place-items: center; flex: 1; padding: 48px 16px; }
 
+/* 메인+사이드 2-column 레이아웃 — 게시판 list, 메인, 추후 마이페이지 등에서 공통 사용 */
+.m-with-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: start;
+}
+.m-main-col { min-width: 0; }   /* grid item 의 자식이 overflow 나지 않도록 */
+.m-side-col { position: sticky; top: 80px; }
+@media (max-width: 880px) {
+    .m-with-sidebar { grid-template-columns: 1fr; }
+    .m-side-col { position: static; order: -1; }   /* 모바일에선 사이드(outlogin)가 위로 */
+}
+
 /* ──────────────────────────────────────────────
    Card
    ────────────────────────────────────────────── */

@@ -14,7 +14,8 @@ if ($is_nogood) $colspan++;
 
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
-    <main class="m-container" style="padding: 32px 20px 64px;">
+    <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
+        <div class="m-main-col">
 
         <!-- 상단바 -->
         <div class="m-board-head">
@@ -166,6 +167,11 @@ if ($is_nogood) $colspan++;
 
             <div class="m-board-pagination"><?php echo $write_pages; ?></div>
         </form>
+        </div><!-- /m-main-col -->
+
+        <aside class="m-side-col">
+            <?php require G5_THEME_PATH.'/modern/_outlogin.inc.php'; ?>
+        </aside>
     </main>
     <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
