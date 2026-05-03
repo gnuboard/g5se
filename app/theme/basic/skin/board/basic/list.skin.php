@@ -90,7 +90,7 @@ if ($is_nogood) $colspan++;
             </div>
             <?php } ?>
 
-            <div class="m-card" style="padding: 0; overflow: hidden;">
+            <div class="m-card" style="padding: 0;">
                 <table class="m-board-table">
                     <thead>
                         <tr>
