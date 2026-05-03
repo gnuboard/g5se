@@ -362,6 +362,17 @@ html, body {
     border-color: var(--m-border);
     color: var(--m-text);
 }
+
+/* 글쓴이 닉네임/게스트명 — default.css 의 .sv_member { color:#333 } 가
+   다크모드에서 어두운 배경에 어두운 글자가 되어 안보이는 문제. 토큰으로 덮음. */
+[data-theme="dark"] .sv_member,
+[data-theme="dark"] .sv_member:link,
+[data-theme="dark"] .sv_member:visited,
+[data-theme="dark"] .sv_guest,
+[data-theme="dark"] .sv_guest:link,
+[data-theme="dark"] .sv_guest:visited {
+    color: var(--m-text-soft);
+}
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
