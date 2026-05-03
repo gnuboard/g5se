@@ -103,58 +103,7 @@ $has_cert = $config['cf_cert_use'] != 0 && $config['cf_cert_find'] != 0
 </div>
 
 <style>
-/* 캡차 영역 — register_form 의 m-captcha-wrap 과 동일 (다크모드 대응) */
-.m-captcha-wrap #captcha {
-    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-    border: 0; padding: 0; margin: 0;
-}
-.m-captcha-wrap #captcha legend { position: absolute; left: -9999px; }
-.m-captcha-wrap #captcha_img {
-    display: block; height: 44px; width: auto;
-    border: 1px solid var(--m-border-hover);
-    border-radius: var(--m-radius); background: white;
-}
-.m-captcha-wrap #captcha_key {
-    flex: 1; min-width: 120px;
-    padding: 10px 12px; box-sizing: border-box;
-    background: var(--m-surface) !important; color: var(--m-text) !important;
-    border: 1px solid var(--m-border-hover);
-    border-radius: var(--m-radius);
-    font-size: 14px; font-family: inherit; outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-.m-captcha-wrap #captcha_key:focus {
-    border-color: var(--m-primary);
-    box-shadow: 0 0 0 3px var(--m-primary-soft);
-}
-.m-captcha-wrap #captcha_reload, .m-captcha-wrap #captcha_mp3 {
-    width: 38px; height: 38px; padding: 0;
-    background: var(--m-surface-2);
-    border: 1px solid var(--m-border);
-    border-radius: var(--m-radius);
-    cursor: pointer; color: var(--m-text-soft);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 0;
-}
-.m-captcha-wrap #captcha_reload::before, .m-captcha-wrap #captcha_mp3::before {
-    content: ''; display: block; width: 16px; height: 16px;
-    background: currentColor;
-}
-.m-captcha-wrap #captcha_reload::before {
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12a9 9 0 0 1 15-6.7L21 8'/><path d='M21 3v5h-5'/><path d='M21 12a9 9 0 0 1-15 6.7L3 16'/><path d='M3 21v-5h5'/></svg>") no-repeat center / contain;
-            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12a9 9 0 0 1 15-6.7L21 8'/><path d='M21 3v5h-5'/><path d='M21 12a9 9 0 0 1-15 6.7L3 16'/><path d='M3 21v-5h5'/></svg>") no-repeat center / contain;
-}
-.m-captcha-wrap #captcha_mp3::before {
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>") no-repeat center / contain;
-            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>") no-repeat center / contain;
-}
-.m-captcha-wrap #captcha_reload:hover, .m-captcha-wrap #captcha_mp3:hover {
-    background: var(--m-border); color: var(--m-text);
-}
-.m-captcha-wrap #captcha_info {
-    display: block; flex-basis: 100%;
-    font-size: 12px; color: var(--m-text-faint); margin-top: 4px;
-}
+/* 캡차 영역 — 공통 _head.inc.php 정의 사용 */
 </style>
 
 <script>
