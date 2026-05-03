@@ -1,173 +1,165 @@
 <?php
-if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
+if (!defined('_GNUBOARD_')) exit;
 ?>
-
 <script>
-// 글자수 제한
-var char_min = parseInt(<?php echo $comment_min ?>); // 최소
-var char_max = parseInt(<?php echo $comment_max ?>); // 최대
+// 댓글 글자수 제한 (gnuboard 표준 변수)
+var char_min = parseInt(<?php echo $comment_min ?>);
+var char_max = parseInt(<?php echo $comment_max ?>);
 </script>
-<button type="button" class="cmt_btn"><span class="total"><b>댓글</b> <?php echo $view['wr_comment']; ?></span><span class="cmt_more"></span></button>
+
 <!-- 댓글 시작 { -->
-<section id="bo_vc">
-    <h2>댓글목록</h2>
-    <?php
-    $cmt_amt = count($list);
-    for ($i=0; $i<$cmt_amt; $i++) {
-        $comment_id = $list[$i]['wr_id'];
-        $cmt_depth = strlen($list[$i]['wr_comment_reply']) * 50;
-        $comment = $list[$i]['content'];
-        /*
-        if (strstr($list[$i]['wr_option'], "secret")) {
-            $str = $str;
-        }
-        */
-        $comment = preg_replace("/\[\<a\s.*href\=\"(http|https|ftp|mms)\:\/\/([^[:space:]]+)\.(mp3|wma|wmv|asf|asx|mpg|mpeg)\".*\<\/a\>\]/i", "<script>doc_write(obj_movie('$1://$2.$3'));</script>", $comment);
-        $cmt_sv = $cmt_amt - $i + 1; // 댓글 헤더 z-index 재설정 ie8 이하 사이드뷰 겹침 문제 해결
-		$c_reply_href = $comment_common_url.'&amp;c_id='.$comment_id.'&amp;w=c#bo_vc_w';
-		$c_edit_href = $comment_common_url.'&amp;c_id='.$comment_id.'&amp;w=cu#bo_vc_w';
-        $is_comment_reply_edit = ($list[$i]['is_reply'] || $list[$i]['is_edit'] || $list[$i]['is_del']) ? 1 : 0;
-	?>
+<section id="bo_vc" class="m-comments">
+    <header class="m-comments-head">
+        <h2 class="m-comments-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            댓글 <strong><?php echo $view['wr_comment'] ?></strong>
+        </h2>
+        <button type="button" class="m-icon-btn cmt_btn" aria-label="댓글 토글" title="댓글 펼치기/접기">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+    </header>
 
-	<article id="c_<?php echo $comment_id ?>" <?php if ($cmt_depth) { ?>style="margin-left:<?php echo $cmt_depth ?>px;border-top-color:#e0e0e0"<?php } ?>>
-        <div class="pf_img"><?php echo get_member_profile_img($list[$i]['mb_id']); ?></div>
-        
-        <div class="cm_wrap">
+    <div class="m-comments-body">
+        <?php
+        $cmt_amt = count($list);
+        if ($cmt_amt === 0) { ?>
+        <p class="m-comments-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity: 0.4;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>아직 댓글이 없습니다. 첫 댓글을 남겨주세요.</span>
+        </p>
+        <?php } ?>
 
-            <header style="z-index:<?php echo $cmt_sv; ?>">
-	            <h2><?php echo get_text($list[$i]['wr_name']); ?>님의 <?php if ($cmt_depth) { ?><span class="sound_only">댓글의</span><?php } ?> 댓글</h2>
-	            <?php echo $list[$i]['name'] ?>
-	            <?php if ($is_ip_view) { ?>
-	            <span class="sound_only">아이피</span>
-	            <span>(<?php echo $list[$i]['ip']; ?>)</span>
-	            <?php } ?>
-	            <span class="sound_only">작성일</span>
-	            <span class="bo_vc_hdinfo"><i class="fa fa-clock-o" aria-hidden="true"></i> <time datetime="<?php echo date('Y-m-d\TH:i:s+09:00', strtotime($list[$i]['datetime'])) ?>"><?php echo $list[$i]['datetime'] ?></time></span>
-	            <?php
-	            include(G5_SNS_PATH.'/view_comment_list.sns.skin.php');
-	            ?>
-	        </header>
-	
-	        <!-- 댓글 출력 -->
-	        <div class="cmt_contents">
-	            <p>
-	                <?php if (strstr($list[$i]['wr_option'], "secret")) { ?><img src="<?php echo $board_skin_url; ?>/img/icon_secret.gif" alt="비밀글"><?php } ?>
-	                <?php echo $comment ?>
-	            </p>
-	            <?php if($is_comment_reply_edit) {
-	                if($w == 'cu') {
-	                    $sql = " select wr_id, wr_content, mb_id from $write_table where wr_id = '$c_id' and wr_is_comment = '1' ";
-	                    $cmt = sql_fetch($sql);
+        <?php for ($i = 0; $i < $cmt_amt; $i++) {
+            $comment_id = $list[$i]['wr_id'];
+            $cmt_depth  = strlen($list[$i]['wr_comment_reply']);
+            $comment    = $list[$i]['content'];
+            $comment    = preg_replace("/\[\<a\s.*href\=\"(http|https|ftp|mms)\:\/\/([^[:space:]]+)\.(mp3|wma|wmv|asf|asx|mpg|mpeg)\".*\<\/a\>\]/i", "<script>doc_write(obj_movie('$1://$2.$3'));</script>", $comment);
+            $cmt_sv     = $cmt_amt - $i + 1;
+            $c_reply_href = $comment_common_url.'&amp;c_id='.$comment_id.'&amp;w=c#bo_vc_w';
+            $c_edit_href  = $comment_common_url.'&amp;c_id='.$comment_id.'&amp;w=cu#bo_vc_w';
+            $is_comment_reply_edit = ($list[$i]['is_reply'] || $list[$i]['is_edit'] || $list[$i]['is_del']) ? 1 : 0;
+            $is_secret = strstr($list[$i]['wr_option'], "secret");
+        ?>
+        <article id="c_<?php echo $comment_id ?>" class="m-comment <?php echo $cmt_depth ? 'm-comment-reply' : '' ?>" style="<?php echo $cmt_depth ? 'margin-left: '.($cmt_depth * 28).'px;' : '' ?>">
+            <div class="m-comment-avatar"><?php echo get_member_profile_img($list[$i]['mb_id']) ?></div>
+
+            <div class="m-comment-main">
+                <header class="m-comment-head" style="z-index: <?php echo $cmt_sv ?>;">
+                    <span class="m-comment-name">
+                        <?php if ($cmt_depth) { ?>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 3px; opacity: 0.6;"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                        <?php } ?>
+                        <?php echo $list[$i]['name'] ?>
+                        <?php if ($is_ip_view) { ?><span class="m-comment-ip">(<?php echo $list[$i]['ip'] ?>)</span><?php } ?>
+                    </span>
+                    <time class="m-comment-time" datetime="<?php echo date('Y-m-d\TH:i:s+09:00', strtotime($list[$i]['datetime'])) ?>"><?php echo $list[$i]['datetime'] ?></time>
+                    <?php @include(G5_SNS_PATH.'/view_comment_list.sns.skin.php'); ?>
+                </header>
+
+                <div class="m-comment-content cmt_contents">
+                    <?php if ($is_secret) { ?>
+                    <span class="m-comment-secret">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        비밀
+                    </span>
+                    <?php } ?>
+                    <?php echo $comment ?>
+
+                    <?php if ($is_comment_reply_edit && $w == 'cu') {
+                        $sql = " select wr_id, wr_content, mb_id from $write_table where wr_id = '$c_id' and wr_is_comment = '1' ";
+                        $cmt = sql_fetch($sql);
                         if (isset($cmt)) {
-                            if (!($is_admin || ($member['mb_id'] == $cmt['mb_id'] && $cmt['mb_id']))) {
-                                $cmt['wr_content'] = '';
-                            }
+                            if (!($is_admin || ($member['mb_id'] == $cmt['mb_id'] && $cmt['mb_id']))) $cmt['wr_content'] = '';
                             $c_wr_content = $cmt['wr_content'];
                         }
-	                }
-				?>
-	            <?php } ?>
-	        </div>
-	        <span id="edit_<?php echo $comment_id ?>" class="bo_vc_w"></span><!-- 수정 -->
-	        <span id="reply_<?php echo $comment_id ?>" class="bo_vc_w"></span><!-- 답변 -->
-	
-	        <input type="hidden" value="<?php echo strstr($list[$i]['wr_option'],"secret") ?>" id="secret_comment_<?php echo $comment_id ?>">
-	        <textarea id="save_comment_<?php echo $comment_id ?>" style="display:none"><?php echo get_text($list[$i]['content1'], 0) ?></textarea>
-		</div>
-        <?php if($is_comment_reply_edit) { ?>
-		<div class="bo_vl_opt">
-            <button type="button" class="btn_cm_opt btn_b01 btn"><i class="fa fa-ellipsis-v" aria-hidden="true"></i><span class="sound_only">댓글 옵션</span></button>
-        	<ul class="bo_vc_act">
-                <?php if ($list[$i]['is_reply']) { ?><li><a href="<?php echo $c_reply_href; ?>" onclick="comment_box('<?php echo $comment_id ?>', 'c'); return false;">답변</a></li><?php } ?>
-                <?php if ($list[$i]['is_edit']) { ?><li><a href="<?php echo $c_edit_href; ?>" onclick="comment_box('<?php echo $comment_id ?>', 'cu'); return false;">수정</a></li><?php } ?>
-                <?php if ($list[$i]['is_del']) { ?><li><a href="<?php echo $list[$i]['del_link']; ?>" onclick="return comment_delete();">삭제</a></li><?php } ?>
-            </ul>
-        </div>
-        <?php } ?>
-        <script>
-			$(function() {			    
-		    // 댓글 옵션창 열기
-		    $(".btn_cm_opt").on("click", function(){
-		        $(this).parent("div").children(".bo_vc_act").show();
-		    });
-				
-		    // 댓글 옵션창 닫기
-		    $(document).mouseup(function (e){
-		        var container = $(".bo_vc_act");
-		        if( container.has(e.target).length === 0)
-		        container.hide();
-		    });
-		});
-		</script>
-    </article>
-    <?php } ?>
-    <?php if ($i == 0) { //댓글이 없다면 ?><p id="bo_vc_empty">등록된 댓글이 없습니다.</p><?php } ?>
+                    } ?>
+                </div>
 
+                <span id="edit_<?php echo $comment_id ?>" class="bo_vc_w m-comment-form-slot"></span>
+                <span id="reply_<?php echo $comment_id ?>" class="bo_vc_w m-comment-form-slot"></span>
+
+                <input type="hidden" value="<?php echo $is_secret ?>" id="secret_comment_<?php echo $comment_id ?>">
+                <textarea id="save_comment_<?php echo $comment_id ?>" style="display:none"><?php echo get_text($list[$i]['content1'], 0) ?></textarea>
+
+                <?php if ($is_comment_reply_edit) { ?>
+                <div class="m-comment-actions">
+                    <?php if ($list[$i]['is_reply']) { ?>
+                    <a href="<?php echo $c_reply_href ?>" onclick="comment_box('<?php echo $comment_id ?>', 'c'); return false;" class="m-comment-action">답글</a>
+                    <?php } ?>
+                    <?php if ($list[$i]['is_edit']) { ?>
+                    <a href="<?php echo $c_edit_href ?>" onclick="comment_box('<?php echo $comment_id ?>', 'cu'); return false;" class="m-comment-action">수정</a>
+                    <?php } ?>
+                    <?php if ($list[$i]['is_del']) { ?>
+                    <a href="<?php echo $list[$i]['del_link'] ?>" onclick="return comment_delete();" class="m-comment-action m-comment-action-danger">삭제</a>
+                    <?php } ?>
+                </div>
+                <?php } ?>
+            </div>
+        </article>
+        <?php } ?>
+    </div>
 </section>
 <!-- } 댓글 끝 -->
 
 <?php if ($is_comment_write) {
-    if($w == '')
-        $w = 'c';
+    if ($w == '') $w = 'c';
 ?>
 <!-- 댓글 쓰기 시작 { -->
-<aside id="bo_vc_w" class="bo_vc_w">
-    <h2>댓글쓰기</h2>
-    <form name="fviewcomment" id="fviewcomment" action="<?php echo $comment_action_url; ?>" onsubmit="return fviewcomment_submit(this);" method="post" autocomplete="off">
-    <input type="hidden" name="w" value="<?php echo $w ?>" id="w">
-    <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
-    <input type="hidden" name="wr_id" value="<?php echo $wr_id ?>">
-    <input type="hidden" name="comment_id" value="<?php echo $c_id ?>" id="comment_id">
-    <input type="hidden" name="sca" value="<?php echo $sca ?>">
-    <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
-    <input type="hidden" name="stx" value="<?php echo $stx ?>">
-    <input type="hidden" name="spt" value="<?php echo $spt ?>">
-    <input type="hidden" name="page" value="<?php echo $page ?>">
-    <input type="hidden" name="is_good" value="">
+<aside id="bo_vc_w" class="m-comment-write bo_vc_w">
+    <h2 class="m-comment-write-title">
+        <?php echo $is_member ? get_text($member['mb_nick']).' 님의 댓글 작성' : '댓글 작성' ?>
+    </h2>
+    <form name="fviewcomment" id="fviewcomment" action="<?php echo $comment_action_url ?>" onsubmit="return fviewcomment_submit(this);" method="post" autocomplete="off">
+        <input type="hidden" name="w"          value="<?php echo $w ?>"      id="w">
+        <input type="hidden" name="bo_table"   value="<?php echo $bo_table ?>">
+        <input type="hidden" name="wr_id"      value="<?php echo $wr_id ?>">
+        <input type="hidden" name="comment_id" value="<?php echo $c_id ?>"   id="comment_id">
+        <input type="hidden" name="sca"        value="<?php echo $sca ?>">
+        <input type="hidden" name="sfl"        value="<?php echo $sfl ?>">
+        <input type="hidden" name="stx"        value="<?php echo $stx ?>">
+        <input type="hidden" name="spt"        value="<?php echo $spt ?>">
+        <input type="hidden" name="page"       value="<?php echo $page ?>">
+        <input type="hidden" name="is_good"    value="">
 
-    <span class="sound_only">내용</span>
-    <?php if ($comment_min || $comment_max) { ?><strong id="char_cnt"><span id="char_count"></span>글자</strong><?php } ?>
-    <textarea id="wr_content" name="wr_content" maxlength="10000" required class="required" title="내용" placeholder="댓글내용을 입력해주세요" 
-    <?php if ($comment_min || $comment_max) { ?>onkeyup="check_byte('wr_content', 'char_count');"<?php } ?>><?php echo $c_wr_content; ?></textarea>
-    <?php if ($comment_min || $comment_max) { ?><script> check_byte('wr_content', 'char_count'); </script><?php } ?>
-    <script>
-    $(document).on("keyup change", "textarea#wr_content[maxlength]", function() {
-        var str = $(this).val()
-        var mx = parseInt($(this).attr("maxlength"))
-        if (str.length > mx) {
-            $(this).val(str.substr(0, mx));
-            return false;
-        }
-    });
-    </script>
-    <div class="bo_vc_w_wr">
-        <div class="bo_vc_w_info">
-            <?php if ($is_guest) { ?>
-            <label for="wr_name" class="sound_only">이름<strong> 필수</strong></label>
-            <input type="text" name="wr_name" value="<?php echo get_cookie("ck_sns_name"); ?>" id="wr_name" required class="frm_input required" size="25" placeholder="이름">
-            <label for="wr_password" class="sound_only">비밀번호<strong> 필수</strong></label>
-            <input type="password" name="wr_password" id="wr_password" required class="frm_input required" size="25" placeholder="비밀번호">
-            <?php
-            }
-            ?>
-            <?php
-            if($board['bo_use_sns'] && ($config['cf_facebook_appid'] || $config['cf_twitter_key'])) {
-            ?>
-            <span class="sound_only">SNS 동시등록</span>
-            <span id="bo_vc_send_sns"></span>
-            <?php } ?>
-            <?php if ($is_guest) { ?>
-                <?php echo $captcha_html; ?>
+        <div class="m-comment-textarea-wrap">
+            <textarea id="wr_content" name="wr_content" maxlength="10000" required class="m-input m-comment-textarea" placeholder="댓글 내용을 입력해 주세요"
+                <?php if ($comment_min || $comment_max) { ?>onkeyup="check_byte('wr_content', 'char_count');"<?php } ?>><?php echo $c_wr_content ?? '' ?></textarea>
+            <?php if ($comment_min || $comment_max) { ?>
+            <div id="char_cnt" class="m-comment-charcount"><span id="char_count"></span> 글자</div>
+            <script>check_byte('wr_content', 'char_count');</script>
             <?php } ?>
         </div>
-        <div class="btn_confirm">
-        	<span class="secret_cm chk_box">
-	            <input type="checkbox" name="wr_secret" value="secret" id="wr_secret" class="selec_chk">
-	            <label for="wr_secret"><span></span>비밀글</label>
-            </span>
-            <button type="submit" id="btn_submit" class="btn_submit">댓글등록</button>
+
+        <script>
+        $(document).on("keyup change", "textarea#wr_content[maxlength]", function() {
+            var str = $(this).val(), mx = parseInt($(this).attr("maxlength"));
+            if (str.length > mx) { $(this).val(str.substr(0, mx)); return false; }
+        });
+        </script>
+
+        <div class="m-comment-write-row">
+            <div class="m-comment-write-info">
+                <?php if ($is_guest) { ?>
+                <input type="text" name="wr_name" value="<?php echo get_cookie("ck_sns_name") ?>" id="wr_name" required class="m-input" maxlength="20" placeholder="이름" style="max-width: 140px;">
+                <input type="password" name="wr_password" id="wr_password" required class="m-input" maxlength="20" placeholder="비밀번호" style="max-width: 140px;">
+                <?php } ?>
+
+                <?php if ($board['bo_use_sns'] && ($config['cf_facebook_appid'] || $config['cf_twitter_key'])) { ?>
+                <span id="bo_vc_send_sns"></span>
+                <?php } ?>
+            </div>
+            <div class="m-comment-write-actions">
+                <label class="m-check">
+                    <input type="checkbox" name="wr_secret" value="secret" id="wr_secret">
+                    <span>비밀글</span>
+                </label>
+                <button type="submit" id="btn_submit" class="m-btn m-btn-primary" style="width: auto; padding: 10px 18px;">등록</button>
+            </div>
         </div>
-    </div>
+
+        <?php if ($is_guest && !empty($captcha_html)) { ?>
+        <div class="m-comment-captcha m-captcha-wrap"><?php echo $captcha_html ?></div>
+        <?php } ?>
     </form>
 </aside>
 
@@ -175,181 +167,234 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
 var save_before = '';
 var save_html = document.getElementById('bo_vc_w').innerHTML;
 
-function good_and_write()
-{
+function good_and_write() {
     var f = document.fviewcomment;
-    if (fviewcomment_submit(f)) {
-        f.is_good.value = 1;
-        f.submit();
-    } else {
-        f.is_good.value = 0;
-    }
+    if (fviewcomment_submit(f)) { f.is_good.value = 1; f.submit(); }
+    else f.is_good.value = 0;
 }
 
-function fviewcomment_submit(f)
-{
-    var pattern = /(^\s*)|(\s*$)/g; // \s 공백 문자
-
+function fviewcomment_submit(f) {
+    var pattern = /(^\s*)|(\s*$)/g;
     f.is_good.value = 0;
 
-    var subject = "";
-    var content = "";
+    var subject = "", content = "";
     $.ajax({
-        url: g5_bbs_url+"/ajax.filter.php",
-        type: "POST",
-        data: {
-            "subject": "",
-            "content": f.wr_content.value
-        },
-        dataType: "json",
-        async: false,
-        cache: false,
-        success: function(data, textStatus) {
-            subject = data.subject;
-            content = data.content;
-        }
+        url: g5_bbs_url + "/ajax.filter.php", type: "POST",
+        data: { "subject": "", "content": f.wr_content.value },
+        dataType: "json", async: false, cache: false,
+        success: function(data) { subject = data.subject; content = data.content; }
     });
+    if (content) { alert("내용에 금지단어('" + content + "')가 포함되어있습니다"); f.wr_content.focus(); return false; }
 
-    if (content) {
-        alert("내용에 금지단어('"+content+"')가 포함되어있습니다");
-        f.wr_content.focus();
-        return false;
-    }
-
-    // 양쪽 공백 없애기
-    var pattern = /(^\s*)|(\s*$)/g; // \s 공백 문자
     document.getElementById('wr_content').value = document.getElementById('wr_content').value.replace(pattern, "");
-    if (char_min > 0 || char_max > 0)
-    {
+    if (char_min > 0 || char_max > 0) {
         check_byte('wr_content', 'char_count');
         var cnt = parseInt(document.getElementById('char_count').innerHTML);
-        if (char_min > 0 && char_min > cnt)
-        {
-            alert("댓글은 "+char_min+"글자 이상 쓰셔야 합니다.");
-            return false;
-        } else if (char_max > 0 && char_max < cnt)
-        {
-            alert("댓글은 "+char_max+"글자 이하로 쓰셔야 합니다.");
-            return false;
-        }
-    }
-    else if (!document.getElementById('wr_content').value)
-    {
-        alert("댓글을 입력하여 주십시오.");
-        return false;
+        if (char_min > 0 && char_min > cnt) { alert("댓글은 " + char_min + "글자 이상 쓰셔야 합니다."); return false; }
+        if (char_max > 0 && char_max < cnt) { alert("댓글은 " + char_max + "글자 이하로 쓰셔야 합니다."); return false; }
+    } else if (!document.getElementById('wr_content').value) {
+        alert("댓글을 입력하여 주십시오."); return false;
     }
 
-    if (typeof(f.wr_name) != 'undefined')
-    {
+    if (typeof(f.wr_name) != 'undefined') {
         f.wr_name.value = f.wr_name.value.replace(pattern, "");
-        if (f.wr_name.value == '')
-        {
-            alert('이름이 입력되지 않았습니다.');
-            f.wr_name.focus();
-            return false;
-        }
+        if (f.wr_name.value == '') { alert('이름이 입력되지 않았습니다.'); f.wr_name.focus(); return false; }
     }
-
-    if (typeof(f.wr_password) != 'undefined')
-    {
+    if (typeof(f.wr_password) != 'undefined') {
         f.wr_password.value = f.wr_password.value.replace(pattern, "");
-        if (f.wr_password.value == '')
-        {
-            alert('비밀번호가 입력되지 않았습니다.');
-            f.wr_password.focus();
-            return false;
-        }
+        if (f.wr_password.value == '') { alert('비밀번호가 입력되지 않았습니다.'); f.wr_password.focus(); return false; }
     }
 
-    <?php if($is_guest) echo chk_captcha_js();  ?>
+    <?php if ($is_guest) echo chk_captcha_js(); ?>
 
     set_comment_token(f);
-
     document.getElementById("btn_submit").disabled = "disabled";
-
     return true;
 }
 
-function comment_box(comment_id, work)
-{
-    var el_id,
-        form_el = 'fviewcomment',
+function comment_box(comment_id, work) {
+    var el_id, form_el = 'fviewcomment',
         respond = document.getElementById(form_el);
 
-    // 댓글 아이디가 넘어오면 답변, 수정
-    if (comment_id)
-    {
-        if (work == 'c')
-            el_id = 'reply_' + comment_id;
-        else
-            el_id = 'edit_' + comment_id;
-    }
-    else
-        el_id = 'bo_vc_w';
+    if (comment_id) el_id = (work == 'c') ? 'reply_' + comment_id : 'edit_' + comment_id;
+    else            el_id = 'bo_vc_w';
 
-    if (save_before != el_id)
-    {
-        if (save_before)
-        {
-            document.getElementById(save_before).style.display = 'none';
-        }
-
+    if (save_before != el_id) {
+        if (save_before) document.getElementById(save_before).style.display = 'none';
         document.getElementById(el_id).style.display = '';
         document.getElementById(el_id).appendChild(respond);
-        //입력값 초기화
         document.getElementById('wr_content').value = '';
-        
-        // 댓글 수정
-        if (work == 'cu')
-        {
+
+        if (work == 'cu') {
             document.getElementById('wr_content').value = document.getElementById('save_comment_' + comment_id).value;
-            if (typeof char_count != 'undefined')
-                check_byte('wr_content', 'char_count');
-            if (document.getElementById('secret_comment_'+comment_id).value)
-                document.getElementById('wr_secret').checked = true;
-            else
-                document.getElementById('wr_secret').checked = false;
+            if (typeof char_count != 'undefined') check_byte('wr_content', 'char_count');
+            document.getElementById('wr_secret').checked = !!document.getElementById('secret_comment_' + comment_id).value;
         }
 
         document.getElementById('comment_id').value = comment_id;
         document.getElementById('w').value = work;
-
-        if(save_before)
-            $("#captcha_reload").trigger("click");
-
+        if (save_before) $("#captcha_reload").trigger("click");
         save_before = el_id;
     }
 }
 
-function comment_delete()
-{
+function comment_delete() {
     return confirm("이 댓글을 삭제하시겠습니까?");
 }
 
-comment_box('', 'c'); // 댓글 입력폼이 보이도록 처리하기위해서 추가 (root님)
+comment_box('', 'c'); // 초기 폼 노출
 
-<?php if($board['bo_use_sns'] && ($config['cf_facebook_appid'] || $config['cf_twitter_key'])) { ?>
-
+<?php if ($board['bo_use_sns'] && ($config['cf_facebook_appid'] || $config['cf_twitter_key'])) { ?>
 $(function() {
-    // sns 등록
-    $("#bo_vc_send_sns").load(
-        "<?php echo G5_SNS_URL; ?>/view_comment_write.sns.skin.php?bo_table=<?php echo $bo_table; ?>",
-        function() {
-            save_html = document.getElementById('bo_vc_w').innerHTML;
-        }
-    );
+    $("#bo_vc_send_sns").load("<?php echo G5_SNS_URL ?>/view_comment_write.sns.skin.php?bo_table=<?php echo $bo_table ?>", function() {
+        save_html = document.getElementById('bo_vc_w').innerHTML;
+    });
 });
 <?php } ?>
 </script>
 <?php } ?>
 <!-- } 댓글 쓰기 끝 -->
+
+<style>
+/* ──────────────────────────────────────────────
+   댓글 영역 — view 카드 안에서 시작 (article.m-view 다음 형제로 위치)
+   ────────────────────────────────────────────── */
+.m-comments {
+    margin-top: 16px;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius-lg);
+    padding: 0;
+    overflow: hidden;
+}
+.m-comments-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-comments-title {
+    display: flex; align-items: center; gap: 6px;
+    font-size: var(--m-text-base); font-weight: 600;
+    color: var(--m-text-soft);
+}
+.m-comments-title strong { color: var(--m-primary); font-weight: 700; }
+
+.m-comments-body { padding: 4px 24px; }
+
+.m-comments-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 32px 16px; margin: 0;
+    color: var(--m-text-faint); font-size: var(--m-text-sm); text-align: center;
+}
+
+/* 개별 댓글 */
+.m-comment {
+    display: flex; gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-comments-body > .m-comment:last-child { border-bottom: 0; }
+.m-comment-reply {
+    border-left: 2px solid var(--m-border);
+    padding-left: 12px;
+}
+
+.m-comment-avatar { flex-shrink: 0; }
+.m-comment-avatar img {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--m-border); display: block;
+}
+
+.m-comment-main { flex: 1; min-width: 0; }
+.m-comment-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+}
+.m-comment-name {
+    display: inline-flex; align-items: center;
+    font-size: var(--m-text-base); font-weight: 600;
+    color: var(--m-text);
+}
+.m-comment-ip { color: var(--m-text-faint); font-weight: 400; font-size: var(--m-text-sm); margin-left: 4px; }
+.m-comment-time { font-size: var(--m-text-xs); color: var(--m-text-faint); }
+
+.m-comment-content {
+    font-size: var(--m-text-md); line-height: var(--m-leading-relaxed);
+    color: var(--m-text); word-break: break-word;
+}
+.m-comment-content a { color: var(--m-primary); }
+
+.m-comment-secret {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 7px; border-radius: 999px;
+    background: rgba(245,158,11,0.15); color: #d97706;
+    font-size: var(--m-text-xs); font-weight: 600;
+    margin-right: 6px; vertical-align: middle;
+}
+
+.m-comment-form-slot:empty { display: none; }
+.m-comment-form-slot { display: block; margin-top: 12px; }
+
+.m-comment-actions {
+    display: flex; gap: 4px; margin-top: 8px;
+}
+.m-comment-action {
+    padding: 4px 10px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-xs); color: var(--m-text-muted);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+.m-comment-action:hover { background: var(--m-surface-2); color: var(--m-text); }
+.m-comment-action-danger:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+/* ──────────────────────────────────────────────
+   댓글 작성 폼
+   ────────────────────────────────────────────── */
+.m-comment-write {
+    margin-top: 16px;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius-lg);
+    padding: 18px 24px 20px;
+}
+.m-comment-write-title {
+    font-size: var(--m-text-base); font-weight: 600;
+    color: var(--m-text-soft); margin-bottom: 12px;
+}
+.m-comment-textarea-wrap { position: relative; }
+.m-comment-textarea {
+    min-height: 96px; resize: vertical;
+    padding: 12px 14px; line-height: var(--m-leading-relaxed);
+    font-family: inherit;
+}
+.m-comment-charcount {
+    position: absolute; bottom: 8px; right: 12px;
+    font-size: var(--m-text-xs); color: var(--m-text-faint);
+    pointer-events: none;
+}
+
+.m-comment-write-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-items: center; justify-content: space-between;
+    margin-top: 10px;
+}
+.m-comment-write-info { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.m-comment-write-info .m-input { padding: 8px 10px; font-size: var(--m-text-sm); }
+.m-comment-write-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.m-comment-captcha { margin-top: 12px; }
+
+/* 댓글 수정/답글 form 이 슬롯에 들어갔을 때 자연스럽게 보이도록 */
+.m-comment .m-comment-write { margin-top: 12px; }
+</style>
+
 <script>
-jQuery(function($) {            
-    //댓글열기
-    $(".cmt_btn").click(function(e){
+// 댓글 토글 버튼
+jQuery(function($) {
+    $(".cmt_btn").click(function(e) {
         e.preventDefault();
-        $(this).toggleClass("cmt_btn_op");
-        $("#bo_vc").toggle();
+        $(this).toggleClass("is-collapsed");
+        $("#bo_vc .m-comments-body").slideToggle(150);
     });
 });
 </script>
