@@ -276,13 +276,14 @@ html, body {
     border-radius: var(--m-radius); background: white;
 }
 .m-captcha-wrap #captcha_key {
-    flex: 1; min-width: 120px;
-    padding: 10px 12px; box-sizing: border-box;
+    width: 9ch;   /* 약 8자리 숫자 + 여유 1자 */
+    padding: 10px 12px; box-sizing: content-box;
     background: var(--m-surface) !important; color: var(--m-text) !important;
     border: 1px solid var(--m-border-hover);
     border-radius: var(--m-radius);
     font-size: var(--m-text-md); font-family: inherit; outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
+    text-align: center; letter-spacing: 0.05em;
 }
 .m-captcha-wrap #captcha_key::placeholder { color: var(--m-text-faint); }
 .m-captcha-wrap #captcha_key:focus {
