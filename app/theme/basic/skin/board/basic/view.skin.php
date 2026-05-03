@@ -300,11 +300,11 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     font-size: var(--m-text-sm); color: var(--m-text-soft);
 }
 .m-view-actions .m-icon-btn span { font-size: var(--m-text-sm); }
-/* 모바일에선 라벨 숨겨 아이콘만 — 케밥과 같은 줄에 들어가도록 */
+/* 모바일에선 padding/gap 만 축소해 라벨은 유지 — 케밥까지 한 줄에 들어가도록 */
 @media (max-width: 540px) {
-    .m-view-actions { flex-wrap: nowrap; gap: 4px; }
-    .m-view-actions .m-icon-btn { padding: 6px 8px; }
-    .m-view-actions .m-icon-btn span { display: none; }
+    .m-view-actions { flex-wrap: nowrap; gap: 2px; }
+    .m-view-actions .m-icon-btn { padding: 6px 8px; gap: 3px; }
+    .m-view-actions .m-icon-btn span { font-size: var(--m-text-xs); }
 }
 .m-icon-btn-danger:hover {
     background: rgba(239,68,68,0.1) !important;
