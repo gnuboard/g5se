@@ -13,14 +13,31 @@ if (!defined('_GNUBOARD_')) return;
 
 global $is_member, $is_admin, $member, $config;
 
-// 메인 nav 링크 — 필요시 여기에 더 추가
-$_nav_links = [
-    ['/',                       '홈'],
-    ['/board/notice',           '공지'],
-    ['/board/free',             '자유게시판'],
-    ['/new',                    '새글'],
-    ['/faq',                    'FAQ'],
-];
+// gnuboard 의 g5_menu (관리자 → 환경설정 → 메뉴설정) 에서 등록된 메뉴를 동적으로 출력.
+// me_link 가 외부 도메인 (예: 데모 install 의 clcode.gnuboard.net) 이면 path/query 만 추출해
+// 우리 호스트 안의 클린 URL 로 동작하게 만든다 (target 은 self/blank 그대로 유지).
+$_nav_menu = function_exists('get_menu_db') ? get_menu_db(0, true) : [];
+$_nav_host = $_SERVER['HTTP_HOST'] ?? '';
+$_nav_normalize = function ($url) use ($_nav_host) {
+    if ($url === '' || $url === '#') return '#';
+    $u = parse_url($url);
+    // host 가 비어있으면 이미 path 형태 — 그대로
+    if (empty($u['host'])) return $url;
+    // 같은 호스트면 path[?query][#fragment] 만
+    if ($u['host'] === $_nav_host) {
+        $rebuilt = $u['path'] ?? '/';
+        if (!empty($u['query']))    $rebuilt .= '?' . $u['query'];
+        if (!empty($u['fragment'])) $rebuilt .= '#' . $u['fragment'];
+        return $rebuilt;
+    }
+    // 외부 호스트는 그대로 (target 으로 새창 처리)
+    return $url;
+};
+$_nav_is_external = function ($url) use ($_nav_host) {
+    $u = parse_url($url);
+    return !empty($u['host']) && $u['host'] !== $_nav_host;
+};
+
 $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 ?>
 
@@ -28,14 +45,45 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     <div class="m-nav-inner">
         <a href="<?php echo G5_URL ?>" class="m-brand"><?php echo isset($config['cf_title']) && $config['cf_title'] ? get_text($config['cf_title']) : 'gnu5se' ?></a>
 
+        <?php if (defined('G5_COMMUNITY_USE') && G5_COMMUNITY_USE && defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
+        <nav class="m-nav-segment" aria-label="섹션 전환">
+            <a href="<?php echo G5_URL ?>/" class="m-nav-segment-item<?php echo (strpos($_cur_path, '/shop') !== 0) ? ' is-active' : '' ?>">커뮤니티</a>
+            <a href="<?php echo G5_SHOP_URL ?>/" class="m-nav-segment-item<?php echo (strpos($_cur_path, '/shop') === 0) ? ' is-active' : '' ?>">쇼핑몰</a>
+        </nav>
+        <?php } ?>
+
         <nav class="m-nav-primary">
-            <?php foreach ($_nav_links as $_link) {
-                $href  = $_link[0];
-                $label = $_link[1];
-                $active = ($href === '/' && $_cur_path === '/') || ($href !== '/' && strpos($_cur_path, parse_url($href, PHP_URL_PATH)) === 0);
+            <a href="/" class="m-nav-link<?php echo $_cur_path === '/' ? ' is-active' : '' ?>">홈</a>
+            <?php foreach ($_nav_menu as $_row) {
+                if (empty($_row)) continue;
+                $href = $_nav_normalize($_row['me_link']);
+                $href_path = parse_url($href, PHP_URL_PATH) ?? '';
+                $active = ($href_path !== '' && $href_path !== '/' && strpos($_cur_path, $href_path) === 0);
+                $external = $_nav_is_external($_row['me_link']);
+                $target = ($_row['me_target'] === 'blank' || $external) ? '_blank' : '_self';
+                $has_sub = !empty($_row['sub']);
             ?>
-            <a href="<?php echo $href ?>" class="m-nav-link<?php echo $active ? ' is-active' : '' ?>"><?php echo $label ?></a>
+            <div class="m-nav-item<?php echo $has_sub ? ' has-sub' : '' ?>">
+                <a href="<?php echo $href ?>" target="<?php echo $target ?>"
+                   class="m-nav-link<?php echo $active ? ' is-active' : '' ?>"><?php echo get_text($_row['me_name']) ?><?php if ($has_sub) { ?>
+                    <svg class="m-nav-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <?php } ?></a>
+                <?php if ($has_sub) { ?>
+                <div class="m-nav-sub" role="menu">
+                    <?php foreach ((array)$_row['sub'] as $_sub) {
+                        if (empty($_sub)) continue;
+                        $sub_href = $_nav_normalize($_sub['me_link']);
+                        $sub_external = $_nav_is_external($_sub['me_link']);
+                        $sub_target = ($_sub['me_target'] === 'blank' || $sub_external) ? '_blank' : '_self';
+                    ?>
+                    <a href="<?php echo $sub_href ?>" target="<?php echo $sub_target ?>" class="m-nav-sub-link" role="menuitem"><?php echo get_text($_sub['me_name']) ?></a>
+                    <?php } ?>
+                </div>
+                <?php } ?>
+            </div>
             <?php } ?>
+            <a href="/new" class="m-nav-link<?php echo $_cur_path === '/new' ? ' is-active' : '' ?>">새글</a>
+            <a href="/faq" class="m-nav-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
         </nav>
 
         <form action="/search" method="get" class="m-nav-search" role="search">
@@ -98,14 +146,37 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             </section>
             <?php } ?>
 
+            <?php if (defined('G5_COMMUNITY_USE') && G5_COMMUNITY_USE && defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
+            <nav class="m-nav-drawer-segment" aria-label="섹션 전환">
+                <a href="<?php echo G5_URL ?>/" class="m-nav-drawer-segment-item<?php echo (strpos($_cur_path, '/shop') !== 0) ? ' is-active' : '' ?>">커뮤니티</a>
+                <a href="<?php echo G5_SHOP_URL ?>/" class="m-nav-drawer-segment-item<?php echo (strpos($_cur_path, '/shop') === 0) ? ' is-active' : '' ?>">쇼핑몰</a>
+            </nav>
+            <?php } ?>
+
             <nav class="m-nav-drawer-links">
-                <?php foreach ($_nav_links as $_link) {
-                    $href  = $_link[0];
-                    $label = $_link[1];
-                    $active = ($href === '/' && $_cur_path === '/') || ($href !== '/' && strpos($_cur_path, parse_url($href, PHP_URL_PATH)) === 0);
+                <a href="/" class="m-nav-drawer-link<?php echo $_cur_path === '/' ? ' is-active' : '' ?>">홈</a>
+                <?php foreach ($_nav_menu as $_row) {
+                    if (empty($_row)) continue;
+                    $href = $_nav_normalize($_row['me_link']);
+                    $href_path = parse_url($href, PHP_URL_PATH) ?? '';
+                    $active = ($href_path !== '' && $href_path !== '/' && strpos($_cur_path, $href_path) === 0);
+                    $external = $_nav_is_external($_row['me_link']);
+                    $target = ($_row['me_target'] === 'blank' || $external) ? '_blank' : '_self';
                 ?>
-                <a href="<?php echo $href ?>" class="m-nav-drawer-link<?php echo $active ? ' is-active' : '' ?>"><?php echo $label ?></a>
+                <a href="<?php echo $href ?>" target="<?php echo $target ?>" class="m-nav-drawer-link<?php echo $active ? ' is-active' : '' ?>"><?php echo get_text($_row['me_name']) ?></a>
+                <?php foreach ((array)$_row['sub'] as $_sub) {
+                    if (empty($_sub)) continue;
+                    $sub_href = $_nav_normalize($_sub['me_link']);
+                    $sub_external = $_nav_is_external($_sub['me_link']);
+                    $sub_target = ($_sub['me_target'] === 'blank' || $sub_external) ? '_blank' : '_self';
+                    $sub_path = parse_url($sub_href, PHP_URL_PATH) ?? '';
+                    $sub_active = ($sub_path !== '' && $sub_path !== '/' && strpos($_cur_path, $sub_path) === 0);
+                ?>
+                <a href="<?php echo $sub_href ?>" target="<?php echo $sub_target ?>" class="m-nav-drawer-link m-nav-drawer-sublink<?php echo $sub_active ? ' is-active' : '' ?>"><?php echo get_text($_sub['me_name']) ?></a>
                 <?php } ?>
+                <?php } ?>
+                <a href="/new" class="m-nav-drawer-link<?php echo $_cur_path === '/new' ? ' is-active' : '' ?>">새글</a>
+                <a href="/faq" class="m-nav-drawer-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
             </nav>
 
             <div class="m-nav-drawer-actions">
@@ -168,6 +239,48 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 }
 .m-nav-link:hover { background: var(--m-surface-2); color: var(--m-text); }
 .m-nav-link.is-active { background: var(--m-primary-soft); color: var(--m-primary); }
+
+/* g5_menu 1차 항목 + 하위 드롭다운 */
+.m-nav-item { position: relative; }
+.m-nav-link { display: inline-flex; align-items: center; gap: 4px; }
+.m-nav-chev { color: var(--m-text-faint); transition: transform 0.15s; }
+.m-nav-item.has-sub:hover .m-nav-chev { transform: rotate(180deg); color: var(--m-primary); }
+.m-nav-sub {
+    position: absolute; top: calc(100% + 4px); left: 0;
+    min-width: 180px; padding: 6px;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    box-shadow: var(--m-shadow-md);
+    display: none; z-index: 200;
+}
+.m-nav-item.has-sub:hover .m-nav-sub,
+.m-nav-item.has-sub:focus-within .m-nav-sub { display: block; }
+.m-nav-sub-link {
+    display: block;
+    padding: 8px 12px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+    text-decoration: none; white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+.m-nav-sub-link:hover { background: var(--m-primary-soft); color: var(--m-primary); }
+
+/* 커뮤니티 / 쇼핑몰 segment 토글 */
+.m-nav-segment {
+    display: inline-flex; padding: 3px;
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); flex-shrink: 0;
+}
+.m-nav-segment-item {
+    padding: 5px 12px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); font-weight: 500;
+    color: var(--m-text-soft); text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+.m-nav-segment-item.is-active {
+    background: var(--m-surface); color: var(--m-primary);
+    box-shadow: var(--m-shadow);
+}
 
 .m-nav-search {
     flex: 1; max-width: 400px;
@@ -297,6 +410,25 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 }
 .m-nav-drawer-link:hover { background: var(--m-surface-2); color: var(--m-text); }
 .m-nav-drawer-link.is-active { background: var(--m-primary-soft); color: var(--m-primary); }
+.m-nav-drawer-sublink { padding-left: 28px !important; font-size: var(--m-text-sm) !important; }
+
+/* 드로어 안 segment 토글 */
+.m-nav-drawer-segment {
+    display: flex; gap: 4px; padding: 3px;
+    margin: 12px 12px 0;
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+}
+.m-nav-drawer-segment-item {
+    flex: 1; text-align: center;
+    padding: 7px 10px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); font-weight: 500;
+    color: var(--m-text-soft); text-decoration: none;
+}
+.m-nav-drawer-segment-item.is-active {
+    background: var(--m-surface); color: var(--m-primary);
+    box-shadow: var(--m-shadow);
+}
 
 .m-nav-drawer-actions {
     display: flex; flex-direction: column; gap: 6px;
