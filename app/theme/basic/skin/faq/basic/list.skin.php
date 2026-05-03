@@ -208,6 +208,8 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     border-top: 1px solid var(--m-border);
     background: var(--m-surface-2);
 }
+/* class 가 display:flex 라서 [hidden] (=display:none) 이 덮어써짐 — 명시적으로 강제 */
+.m-faq-a[hidden] { display: none !important; }
 .m-faq-a-text {
     flex: 1; min-width: 0;
     font-size: var(--m-text-md); line-height: var(--m-leading-relaxed);
