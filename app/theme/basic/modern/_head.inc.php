@@ -373,6 +373,13 @@ html, body {
 [data-theme="dark"] .sv_guest:visited {
     color: var(--m-text-soft);
 }
+
+/* sideview — 회원 아이콘 + 닉네임이 같은 줄에 오도록.
+   UnoCSS reset 이 img 를 display:block 으로 만들어 아이콘이 따로 줄을 차지하던 문제. */
+.sv_wrap { display: inline-flex; align-items: center; gap: 4px; }
+.sv_member, .sv_guest { display: inline-flex; align-items: center; gap: 4px; }
+.profile_img { display: inline-flex; align-items: center; line-height: 0; }
+.profile_img img { display: inline-block; vertical-align: middle; }
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
