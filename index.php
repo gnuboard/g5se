@@ -48,6 +48,39 @@ ob_start(function ($html) {
         },
         $html
     );
+
+    // 3) 게시판 액션 URL 정리: /write.php / delete.php / good.php / download.php / view_image.php
+    //    형태를 모두 /board/{bo_table}/{action}[/{wr_id}[/{no}]] 로 치환 (라우터 패턴과 일치)
+    $html = preg_replace_callback(
+        '#/(write|write_update|delete|good|nogood|download|view_image)\.php\?bo_table=([a-zA-Z0-9_]+)(?:(?:&|&amp;)wr_id=(\d+))?(?:(?:&|&amp;)no=(\d+))?#',
+        function ($m) {
+            // good/nogood 는 라우터 측에서 wr_id 만 받음 (good_or_nogood 파라미터 처리는 별도)
+            $action = $m[1];
+            $bo     = $m[2];
+            $wr     = $m[3] ?? '';
+            $no     = $m[4] ?? '';
+            $url = '/board/'.$bo.'/'.$action;
+            if ($wr !== '') $url .= '/'.$wr;
+            if ($no !== '') $url .= '/'.$no;
+            return $url;
+        },
+        $html
+    );
+
+    // 4) 댓글 작성/삭제도 마찬가지: /write_comment_update.php, /delete_comment.php
+    $html = preg_replace_callback(
+        '#/write_comment_update\.php\?bo_table=([a-zA-Z0-9_]+)#',
+        fn($m) => '/board/'.$m[1].'/comment',
+        $html
+    );
+    $html = preg_replace_callback(
+        '#/delete_comment\.php\?(?:[^"\']*?(?:&|&amp;)?bo_table=([a-zA-Z0-9_]+))(?:[^"\']*?(?:&|&amp;)comment_id=(\d+))?#',
+        function ($m) {
+            return '/board/'.$m[1].'/comment/delete'.(isset($m[2]) && $m[2] !== '' ? '/'.$m[2] : '');
+        },
+        $html
+    );
+
     return $html;
 });
 
