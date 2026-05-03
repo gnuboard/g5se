@@ -39,6 +39,13 @@ class Router
         '/faq'                    => 'bbs/faq.php',
         '/content'                => 'bbs/content.php',
         '/group'                  => 'bbs/group.php',
+
+        // 쪽지 (popup)
+        '/memo'                   => 'bbs/memo.php',
+        '/memo_form'              => 'bbs/memo_form.php',
+        '/memo_form_update'       => 'bbs/memo_form_update.php',
+        '/memo_view'              => 'bbs/memo_view.php',
+        '/memo_delete'            => 'bbs/memo_delete.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
