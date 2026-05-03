@@ -38,13 +38,27 @@ ob_start(function ($html) {
     $pattern = '#(/(?:'.implode('|', $clean_endpoints).'))\.php(?![a-zA-Z0-9])#';
     $html = preg_replace($pattern, '$1', $html);
 
-    // 2) 게시판 URL 정리: /board.php?bo_table=X[&wr_id=N] → /board/X[/N]
-    //    - bo_table 은 영문/숫자/_ 만, wr_id 는 숫자만 (라우터 패턴과 일치)
-    //    - HTML 안에선 `&` 가 `&amp;` 로 인코딩되므로 둘 다 처리
+    // 2) 게시판 URL 정리: /board.php?bo_table=X[&wr_id=N][&page=Y&...] → /board/X[/N][?page=Y&...]
+    //    매개변수 순서 무관하게 bo_table, wr_id 추출 후 나머지 query string 은 보존.
+    //    HTML 안에선 `&` 가 `&amp;` 로 인코딩되므로 parse_str 호출 전 디코드.
     $html = preg_replace_callback(
-        '#/board\.php\?bo_table=([a-zA-Z0-9_]+)(?:(?:&|&amp;)wr_id=(\d+))?#',
+        '#/board\.php\?([^"\'\s<>]+)#',
         function ($m) {
-            return '/board/'.$m[1].(isset($m[2]) && $m[2] !== '' ? '/'.$m[2] : '');
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['bo_table']) || !preg_match('/^[a-zA-Z0-9_]+$/', $params['bo_table'])) {
+                return $m[0];
+            }
+            $url = '/board/'.$params['bo_table'];
+            if (!empty($params['wr_id']) && preg_match('/^\d+$/', $params['wr_id'])) {
+                $url .= '/'.$params['wr_id'];
+                unset($params['wr_id']);
+            }
+            unset($params['bo_table']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
         },
         $html
     );
