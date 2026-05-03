@@ -96,8 +96,8 @@ class Router
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
-        // 1:1 문의 수정 — /qa/write/{qa_id}
-        '#^/qa/write/(?P<qa_id>\d+)/?$#'  => 'bbs/qawrite.php',
+        // 1:1 문의 수정 — /qa/{qa_id}/edit (resource-first; w=u 자동 주입)
+        '#^/qa/(?P<qa_id>\d+)/edit/?$#'   => 'bbs/qawrite.php?w=u',
 
         // 게시판 — /board/{bo_table}[/{wr_id}] + 액션
         // bo_table 은 영문/숫자/_ 만 허용 (gnuboard 표준)
@@ -164,7 +164,7 @@ class Router
             } else if ($action === 'qawrite') {
                 $url = '/qa/write';
                 if (!empty($params['w']) && $params['w'] === 'u' && !empty($params['qa_id']) && preg_match('/^\d+$/', $params['qa_id'])) {
-                    $url = '/qa/write/'.$params['qa_id'];
+                    $url = '/qa/'.$params['qa_id'].'/edit';
                     unset($params['qa_id'], $params['w']);
                 }
             } else if ($action === 'qadelete') {
@@ -232,6 +232,15 @@ class Router
         // 4) 정규식 기반 라우트 (디버그/AJAX 등)
         foreach ($this->extraRoutes as $pattern => $target) {
             if (preg_match($pattern, $path, $m)) {
+                // target 이 'bbs/foo.php?key=val&k2=v2' 형태면 ? 뒤를 $_GET 에 주입
+                if (strpos($target, '?') !== false) {
+                    list($target, $injectQs) = explode('?', $target, 2);
+                    parse_str($injectQs, $injectParams);
+                    foreach ($injectParams as $k => $v) {
+                        $_GET[$k] = $v;
+                        $_REQUEST[$k] = $v;
+                    }
+                }
                 // 캡처 그룹을 target 의 {N} placeholder 로 치환 ({1}, {2}, ...)
                 $resolved = preg_replace_callback('/\{(\d+)\}/', function ($ph) use ($m) {
                     return isset($m[(int)$ph[1]]) ? $m[(int)$ph[1]] : '';
