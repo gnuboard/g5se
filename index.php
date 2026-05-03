@@ -50,18 +50,30 @@ ob_start(function ($html) {
     );
 
     // 3) 게시판 액션 URL 정리: /write.php / delete.php / good.php / download.php / view_image.php
-    //    형태를 모두 /board/{bo_table}/{action}[/{wr_id}[/{no}]] 로 치환 (라우터 패턴과 일치)
+    //    매개변수 순서 무관하게 bo_table, wr_id, no, w 추출 후 /board/{bo_table}/{action}[/{wr_id}[/{no}]][?w=X&...] 로 재조립
     $html = preg_replace_callback(
-        '#/(write|write_update|delete|good|nogood|download|view_image)\.php\?bo_table=([a-zA-Z0-9_]+)(?:(?:&|&amp;)wr_id=(\d+))?(?:(?:&|&amp;)no=(\d+))?#',
+        '#/(write|write_update|delete|good|nogood|download|view_image)\.php\?([^"\'\s<>]+)#',
         function ($m) {
-            // good/nogood 는 라우터 측에서 wr_id 만 받음 (good_or_nogood 파라미터 처리는 별도)
             $action = $m[1];
-            $bo     = $m[2];
-            $wr     = $m[3] ?? '';
-            $no     = $m[4] ?? '';
-            $url = '/board/'.$bo.'/'.$action;
-            if ($wr !== '') $url .= '/'.$wr;
-            if ($no !== '') $url .= '/'.$no;
+            $qs = str_replace('&amp;', '&', $m[2]);
+            parse_str($qs, $params);
+            if (empty($params['bo_table']) || !preg_match('/^[a-zA-Z0-9_]+$/', $params['bo_table'])) {
+                return $m[0];   // bo_table 없거나 이상하면 그대로 둠
+            }
+            $url = '/board/'.$params['bo_table'].'/'.$action;
+            if (!empty($params['wr_id']) && preg_match('/^\d+$/', $params['wr_id'])) {
+                $url .= '/'.$params['wr_id'];
+                unset($params['wr_id']);
+            }
+            if (!empty($params['no']) && preg_match('/^\d+$/', $params['no'])) {
+                $url .= '/'.$params['no'];
+                unset($params['no']);
+            }
+            unset($params['bo_table']);
+            // 남은 query 파라미터 (w, sca, sfl, stx, page 등) 보존
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
             return $url;
         },
         $html
