@@ -52,19 +52,29 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                         </a>
                         <?php } ?>
                         <?php if ($write_href) { ?>
-                        <a href="<?php echo $write_href ?>" class="m-btn m-btn-primary" style="width: auto; padding: 8px 14px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="vertical-align: -2px; margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            글쓰기
+                        <a href="<?php echo $write_href ?>" class="m-icon-btn" title="글쓰기">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>글쓰기</span>
                         </a>
                         <?php } ?>
-                        <?php if ($update_href || $delete_href || $copy_href || $move_href || $search_href) { ?>
+                        <?php if ($update_href) { ?>
+                        <a href="<?php echo $update_href ?>" class="m-icon-btn" title="수정">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <span>수정</span>
+                        </a>
+                        <?php } ?>
+                        <?php if ($delete_href) { ?>
+                        <a href="<?php echo $delete_href ?>" onclick="del(this.href); return false;" class="m-icon-btn m-icon-btn-danger" title="삭제">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+                            <span>삭제</span>
+                        </a>
+                        <?php } ?>
+                        <?php if ($copy_href || $move_href || $search_href) { ?>
                         <div class="m-view-more">
                             <button type="button" class="m-icon-btn btn_more_opt is_view_btn" aria-label="더보기">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                             </button>
                             <ul class="m-view-more-menu more_opt is_view_btn" hidden>
-                                <?php if ($update_href) { ?><li><a href="<?php echo $update_href ?>">수정</a></li><?php } ?>
-                                <?php if ($delete_href) { ?><li><a href="<?php echo $delete_href ?>" onclick="del(this.href); return false;">삭제</a></li><?php } ?>
                                 <?php if ($copy_href)   { ?><li><a href="<?php echo $copy_href ?>" onclick="board_move(this.href); return false;">복사</a></li><?php } ?>
                                 <?php if ($move_href)   { ?><li><a href="<?php echo $move_href ?>" onclick="board_move(this.href); return false;">이동</a></li><?php } ?>
                                 <?php if ($search_href) { ?><li><a href="<?php echo $search_href ?>">검색</a></li><?php } ?>
