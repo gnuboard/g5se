@@ -36,12 +36,13 @@ header("Pragma: no-cache"); // HTTP/1.0
 <head>
 <meta charset="utf-8">
 <?php
-if (G5_IS_MOBILE) {
-    echo '<meta name="viewport" id="meta_viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10">'.PHP_EOL;
-    echo '<meta name="HandheldFriendly" content="true">'.PHP_EOL;
-    echo '<meta name="format-detection" content="telephone=no">'.PHP_EOL;
-} else {
-    echo '<meta http-equiv="imagetoolbar" content="no">'.PHP_EOL;
+// 반응형 CSS 가 동작하려면 viewport meta 가 항상 필요. gnuboard 의 모바일 UA
+// 감지에 의존해 분기 출력하면 데스크톱 UA + 좁은 viewport (devtools / 태블릿)
+// 환경에서 viewport 가 default ~980px 로 떨어져 데스크톱 레이아웃이 노출됨.
+echo '<meta name="viewport" id="meta_viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10">'.PHP_EOL;
+echo '<meta name="HandheldFriendly" content="true">'.PHP_EOL;
+echo '<meta name="format-detection" content="telephone=no">'.PHP_EOL;
+if (!G5_IS_MOBILE) {
     echo '<meta http-equiv="X-UA-Compatible" content="IE=edge">'.PHP_EOL;
 }
 
