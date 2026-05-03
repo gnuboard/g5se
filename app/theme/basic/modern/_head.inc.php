@@ -405,7 +405,10 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 }
 
 /* sideview 팝업 메뉴 (.sv_wrap .sv) — gnuboard 기본 #333 검정 박스 → 모던 카드 */
+/* sv_wrap 을 inline-flex 로 바꾸면서 자식 .sv 가 같이 노출되던 문제: 명시적으로 숨김 처리 */
 .sv_wrap .sv {
+    display: none !important;
+    position: absolute;
     margin-top: 8px !important;
     min-width: 140px;
     padding: 6px;
@@ -415,7 +418,10 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
     box-shadow: var(--m-shadow-md) !important;
     font-size: var(--m-text-sm);
     overflow: hidden;
+    z-index: 100;
 }
+.sv_wrap .sv.sv_on { display: block !important; }
+.sv_wrap { position: relative; }
 .sv_wrap .sv:before {
     border-bottom-color: var(--m-border) !important;
     top: -7px !important;
@@ -442,6 +448,130 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 .sv_on {
     top: calc(100% + 2px) !important;
     left: 0 !important;
+}
+
+/* ──────────────────────────────────────────────
+   Popup window 공통 (쪽지 등 window.open 으로 뜨는 작은 창)
+   m-shell 처럼 fixed 오버레이로 gnuboard chrome 을 가린다.
+   ────────────────────────────────────────────── */
+.m-popup {
+    position: fixed; inset: 0;
+    background: var(--m-bg);
+    color: var(--m-text);
+    z-index: 9999;
+    overflow: auto;
+    padding: 14px 16px;
+    box-sizing: border-box;
+}
+.m-popup-head { margin-bottom: 8px; }
+.m-popup-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: var(--m-text-lg); font-weight: 700;
+    color: var(--m-text); margin: 0 0 2px;
+}
+.m-popup-title svg { color: var(--m-primary); }
+.m-popup-sub { margin: 0; font-size: var(--m-text-sm); color: var(--m-text-muted); }
+.m-popup-sub strong { color: var(--m-text); }
+.m-popup-hint {
+    display: flex; align-items: center; gap: 6px;
+    margin: 14px 0 0; padding: 10px 14px;
+    background: var(--m-surface-2); border-radius: var(--m-radius);
+    font-size: var(--m-text-xs); color: var(--m-text-muted);
+}
+.m-popup-hint svg { color: var(--m-text-faint); flex-shrink: 0; }
+.m-popup-hint strong { color: var(--m-text); font-weight: 600; }
+.m-popup-actions {
+    display: flex; justify-content: flex-end; gap: 6px;
+    margin-top: 10px;
+}
+
+/* 쪽지 탭 */
+.m-memo-tabs {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--m-border);
+    margin-bottom: 10px;
+}
+.m-memo-tab {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 7px 12px;
+    color: var(--m-text-muted); text-decoration: none;
+    font-size: var(--m-text-sm); font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+}
+.m-memo-tab:hover { color: var(--m-text); }
+.m-memo-tab.is-active {
+    color: var(--m-primary); border-bottom-color: var(--m-primary);
+}
+.m-memo-tab-write { margin-left: auto; color: var(--m-primary); }
+
+/* 쪽지 공통 — avatar */
+.m-memo-avatar { display: inline-flex; align-items: center; flex-shrink: 0; }
+.m-memo-avatar img {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--m-border); object-fit: cover;
+}
+
+/* ──────────────────────────────────────────────
+   kcaptcha — 모든 모던 폼 (register_form, memo_form, board write, password_lost, formmail 등)
+   captcha_html() 이 #captcha 컨테이너로 일관된 마크업을 출력하므로 글로벌 셀렉터로 통일.
+   이미지/입력/스피커/리프레시 모두 같은 height(40px) 한 줄 정렬, 다크모드에서도 입력값이 읽힘.
+   ────────────────────────────────────────────── */
+#captcha {
+    --cap-h: 40px;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+}
+#captcha_img,
+#captcha_mp3,
+#captcha_reload {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: var(--cap-h); box-sizing: border-box;
+    border: 1px solid var(--m-border); border-radius: var(--m-radius-sm);
+    background: var(--m-surface); overflow: hidden;
+}
+#captcha_img img,
+#captcha_img canvas { height: 100%; width: auto; display: block; }
+#captcha #captcha_key,
+#captcha_key {
+    height: var(--cap-h, 40px) !important;
+    width: 9ch !important;
+    min-width: 9ch !important;
+    box-sizing: content-box !important;
+    padding: 0 12px !important;
+    background: var(--m-surface) !important;
+    color: var(--m-text) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius-sm) !important;
+    font-size: var(--m-text-md) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-align: center !important;
+    -webkit-text-fill-color: var(--m-text);
+}
+#captcha_key::placeholder {
+    color: var(--m-text-faint); font-weight: 400; letter-spacing: 0;
+}
+#captcha_key:focus {
+    outline: none; border-color: var(--m-primary) !important;
+    box-shadow: 0 0 0 3px var(--m-primary-soft);
+}
+#captcha_mp3 button,
+#captcha_reload button {
+    width: var(--cap-h); height: var(--cap-h); padding: 0;
+    background: transparent; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--m-text-soft);
+}
+#captcha_mp3:hover,
+#captcha_reload:hover {
+    background: var(--m-surface-2); border-color: var(--m-border-hover);
+}
+#captcha_mp3:hover button,
+#captcha_reload:hover button { color: var(--m-text); }
+#captcha_info {
+    width: 100%; margin: 4px 0 0;
+    font-size: var(--m-text-xs); color: var(--m-text-muted);
 }
 </style>
 <?php

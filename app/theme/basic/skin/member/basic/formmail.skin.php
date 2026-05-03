@@ -55,17 +55,19 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
         <div class="m-formmail-field">
             <span class="m-label">첨부 파일</span>
-            <label class="m-formmail-file" for="file1">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                <span class="m-formmail-file-label">파일 1 선택</span>
-                <input type="file" name="file1" id="file1" class="m-formmail-file-input">
-            </label>
-            <label class="m-formmail-file" for="file2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                <span class="m-formmail-file-label">파일 2 선택</span>
-                <input type="file" name="file2" id="file2" class="m-formmail-file-input">
-            </label>
-            <p class="m-memo-hint">첨부 파일은 누락될 수 있으니 발송 후 확인해 주세요.</p>
+            <div class="m-formmail-files">
+                <label class="m-formmail-file" for="file1">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    <span class="m-formmail-file-label">파일 1 선택</span>
+                    <input type="file" name="file1" id="file1" class="m-formmail-file-input">
+                </label>
+                <label class="m-formmail-file" for="file2">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    <span class="m-formmail-file-label">파일 2 선택</span>
+                    <input type="file" name="file2" id="file2" class="m-formmail-file-input">
+                </label>
+            </div>
+            <p class="m-memo-hint">첨부는 누락될 수 있으니 발송 후 확인해 주세요.</p>
         </div>
 
         <div class="m-formmail-field">
@@ -106,37 +108,40 @@ function fformmail_submit(f) {
 </script>
 
 <style>
-.m-formmail { display: flex; flex-direction: column; gap: 12px; }
-.m-formmail-field { display: flex; flex-direction: column; gap: 4px; }
-.m-formmail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.m-formmail { display: flex; flex-direction: column; gap: 8px; }
+.m-formmail-field { display: flex; flex-direction: column; gap: 3px; }
+.m-formmail-field .m-label { margin-bottom: 0; }
+.m-formmail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 @media (max-width: 480px) { .m-formmail-row { grid-template-columns: 1fr; } }
 
-.m-formmail-radios { display: flex; gap: 16px; padding: 4px 2px; }
+.m-formmail-radios { display: flex; gap: 14px; padding: 2px 0; }
 .m-formmail-radio {
-    display: inline-flex; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 5px;
     font-size: var(--m-text-sm); color: var(--m-text-soft);
     cursor: pointer;
 }
 .m-formmail-radio input { accent-color: var(--m-primary); }
 
 .m-formmail-textarea {
-    min-height: 160px; max-height: 40vh;
-    padding: 10px; font-family: inherit; resize: vertical;
-    line-height: var(--m-leading-relaxed);
+    min-height: 100px; max-height: 30vh;
+    padding: 8px 10px; font-family: inherit; resize: vertical;
+    line-height: var(--m-leading);
 }
 
+.m-formmail-files { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+@media (max-width: 480px) { .m-formmail-files { grid-template-columns: 1fr; } }
 .m-formmail-file {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 12px; margin-bottom: 6px; max-width: 100%;
+    padding: 6px 10px; min-width: 0;
     background: var(--m-surface); border: 1px dashed var(--m-border-hover);
     border-radius: var(--m-radius);
-    font-size: var(--m-text-sm); color: var(--m-text-soft);
+    font-size: var(--m-text-xs); color: var(--m-text-soft);
     cursor: pointer; transition: border-color 0.15s, color 0.15s;
 }
 .m-formmail-file:hover { border-color: var(--m-primary); color: var(--m-primary); }
 .m-formmail-file svg { color: var(--m-text-faint); flex-shrink: 0; }
 .m-formmail-file:hover svg { color: var(--m-primary); }
-.m-formmail-file-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-formmail-file-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .m-formmail-file-input { position: absolute; left: -9999px; opacity: 0; width: 0; height: 0; }
 </style>
 <!-- } 폼메일 끝 -->
