@@ -84,6 +84,9 @@ class Router
         // 내용관리 — /content/{co_id}
         '#^/content/(?P<co_id>[a-zA-Z0-9_-]+)/?$#' => 'bbs/content.php',
 
+        // 그룹 — /group/{gr_id}
+        '#^/group/(?P<gr_id>[a-zA-Z0-9_-]+)/?$#' => 'bbs/group.php',
+
         // 게시판 — /board/{bo_table}[/{wr_id}] + 액션
         // bo_table 은 영문/숫자/_ 만 허용 (gnuboard 표준)
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/?$#'                                     => 'bbs/board.php',
@@ -110,15 +113,22 @@ class Router
         // 1) 클린 URL 직접 매칭 (trailing slash 정규화)
         $normalized = ($path !== '/') ? rtrim($path, '/') : '/';
         if (isset($this->cleanRoutes[$normalized])) {
-            // /content?co_id=X → /content/X 로 강한 정규화 (path-style 클린 URL)
-            if ($normalized === '/content' && ($method === 'GET' || $method === 'HEAD')) {
-                parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
-                if (!empty($params['co_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['co_id'])) {
-                    $url = '/content/'.$params['co_id'];
-                    unset($params['co_id']);
-                    if (!empty($params)) $url .= '?'.http_build_query($params);
-                    header('Location: '.$url, true, 301);
-                    exit;
+            // /content?co_id=X → /content/X, /group?gr_id=X → /group/X 강한 정규화
+            if (($method === 'GET' || $method === 'HEAD')) {
+                $pathParams = [
+                    '/content' => 'co_id',
+                    '/group'   => 'gr_id',
+                ];
+                if (isset($pathParams[$normalized])) {
+                    $key = $pathParams[$normalized];
+                    parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+                    if (!empty($params[$key]) && preg_match('/^[a-zA-Z0-9_-]+$/', $params[$key])) {
+                        $url = $normalized.'/'.$params[$key];
+                        unset($params[$key]);
+                        if (!empty($params)) $url .= '?'.http_build_query($params);
+                        header('Location: '.$url, true, 301);
+                        exit;
+                    }
                 }
             }
             return $this->cleanRoutes[$normalized];
