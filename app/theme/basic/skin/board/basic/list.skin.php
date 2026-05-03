@@ -231,7 +231,7 @@ if ($is_nogood) $colspan++;
 
 .m-board-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .m-board-table thead th {
-    padding: 12px 10px; text-align: left; font-weight: 600;
+    padding: 12px 10px; text-align: center; font-weight: 600;
     font-size: 12px; color: var(--m-text-muted);
     background: var(--m-surface-2); border-bottom: 1px solid var(--m-border);
     text-transform: uppercase; letter-spacing: 0.04em;
@@ -241,14 +241,15 @@ if ($is_nogood) $colspan++;
 .m-board-table tbody tr { border-bottom: 1px solid var(--m-border); transition: background 0.1s; }
 .m-board-table tbody tr:hover { background: var(--m-surface-2); }
 .m-board-table tbody tr:last-child { border-bottom: 0; }
-.m-board-table td { padding: 14px 10px; vertical-align: middle; }
+.m-board-table td { padding: 14px 10px; vertical-align: middle; text-align: center; }
 
-.m-col-chk { width: 36px; text-align: center; }
-.m-col-num { width: 80px; text-align: center; color: var(--m-text-faint); font-size: 13px; }
-.m-col-subject { padding-left: 16px !important; }
+.m-col-chk { width: 36px; }
+.m-col-num { width: 80px; color: var(--m-text-faint); font-size: 13px; }
+/* 제목만 좌측 정렬 (th + td) */
+th.m-col-subject, td.m-col-subject { text-align: left; padding-left: 16px !important; }
 .m-col-name { width: 110px; color: var(--m-text-soft); font-size: 13px; }
-.m-col-meta { width: 70px; text-align: center; color: var(--m-text-muted); font-size: 13px; }
-.m-col-date { width: 110px; color: var(--m-text-faint); font-size: 12px; text-align: right; padding-right: 16px !important; }
+.m-col-meta { width: 70px; color: var(--m-text-muted); font-size: 13px; }
+.m-col-date { width: 110px; color: var(--m-text-faint); font-size: 12px; padding-right: 16px !important; }
 
 @media (max-width: 720px) {
     .m-col-name, .m-col-meta { display: none; }
