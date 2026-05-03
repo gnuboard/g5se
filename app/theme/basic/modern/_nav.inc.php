@@ -42,17 +42,43 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 ?>
 
 <header class="m-nav">
-    <div class="m-nav-inner">
-        <a href="<?php echo G5_URL ?>" class="m-brand"><?php echo isset($config['cf_title']) && $config['cf_title'] ? get_text($config['cf_title']) : 'gnu5se' ?></a>
+    <!-- Row 1: 브랜드 + 검색 + (커뮤니티/쇼핑몰 segment) + 로그인 액션 + 햄버거 -->
+    <div class="m-nav-row m-nav-row-top">
+        <div class="m-nav-row-inner">
+            <a href="<?php echo G5_URL ?>" class="m-brand"><?php echo isset($config['cf_title']) && $config['cf_title'] ? get_text($config['cf_title']) : 'gnu5se' ?></a>
 
-        <?php if (defined('G5_COMMUNITY_USE') && G5_COMMUNITY_USE && defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
-        <nav class="m-nav-segment" aria-label="섹션 전환">
-            <a href="<?php echo G5_URL ?>/" class="m-nav-segment-item<?php echo (strpos($_cur_path, '/shop') !== 0) ? ' is-active' : '' ?>">커뮤니티</a>
-            <a href="<?php echo G5_SHOP_URL ?>/" class="m-nav-segment-item<?php echo (strpos($_cur_path, '/shop') === 0) ? ' is-active' : '' ?>">쇼핑몰</a>
-        </nav>
-        <?php } ?>
+            <?php if (defined('G5_COMMUNITY_USE') && G5_COMMUNITY_USE && defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
+            <nav class="m-nav-segment" aria-label="섹션 전환">
+                <a href="<?php echo G5_URL ?>/" class="m-nav-segment-item<?php echo (strpos($_cur_path, '/shop') !== 0) ? ' is-active' : '' ?>">커뮤니티</a>
+                <a href="<?php echo G5_SHOP_URL ?>/" class="m-nav-segment-item<?php echo (strpos($_cur_path, '/shop') === 0) ? ' is-active' : '' ?>">쇼핑몰</a>
+            </nav>
+            <?php } ?>
 
-        <nav class="m-nav-primary">
+            <form action="/search" method="get" class="m-nav-search" role="search">
+                <input type="hidden" name="sfl" value="wr_subject||wr_content">
+                <input type="hidden" name="sop" value="and">
+                <svg class="m-nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" name="stx" placeholder="검색" class="m-nav-search-input" maxlength="20">
+            </form>
+
+            <div class="m-nav-actions">
+                <?php if ($is_member) { ?>
+                    <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
+                <?php } else { ?>
+                    <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
+                    <a href="<?php echo G5_BBS_URL ?>/register.php" class="m-btn m-btn-secondary" style="width: auto; padding: 8px 14px;">회원가입</a>
+                <?php } ?>
+            </div>
+
+            <button type="button" class="m-nav-mobile-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="m-nav-drawer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Row 2: 메인 nav 링크 (홈 + g5_menu + 새글 + FAQ) -->
+    <div class="m-nav-row m-nav-row-links">
+        <nav class="m-nav-row-inner m-nav-primary" aria-label="메인 메뉴">
             <a href="/" class="m-nav-link<?php echo $_cur_path === '/' ? ' is-active' : '' ?>">홈</a>
             <?php foreach ($_nav_menu as $_row) {
                 if (empty($_row)) continue;
@@ -85,26 +111,6 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             <a href="/new" class="m-nav-link<?php echo $_cur_path === '/new' ? ' is-active' : '' ?>">새글</a>
             <a href="/faq" class="m-nav-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
         </nav>
-
-        <form action="/search" method="get" class="m-nav-search" role="search">
-            <input type="hidden" name="sfl" value="wr_subject||wr_content">
-            <input type="hidden" name="sop" value="and">
-            <svg class="m-nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" name="stx" placeholder="검색" class="m-nav-search-input" maxlength="20">
-        </form>
-
-        <div class="m-nav-actions">
-            <?php if ($is_member) { ?>
-                <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
-            <?php } else { ?>
-                <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
-                <a href="<?php echo G5_BBS_URL ?>/register.php" class="m-btn m-btn-secondary" style="width: auto; padding: 8px 14px;">회원가입</a>
-            <?php } ?>
-        </div>
-
-        <button type="button" class="m-nav-mobile-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="m-nav-drawer">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
     </div>
 
     <!-- 모바일 드로어: 햄버거 클릭 시 열림. 데스크톱에선 hidden. -->
@@ -221,15 +227,19 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
 <?php if (!defined('_MODERN_NAV_CSS_LOADED_')) { define('_MODERN_NAV_CSS_LOADED_', true); ?>
 <style>
-.m-nav-inner {
+/* 2-row 헤더 — row 1: 브랜드+검색+액션, row 2: 메뉴 링크 */
+.m-nav { background: var(--m-bg); border-bottom: 1px solid var(--m-border); }
+.m-nav-row-inner {
     display: flex; align-items: center; gap: 16px;
     padding: 12px 20px; max-width: var(--m-max-7xl); margin: 0 auto;
 }
-.m-brand { flex-shrink: 0; }
+.m-nav-row-top { border-bottom: 1px solid var(--m-border); }
+.m-nav-row-links { background: var(--m-surface); }
+.m-brand { flex-shrink: 0; font-weight: 700; }
 
 .m-nav-primary {
-    display: flex; align-items: center; gap: 4px;
-    flex-shrink: 0;
+    flex-wrap: wrap; gap: 2px;
+    padding: 6px 20px;
 }
 .m-nav-link {
     padding: 7px 12px; border-radius: var(--m-radius);
@@ -318,9 +328,10 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 }
 
 @media (max-width: 880px) {
-    .m-nav-primary { display: none; }
+    .m-nav-row-links { display: none; }   /* row 2 메뉴는 햄버거 드로어가 흡수 */
+    .m-nav-segment { display: none; }     /* 커뮤니티/쇼핑몰 토글도 드로어로 */
     .m-nav-search { max-width: none; }
-    .m-nav-actions { display: none; }   /* 모바일에선 햄버거 드로어 안에서 처리 */
+    .m-nav-actions { display: none; }
     .m-nav-mobile-toggle { display: inline-flex; }
     /* 사이드바(outlogin) 도 모바일에선 숨김 — 동일 정보를 드로어가 노출 */
     .m-side-col { display: none !important; }
