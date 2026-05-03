@@ -105,7 +105,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 </header>
 
                 <section class="m-view-body">
-                    <?php if (file_exists(G5_SNS_PATH."/view.sns.skin.php")) { ?>
+                    <?php if (!empty($board['bo_use_sns']) && file_exists(G5_SNS_PATH."/view.sns.skin.php")) { ?>
                     <div class="m-view-share">
                         <?php @include_once(G5_SNS_PATH."/view.sns.skin.php"); ?>
                     </div>
