@@ -18,7 +18,8 @@ $_nav_links = [
     ['/',                       '홈'],
     ['/board/notice',           '공지'],
     ['/board/free',             '자유게시판'],
-    [G5_BBS_URL.'/new.php',     '새글'],
+    ['/new',                    '새글'],
+    ['/faq',                    'FAQ'],
 ];
 $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 ?>
