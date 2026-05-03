@@ -11,7 +11,7 @@
 
 if (!defined('_GNUBOARD_')) return;
 
-global $is_member, $config;
+global $is_member, $is_admin, $member, $config;
 
 // 메인 nav 링크 — 필요시 여기에 더 추가
 $_nav_links = [
@@ -54,11 +54,99 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             <?php } ?>
         </div>
 
-        <button type="button" class="m-nav-mobile-toggle" aria-label="메뉴 열기">
+        <button type="button" class="m-nav-mobile-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="m-nav-drawer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
     </div>
+
+    <!-- 모바일 드로어: 햄버거 클릭 시 열림. 데스크톱에선 hidden. -->
+    <div id="m-nav-drawer" class="m-nav-drawer" hidden>
+        <div class="m-nav-drawer-backdrop" data-nav-close></div>
+        <aside class="m-nav-drawer-panel" role="dialog" aria-label="메뉴">
+            <header class="m-nav-drawer-head">
+                <span class="m-nav-drawer-title">메뉴</span>
+                <button type="button" class="m-nav-drawer-close" aria-label="메뉴 닫기" data-nav-close>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </header>
+
+            <?php if ($is_member) { ?>
+            <section class="m-nav-drawer-me">
+                <div class="m-nav-drawer-me-row">
+                    <span class="m-nav-drawer-avatar">
+                        <?php $_drawer_nick = get_text($member['mb_nick']); echo mb_substr($_drawer_nick, 0, 1); ?>
+                    </span>
+                    <div class="m-nav-drawer-me-text">
+                        <div class="m-nav-drawer-nick"><?php echo $_drawer_nick ?> 님</div>
+                        <a href="/member_confirm" class="m-nav-drawer-edit">정보 수정 →</a>
+                    </div>
+                </div>
+                <ul class="m-nav-drawer-stats">
+                    <li><a href="/point" onclick="win_point(this.href); return false;">
+                        <span class="m-nav-drawer-stat-label">포인트</span>
+                        <span class="m-nav-drawer-stat-value"><?php echo number_format((int)$member['mb_point']) ?></span>
+                    </a></li>
+                    <li><a href="/memo" onclick="win_memo(this.href); return false;">
+                        <span class="m-nav-drawer-stat-label">쪽지</span>
+                        <span class="m-nav-drawer-stat-value"><?php echo isset($member['mb_memo_cnt']) ? (int)$member['mb_memo_cnt'] : 0 ?></span>
+                    </a></li>
+                    <li><a href="/scrap" onclick="win_scrap(this.href); return false;">
+                        <span class="m-nav-drawer-stat-label">스크랩</span>
+                        <span class="m-nav-drawer-stat-value"><?php echo isset($member['mb_scrap_cnt']) ? (int)$member['mb_scrap_cnt'] : 0 ?></span>
+                    </a></li>
+                </ul>
+            </section>
+            <?php } ?>
+
+            <nav class="m-nav-drawer-links">
+                <?php foreach ($_nav_links as $_link) {
+                    $href  = $_link[0];
+                    $label = $_link[1];
+                    $active = ($href === '/' && $_cur_path === '/') || ($href !== '/' && strpos($_cur_path, parse_url($href, PHP_URL_PATH)) === 0);
+                ?>
+                <a href="<?php echo $href ?>" class="m-nav-drawer-link<?php echo $active ? ' is-active' : '' ?>"><?php echo $label ?></a>
+                <?php } ?>
+            </nav>
+
+            <div class="m-nav-drawer-actions">
+                <?php if ($is_member) { ?>
+                    <?php if ($is_admin) { ?>
+                    <a href="<?php echo G5_ADMIN_URL ?>/" class="m-btn m-btn-ghost">관리자</a>
+                    <?php } ?>
+                    <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
+                <?php } else { ?>
+                    <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
+                    <a href="<?php echo G5_BBS_URL ?>/register.php" class="m-btn">회원가입</a>
+                <?php } ?>
+            </div>
+        </aside>
+    </div>
 </header>
+
+<script>
+(function(){
+    var drawer = document.getElementById('m-nav-drawer');
+    var toggle = document.querySelector('.m-nav-mobile-toggle');
+    if (!drawer || !toggle) return;
+    function open(){
+        drawer.removeAttribute('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        document.documentElement.style.overflow = 'hidden';
+    }
+    function close(){
+        drawer.setAttribute('hidden', '');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.documentElement.style.overflow = '';
+    }
+    toggle.addEventListener('click', open);
+    drawer.addEventListener('click', function(e){
+        if (e.target.closest('[data-nav-close]')) close();
+    });
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && !drawer.hasAttribute('hidden')) close();
+    });
+})();
+</script>
 
 <?php if (!defined('_MODERN_NAV_CSS_LOADED_')) { define('_MODERN_NAV_CSS_LOADED_', true); ?>
 <style>
@@ -119,11 +207,102 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 @media (max-width: 880px) {
     .m-nav-primary { display: none; }
     .m-nav-search { max-width: none; }
-    .m-nav-actions a:not(.m-btn-secondary) { display: none; }   /* 모바일 좁을 때 로그인 텍스트 버튼 숨김 — 햄버거에서 진입 가정 */
+    .m-nav-actions { display: none; }   /* 모바일에선 햄버거 드로어 안에서 처리 */
     .m-nav-mobile-toggle { display: inline-flex; }
+    /* 사이드바(outlogin) 도 모바일에선 숨김 — 동일 정보를 드로어가 노출 */
+    .m-side-col { display: none !important; }
 }
 @media (max-width: 540px) {
     .m-nav-search { display: none; }
 }
+
+/* 모바일 드로어 — 우측 슬라이드 인 패널 */
+.m-nav-drawer {
+    position: fixed; inset: 0; z-index: 10000;
+}
+.m-nav-drawer-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+    animation: m-nav-fade-in 0.2s ease-out;
+}
+.m-nav-drawer-panel {
+    position: absolute; top: 0; right: 0; bottom: 0;
+    width: min(320px, 85vw);
+    background: var(--m-bg);
+    border-left: 1px solid var(--m-border);
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+    animation: m-nav-slide-in 0.22s ease-out;
+}
+@keyframes m-nav-fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes m-nav-slide-in { from { transform: translateX(100%) } to { transform: translateX(0) } }
+
+.m-nav-drawer-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-nav-drawer-title { font-size: var(--m-text-base); font-weight: 600; color: var(--m-text-soft); }
+.m-nav-drawer-close {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    background: transparent; border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); color: var(--m-text-soft);
+    cursor: pointer;
+}
+.m-nav-drawer-close:hover { background: var(--m-surface-2); color: var(--m-text); }
+
+.m-nav-drawer-me {
+    padding: 16px;
+    border-bottom: 1px solid var(--m-border);
+    background: var(--m-surface);
+}
+.m-nav-drawer-me-row { display: flex; align-items: center; gap: 12px; }
+.m-nav-drawer-avatar {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--m-primary); color: #fff;
+    font-size: var(--m-text-md); font-weight: 700;
+}
+.m-nav-drawer-me-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.m-nav-drawer-nick { font-size: var(--m-text-md); font-weight: 600; color: var(--m-text); }
+.m-nav-drawer-edit { font-size: var(--m-text-xs); color: var(--m-text-muted); text-decoration: none; }
+.m-nav-drawer-edit:hover { color: var(--m-primary); }
+
+.m-nav-drawer-stats {
+    list-style: none; margin: 12px 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+}
+.m-nav-drawer-stats a {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 8px 4px; border-radius: var(--m-radius);
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    text-decoration: none;
+}
+.m-nav-drawer-stats a:hover { border-color: var(--m-primary); }
+.m-nav-drawer-stat-label { font-size: var(--m-text-xs); color: var(--m-text-muted); }
+.m-nav-drawer-stat-value { font-size: var(--m-text-md); font-weight: 700; color: var(--m-text); font-feature-settings: "tnum"; }
+
+.m-nav-drawer-links {
+    display: flex; flex-direction: column;
+    padding: 8px 8px;
+    flex: 1; min-height: 0;
+}
+.m-nav-drawer-link {
+    padding: 12px 12px; border-radius: var(--m-radius);
+    font-size: var(--m-text-md); font-weight: 500;
+    color: var(--m-text-soft); text-decoration: none;
+}
+.m-nav-drawer-link:hover { background: var(--m-surface-2); color: var(--m-text); }
+.m-nav-drawer-link.is-active { background: var(--m-primary-soft); color: var(--m-primary); }
+
+.m-nav-drawer-actions {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 12px 16px 18px;
+    border-top: 1px solid var(--m-border);
+}
+.m-nav-drawer-actions .m-btn { width: 100%; }
 </style>
 <?php } ?>
