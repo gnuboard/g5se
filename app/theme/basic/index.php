@@ -78,22 +78,7 @@ include_once(G5_PATH.'/head.sub.php');
 </div>
 
 <style>
-/* 메인+사이드 2-column 레이아웃 (게시판 list 등에서도 같은 패턴 재사용 예정) */
-.m-with-sidebar {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 24px;
-    align-items: start;
-}
-.m-main-col { min-width: 0; }   /* grid item 의 자식이 overflow 나는 것 방지 */
-.m-side-col { position: sticky; top: 80px; }
-
-@media (max-width: 880px) {
-    .m-with-sidebar { grid-template-columns: 1fr; }
-    .m-side-col { position: static; order: -1; }   /* 모바일에선 outlogin 가 위로 */
-}
-
-/* 게시판 카드 hover */
+/* 메인 페이지 게시판 카드 hover (m-with-sidebar 는 _head.inc.php 에서 공통 정의됨) */
 .m-board-card { transition: border-color 0.15s, transform 0.15s; }
 .m-board-card:hover { border-color: var(--m-border-hover); transform: translateY(-2px); }
 </style>
