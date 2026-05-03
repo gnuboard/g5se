@@ -423,29 +423,31 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 
 .m-view-nav {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    display: flex; flex-direction: column;
     border-top: 1px solid var(--m-border);
 }
-@media (max-width: 540px) { .m-view-nav { grid-template-columns: 1fr; } }
 .m-view-nav-item {
-    display: flex; flex-direction: column; gap: 4px;
-    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px;
     text-decoration: none; color: var(--m-text);
     transition: background 0.15s;
-    border-right: 1px solid var(--m-border);
+    border-bottom: 1px solid var(--m-border);
 }
-.m-view-nav-item:last-child { border-right: 0; }
+.m-view-nav-item:last-child { border-bottom: 0; }
 .m-view-nav-item.is-empty { cursor: default; }
 .m-view-nav-item.is-empty:hover { background: transparent; }
 a.m-view-nav-item:hover { background: var(--m-surface-2); }
-.m-view-nav-next { text-align: right; }
-.m-view-nav-label { font-size: var(--m-text-xs); color: var(--m-text-faint); font-weight: 600; }
+.m-view-nav-label {
+    flex-shrink: 0; min-width: 56px;
+    font-size: var(--m-text-xs); color: var(--m-text-faint); font-weight: 600;
+}
 .m-view-nav-title {
+    flex: 1; min-width: 0;
     font-size: var(--m-text-base); color: var(--m-text);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.m-view-nav-date { font-size: var(--m-text-xs); color: var(--m-text-faint); }
-.m-view-nav-empty { font-size: var(--m-text-base); color: var(--m-text-faint); }
+.m-view-nav-date { flex-shrink: 0; font-size: var(--m-text-xs); color: var(--m-text-faint); }
+.m-view-nav-empty { flex: 1; font-size: var(--m-text-base); color: var(--m-text-faint); }
 </style>
 
 <script>
