@@ -11,19 +11,7 @@ if ($config['cf_cert_use'] && ($config['cf_cert_simple'] || $config['cf_cert_ipi
 <!-- 회원정보 입력/수정 시작 { -->
 <div class="m-shell">
 
-    <header class="m-nav">
-        <div class="m-nav-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand">gnu5se</a>
-            <nav class="m-nav-actions">
-                <?php if ($is_member) { ?>
-                    <span style="font-size: 13px; color: var(--m-text-muted);"><?php echo get_text($member['mb_nick']) ?></span>
-                    <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
-                <?php } else { ?>
-                    <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
-                <?php } ?>
-            </nav>
-        </div>
-    </header>
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
     <main class="m-center" style="align-items: start;">
     <div style="width: 100%; max-width: 720px;">
@@ -357,6 +345,7 @@ if ($config['cf_cert_use'] && ($config['cf_cert_simple'] || $config['cf_cert_ipi
 
     </div>
     </main>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
 <style>

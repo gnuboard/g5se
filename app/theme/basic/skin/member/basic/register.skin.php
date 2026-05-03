@@ -7,14 +7,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 <!-- 회원가입 약관 동의 시작 { -->
 <div class="m-shell">
 
-    <header class="m-nav">
-        <div class="m-nav-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand">gnu5se</a>
-            <nav class="m-nav-actions">
-                <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
-            </nav>
-        </div>
-    </header>
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
     <main class="m-center" style="align-items: start;">
         <div class="m-card" style="width: 100%; max-width: 640px;">
@@ -93,6 +86,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
         </div>
     </main>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
 <style>

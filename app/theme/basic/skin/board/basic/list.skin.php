@@ -12,19 +12,7 @@ if ($is_nogood) $colspan++;
 <!-- 게시판 목록 시작 { -->
 <div class="m-shell">
 
-    <header class="m-nav">
-        <div class="m-nav-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand">gnu5se</a>
-            <nav class="m-nav-actions">
-                <?php if ($is_member) { ?>
-                    <span style="font-size: 13px; color: var(--m-text-muted);"><?php echo get_text($member['mb_nick']) ?></span>
-                    <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
-                <?php } else { ?>
-                    <a href="<?php echo G5_BBS_URL ?>/login.php" class="m-btn m-btn-ghost">로그인</a>
-                <?php } ?>
-            </nav>
-        </div>
-    </header>
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
     <main class="m-container" style="padding: 32px 20px 64px;">
 
@@ -179,6 +167,7 @@ if ($is_nogood) $colspan++;
             <div class="m-board-pagination"><?php echo $write_pages; ?></div>
         </form>
     </main>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
 <style>

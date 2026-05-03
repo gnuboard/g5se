@@ -6,6 +6,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
 <!-- 로그인 시작 { -->
 <div class="m-shell">
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
     <div class="m-center">
         <div class="m-card m-card-narrow">
 
@@ -52,6 +53,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             <?php @include_once(get_social_skin_path().'/social_login.skin.php'); ?>
         </div>
     </div>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
 <script>
