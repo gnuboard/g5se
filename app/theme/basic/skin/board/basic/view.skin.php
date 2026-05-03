@@ -280,10 +280,6 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 .m-view-name { display: inline-flex; align-items: center; color: var(--m-text); font-weight: 600; font-size: var(--m-text-base); }
 .m-view-name a, .m-view-name a:link, .m-view-name a:visited { color: var(--m-text); font-weight: 600; }
-.m-view-name .profile_img img {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 1px solid var(--m-border); object-fit: cover;
-}
 .m-view-ip { font-size: var(--m-text-xs); color: var(--m-text-faint); font-weight: 400; }
 .m-view-meta-sep { color: var(--m-text-faint); }
 .m-view-meta-item {
