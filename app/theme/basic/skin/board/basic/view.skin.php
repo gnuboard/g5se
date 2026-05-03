@@ -203,24 +203,32 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 </section>
                 <?php } ?>
 
-                <?php if ($prev_href || $next_href) { ?>
                 <nav class="m-view-nav">
                     <?php if ($prev_href) { ?>
-                    <a href="<?php echo $prev_href ?>" class="m-view-nav-item">
+                    <a href="<?php echo $prev_href ?>" class="m-view-nav-item m-view-nav-prev">
                         <span class="m-view-nav-label">▲ 이전글</span>
                         <span class="m-view-nav-title"><?php echo $prev_wr_subject ?></span>
                         <span class="m-view-nav-date"><?php echo str_replace('-', '.', substr($prev_wr_date, 2, 8)) ?></span>
                     </a>
+                    <?php } else { ?>
+                    <div class="m-view-nav-item m-view-nav-prev is-empty">
+                        <span class="m-view-nav-label">▲ 이전글</span>
+                        <span class="m-view-nav-empty">이전글이 없습니다.</span>
+                    </div>
                     <?php } ?>
                     <?php if ($next_href) { ?>
-                    <a href="<?php echo $next_href ?>" class="m-view-nav-item">
+                    <a href="<?php echo $next_href ?>" class="m-view-nav-item m-view-nav-next">
                         <span class="m-view-nav-label">▼ 다음글</span>
                         <span class="m-view-nav-title"><?php echo $next_wr_subject ?></span>
                         <span class="m-view-nav-date"><?php echo str_replace('-', '.', substr($next_wr_date, 2, 8)) ?></span>
                     </a>
+                    <?php } else { ?>
+                    <div class="m-view-nav-item m-view-nav-next is-empty">
+                        <span class="m-view-nav-label">▼ 다음글</span>
+                        <span class="m-view-nav-empty">다음글이 없습니다.</span>
+                    </div>
                     <?php } ?>
                 </nav>
-                <?php } ?>
 
                 <?php
                 // 댓글 (view_comment.skin.php 가 출력 — 별도 모던화 예정)
@@ -400,13 +408,17 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     border-right: 1px solid var(--m-border);
 }
 .m-view-nav-item:last-child { border-right: 0; }
-.m-view-nav-item:hover { background: var(--m-surface-2); }
+.m-view-nav-item.is-empty { cursor: default; }
+.m-view-nav-item.is-empty:hover { background: transparent; }
+a.m-view-nav-item:hover { background: var(--m-surface-2); }
+.m-view-nav-next { text-align: right; }
 .m-view-nav-label { font-size: var(--m-text-xs); color: var(--m-text-faint); font-weight: 600; }
 .m-view-nav-title {
     font-size: var(--m-text-base); color: var(--m-text);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .m-view-nav-date { font-size: var(--m-text-xs); color: var(--m-text-faint); }
+.m-view-nav-empty { font-size: var(--m-text-base); color: var(--m-text-faint); }
 </style>
 
 <script>
