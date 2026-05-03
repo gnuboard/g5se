@@ -504,3 +504,68 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 ---
 
 다음 세션에서 `/mypage` 또는 `/board/...` 작업 이어가면 됨. 이 문서대로 패턴 따라 가면 일관된 디자인 + 다크모드 지원 자동 적용.
+
+---
+
+## 10. 후속 라운드 요약 (1·2·3 순위 + 회귀)
+
+문서 1~9 절 작성 이후 진행한 영역. 모두 같은 m-shell / m-popup / 토큰 기반 패턴.
+
+### 1순위 — 자주 노출
+- **사이드뷰 팝업** (`.sv_wrap .sv`) — `_head.inc.php` 에서 토큰 기반 카드로 재스타일, `:has(.sv_on)` 으로 z-index 1000 escape
+- **전체검색** `/search` (search.skin) — 카드형 폼 + 결과 요약 + 게시판 필터 pill + 결과 카드 + 빈 상태
+- **새글** `/new` (new.skin) — 카드형 폼 + 모던 테이블, 모바일에선 부가 칼럼 숨김
+
+### 2순위 — 회원 자주 사용
+- **쪽지** `/memo` · `/memo_form` · `/memo_view` — popup 패턴 (`.m-popup`), 탭 + 카드형 리스트 + 답장 흐름
+- **메일보내기** `/formmail` — popup, textarea flex:1 으로 viewport 가득 채움
+- **자기소개** `/profile` — popup, avatar 카드 + grid 스펙 + 인사말. mb_id 없으면 본인으로 fallback
+- **포인트 내역** `/point` — popup, 보유 포인트 hero 카드(primary 그라디언트) + 적립/사용 색상별 카드 + 만료 pill
+- **스크랩** `/scrap` + `/scrap_popin` — popup, 카드형 + 인용 카드(primary border-left)
+
+### 3순위 — 가끔
+- **그룹 페이지** `/group` (theme/basic/group.php + latest.skin) — m-shell + 게시판 카드 grid + latest 위젯
+- **FAQ** `/faq` (faq/basic/list.skin) — 검색바 + 카테고리 pill + 아코디언 (Q/A 뱃지, chevron 회전)
+- **alert / confirm** (`bbs/alert.php`, `bbs/confirm.php`) — script alert 우선, noscript fallback 을 m-card-narrow + 아이콘 + 토큰 기반 버튼으로
+
+### 회귀/폴리시
+- **콘텐츠** `/content?co_id=...` (content.skin) — 회사소개·개인정보·이용약관 — 본문 typography 토큰화 + 실제 한글 콘텐츠 시드
+- **갤러리 게시판** `bo_skin='theme/basic'` 으로 통일
+- **viewport meta** 무조건 출력 (`G5_IS_MOBILE` 분기 제거) — 좁은 viewport 에서 반응형 정상 동작
+- **모바일 햄버거 드로어** — 우측 슬라이드 인 패널, 로그인 상태(닉/포인트/쪽지/스크랩 카운트 + 액션) + nav 링크
+- **사이드뷰 클립 픽스** — list.skin 의 `<div class="m-card" style="overflow:hidden">` 를 visible 로, 그리고 `.sv_wrap:has(.sv_on) { z-index: 1000 }`
+- **케밥 메뉴** (view.skin) — 수정/삭제/복사/이동/검색을 점 세 개 드롭다운으로
+- **페이지네이션** — `.pg_*` 토큰 스타일을 `_head.inc.php` 글로벌로 hoist, 어떤 스킨이든 `<?= $write_pages ?>` + `.m-pagination` 만 있으면 적용
+- **임시저장 글 목록** popup 정렬 (write.skin)
+- **클린 URL 라우트** — `/memo`, `/memo_form`, `/memo_form_update`, `/memo_view`, `/memo_delete`, `/formmail`, `/formmail_send`, `/profile`, `/point`, `/scrap`, `/scrap_delete`, `/scrap_popin`, `/scrap_popin_update`, `/search`, `/new`, `/faq`, `/content`, `/group`, `/write_token.php`. `/bbs/{name}.php` 도 clean URL 로 301
+- **출력 필터 강화** (`index.php`) — `/board.php?bo_table=X` 패턴이 추가 쿼리(page/sca/sfl 등) 를 보존하도록 `parse_str` 기반으로 재작성
+- **시드** — 50명 회원 + 50건 게시물 (free 게시판) — `/tmp/seed_gnu5se.php`. FAQ 13건. 콘텐츠 3건
+
+### 직접 수정한 gnuboard 코어 파일 (이 라운드)
+- `app/theme/basic/head.sub.php` — viewport meta 무조건 출력
+- `app/bbs/alert.php` — modern 토큰 등록 + noscript fallback 카드화
+- `app/bbs/confirm.php` — 동일
+- `app/bbs/profile.php` — `/profile` 본인 fallback
+- `app/theme/basic/group.php` — 그룹 페이지 전면 재작성
+
+### DB 변경 (요약)
+- `g5_config`: cf_search_skin / cf_new_skin / cf_faq_skin / cf_member_skin = `theme/basic`
+- `g5_board`: 모든 게시판 `bo_skin='theme/basic'`, free 의 `bo_use_search=1`
+- `g5_content`: 3건 `co_skin='theme/basic'` + 실 콘텐츠 시드
+- `g5_faq_master`/`g5_faq`: 카테고리 3 + Q&A 13 시드
+- `data/dbconfig.php`: DB credentials 를 `gnu5se/gnu5se/gnu5se` 로 (이전 `gnuboard5/...` 에서 dump → import)
+
+---
+
+## 11. 새 테마 추가 가이드
+
+`theme/basic/modern/_head.inc.php` 의 토큰 (`--m-bg`, `--m-surface`, `--m-primary`, ...) 만 다른 값으로 바꾸면 모든 스킨이 자동으로 새 팔레트를 따라간다 (스킨은 모두 `var(--m-*)` 만 사용).
+
+새 테마를 추가하려면:
+1. `app/theme/<name>/` 디렉토리 생성, 기본은 `theme/basic` 의 구조를 그대로 유지 (skin/, modern/, head.php, tail.php, group.php, index.php, head.sub.php).
+2. `theme/<name>/modern/_head.inc.php` 의 토큰 블록만 새 팔레트로 변경.
+3. 필요하면 `_nav.inc.php`/`_footer.inc.php` 의 layout 도 변경.
+4. 스킨 파일은 symlink (`ln -s ../../basic/skin theme/<name>/skin`) 하거나 카피해서 부분 변형.
+5. `cf_theme` 을 새 이름으로 바꾸면 즉시 전환 — 다른 DB 변경 없음.
+
+`m-*` 클래스/변수 네임 컨벤션을 깨지 않으면 스킨은 100% 재사용 가능.
