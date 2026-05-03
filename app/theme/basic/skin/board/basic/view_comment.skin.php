@@ -260,7 +260,7 @@ $(function() {
    댓글 영역 — view 카드 안에서 시작 (article.m-view 다음 형제로 위치)
    ────────────────────────────────────────────── */
 .m-comments {
-    margin-top: 28px;
+    margin: 18px 28px 0;
     background: var(--m-surface);
     border: 1px solid var(--m-border);
     border-radius: var(--m-radius-lg);
@@ -351,7 +351,7 @@ $(function() {
    댓글 작성 폼
    ────────────────────────────────────────────── */
 .m-comment-write {
-    margin-top: 24px;
+    margin: 18px 28px 28px;
     background: var(--m-surface);
     border: 1px solid var(--m-border);
     border-radius: var(--m-radius-lg);
