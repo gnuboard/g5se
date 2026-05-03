@@ -14,13 +14,13 @@ if ($is_checkbox) $colspan++;
     <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
         <div class="m-main-col">
             <header class="m-board-head">
-                <div>
-                    <h1 style="font-size: 22px; margin-bottom: 4px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -3px; color: var(--m-primary);"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        <?php echo get_text($qaconfig['qa_title']) ?>
+                <div class="m-qa-head-text">
+                    <h1 class="m-qa-head-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span><?php echo get_text($qaconfig['qa_title']) ?></span>
                     </h1>
-                    <p style="font-size: 13px; color: var(--m-text-muted);">
-                        Total <strong style="color: var(--m-text);"><?php echo number_format($total_count) ?></strong>건 · <?php echo $page ?> 페이지
+                    <p class="m-qa-head-sub">
+                        Total <strong><?php echo number_format($total_count) ?></strong>건 · <?php echo $page ?> 페이지
                     </p>
                 </div>
                 <div class="m-board-actions">
@@ -123,9 +123,9 @@ if ($is_checkbox) $colspan++;
 
                             <?php if ($i == 0) { ?>
                             <tr><td colspan="<?php echo $colspan ?>" class="m-empty">
-                                <div style="padding: 60px 20px; text-align: center; color: var(--m-text-faint);">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                    <p style="margin: 0; font-size: 13px;">등록된 문의가 없습니다.</p>
+                                <div class="m-qa-empty">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                    <p>등록된 문의가 없습니다.</p>
                                 </div>
                             </td></tr>
                             <?php } ?>
@@ -206,6 +206,26 @@ if ($is_checkbox) $colspan++;
     cursor: pointer;
 }
 .m-bulk-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
+
+/* 헤더 — 1:1문의 타이틀과 아이콘이 inline 으로 (UnoCSS reset 의 svg{display:block} 회피) */
+.m-qa-head-text { min-width: 0; }
+.m-qa-head-title {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 0 4px;
+    font-size: var(--m-text-2xl); font-weight: 700; color: var(--m-text);
+    letter-spacing: -0.01em;
+}
+.m-qa-head-title svg { color: var(--m-primary); flex-shrink: 0; }
+.m-qa-head-sub { margin: 0; font-size: var(--m-text-sm); color: var(--m-text-muted); }
+.m-qa-head-sub strong { color: var(--m-text); font-weight: 600; }
+
+/* 빈 상태 — svg 가 display:block 이라 아이콘이 좌측에 박히던 문제 fix (flex column + center) */
+.m-qa-empty {
+    padding: 60px 20px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.m-qa-empty svg { color: var(--m-text-faint); }
+.m-qa-empty p { margin: 0; font-size: var(--m-text-sm); color: var(--m-text-muted); }
 
 /* 카테고리 nav (gnuboard 의 ul/li 마크업을 토큰 pill 로 재스타일) */
 .m-qa-cates ul { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
