@@ -1,51 +1,52 @@
 <?php
-if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
+if (!defined('_GNUBOARD_')) exit;
 
-// add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
-add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 0);
+require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 ?>
 
 <!-- 쪽지 보내기 시작 { -->
-<div id="memo_write" class="new_win">
-    <h1 id="win_title"><i class="fa fa-envelope-o" aria-hidden="true"></i> 쪽지 보내기</h1>
-    <div class="new_win_con2">
-        <ul class="win_ul">
-            <li><a href="./memo.php?kind=recv">받은쪽지</a></li>
-            <li><a href="./memo.php?kind=send">보낸쪽지</a></li>
-            <li class="selected"><a href="./memo_form.php">쪽지쓰기</a></li>
-        </ul>
+<div class="m-popup">
+    <header class="m-popup-head">
+        <h1 class="m-popup-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            쪽지 보내기
+        </h1>
+    </header>
 
-        <form name="fmemoform" action="<?php echo $memo_action_url; ?>" onsubmit="return fmemoform_submit(this);" method="post" autocomplete="off">
-        <div class="form_01">
-            <h2 class="sound_only">쪽지쓰기</h2>
-            <ul>
-                <li>
-                    <label for="me_recv_mb_id" class="sound_only">받는 회원아이디<strong>필수</strong></label>
-                    
-                    <input type="text" name="me_recv_mb_id" value="<?php echo $me_recv_mb_id; ?>" id="me_recv_mb_id" required class="frm_input full_input required" size="47" placeholder="받는 회원아이디">
-                    <span class="frm_info">여러 회원에게 보낼때는 컴마(,)로 구분하세요.</span>
-                    <?php if ($config['cf_memo_send_point']) { ?>
-                    <br ><span class="frm_info">쪽지 보낼때 회원당 <?php echo number_format($config['cf_memo_send_point']); ?>점의 포인트를 차감합니다.</span>
-                    <?php } ?>
-                </li>
-                <li>
-                    <label for="me_memo" class="sound_only">내용</label>
-                    <textarea name="me_memo" id="me_memo" required class="required"><?php echo $content ?></textarea>
-                </li>
-                <li>
-                    <span class="sound_only">자동등록방지</span>
-                    
-                    <?php echo captcha_html(); ?>
-                    
-                </li>
-            </ul>
+    <nav class="m-memo-tabs">
+        <a href="/memo?kind=recv" class="m-memo-tab">받은쪽지</a>
+        <a href="/memo?kind=send" class="m-memo-tab">보낸쪽지</a>
+        <a href="/memo_form" class="m-memo-tab m-memo-tab-write is-active">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            쪽지쓰기
+        </a>
+    </nav>
+
+    <form name="fmemoform" action="<?php echo $memo_action_url; ?>" onsubmit="return fmemoform_submit(this);" method="post" autocomplete="off" class="m-memo-form">
+        <div class="m-memo-field">
+            <label for="me_recv_mb_id" class="m-label">받는 회원아이디 <span class="m-label-req">필수</span></label>
+            <input type="text" name="me_recv_mb_id" value="<?php echo $me_recv_mb_id; ?>" id="me_recv_mb_id" required class="m-input" placeholder="회원아이디 입력 (여러 명은 ',' 로 구분)">
+            <p class="m-memo-hint">여러 회원에게 보낼때는 컴마(,)로 구분하세요.</p>
+            <?php if ($config['cf_memo_send_point']) { ?>
+            <p class="m-memo-hint m-memo-hint-warn">
+                쪽지 보낼때 회원당 <strong><?php echo number_format($config['cf_memo_send_point']); ?></strong>점의 포인트를 차감합니다.
+            </p>
+            <?php } ?>
         </div>
 
-        <div class="win_btn">
-        	<button type="submit" id="btn_submit" class="btn btn_b02 reply_btn">보내기</button>
-        	<button type="button" onclick="window.close();" class="btn_close">창닫기</button>
+        <div class="m-memo-field">
+            <label for="me_memo" class="m-label">내용</label>
+            <textarea name="me_memo" id="me_memo" required class="m-input m-memo-textarea"><?php echo $content ?></textarea>
         </div>
-    </div>
+
+        <div class="m-memo-field">
+            <?php echo captcha_html(); ?>
+        </div>
+
+        <div class="m-popup-actions">
+            <button type="submit" id="btn_submit" class="m-btn" style="width:auto; padding:10px 22px;">보내기</button>
+            <button type="button" onclick="window.close();" class="m-btn m-btn-ghost" style="width:auto; padding:9px 20px;">창닫기</button>
+        </div>
     </form>
 </div>
 
@@ -53,8 +54,20 @@ add_stylesheet('<link rel="stylesheet" href="'.$member_skin_url.'/style.css">', 
 function fmemoform_submit(f)
 {
     <?php echo chk_captcha_js();  ?>
-
     return true;
 }
 </script>
+
+<style>
+.m-memo-form { display: flex; flex-direction: column; gap: 16px; }
+.m-memo-field { display: flex; flex-direction: column; gap: 6px; }
+.m-label-req {
+    font-size: var(--m-text-xs); font-weight: 500;
+    color: var(--m-primary); margin-left: 4px;
+}
+.m-memo-hint { margin: 4px 0 0; font-size: var(--m-text-xs); color: var(--m-text-muted); }
+.m-memo-hint-warn { color: var(--m-text-soft); }
+.m-memo-hint-warn strong { color: var(--m-primary); font-weight: 600; }
+.m-memo-textarea { min-height: 200px; padding: 12px; font-family: inherit; resize: vertical; line-height: var(--m-leading-relaxed); }
+</style>
 <!-- } 쪽지 보내기 끝 -->
