@@ -146,6 +146,39 @@ class Router
             return $this->cleanRoutes[$normalized];
         }
 
+        // 1.5) 1:1 문의 (qa) 레거시 URL → 클린 URL 301
+        //      /qalist.php?... → /qa[?...]
+        //      /qaview.php?qa_id=N → /qa/N
+        //      /qawrite.php[?w=u&qa_id=N] → /qa/write[/N]
+        //      /qadelete.php / /qadownload.php / /qawrite_update.php → /qa/delete /download /write_update
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^/(qalist|qaview|qawrite|qadelete|qadownload|qawrite_update)\.php$#', $path, $m)) {
+            $action = $m[1];
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/qa';
+            if ($action === 'qaview') {
+                if (!empty($params['qa_id']) && preg_match('/^\d+$/', $params['qa_id'])) {
+                    $url = '/qa/'.$params['qa_id'];
+                    unset($params['qa_id']);
+                }
+            } else if ($action === 'qawrite') {
+                $url = '/qa/write';
+                if (!empty($params['w']) && $params['w'] === 'u' && !empty($params['qa_id']) && preg_match('/^\d+$/', $params['qa_id'])) {
+                    $url = '/qa/write/'.$params['qa_id'];
+                    unset($params['qa_id'], $params['w']);
+                }
+            } else if ($action === 'qadelete') {
+                $url = '/qa/delete';
+            } else if ($action === 'qadownload') {
+                $url = '/qa/download';
+            } else if ($action === 'qawrite_update') {
+                $url = '/qa/write_update';
+            }
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+
         // 2) 게시판 레거시 URL → 클린 URL 301 리다이렉트
         //    /bbs/board.php?bo_table=X[&wr_id=N]   → /board/X[/N]
         //    /board.php?bo_table=X...               → /board/X[/N]
