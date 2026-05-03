@@ -260,7 +260,7 @@ $(function() {
    댓글 영역 — view 카드 안에서 시작 (article.m-view 다음 형제로 위치)
    ────────────────────────────────────────────── */
 .m-comments {
-    margin-top: 16px;
+    margin-top: 28px;
     background: var(--m-surface);
     border: 1px solid var(--m-border);
     border-radius: var(--m-radius-lg);
@@ -351,15 +351,15 @@ $(function() {
    댓글 작성 폼
    ────────────────────────────────────────────── */
 .m-comment-write {
-    margin-top: 16px;
+    margin-top: 24px;
     background: var(--m-surface);
     border: 1px solid var(--m-border);
     border-radius: var(--m-radius-lg);
-    padding: 18px 24px 20px;
+    padding: 24px 28px 26px;
 }
 .m-comment-write-title {
     font-size: var(--m-text-base); font-weight: 600;
-    color: var(--m-text-soft); margin-bottom: 12px;
+    color: var(--m-text-soft); margin-bottom: 16px;
 }
 .m-comment-textarea-wrap { position: relative; }
 .m-comment-textarea {
@@ -376,13 +376,13 @@ $(function() {
 .m-comment-write-row {
     display: flex; flex-wrap: wrap; gap: 10px;
     align-items: center; justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 14px;
 }
 .m-comment-write-info { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .m-comment-write-info .m-input { padding: 8px 10px; font-size: var(--m-text-sm); }
 .m-comment-write-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-.m-comment-captcha { margin-top: 12px; }
+.m-comment-captcha { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--m-border); }
 
 /* 댓글 수정/답글 form 이 슬롯에 들어갔을 때 자연스럽게 보이도록 */
 .m-comment .m-comment-write { margin-top: 12px; }
