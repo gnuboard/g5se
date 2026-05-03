@@ -134,8 +134,8 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 </section>
 
                 <div class="m-write-actions">
-                    <a href="<?php echo $list_href ?>" class="m-btn m-btn-ghost" style="width:auto; padding:10px 22px;">취소</a>
-                    <button type="submit" id="btn_submit" class="m-btn" style="width:auto; padding:10px 22px;" accesskey="s">
+                    <a href="<?php echo $list_href ?>" class="m-btn m-btn-secondary" style="flex: 1; max-width: 160px;">취소</a>
+                    <button type="submit" id="btn_submit" accesskey="s" class="m-btn m-btn-primary" style="flex: 2; max-width: 320px;">
                         <?php echo ($w == 'u' ? '수정 완료' : '문의 등록') ?>
                     </button>
                 </div>
@@ -235,6 +235,23 @@ function fwrite_submit(f) {
 .m-qa-contact-row { }
 .m-qa-contact-input { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .m-qa-contact-input .m-input { flex: 1; min-width: 220px; }
+
+/* 첨부 파일 — 클립 svg + dashed-border 라벨 (native input 숨김) */
+.m-qa-files { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+@media (max-width: 540px) { .m-qa-files { grid-template-columns: 1fr; } }
+.m-qa-file {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 12px; min-width: 0;
+    background: var(--m-surface); border: 1px dashed var(--m-border-hover);
+    border-radius: var(--m-radius);
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+    cursor: pointer; transition: border-color 0.15s, color 0.15s;
+}
+.m-qa-file:hover { border-color: var(--m-primary); color: var(--m-primary); }
+.m-qa-file svg { color: var(--m-text-faint); flex-shrink: 0; display: inline-block; }
+.m-qa-file:hover svg { color: var(--m-primary); }
+.m-qa-file-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.m-qa-file-input { position: absolute; left: -9999px; opacity: 0; width: 0; height: 0; }
 
 .m-qa-file-del {
     display: inline-flex; align-items: center; gap: 6px;
