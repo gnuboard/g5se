@@ -50,6 +50,12 @@ class Router
         // 메일보내기 (popup)
         '/formmail'               => 'bbs/formmail.php',
         '/formmail_send'          => 'bbs/formmail_send.php',
+
+        // 프로필 / 자기소개 (popup)
+        '/profile'                => 'bbs/profile.php',
+
+        // 포인트 내역
+        '/point'                  => 'bbs/point.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
