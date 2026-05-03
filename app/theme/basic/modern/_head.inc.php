@@ -345,6 +345,23 @@ html, body {
 .m-theme-toggle .m-icon-moon { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-sun  { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-moon { display: none; }
+
+/* SmartEditor2 단축키 일람 — 다크모드에서 흰 배경/회색 글자가 안보여서 토큰으로 덮음 */
+[data-theme="dark"] .cke_sc_def {
+    background: var(--m-surface);
+    border-color: var(--m-border);
+    color: var(--m-text);
+}
+[data-theme="dark"] .cke_sc_def dt,
+[data-theme="dark"] .cke_sc_def dd {
+    border-bottom-color: var(--m-border);
+    color: var(--m-text);
+}
+[data-theme="dark"] .btn_cke_sc {
+    background: var(--m-surface);
+    border-color: var(--m-border);
+    color: var(--m-text);
+}
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
