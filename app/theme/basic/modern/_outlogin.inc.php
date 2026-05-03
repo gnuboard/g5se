@@ -87,6 +87,22 @@ $_ol_login_back_url   = isset($urlencode) ? $urlencode : urlencode($_SERVER['REQ
 }
 .m-ol-profile-edit:hover { color: var(--m-primary); }
 
+/* 관리자 바로가기 — 프로필 헤더 우측 톱니 아이콘 */
+.m-ol-admin-shortcut {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; flex-shrink: 0;
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    color: var(--m-text-muted);
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.4s;
+}
+.m-ol-admin-shortcut:hover {
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+    border-color: var(--m-primary);
+    transform: rotate(45deg);
+}
+
 .m-ol-stats {
     list-style: none; padding: 0; margin: 0 0 12px 0;
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
@@ -136,6 +152,11 @@ $_ol_login_back_url   = isset($urlencode) ? $urlencode : urlencode($_SERVER['REQ
                 <span class="m-ol-admin-badge"><?php echo $is_admin ?> 관리자</span>
                 <?php } ?>
             </div>
+            <?php if ($is_admin) { ?>
+            <a href="<?php echo G5_ADMIN_URL ?>" class="m-ol-admin-shortcut" title="관리자 페이지로 이동">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </a>
+            <?php } ?>
         </div>
 
         <!-- 카운트 -->
@@ -154,11 +175,8 @@ $_ol_login_back_url   = isset($urlencode) ? $urlencode : urlencode($_SERVER['REQ
             </a></li>
         </ul>
 
-        <!-- 액션 -->
+        <!-- 액션 — 관리자 진입은 헤더 톱니 아이콘으로 옮겼으므로 여기선 로그아웃만 -->
         <div class="m-ol-actions">
-            <?php if ($is_admin == 'super' || $is_admin) { ?>
-            <a href="<?php echo G5_ADMIN_URL ?>" class="m-btn m-btn-secondary" style="flex: 1;">관리자</a>
-            <?php } ?>
             <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-secondary" style="flex: 1;">로그아웃</a>
         </div>
     </div>
