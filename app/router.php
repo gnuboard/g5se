@@ -71,7 +71,37 @@ class Router
             return $this->cleanRoutes[$normalized];
         }
 
-        // 2) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트
+        // 2) 게시판 레거시 URL → 클린 URL 301 리다이렉트
+        //    /bbs/board.php?bo_table=X[&wr_id=N]   → /board/X[/N]
+        //    /board.php?bo_table=X...               → /board/X[/N]
+        //    /(bbs/)?write.php?bo_table=X[&wr_id=N] → /board/X/write[/N]
+        //    delete/good/nogood/download/view_image 도 동일한 규칙
+        //    (단, GET/HEAD 만 — POST 는 그대로 통과시켜 폼 제출 호환)
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^/(?:bbs/)?(board|write|write_update|delete|good|nogood|download|view_image)\.php$#', $path, $m)) {
+            $action = $m[1];
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['bo_table']) && preg_match('/^[a-zA-Z0-9_]+$/', $params['bo_table'])) {
+                $url = '/board/'.$params['bo_table'];
+                if ($action !== 'board') {
+                    $url .= '/'.$action;
+                }
+                if (!empty($params['wr_id']) && preg_match('/^\d+$/', $params['wr_id'])) {
+                    $url .= '/'.$params['wr_id'];
+                }
+                if (!empty($params['no']) && preg_match('/^\d+$/', $params['no'])) {
+                    $url .= '/'.$params['no'];
+                }
+                unset($params['bo_table'], $params['wr_id'], $params['no']);
+                if (!empty($params)) {
+                    $url .= '?'.http_build_query($params);
+                }
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+
+        // 3) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트
         //    (단, GET/HEAD 만 — POST 폼이 .php 로 날아오면 데이터 유실 방지 위해 그대로 처리)
         if (preg_match('#^(/[a-zA-Z0-9_]+)\.php$#', $path, $m)) {
             $clean = $m[1];
@@ -86,7 +116,7 @@ class Router
             }
         }
 
-        // 3) 정규식 기반 라우트 (디버그/AJAX 등)
+        // 4) 정규식 기반 라우트 (디버그/AJAX 등)
         foreach ($this->extraRoutes as $pattern => $target) {
             if (preg_match($pattern, $path, $m)) {
                 // 캡처 그룹을 target 의 {N} placeholder 로 치환 ({1}, {2}, ...)
