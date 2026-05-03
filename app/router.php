@@ -42,6 +42,9 @@ class Router
         // (jquery.register_form.js 등이 g5_bbs_url+"/ajax.mb_id.php" 형태로 요청)
         '#^/(ajax\.[a-z0-9_.]+\.php)$#i' => 'bbs/{1}',
 
+        // 글쓰기 토큰 발급 (common.js 의 form[name=fwrite] submit 시 호출)
+        '#^/write_token\.php$#' => 'bbs/write_token.php',
+
         // 게시판 — /board/{bo_table}[/{wr_id}] + 액션
         // bo_table 은 영문/숫자/_ 만 허용 (gnuboard 표준)
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/?$#'                                     => 'bbs/board.php',
