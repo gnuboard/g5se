@@ -560,23 +560,30 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
     outline: none; border-color: var(--m-primary) !important;
     box-shadow: 0 0 0 3px var(--m-primary-soft);
 }
-/* 캡챠 스피커/리프레시 — gnuboard sprite (captcha2.png) 를 흰 알약 위에 양 모드 동일하게 고정.
-   shorthand 로 background: color image position no-repeat 한 줄 !important 라서 다른 규칙이
-   부분 속성으로 덮어쓰는 일을 방지. 라이트/다크 무관하게 같은 모양. */
-#captcha #captcha_mp3 {
-    width: var(--cap-h) !important; height: var(--cap-h) !important;
-    background: #ffffff url('/img/captcha2.png') no-repeat 0 0 !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: var(--m-radius-sm) !important;
-}
+/* 캡챠 스피커/리프레시 — gnuboard sprite 대신 inline-SVG (Feather volume-2 / rotate-cw) 를
+   background-image 로 그려 양 모드 모두 흰 알약 + 다크 아이콘. SVG color 는 url-encoded %23.
+   shorthand + !important + 별도 background-size 로 다른 규칙이 부분 속성으로 덮지 못하게 함. */
+#captcha #captcha_mp3,
 #captcha #captcha_reload {
     width: var(--cap-h) !important; height: var(--cap-h) !important;
-    background: #ffffff url('/img/captcha2.png') no-repeat 0 -40px !important;
+    background-color: #ffffff !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 18px !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: var(--m-radius-sm) !important;
+    text-indent: 0 !important;
+    color: transparent !important;
+    cursor: pointer;
 }
-#captcha_mp3:hover { background-color: #f1f5f9 !important; }
-#captcha_reload:hover { background-color: #f1f5f9 !important; }
+#captcha #captcha_mp3 {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>") !important;
+}
+#captcha #captcha_reload {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 4 23 10 17 10'/><path d='M20.49 15a9 9 0 1 1-2.12-9.36L23 10'/></svg>") !important;
+}
+#captcha_mp3:hover, #captcha_reload:hover { background-color: #f1f5f9 !important; border-color: #94a3b8 !important; }
+#captcha_mp3 > *, #captcha_reload > * { display: none !important; }
 #captcha_info {
     width: 100%; margin: 4px 0 0;
     font-size: var(--m-text-xs); color: var(--m-text-muted);
