@@ -39,6 +39,7 @@ class Router
         '/faq'                    => 'bbs/faq.php',
         '/content'                => 'bbs/content.php',
         '/group'                  => 'bbs/group.php',
+        '/connect'                => 'bbs/current_connect.php',
 
         // 쪽지 (popup)
         '/memo'                   => 'bbs/memo.php',

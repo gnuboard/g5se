@@ -54,12 +54,18 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             </nav>
             <?php } ?>
 
-            <form action="/search" method="get" class="m-nav-search" role="search">
-                <input type="hidden" name="sfl" value="wr_subject||wr_content">
-                <input type="hidden" name="sop" value="and">
-                <svg class="m-nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" name="stx" placeholder="검색" class="m-nav-search-input" maxlength="20">
-            </form>
+            <div class="m-nav-spacer"></div>
+
+            <a href="/search" class="m-nav-search-icon-btn" title="검색" aria-label="검색">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+
+            <nav class="m-nav-utility" aria-label="유틸 메뉴">
+                <a href="/faq"     class="m-nav-utility-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
+                <a href="/qa"      class="m-nav-utility-link<?php echo strpos($_cur_path, '/qa') === 0 ? ' is-active' : '' ?>">Q&amp;A</a>
+                <a href="/new"     class="m-nav-utility-link<?php echo strpos($_cur_path, '/new') === 0 ? ' is-active' : '' ?>">새글</a>
+                <a href="/connect" class="m-nav-utility-link<?php echo strpos($_cur_path, '/connect') === 0 ? ' is-active' : '' ?>">접속자</a>
+            </nav>
 
             <div class="m-nav-actions">
                 <?php if ($is_member) { ?>
@@ -108,8 +114,6 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                 <?php } ?>
             </div>
             <?php } ?>
-            <a href="/new" class="m-nav-link<?php echo $_cur_path === '/new' ? ' is-active' : '' ?>">새글</a>
-            <a href="/faq" class="m-nav-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
         </nav>
     </div>
 
@@ -181,8 +185,11 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                 <a href="<?php echo $sub_href ?>" target="<?php echo $sub_target ?>" class="m-nav-drawer-link m-nav-drawer-sublink<?php echo $sub_active ? ' is-active' : '' ?>"><?php echo get_text($_sub['me_name']) ?></a>
                 <?php } ?>
                 <?php } ?>
-                <a href="/new" class="m-nav-drawer-link<?php echo $_cur_path === '/new' ? ' is-active' : '' ?>">새글</a>
-                <a href="/faq" class="m-nav-drawer-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
+                <a href="/faq"     class="m-nav-drawer-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
+                <a href="/qa"      class="m-nav-drawer-link<?php echo strpos($_cur_path, '/qa') === 0 ? ' is-active' : '' ?>">Q&amp;A</a>
+                <a href="/new"     class="m-nav-drawer-link<?php echo strpos($_cur_path, '/new') === 0 ? ' is-active' : '' ?>">새글</a>
+                <a href="/connect" class="m-nav-drawer-link<?php echo strpos($_cur_path, '/connect') === 0 ? ' is-active' : '' ?>">접속자</a>
+                <a href="/search"  class="m-nav-drawer-link<?php echo strpos($_cur_path, '/search') === 0 ? ' is-active' : '' ?>">검색</a>
             </nav>
 
             <div class="m-nav-drawer-actions">
@@ -292,29 +299,35 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     box-shadow: var(--m-shadow);
 }
 
-.m-nav-search {
-    flex: 1; max-width: 400px;
-    position: relative;
+.m-nav-spacer { flex: 1; }
+
+.m-nav-search-icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: transparent; border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); color: var(--m-text-soft);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.m-nav-search-icon {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    color: var(--m-text-faint); pointer-events: none;
-}
-.m-nav-search-input {
-    width: 100%; padding: 8px 12px 8px 36px; box-sizing: border-box;
+.m-nav-search-icon-btn:hover {
     background: var(--m-surface-2);
-    border: 1px solid transparent;
-    border-radius: var(--m-radius);
-    color: var(--m-text);
-    font-size: var(--m-text-base); font-family: inherit;
-    outline: none; transition: border-color 0.15s, background 0.15s;
-}
-.m-nav-search-input:focus {
+    color: var(--m-primary);
     border-color: var(--m-primary);
-    background: var(--m-surface);
-    box-shadow: 0 0 0 3px var(--m-primary-soft);
 }
-.m-nav-search-input::placeholder { color: var(--m-text-faint); }
+
+.m-nav-utility {
+    display: inline-flex; align-items: center; gap: 2px;
+    flex-shrink: 0;
+}
+.m-nav-utility-link {
+    padding: 6px 10px; border-radius: var(--m-radius);
+    font-size: var(--m-text-base); font-weight: 500;
+    color: var(--m-text-soft); text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+.m-nav-utility-link:hover { background: var(--m-surface-2); color: var(--m-text); }
+.m-nav-utility-link.is-active { color: var(--m-primary); }
 
 .m-nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
@@ -330,14 +343,12 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 @media (max-width: 880px) {
     .m-nav-row-links { display: none; }   /* row 2 메뉴는 햄버거 드로어가 흡수 */
     .m-nav-segment { display: none; }     /* 커뮤니티/쇼핑몰 토글도 드로어로 */
-    .m-nav-search { max-width: none; }
+    .m-nav-utility { display: none; }     /* FAQ/Q&A/새글/접속자 도 드로어로 */
+    .m-nav-search-icon-btn { margin-left: auto; }
     .m-nav-actions { display: none; }
     .m-nav-mobile-toggle { display: inline-flex; }
     /* 사이드바(outlogin) 도 모바일에선 숨김 — 동일 정보를 드로어가 노출 */
     .m-side-col { display: none !important; }
-}
-@media (max-width: 540px) {
-    .m-nav-search { display: none; }
 }
 
 /* 모바일 드로어 — 우측 슬라이드 인 패널 */
