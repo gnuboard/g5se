@@ -275,6 +275,11 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     font-size: var(--m-text-sm); color: var(--m-text-soft);
 }
 .m-view-actions .m-icon-btn span { font-size: var(--m-text-sm); }
+.m-icon-btn-danger:hover {
+    background: rgba(239,68,68,0.1) !important;
+    border-color: rgba(239,68,68,0.4) !important;
+    color: #ef4444 !important;
+}
 
 .m-view-more { position: relative; }
 .m-view-more-menu {
