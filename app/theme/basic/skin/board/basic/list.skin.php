@@ -292,27 +292,8 @@ if ($is_nogood) $colspan++;
 .m-icon-hot { background: #f59e0b; color: white; }
 .m-icon-mini { color: var(--m-text-faint); display: inline-flex; }
 
-/* gnuboard 의 페이지네이션 마크업 (.pg_*) 을 토큰 기반으로 재스타일 */
+/* 페이지네이션 컨테이너만 — pg_* 자체 스타일은 _head.inc.php 의 글로벌 규칙이 처리 */
 .m-board-pagination { margin-top: 24px; display: flex; justify-content: center; }
-.m-board-pagination .pg_wrap, .m-board-pagination > .pg { display: inline-flex; gap: 4px; flex-wrap: wrap; }
-.m-board-pagination .pg_page, .m-board-pagination .pg_current,
-.m-board-pagination .pg_start, .m-board-pagination .pg_prev,
-.m-board-pagination .pg_next, .m-board-pagination .pg_end {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-width: 36px; height: 36px; padding: 0 10px;
-    background: var(--m-surface); border: 1px solid var(--m-border);
-    border-radius: var(--m-radius);
-    color: var(--m-text-soft); text-decoration: none; font-size: 13px;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-    /* default.css 의 text-indent:-999px / overflow:hidden / 배경 GIF 해제 */
-    text-indent: 0; overflow: visible; background-image: none;
-}
-.m-board-pagination a:hover {
-    background: var(--m-surface-2); border-color: var(--m-border-hover); color: var(--m-text);
-}
-.m-board-pagination .pg_current {
-    background: var(--m-primary); border-color: var(--m-primary); color: white; font-weight: 600;
-}
 </style>
 
 <script>
