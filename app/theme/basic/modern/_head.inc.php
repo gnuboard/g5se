@@ -560,19 +560,42 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
     outline: none; border-color: var(--m-primary) !important;
     box-shadow: 0 0 0 3px var(--m-primary-soft);
 }
-#captcha_mp3 button,
-#captcha_reload button {
-    width: var(--cap-h); height: var(--cap-h); padding: 0;
-    background: transparent; border: 0; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    color: var(--m-text-soft);
+/* gnuboard default.css 의 sprite png 를 mask 로 덮어 토큰 색을 따르도록.
+   #captcha_mp3 / #captcha_reload 는 <button> 자체이므로 background-image 무력화 + 자식 span 도 hide,
+   ::before 로 inline SVG icon 을 mask 처리해 currentColor 로 그린다. */
+#captcha #captcha_mp3,
+#captcha #captcha_reload {
+    width: var(--cap-h) !important; height: var(--cap-h) !important;
+    background-image: none !important;
+    text-indent: 0 !important;
+    color: transparent;          /* 텍스트 라벨 시각적으로 숨김 (sound_only 효과) */
+    position: relative;
+    cursor: pointer;
+}
+#captcha_mp3 > *, #captcha_reload > * { display: none !important; }
+#captcha_mp3::before,
+#captcha_reload::before {
+    content: ""; position: absolute; inset: 0;
+    background: var(--m-text-soft);
+    -webkit-mask-position: center; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 18px;
+    mask-position: center; mask-repeat: no-repeat; mask-size: 18px;
+}
+/* 스피커(음성 듣기) */
+#captcha_mp3::before {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>");
+            mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>");
+}
+/* 새로고침 */
+#captcha_reload::before {
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 4 23 10 17 10'/><path d='M20.49 15a9 9 0 1 1-2.12-9.36L23 10'/></svg>");
+            mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 4 23 10 17 10'/><path d='M20.49 15a9 9 0 1 1-2.12-9.36L23 10'/></svg>");
 }
 #captcha_mp3:hover,
 #captcha_reload:hover {
-    background: var(--m-surface-2); border-color: var(--m-border-hover);
+    background: var(--m-surface-2) !important; border-color: var(--m-border-hover) !important;
 }
-#captcha_mp3:hover button,
-#captcha_reload:hover button { color: var(--m-text); }
+#captcha_mp3:hover::before,
+#captcha_reload:hover::before { background: var(--m-primary); }
 #captcha_info {
     width: 100%; margin: 4px 0 0;
     font-size: var(--m-text-xs); color: var(--m-text-muted);
