@@ -245,8 +245,9 @@ if ($is_nogood) $colspan++;
 
 .m-col-chk { width: 36px; }
 .m-col-num { width: 80px; color: var(--m-text-faint); font-size: 13px; }
-/* 제목만 좌측 정렬 (th + td) */
-th.m-col-subject, td.m-col-subject { text-align: left; padding-left: 16px !important; }
+/* 제목만 좌측 정렬 (th + td) — thead th 의 default center 보다 specificity 가 높아야 함 */
+.m-board-table thead th.m-col-subject,
+.m-board-table tbody td.m-col-subject { text-align: left; padding-left: 16px !important; }
 .m-col-name { width: 110px; color: var(--m-text-soft); font-size: 13px; }
 .m-col-meta { width: 70px; color: var(--m-text-muted); font-size: 13px; }
 .m-col-date { width: 110px; color: var(--m-text-faint); font-size: 12px; padding-right: 16px !important; }
