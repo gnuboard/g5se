@@ -297,6 +297,11 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     border-radius: var(--m-radius); color: var(--m-text-faint);
 }
 .m-write-link-row .m-input { flex: 1; min-width: 200px; }
+/* 모바일에서는 폭이 좁아 아이콘이 별도 줄로 떨어지므로 제거 */
+@media (max-width: 540px) {
+    .m-write-link-icon { display: none; }
+    .m-write-link-row .m-input { min-width: 0; }
+}
 .m-write-file-del { flex-basis: 100%; padding-left: 4px; }
 .m-write-file-del span { font-size: var(--m-text-sm); color: var(--m-text-muted); }
 
