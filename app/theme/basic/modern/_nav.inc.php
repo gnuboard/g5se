@@ -37,7 +37,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             <?php } ?>
         </nav>
 
-        <form action="<?php echo G5_BBS_URL ?>/search.php" method="get" class="m-nav-search" role="search">
+        <form action="/search" method="get" class="m-nav-search" role="search">
             <input type="hidden" name="sfl" value="wr_subject||wr_content">
             <input type="hidden" name="sop" value="and">
             <svg class="m-nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

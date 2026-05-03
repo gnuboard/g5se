@@ -32,6 +32,13 @@ class Router
 
         // 회원 탈퇴
         '/member_leave'           => 'bbs/member_leave.php',
+
+        // 게시판 부가 페이지
+        '/search'                 => 'bbs/search.php',
+        '/new'                    => 'bbs/new.php',
+        '/faq'                    => 'bbs/faq.php',
+        '/content'                => 'bbs/content.php',
+        '/group'                  => 'bbs/group.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
@@ -112,17 +119,22 @@ class Router
 
         // 3) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트
         //    (단, GET/HEAD 만 — POST 폼이 .php 로 날아오면 데이터 유실 방지 위해 그대로 처리)
+        //    (a) /name.php  → /name
+        //    (b) /bbs/name.php → /name (gnuboard 내부 링크 정리용)
+        $cleanCandidate = null;
         if (preg_match('#^(/[a-zA-Z0-9_]+)\.php$#', $path, $m)) {
-            $clean = $m[1];
-            if (isset($this->cleanRoutes[$clean])) {
-                if ($method === 'GET' || $method === 'HEAD') {
-                    $qs = parse_url($requestUri, PHP_URL_QUERY);
-                    header('Location: '.$clean.($qs ? '?'.$qs : ''), true, 301);
-                    exit;
-                }
-                // POST 등은 그대로 진행 (폼 제출 호환)
-                return $this->cleanRoutes[$clean];
+            $cleanCandidate = $m[1];
+        } else if (preg_match('#^/bbs/([a-zA-Z0-9_]+)\.php$#', $path, $m)) {
+            $cleanCandidate = '/'.$m[1];
+        }
+        if ($cleanCandidate !== null && isset($this->cleanRoutes[$cleanCandidate])) {
+            if ($method === 'GET' || $method === 'HEAD') {
+                $qs = parse_url($requestUri, PHP_URL_QUERY);
+                header('Location: '.$cleanCandidate.($qs ? '?'.$qs : ''), true, 301);
+                exit;
             }
+            // POST 등은 그대로 진행 (폼 제출 호환)
+            return $this->cleanRoutes[$cleanCandidate];
         }
 
         // 4) 정규식 기반 라우트 (디버그/AJAX 등)
