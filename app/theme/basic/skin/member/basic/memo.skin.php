@@ -34,7 +34,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 <span class="m-memo-avatar"><?php echo get_member_profile_img($list[$i]['mb_id']); ?></span>
                 <span class="m-memo-body">
                     <span class="m-memo-meta">
-                        <span class="m-memo-name"><?php echo $list[$i]['name']; ?></span>
+                        <span class="m-memo-name"><?php echo get_text($list[$i]['mb_nick']); ?></span>
                         <?php if (!$is_read) { ?><span class="m-memo-badge">NEW</span><?php } ?>
                         <span class="m-memo-time">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -71,58 +71,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 </div>
 
 <style>
-/* 쪽지 등 popup window 공통 레이아웃 */
-.m-popup {
-    background: var(--m-bg);
-    color: var(--m-text);
-    min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-}
-.m-popup-head { margin-bottom: 14px; }
-.m-popup-title {
-    display: flex; align-items: center; gap: 8px;
-    font-size: var(--m-text-xl); font-weight: 700;
-    color: var(--m-text); margin: 0 0 4px;
-}
-.m-popup-title svg { color: var(--m-primary); }
-.m-popup-sub { margin: 0; font-size: var(--m-text-sm); color: var(--m-text-muted); }
-.m-popup-sub strong { color: var(--m-text); }
-.m-popup-hint {
-    display: flex; align-items: center; gap: 6px;
-    margin: 14px 0 0; padding: 10px 14px;
-    background: var(--m-surface-2); border-radius: var(--m-radius);
-    font-size: var(--m-text-xs); color: var(--m-text-muted);
-}
-.m-popup-hint svg { color: var(--m-text-faint); flex-shrink: 0; }
-.m-popup-hint strong { color: var(--m-text); font-weight: 600; }
-.m-popup-actions {
-    display: flex; justify-content: flex-end; gap: 6px;
-    margin-top: 14px;
-}
-
-/* 탭 */
-.m-memo-tabs {
-    display: flex; gap: 4px;
-    border-bottom: 1px solid var(--m-border);
-    margin-bottom: 14px;
-}
-.m-memo-tab {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 10px 16px;
-    color: var(--m-text-muted); text-decoration: none;
-    font-size: var(--m-text-sm); font-weight: 500;
-    border-bottom: 2px solid transparent;
-    transition: all 0.15s;
-    margin-bottom: -1px;
-}
-.m-memo-tab:hover { color: var(--m-text); }
-.m-memo-tab.is-active {
-    color: var(--m-primary); border-bottom-color: var(--m-primary);
-}
-.m-memo-tab-write { margin-left: auto; color: var(--m-primary); }
-
-/* 목록 */
+/* 목록 — popup 공통 CSS 는 _head.inc.php */
 .m-memo-list { list-style: none; padding: 0; margin: 0; }
 .m-memo-item {
     display: flex; align-items: stretch;
@@ -133,35 +82,51 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     transition: border-color 0.15s, background 0.15s;
 }
 .m-memo-item:hover { border-color: var(--m-border-hover); }
-.m-memo-item.is-read { opacity: 0.78; }
+.m-memo-item.is-read { opacity: 0.7; }
 
 .m-memo-item-link {
     flex: 1; min-width: 0;
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
     color: var(--m-text); text-decoration: none;
 }
 .m-memo-avatar { display: inline-flex; align-items: center; flex-shrink: 0; }
 .m-memo-avatar img {
-    width: 36px; height: 36px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     border: 1px solid var(--m-border); object-fit: cover;
 }
-.m-memo-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.m-memo-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.m-memo-name { font-size: var(--m-text-base); font-weight: 600; color: var(--m-text); }
+.m-memo-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.m-memo-meta {
+    display: flex; align-items: center; gap: 6px;
+    min-width: 0; flex-wrap: nowrap;
+}
+.m-memo-name {
+    font-size: var(--m-text-base); font-weight: 600; color: var(--m-text);
+    flex-shrink: 0;
+    /* sideview wrapper 가 닉만 보이도록 자식 메뉴 제외 너비 자동 */
+    max-width: 50%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* sideview 가 .m-memo-name 안에 들어와도 닉만 한 줄로 */
+.m-memo-name .sv_wrap, .m-memo-name .sv_member, .m-memo-name .sv_guest {
+    display: inline !important;
+    white-space: nowrap;
+}
 .m-memo-badge {
+    flex-shrink: 0; line-height: 1;
     font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
-    padding: 2px 6px; border-radius: 999px;
+    padding: 3px 7px; border-radius: 999px;
     background: var(--m-primary); color: #fff;
 }
 .m-memo-time {
     display: inline-flex; align-items: center; gap: 4px;
     font-size: var(--m-text-xs); color: var(--m-text-faint);
-    margin-left: auto;
+    margin-left: auto; flex-shrink: 0; white-space: nowrap;
 }
 .m-memo-preview {
     font-size: var(--m-text-sm); color: var(--m-text-soft);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0;
 }
 .m-memo-del {
     display: inline-flex; align-items: center; justify-content: center;
