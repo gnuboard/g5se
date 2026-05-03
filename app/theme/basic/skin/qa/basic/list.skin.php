@@ -159,7 +159,15 @@ if ($is_checkbox) $colspan++;
 }
 .m-board-head h1 { margin: 0; }
 .m-board-actions { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.m-board-actions .m-icon-btn { width: 36px; height: 36px; padding: 0; }
+.m-icon-btn {
+    width: 36px; height: 36px; padding: 0;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); color: var(--m-text-soft);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.m-icon-btn:hover { background: var(--m-surface-2); color: var(--m-text); border-color: var(--m-border-hover); }
 .m-board-actions .m-btn { display: inline-flex; align-items: center; }
 
 .m-board-search-drawer {
