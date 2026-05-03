@@ -84,9 +84,9 @@ if ($is_nogood) $colspan++;
 
             <?php if (($is_admin == 'super' || $is_auth) && $is_checkbox) { ?>
             <div class="m-board-bulk">
-                <button type="submit" name="btn_submit" value="선택삭제" onclick="document.pressed=this.value" class="m-btn m-btn-secondary" style="width: auto;">선택삭제</button>
-                <button type="submit" name="btn_submit" value="선택복사" onclick="document.pressed=this.value" class="m-btn m-btn-secondary" style="width: auto;">선택복사</button>
-                <button type="submit" name="btn_submit" value="선택이동" onclick="document.pressed=this.value" class="m-btn m-btn-secondary" style="width: auto;">선택이동</button>
+                <button type="submit" name="btn_submit" value="선택삭제" onclick="document.pressed=this.value" class="m-bulk-btn">선택삭제</button>
+                <button type="submit" name="btn_submit" value="선택복사" onclick="document.pressed=this.value" class="m-bulk-btn">선택복사</button>
+                <button type="submit" name="btn_submit" value="선택이동" onclick="document.pressed=this.value" class="m-bulk-btn">선택이동</button>
             </div>
             <?php } ?>
 
@@ -218,7 +218,16 @@ if ($is_nogood) $colspan++;
 .m-board-search-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .m-board-search-form .m-input { flex: 1; min-width: 160px; }
 
-.m-board-bulk { margin-bottom: 12px; display: flex; gap: 8px; }
+.m-board-bulk { margin-bottom: 12px; display: flex; gap: 6px; }
+.m-bulk-btn {
+    padding: 5px 10px; border-radius: var(--m-radius-sm);
+    background: transparent; border: 1px solid var(--m-border);
+    color: var(--m-text-faint);
+    font-size: var(--m-text-sm); font-weight: 500; font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.m-bulk-btn:hover { background: var(--m-surface-2); border-color: var(--m-border-hover); color: var(--m-text-soft); }
 
 .m-board-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .m-board-table thead th {
