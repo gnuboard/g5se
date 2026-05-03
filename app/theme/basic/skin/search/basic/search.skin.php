@@ -219,7 +219,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     margin-bottom: 14px;
 }
 .m-search-board-filter a {
-    display: inline-flex; align-items: center;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 12px;
     background: var(--m-surface); border: 1px solid var(--m-border);
     border-radius: var(--m-radius);
@@ -233,6 +233,20 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 .m-search-board-filter a.sch_on,
 .m-search-board-filter a[class*="sch_on"] {
     background: var(--m-primary); border-color: var(--m-primary); color: #fff;
+}
+/* 게시판별 결과 갯수 뱃지 (gnuboard 가 <span class="cnt_cmt">N</span> 으로 출력) */
+.m-search-board-filter .cnt_cmt {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; padding: 1px 6px;
+    background: var(--m-surface-2); color: var(--m-text-muted);
+    border-radius: 999px;
+    font-size: 10px; font-weight: 700;
+    font-feature-settings: "tnum";
+}
+.m-search-board-filter a:hover .cnt_cmt { background: var(--m-surface); color: var(--m-primary); }
+.m-search-board-filter a.sch_on .cnt_cmt,
+.m-search-board-filter a[class*="sch_on"] .cnt_cmt {
+    background: rgba(255,255,255,0.25); color: #fff;
 }
 
 .m-search-result-card { padding: 18px 22px; margin-bottom: 14px; }
