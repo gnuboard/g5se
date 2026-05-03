@@ -140,11 +140,11 @@ $_ol_login_back_url   = isset($urlencode) ? $urlencode : urlencode($_SERVER['REQ
 
         <!-- 카운트 -->
         <ul class="m-ol-stats">
-            <li><a href="<?php echo G5_BBS_URL ?>/point.php" class="m-ol-stat" title="포인트">
+            <li><a href="/point" onclick="win_point(this.href); return false;" class="m-ol-stat" title="포인트">
                 <span class="m-ol-stat-label">포인트</span>
                 <span class="m-ol-stat-value"><?php echo $_ol_point ?></span>
             </a></li>
-            <li><a href="<?php echo G5_BBS_URL ?>/memo.php" class="m-ol-stat" title="안읽은 쪽지">
+            <li><a href="/memo" onclick="win_memo(this.href); return false;" class="m-ol-stat" title="안읽은 쪽지">
                 <span class="m-ol-stat-label">쪽지</span>
                 <span class="m-ol-stat-value"><?php echo $_ol_memo ?></span>
             </a></li>
