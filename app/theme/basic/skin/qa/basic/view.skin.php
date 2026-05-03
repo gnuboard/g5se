@@ -204,6 +204,150 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 </div>
 
 <style>
+/* board-common view 레이아웃 — board view.skin 의 동일 규칙 복제 (페이지 공유 안 됨) */
+.m-view { padding: 0; overflow: hidden; }
+
+.m-view-head { padding: 24px 28px 18px; border-bottom: 1px solid var(--m-border); }
+.m-view-title { font-size: var(--m-text-2xl); font-weight: 700; color: var(--m-text); margin-bottom: 12px; word-break: break-word; }
+.m-view-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: var(--m-text-sm); color: var(--m-text-muted); }
+.m-view-name { display: inline-flex; align-items: center; color: var(--m-text); font-weight: 600; font-size: var(--m-text-base); }
+.m-view-meta-sep { color: var(--m-text-faint); }
+.m-view-meta-item { display: inline-flex; align-items: center; gap: 4px; color: var(--m-text-muted); }
+
+.m-cate-tag {
+    display: inline-block; padding: 2px 8px;
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    border-radius: 4px; font-size: 11px; color: var(--m-text-soft);
+    text-decoration: none; margin-right: 6px;
+}
+
+.m-icon-btn {
+    width: 36px; height: 36px; padding: 0;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); color: var(--m-text-soft);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.m-icon-btn:hover { background: var(--m-surface-2); color: var(--m-text); border-color: var(--m-border-hover); }
+
+.m-view-actions {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 14px; justify-content: flex-end;
+}
+.m-view-actions .m-icon-btn {
+    width: auto; padding: 6px 12px; gap: 4px;
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+}
+.m-view-actions .m-icon-btn span { font-size: var(--m-text-sm); }
+@media (max-width: 540px) {
+    .m-view-actions { flex-wrap: nowrap; gap: 2px; }
+    .m-view-actions .m-icon-btn { padding: 6px 8px; gap: 3px; }
+    .m-view-actions .m-icon-btn span { font-size: var(--m-text-xs); }
+}
+.m-icon-btn-danger:hover {
+    background: rgba(239,68,68,0.1) !important;
+    border-color: rgba(239,68,68,0.4) !important;
+    color: #ef4444 !important;
+}
+
+.m-view-kebab { position: relative; }
+.m-view-kebab-menu {
+    position: absolute; top: calc(100% + 4px); right: 0;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); box-shadow: var(--m-shadow-md);
+    list-style: none; padding: 4px; margin: 0;
+    min-width: 130px; z-index: 100;
+}
+.m-view-kebab-menu li a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+    text-decoration: none;
+}
+.m-view-kebab-menu li a svg { flex-shrink: 0; }
+.m-view-kebab-menu li a:hover { background: var(--m-surface-2); color: var(--m-text); }
+.m-view-kebab-menu li a.is-danger { color: #ef4444; }
+.m-view-kebab-menu li a.is-danger:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+.m-view-body { padding: 24px 28px 28px; }
+
+.m-view-images {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 18px;
+}
+.m-view-images img { max-width: 100%; height: auto; border-radius: var(--m-radius); }
+
+.m-view-content {
+    font-size: var(--m-text-md); line-height: var(--m-leading-relaxed);
+    color: var(--m-text); word-break: break-word;
+    min-height: 180px; padding: 8px 0 24px;
+}
+.m-view-content img { max-width: 100%; height: auto; border-radius: var(--m-radius-sm); }
+.m-view-content a { color: var(--m-primary); }
+
+.m-view-files {
+    margin: 18px 28px; padding: 14px 16px;
+    background: var(--m-surface-2); border-radius: var(--m-radius);
+}
+.m-view-section-title {
+    font-size: var(--m-text-sm); font-weight: 600;
+    color: var(--m-text-soft); margin: 0 0 10px;
+}
+.m-view-files ul { list-style: none; padding: 0; margin: 0; }
+.m-view-files li { margin-bottom: 8px; }
+.m-view-files li:last-child { margin-bottom: 0; }
+.m-view-file {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--m-text); text-decoration: none;
+    padding: 8px 10px; border-radius: var(--m-radius-sm);
+    transition: background 0.15s;
+}
+.m-view-file:hover { background: var(--m-surface); color: var(--m-primary); }
+.m-view-file strong { font-size: var(--m-text-md); font-weight: 500; }
+
+.m-view-nav {
+    display: flex; flex-direction: column;
+    border-top: 1px solid var(--m-border);
+}
+.m-view-nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px;
+    text-decoration: none; color: var(--m-text);
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-view-nav-item:last-child { border-bottom: 0; }
+.m-view-nav-item.is-empty { cursor: default; }
+.m-view-nav-item.is-empty:hover { background: transparent; }
+a.m-view-nav-item:hover { background: var(--m-surface-2); }
+.m-view-nav-label {
+    flex-shrink: 0; min-width: 56px;
+    font-size: var(--m-text-xs); color: var(--m-text-faint); font-weight: 600;
+}
+.m-view-nav-empty { flex: 1; font-size: var(--m-text-base); color: var(--m-text-faint); }
+
+/* qa 전용 — status pill (목록 + view 헤더 공통) */
+.m-qa-status {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: var(--m-text-xs); font-weight: 600;
+}
+.m-qa-status-rdy {
+    background: var(--m-surface-2); color: var(--m-text-muted);
+    border: 1px solid var(--m-border);
+}
+.m-qa-status-done {
+    background: var(--m-primary-soft); color: var(--m-primary);
+    border: 1px solid var(--m-primary);
+}
+.m-qa-cate-tag {
+    display: inline-block; padding: 2px 8px; margin-right: 6px;
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    border-radius: 999px;
+    font-size: var(--m-text-xs); color: var(--m-text-muted);
+}
+
 .m-qa-addq { margin: 20px 0; text-align: center; }
 .m-qa-addq .m-btn { width: auto; padding: 10px 22px; }
 
