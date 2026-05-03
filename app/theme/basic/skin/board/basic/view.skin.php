@@ -69,17 +69,23 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                             <span>삭제</span>
                         </a>
                         <?php } ?>
-                        <?php if ($copy_href || $move_href || $search_href) { ?>
-                        <div class="m-view-more">
-                            <button type="button" class="m-icon-btn btn_more_opt is_view_btn" aria-label="더보기">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-                            </button>
-                            <ul class="m-view-more-menu more_opt is_view_btn" hidden>
-                                <?php if ($copy_href)   { ?><li><a href="<?php echo $copy_href ?>" onclick="board_move(this.href); return false;">복사</a></li><?php } ?>
-                                <?php if ($move_href)   { ?><li><a href="<?php echo $move_href ?>" onclick="board_move(this.href); return false;">이동</a></li><?php } ?>
-                                <?php if ($search_href) { ?><li><a href="<?php echo $search_href ?>">검색</a></li><?php } ?>
-                            </ul>
-                        </div>
+                        <?php if ($copy_href) { ?>
+                        <a href="<?php echo $copy_href ?>" onclick="board_move(this.href); return false;" class="m-icon-btn" title="복사">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>복사</span>
+                        </a>
+                        <?php } ?>
+                        <?php if ($move_href) { ?>
+                        <a href="<?php echo $move_href ?>" onclick="board_move(this.href); return false;" class="m-icon-btn" title="이동">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+                            <span>이동</span>
+                        </a>
+                        <?php } ?>
+                        <?php if ($search_href) { ?>
+                        <a href="<?php echo $search_href ?>" class="m-icon-btn" title="검색">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span>검색</span>
+                        </a>
                         <?php }
                         $link_buttons = ob_get_contents();
                         ob_end_flush();
@@ -292,24 +298,6 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     border-color: rgba(239,68,68,0.4) !important;
     color: #ef4444 !important;
 }
-
-.m-view-more { position: relative; }
-.m-view-more-menu {
-    position: absolute; top: calc(100% + 4px); right: 0;
-    background: var(--m-surface);
-    border: 1px solid var(--m-border);
-    border-radius: var(--m-radius);
-    box-shadow: var(--m-shadow-md);
-    list-style: none; padding: 4px; margin: 0;
-    min-width: 120px; z-index: 100;
-}
-.m-view-more-menu li a {
-    display: block; padding: 8px 12px;
-    border-radius: var(--m-radius-sm);
-    font-size: var(--m-text-sm); color: var(--m-text-soft);
-    text-decoration: none;
-}
-.m-view-more-menu li a:hover { background: var(--m-surface-2); color: var(--m-text); }
 
 .m-view-body { padding: 24px 28px 28px; }
 
