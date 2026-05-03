@@ -304,6 +304,8 @@ if ($is_nogood) $colspan++;
     border-radius: var(--m-radius);
     color: var(--m-text-soft); text-decoration: none; font-size: 13px;
     transition: background 0.15s, border-color 0.15s, color 0.15s;
+    /* default.css 의 text-indent:-999px / overflow:hidden / 배경 GIF 해제 */
+    text-indent: 0; overflow: visible; background-image: none;
 }
 .m-board-pagination a:hover {
     background: var(--m-surface-2); border-color: var(--m-border-hover); color: var(--m-text);
