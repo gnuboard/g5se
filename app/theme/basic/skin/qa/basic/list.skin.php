@@ -1,194 +1,240 @@
 <?php
-if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
+if (!defined('_GNUBOARD_')) exit;
 
-// 선택옵션으로 인해 셀합치기가 가변적으로 변함
-$colspan = 6;
+require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
+$colspan = 5;
 if ($is_checkbox) $colspan++;
-
-// add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
-add_stylesheet('<link rel="stylesheet" href="'.$qa_skin_url.'/style.css">', 0);
 ?>
 
-<div id="bo_list">
-	<?php if ($category_option) { ?>
-    <!-- 카테고리 시작 { -->
-    <nav id="bo_cate">
-        <h2><?php echo $qaconfig['qa_title'] ?> 카테고리</h2>
-        <ul id="bo_cate_ul">
-            <?php echo $category_option ?>
-        </ul>
-    </nav>
-    <!-- } 카테고리 끝 -->
-    <?php } ?>
-    
-	<!-- 게시판 페이지 정보 및 버튼 시작 { -->
-    <div id="bo_btn_top">
-        <div id="bo_list_total">
-            <span>Total <?php echo number_format($total_count) ?>건</span>
-            <?php echo $page ?> 페이지
+<!-- 1:1 문의 목록 시작 { -->
+<div class="m-shell">
+    <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
+
+    <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
+        <div class="m-main-col">
+            <header class="m-board-head">
+                <div>
+                    <h1 style="font-size: 22px; margin-bottom: 4px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -3px; color: var(--m-primary);"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <?php echo get_text($qaconfig['qa_title']) ?>
+                    </h1>
+                    <p style="font-size: 13px; color: var(--m-text-muted);">
+                        Total <strong style="color: var(--m-text);"><?php echo number_format($total_count) ?></strong>건 · <?php echo $page ?> 페이지
+                    </p>
+                </div>
+                <div class="m-board-actions">
+                    <button type="button" class="m-icon-btn btn_bo_sch" aria-label="검색" title="검색">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                    <?php if ($admin_href) { ?>
+                    <a href="<?php echo $admin_href ?>" class="m-icon-btn" title="관리자">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </a>
+                    <?php } ?>
+                    <?php if ($write_href) { ?>
+                    <a href="/qa/write" class="m-btn m-btn-primary" style="width:auto; padding:8px 14px; gap:4px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        문의 등록
+                    </a>
+                    <?php } ?>
+                </div>
+            </header>
+
+            <div class="m-board-search-drawer" hidden>
+                <form name="fsearch" method="get" class="m-board-search-form">
+                    <input type="hidden" name="sca" value="<?php echo get_text($sca) ?>">
+                    <input type="hidden" name="sop" value="and">
+                    <select name="sfl" id="sfl" class="m-input" style="width: auto; flex: 0 0 auto;">
+                        <?php echo get_qa_sfl_select_options($sfl); ?>
+                    </select>
+                    <input type="text" name="stx" value="<?php echo get_text(stripslashes($stx)) ?>" required class="m-input" placeholder="검색어 입력" maxlength="60">
+                    <button type="submit" class="m-btn" style="width:auto; padding:9px 16px;">검색</button>
+                    <button type="button" class="bo_sch_cls m-btn m-btn-ghost" style="width:auto; padding:8px 12px;">닫기</button>
+                </form>
+            </div>
+
+            <?php if ($category_option) { ?>
+            <nav class="m-qa-cates">
+                <?php
+                // gnuboard 의 $category_option 은 이미 <li><a>...</a></li> 형태 — 그대로 사용
+                echo '<ul>'.$category_option.'</ul>';
+                ?>
+            </nav>
+            <?php } ?>
+
+            <form name="fqalist" id="fqalist" action="/qa/delete" onsubmit="return fqalist_submit(this);" method="post">
+                <input type="hidden" name="stx"   value="<?php echo get_text($stx) ?>">
+                <input type="hidden" name="sca"   value="<?php echo get_text($sca) ?>">
+                <input type="hidden" name="page"  value="<?php echo $page ?>">
+                <input type="hidden" name="token" value="<?php echo get_text($token) ?>">
+
+                <div class="m-card" style="padding: 0;">
+                    <table class="m-board-table m-qa-table">
+                        <thead>
+                            <tr>
+                                <?php if ($is_checkbox) { ?>
+                                <th class="m-col-chk">
+                                    <input type="checkbox" id="chkall" onclick="all_checked(this.checked);">
+                                </th>
+                                <?php } ?>
+                                <th class="m-col-num">번호</th>
+                                <th class="m-col-subject">제목</th>
+                                <th class="m-col-name">글쓴이</th>
+                                <th class="m-col-date">등록일</th>
+                                <th class="m-col-status">상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php for ($i = 0; $i < count($list); $i++) { ?>
+                            <tr>
+                                <?php if ($is_checkbox) { ?>
+                                <td class="m-col-chk">
+                                    <input type="checkbox" name="chk_qa_id[]" value="<?php echo $list[$i]['qa_id'] ?>">
+                                </td>
+                                <?php } ?>
+                                <td class="m-col-num"><?php echo $list[$i]['num']; ?></td>
+                                <td class="m-col-subject">
+                                    <?php if ($list[$i]['category']) { ?>
+                                    <span class="m-qa-cate-tag"><?php echo get_text($list[$i]['category']) ?></span>
+                                    <?php } ?>
+                                    <a href="/qa/<?php echo (int)$list[$i]['qa_id'] ?>" class="m-board-subject"><?php echo $list[$i]['subject'] ?></a>
+                                    <?php if ($list[$i]['icon_file']) { ?>
+                                    <svg class="m-icon-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                                    <?php } ?>
+                                </td>
+                                <td class="m-col-name"><?php echo $list[$i]['name']; ?></td>
+                                <td class="m-col-date"><?php echo $list[$i]['date']; ?></td>
+                                <td class="m-col-status">
+                                    <?php if ($list[$i]['qa_status']) { ?>
+                                    <span class="m-qa-status m-qa-status-done">
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                        답변완료
+                                    </span>
+                                    <?php } else { ?>
+                                    <span class="m-qa-status m-qa-status-rdy">
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        답변대기
+                                    </span>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <?php } ?>
+
+                            <?php if ($i == 0) { ?>
+                            <tr><td colspan="<?php echo $colspan ?>" class="m-empty">
+                                <div style="padding: 60px 20px; text-align: center; color: var(--m-text-faint);">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                    <p style="margin: 0; font-size: 13px;">등록된 문의가 없습니다.</p>
+                                </div>
+                            </td></tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="m-pagination"><?php echo $list_pages ?></div>
+
+                <?php if ($is_checkbox) { ?>
+                <div class="m-qa-bulk-row">
+                    <button type="submit" name="btn_submit" value="선택삭제" onclick="document.pressed=this.value" class="m-bulk-btn">선택삭제</button>
+                </div>
+                <?php } ?>
+            </form>
         </div>
 
-        <?php if ($admin_href || $write_href) { ?>
-        <ul class="btn_bo_user">
-        	<?php if ($admin_href) { ?><li><a href="<?php echo $admin_href ?>" class="btn_admin btn" title="관리자"><i class="fa fa-cog fa-spin fa-fw"></i><span class="sound_only">관리자</span></a></li><?php } ?>
-        	<li>
-        		<button type="button" class="btn_bo_sch btn_b01 btn" title="게시판 검색"><i class="fa fa-search" aria-hidden="true"></i><span class="sound_only">게시판 검색</span></button>
-				<!-- 게시판 검색 시작 { -->
-			    <div class="bo_sch_wrap">
-				    <fieldset class="bo_sch">
-				    	<h3>검색</h3>
-				        <legend>게시물 검색</legend>
-				        <form name="fsearch" method="get">
-				        <input type="hidden" name="sca" value="<?php echo $sca ?>">
-                        <input type="hidden" name="sop" value="and">
-                        <label for="sfl" class="sound_only">검색대상</label>
-                        <select name="sfl" id="sfl">
-                            <?php echo get_qa_sfl_select_options($sfl); ?>
-                        </select>
-				        <label for="stx" class="sound_only">검색어<strong class="sound_only"> 필수</strong></label>
-				        <div class="sch_bar">
-				       		<input type="text" name="stx" value="<?php echo stripslashes($stx); ?>" id="stx" required class="sch_input" size="25" maxlength="15" placeholder=" 검색어를 입력해주세요">
-							<button type="submit" value="검색" class="sch_btn" title="검색"><i class="fa fa-search" aria-hidden="true"></i><span class="sound_only">검색</span></button>
-				        </div>
-				        <button type="button" class="bo_sch_cls"><i class="fa fa-times" aria-hidden="true"></i><span class="sound_only">닫기</span></button>
-				        </form>
-				    </fieldset>
-			    	<div class="bo_sch_bg"></div>
-			    </div>
-			    <script>
-					// 게시판 검색
-					$(".btn_bo_sch").on("click", function() {
-					    $(".bo_sch_wrap").toggle();
-					})
-					$('.bo_sch_bg, .bo_sch_cls').click(function(){
-					    $('.bo_sch_wrap').hide();
-					});
-				</script>
-			    <!-- } 게시판 검색 끝 -->
-			</li>
-            <?php if ($write_href) { ?><li><a href="<?php echo $write_href ?>" class="btn_b01 btn" title="문의등록"><i class="fa fa-pencil" aria-hidden="true"></i><span class="sound_only">문의등록</span></a></li><?php } ?>
-        </ul>
-        <?php } ?>
-    </div>
-    <!-- } 게시판 페이지 정보 및 버튼 끝 -->
-	
-    <form name="fqalist" id="fqalist" action="./qadelete.php" onsubmit="return fqalist_submit(this);" method="post">
-    <input type="hidden" name="stx" value="<?php echo $stx; ?>">
-    <input type="hidden" name="sca" value="<?php echo $sca; ?>">
-    <input type="hidden" name="page" value="<?php echo $page; ?>">
-    <input type="hidden" name="token" value="<?php echo get_text($token); ?>">
-            
-    <div class="tbl_head01 tbl_wrap">
-        <table>
-        <caption><?php echo $board['bo_subject'] ?> 목록</caption>
-        <thead>
-        <tr>
-            <?php if ($is_checkbox) { ?>
-            <th scope="col" class="all_chk chk_box">
-                <input type="checkbox" id="chkall" onclick="if (this.checked) all_checked(true); else all_checked(false);" class="selec_chk">
-            	<label for="chkall">
-                	<span></span>
-                	<b class="sound_only">현재 페이지 게시물  전체선택</b>
-                </label>
-            </th>
-            <?php } ?>
-            <th scope="col">번호</th>
-            <th scope="col">제목</th>
-            <th scope="col">글쓴이</th>
-            <th scope="col">등록일</th>
-            <th scope="col">상태</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        for ($i=0; $i<count($list); $i++) {
-        	if ($i%2==0) $lt_class = "even";
-        	else $lt_class = "";
-        ?>
-        <tr class="<?php echo $lt_class ?>">
-            <?php if ($is_checkbox) { ?>
-            <td class="td_chk chk_box">
-            	<input type="checkbox" name="chk_qa_id[]" value="<?php echo $list[$i]['qa_id'] ?>" id="chk_qa_id_<?php echo $i ?>" class="selec_chk">
-                <label for="chk_qa_id_<?php echo $i ?>">
-            		<span></span>
-            		<b class="sound_only"><?php echo $list[$i]['subject'] ?></b>
-            	</label>
-            </td>
-            <?php } ?>
-            <td class="td_num"><?php echo $list[$i]['num']; ?></td>
-            <td class="td_subject">
-                <span class="bo_cate_link"><?php echo $list[$i]['category']; ?></span>
-                <a href="<?php echo $list[$i]['view_href']; ?>" class="bo_tit">
-                    <?php echo $list[$i]['subject']; ?>
-                    <?php if ($list[$i]['icon_file']) echo " <i class=\"fa fa-download\" aria-hidden=\"true\"></i>" ; ?>
-                </a>
-            </td>
-            <td class="td_name"><?php echo $list[$i]['name']; ?></td>
-            <td class="td_date"><?php echo $list[$i]['date']; ?></td>
-            <td class="td_stat"><span class=" <?php echo ($list[$i]['qa_status'] ? 'txt_done' : 'txt_rdy'); ?>"><?php echo ($list[$i]['qa_status'] ? '답변완료' : '답변대기'); ?></span></td>
-        </tr>
-        <?php
-        }
-        ?>
+        <aside class="m-side-col">
+            <?php require G5_THEME_PATH.'/modern/_outlogin.inc.php'; ?>
+        </aside>
+    </main>
 
-        <?php if ($i == 0) { echo '<tr><td colspan="'.$colspan.'" class="empty_table">게시물이 없습니다.</td></tr>'; } ?>
-        </tbody>
-        </table>
-    </div>
-	<!-- 페이지 -->
-	<?php echo $list_pages; ?>
-	<!-- 페이지 -->
-	
-    <div class="bo_fx">
-        <ul class="btn_bo_user">
-        	<?php if ($is_checkbox) { ?>
-            <li><button type="submit" name="btn_submit" value="선택삭제" title="선택삭제" onclick="document.pressed=this.value" class="btn btn_b01 btn_admin"><i class="fa fa-trash-o" aria-hidden="true"></i><span class="sound_only">선택삭제</span></button></li>
-            <?php } ?>
-            <?php if ($list_href) { ?><li><a href="<?php echo $list_href ?>" class="btn_b01 btn" title="목록"><i class="fa fa-list" aria-hidden="true"></i><span class="sound_only">목록</span></a></li><?php } ?>
-            <?php if ($write_href) { ?><li><a href="<?php echo $write_href ?>" class="btn_b01 btn" title="문의등록"><i class="fa fa-pencil" aria-hidden="true"></i><span class="sound_only">문의등록</span></a></li><?php } ?>
-        </ul>
-    </div>
-    </form>
+    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
 
-<?php if($is_checkbox) { ?>
-<noscript>
-<p>자바스크립트를 사용하지 않는 경우<br>별도의 확인 절차 없이 바로 선택삭제 처리하므로 주의하시기 바랍니다.</p>
-</noscript>
-<?php } ?>
+<style>
+/* 카테고리 nav (gnuboard 의 ul/li 마크업을 토큰 pill 로 재스타일) */
+.m-qa-cates ul { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.m-qa-cates li { margin: 0; }
+.m-qa-cates li a {
+    display: inline-flex; align-items: center;
+    padding: 6px 12px;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: 999px;
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+    text-decoration: none;
+    transition: all 0.15s;
+}
+.m-qa-cates li a:hover { border-color: var(--m-primary); color: var(--m-primary); }
+.m-qa-cates li#bo_cate_on a, .m-qa-cates li a#bo_cate_on,
+.m-qa-cates li.bo_cate_on a {
+    background: var(--m-primary); border-color: var(--m-primary); color: #fff;
+}
+
+/* 분류 태그 (목록 row 안) */
+.m-qa-cate-tag {
+    display: inline-block; padding: 2px 8px; margin-right: 6px;
+    background: var(--m-surface-2); border: 1px solid var(--m-border);
+    border-radius: 999px;
+    font-size: var(--m-text-xs); color: var(--m-text-muted);
+    vertical-align: 1px;
+}
+
+/* 상태 pill */
+.m-col-status { width: 100px; }
+.m-qa-status {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: var(--m-text-xs); font-weight: 600;
+}
+.m-qa-status-rdy {
+    background: var(--m-surface-2);
+    color: var(--m-text-muted);
+    border: 1px solid var(--m-border);
+}
+.m-qa-status-done {
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+    border: 1px solid var(--m-primary);
+}
+
+.m-qa-bulk-row { display: flex; justify-content: flex-end; gap: 6px; margin: 14px 0 0; }
+
+/* 모바일 — 글쓴이 칼럼 숨김 (제목 + 상태 + 등록일만 노출) */
+@media (max-width: 720px) {
+    .m-qa-table .m-col-name, .m-qa-table .m-col-num { display: none; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var toggleBtn = document.querySelector('.btn_bo_sch');
+    var drawer    = document.querySelector('.m-board-search-drawer');
+    var closeBtn  = document.querySelector('.bo_sch_cls');
+    if (toggleBtn && drawer) {
+        toggleBtn.addEventListener('click', function() {
+            drawer.hidden = !drawer.hidden;
+            if (!drawer.hidden) drawer.querySelector('input[name=stx]').focus();
+        });
+    }
+    if (closeBtn && drawer) closeBtn.addEventListener('click', function() { drawer.hidden = true; });
+});
 
 <?php if ($is_checkbox) { ?>
-<script>
 function all_checked(sw) {
     var f = document.fqalist;
-
-    for (var i=0; i<f.length; i++) {
-        if (f.elements[i].name == "chk_qa_id[]")
-            f.elements[i].checked = sw;
+    for (var i = 0; i < f.length; i++) {
+        if (f.elements[i].name == "chk_qa_id[]") f.elements[i].checked = sw;
     }
 }
-
 function fqalist_submit(f) {
-    var chk_count = 0;
-
-    for (var i=0; i<f.length; i++) {
-        if (f.elements[i].name == "chk_qa_id[]" && f.elements[i].checked)
-            chk_count++;
+    var cnt = 0;
+    for (var i = 0; i < f.length; i++) {
+        if (f.elements[i].name == "chk_qa_id[]" && f.elements[i].checked) cnt++;
     }
-
-    if (!chk_count) {
-        alert(document.pressed + "할 게시물을 하나 이상 선택하세요.");
-        return false;
-    }
-
-    if(document.pressed == "선택삭제") {
-        if (!confirm("선택한 게시물을 정말 삭제하시겠습니까?\n\n한번 삭제한 자료는 복구할 수 없습니다"))
-            return false;
-    }
-
+    if (!cnt) { alert(document.pressed + "할 게시물을 하나 이상 선택하세요."); return false; }
+    if (document.pressed == "선택삭제" && !confirm("선택한 게시물을 정말 삭제하시겠습니까?\n\n한번 삭제한 자료는 복구할 수 없습니다")) return false;
     return true;
 }
-</script>
 <?php } ?>
-<!-- } 게시판 목록 끝 -->
+</script>
+<!-- } 1:1 문의 목록 끝 -->
