@@ -22,8 +22,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                     <h1 class="m-view-title"><?php echo cut_str(get_text($view['wr_subject']), 70) ?></h1>
 
                     <div class="m-view-meta">
-                        <span class="m-view-author"><?php echo get_member_profile_img($view['mb_id']) ?></span>
-                        <strong class="m-view-name"><?php echo $view['name'] ?><?php if ($is_ip_view) echo ' ('.$ip.')' ?></strong>
+                        <span class="m-view-name"><?php echo $view['name'] ?></span>
+                        <?php if ($is_ip_view) { ?>
+                        <span class="m-view-ip"><?php echo $ip ?></span>
+                        <?php } ?>
                         <span class="m-view-meta-sep">·</span>
                         <span class="m-view-meta-item">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -276,13 +278,13 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     flex-wrap: wrap;
     font-size: var(--m-text-sm); color: var(--m-text-muted);
 }
-.m-view-author { display: inline-flex; align-items: center; }
-.m-view-author img {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 1px solid var(--m-border);
-    margin-right: 4px; vertical-align: middle;
+.m-view-name { display: inline-flex; align-items: center; color: var(--m-text); font-weight: 600; font-size: var(--m-text-base); }
+.m-view-name a, .m-view-name a:link, .m-view-name a:visited { color: var(--m-text); font-weight: 600; }
+.m-view-name .profile_img img {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1px solid var(--m-border); object-fit: cover;
 }
-.m-view-name { color: var(--m-text); font-weight: 600; font-size: var(--m-text-base); }
+.m-view-ip { font-size: var(--m-text-xs); color: var(--m-text-faint); font-weight: 400; }
 .m-view-meta-sep { color: var(--m-text-faint); }
 .m-view-meta-item {
     display: inline-flex; align-items: center; gap: 4px;
