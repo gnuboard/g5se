@@ -422,6 +422,9 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 }
 .sv_wrap .sv.sv_on { display: block !important; }
 .sv_wrap { position: relative; }
+/* sideview 가 열리면 부모 sv_wrap 자체를 stacking context 의 위로 올려서
+   테이블의 다른 행들 (hover bg 등) 에 가려지지 않도록 보장 */
+.sv_wrap:has(.sv_on) { z-index: 1000; }
 .sv_wrap .sv:before {
     border-bottom-color: var(--m-border) !important;
     top: -7px !important;
