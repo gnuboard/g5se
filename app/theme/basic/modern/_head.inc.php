@@ -345,6 +345,15 @@ html, body {
 .m-theme-toggle .m-icon-moon { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-sun  { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-moon { display: none; }
+
+/* SmartEditor2 단축키 일람 — 패널은 라이트 배경 그대로지만 다크모드에서 글자색이
+   page 의 --m-text(밝은색)로 상속돼 안보이는 문제. 이 패널만 글자색을 고정. */
+[data-theme="dark"] .cke_sc_def,
+[data-theme="dark"] .cke_sc_def dt,
+[data-theme="dark"] .cke_sc_def dd,
+[data-theme="dark"] .btn_cke_sc {
+    color: #1f2937;
+}
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
