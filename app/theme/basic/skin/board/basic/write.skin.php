@@ -241,6 +241,35 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 .m-autosave-pop strong { display: block; font-size: var(--m-text-base); margin-bottom: 8px; color: var(--m-text); }
 .m-autosave-pop ul { list-style: none; padding: 0; margin: 0 0 8px 0; max-height: 240px; overflow-y: auto; font-size: var(--m-text-sm); }
 
+/* 임시저장 항목: 제목 ─ (날짜 + 삭제) 한 줄 */
+.m-autosave-pop ul li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-autosave-pop ul li:last-child { border-bottom: 0; }
+.m-autosave-pop ul li:hover { background: var(--m-surface-2); }
+.m-autosave-pop ul li .autosave_load {
+    flex: 1; min-width: 0;
+    color: var(--m-text); text-decoration: none;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.m-autosave-pop ul li .autosave_load:hover { color: var(--m-primary); }
+.m-autosave-pop ul li > span {
+    display: inline-flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+    font-size: var(--m-text-xs); color: var(--m-text-faint);
+}
+.m-autosave-pop ul li .autosave_del {
+    appearance: none; background: transparent;
+    border: 1px solid var(--m-border); border-radius: var(--m-radius-sm);
+    padding: 2px 8px; font-size: var(--m-text-xs);
+    color: var(--m-text-muted); cursor: pointer;
+}
+.m-autosave-pop ul li .autosave_del:hover {
+    background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); color: #ef4444;
+}
+
 .m-write-content-wrap { margin-top: 4px; }
 .m-write-content-wrap textarea {
     width: 100%; box-sizing: border-box;
