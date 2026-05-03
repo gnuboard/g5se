@@ -474,5 +474,21 @@ function excute_good(href, $el, $tx) {
         }
     }, "json");
 }
+
+// 케밥 메뉴 토글 — 버튼 클릭 시 hidden 속성 토글, 바깥 클릭 시 닫기
+document.addEventListener("click", function(e) {
+    var btn = e.target.closest(".m-view-kebab .btn_more_opt");
+    if (btn) {
+        e.preventDefault();
+        var menu = btn.parentNode.querySelector(".m-view-kebab-menu");
+        var isOpen = !menu.hasAttribute("hidden");
+        document.querySelectorAll(".m-view-kebab-menu").forEach(function(m){ m.setAttribute("hidden",""); });
+        if (!isOpen) menu.removeAttribute("hidden");
+        return;
+    }
+    if (!e.target.closest(".m-view-kebab")) {
+        document.querySelectorAll(".m-view-kebab-menu").forEach(function(m){ m.setAttribute("hidden",""); });
+    }
+});
 </script>
 <!-- } 게시물 읽기 끝 -->
