@@ -346,13 +346,21 @@ html, body {
 [data-theme="dark"] .m-theme-toggle .m-icon-sun  { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-moon { display: none; }
 
-/* SmartEditor2 단축키 일람 — 패널은 라이트 배경 그대로지만 다크모드에서 글자색이
-   page 의 --m-text(밝은색)로 상속돼 안보이는 문제. 이 패널만 글자색을 고정. */
-[data-theme="dark"] .cke_sc_def,
+/* SmartEditor2 단축키 일람 — 다크모드에서 짙은 바탕 + 밝은 글자로. */
+[data-theme="dark"] .cke_sc_def {
+    background: var(--m-surface);
+    border-color: var(--m-border);
+    color: var(--m-text);
+}
 [data-theme="dark"] .cke_sc_def dt,
-[data-theme="dark"] .cke_sc_def dd,
+[data-theme="dark"] .cke_sc_def dd {
+    border-bottom-color: var(--m-border);
+    color: var(--m-text);
+}
 [data-theme="dark"] .btn_cke_sc {
-    color: #1f2937;
+    background: var(--m-surface);
+    border-color: var(--m-border);
+    color: var(--m-text);
 }
 </style>
 <?php
