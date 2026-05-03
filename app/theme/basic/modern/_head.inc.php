@@ -560,19 +560,22 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
     outline: none; border-color: var(--m-primary) !important;
     box-shadow: 0 0 0 3px var(--m-primary-soft);
 }
-#captcha_mp3 button,
-#captcha_reload button {
-    width: var(--cap-h); height: var(--cap-h); padding: 0;
-    background: transparent; border: 0; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    color: var(--m-text-soft);
+/* gnuboard 의 sprite png 가 라이트/다크 모두 보이도록 강제 (다크모드에서 우리
+   #captcha_mp3 { background: var(--m-surface) } 가 sprite 위에 깔리는 경우 대비). */
+#captcha #captcha_mp3,
+#captcha #captcha_reload {
+    width: var(--cap-h) !important; height: var(--cap-h) !important;
+    background-color: #fff !important;
+    background-image: url('/img/captcha2.png') !important;
+    background-repeat: no-repeat !important;
 }
+#captcha #captcha_mp3   { background-position: 0 0     !important; }
+#captcha #captcha_reload { background-position: 0 -40px !important; }
 #captcha_mp3:hover,
 #captcha_reload:hover {
-    background: var(--m-surface-2); border-color: var(--m-border-hover);
+    background-color: var(--m-surface-2) !important;
+    border-color: var(--m-border-hover) !important;
 }
-#captcha_mp3:hover button,
-#captcha_reload:hover button { color: var(--m-text); }
 #captcha_info {
     width: 100%; margin: 4px 0 0;
     font-size: var(--m-text-xs); color: var(--m-text-muted);
