@@ -204,6 +204,34 @@ function fwrite_submit(f) {
 </script>
 
 <style>
+/* board-common write 레이아웃 — board write.skin 의 동일 규칙 복제 (페이지 공유 안 됨) */
+.m-board-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.m-write-section { margin-bottom: 14px; padding: 20px 24px; }
+.m-write-section-title {
+    margin: 0 0 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--m-border);
+    font-size: var(--m-text-sm); font-weight: 600;
+    color: var(--m-text-soft); letter-spacing: 0.02em;
+}
+.m-write-row { }
+.m-write-row .m-label { margin-bottom: 6px; }
+.m-write-row + .m-write-row { margin-top: 14px; }
+.m-write-actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin: 20px 0 0;
+}
+@media (max-width: 540px) {
+    .m-write-actions { flex-direction: column-reverse; }
+    .m-write-actions .m-btn { width: 100% !important; max-width: none !important; }
+}
+.m-label-req {
+    font-size: var(--m-text-xs); font-weight: 500;
+    color: var(--m-primary); margin-left: 4px;
+}
+
 .m-qa-contact-row { }
 .m-qa-contact-input { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .m-qa-contact-input .m-input { flex: 1; min-width: 220px; }
