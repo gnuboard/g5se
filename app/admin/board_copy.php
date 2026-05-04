@@ -46,9 +46,36 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
         body { background-color: var(--slate-50); color: var(--slate-900); padding: 1.5rem; }
-        html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
+        html.dark body, html[data-theme="dark"] body { background-color: var(--slate-950); color: var(--slate-100); }
         .popup-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
         .popup-head h1 { font-size: 1.125rem; font-weight: 700; }
+
+        /* 다크모드 폴백 — 일부 브라우저에서 [data-theme="dark"] 셀렉터 cascade 가
+           popup 컨텍스트에 늦게 적용되는 경우 대비. .dark 클래스로도 동일 톤 강제. */
+        html.dark .legacy-admin-content .frm_input,
+        html.dark .legacy-admin-content input[type="text"]:not([class*="rounded"]),
+        html.dark .legacy-admin-content input[type="password"]:not([class*="rounded"]),
+        html.dark .legacy-admin-content input[type="number"]:not([class*="rounded"]),
+        html.dark .legacy-admin-content input[type="email"]:not([class*="rounded"]),
+        html.dark .legacy-admin-content textarea:not([class*="rounded"]),
+        html.dark .legacy-admin-content select:not([class*="rounded"]) {
+            border-color: var(--slate-700) !important;
+            background-color: var(--slate-800) !important;
+            color: var(--slate-100) !important;
+        }
+        html.dark .legacy-admin-content .tbl_frm01 {
+            border-color: var(--slate-800) !important;
+            background-color: var(--slate-900) !important;
+        }
+        html.dark .legacy-admin-content .tbl_frm01 tbody th {
+            background-color: #15202b !important;
+            color: var(--slate-300) !important;
+            border-bottom-color: var(--slate-800) !important;
+        }
+        html.dark .legacy-admin-content .tbl_frm01 tbody td {
+            border-bottom-color: var(--slate-800) !important;
+            color: var(--slate-300) !important;
+        }
     </style>
 </head>
 <body>
