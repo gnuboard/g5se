@@ -144,8 +144,8 @@ admin_layout_start('메뉴 설정', 'menus');
         </div>
 
         <div class="flex flex-wrap items-center gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
-            <span class="text-xs text-slate-500">— 변경/삭제/추가 후 저장을 눌러야 반영됩니다</span>
-            <button type="submit" class="ml-auto h-9 px-5 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-sm font-semibold">저장</button>
+            <span class="ml-auto text-xs text-slate-500">변경/삭제/추가 후 저장을 눌러야 반영됩니다 —</span>
+            <button type="submit" class="h-9 px-5 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-sm font-semibold">저장</button>
         </div>
     </form>
 
