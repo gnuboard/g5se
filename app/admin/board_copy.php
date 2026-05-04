@@ -32,6 +32,13 @@ $content = preg_replace_callback(
     $content
 );
 
+// gnuboard 의 admin.js 로더 + g5_admin_csrf_token_key 변수 정의 제거.
+// admin.js 는 form submit 시 /adm/ajax.token.php 로 AJAX 호출해 token 을 갱신하지만,
+// 우리 환경에선 그 endpoint 가 없어 빈 토큰으로 덮어쓰는 부작용 → check_admin_token 실패.
+// 우리 inline JS 가 페이지 로드 시점의 get_admin_token() 결과를 form 에 채워주므로 admin.js 불필요.
+$content = preg_replace('#<script[^>]*>\s*var\s+g5_admin_csrf_token_key\s*=.*?</script>#si', '', $content);
+$content = preg_replace('#<script[^>]*src="[^"]*admin\.js[^"]*"[^>]*></script>#i', '', $content);
+
 $page_title = $g5['title'] ?? '게시판 복사';
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 ?>
