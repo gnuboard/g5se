@@ -10,8 +10,9 @@ function get_shop_item($it_id, $is_cache=false, $add_query=''){
     $item = $is_cache ? $g5_object->get('shop', $it_id, $add_query_key) : null;
 
     if( !$item ){
-        $sql = " select * from {$g5['g5_shop_item_table']} where it_id = '{$it_id}' $add_query ";
-        $item = sql_fetch($sql);
+        // $add_query 는 호출자 SQL fragment
+        $item = sql_pdo_fetch(" select * from {$g5['g5_shop_item_table']} where it_id = :it_id $add_query ",
+                              [':it_id' => $it_id]);
 
         $g5_object->set('shop', $it_id, $item, $add_query_key);
     }
@@ -32,12 +33,12 @@ function get_shop_item_with_category($it_id, $seo_title='', $add_query=''){
     global $g5, $default;
 
     if( $seo_title ){
-        $sql = " select a.*, b.ca_name, b.ca_use from {$g5['g5_shop_item_table']} a, {$g5['g5_shop_category_table']} b where a.it_seo_title = '".sql_real_escape_string(generate_seo_title($seo_title))."' and a.ca_id = b.ca_id $add_query order by it_id desc limit 1";
+        $item = sql_pdo_fetch(" select a.*, b.ca_name, b.ca_use from {$g5['g5_shop_item_table']} a, {$g5['g5_shop_category_table']} b where a.it_seo_title = :seo_title and a.ca_id = b.ca_id $add_query order by it_id desc limit 1",
+                              [':seo_title' => generate_seo_title($seo_title)]);
     } else {
-        $sql = " select a.*, b.ca_name, b.ca_use from {$g5['g5_shop_item_table']} a, {$g5['g5_shop_category_table']} b where a.it_id = '$it_id' and a.ca_id = b.ca_id $add_query order by it_id desc limit 1";
+        $item = sql_pdo_fetch(" select a.*, b.ca_name, b.ca_use from {$g5['g5_shop_item_table']} a, {$g5['g5_shop_category_table']} b where a.it_id = :it_id and a.ca_id = b.ca_id $add_query order by it_id desc limit 1",
+                              [':it_id' => $it_id]);
     }
-    
-    $item = sql_fetch($sql);
 
     if( isset($item['it_basic']) ) {
         $item['it_basic'] = conv_content($item['it_basic'], 1);
@@ -110,23 +111,23 @@ function get_shop_category_array($is_cache=false){
         return $categories;
     }
 
-    $result = sql_query(get_shop_category_sql('', 2));
+    $result = sql_pdo_query(get_shop_category_sql('', 2));
 
     for($i=0; $row=sql_fetch_array($result); $i++) {
 
         $row['url'] = shop_category_url($row['ca_id']);
         $categories[$row['ca_id']]['text'] = $row;
-        
+
         if( $row['ca_id'] ){
-            $result2 = sql_query(get_shop_category_sql($row['ca_id'], 4));
+            $result2 = sql_pdo_query(get_shop_category_sql($row['ca_id'], 4));
 
             for($j=0; $row2=sql_fetch_array($result2); $j++) {
 
                 $row2['url'] = shop_category_url($row2['ca_id']);
                 $categories[$row['ca_id']][$row2['ca_id']]['text'] = $row2;
-                
+
                 if( $row2['ca_id'] ){
-                    $result3 = sql_query(get_shop_category_sql($row2['ca_id'], 6));
+                    $result3 = sql_pdo_query(get_shop_category_sql($row2['ca_id'], 6));
                     for($k=0; $row3=sql_fetch_array($result3); $k++) {
 
                         $row3['url'] = shop_category_url($row3['ca_id']);
@@ -143,11 +144,15 @@ function get_shop_category_array($is_cache=false){
 function get_shop_category_sql($ca_id, $len){
     global $g5;
 
+    // ca_id 는 사용자 입력 가능 → 안전 필터
+    $ca_id_safe = preg_replace('/[^0-9a-z]/i', '', $ca_id);
+    $len_i = (int) $len;
+
     $sql = " select * from {$g5['g5_shop_category_table']}
                 where ca_use = '1' ";
-    if($ca_id)
-        $sql .= " and ca_id like '$ca_id%' ";
-    $sql .= " and length(ca_id) = '$len' order by ca_order, ca_id ";
+    if($ca_id_safe)
+        $sql .= " and ca_id like '{$ca_id_safe}%' ";
+    $sql .= " and length(ca_id) = {$len_i} order by ca_order, ca_id ";
 
     return $sql;
 }
@@ -169,12 +174,12 @@ function get_shop_member_coupon_count($mb_id='', $is_cache=false){
 
     // 쿠폰
     $cp_count = 0;
-    $sql = " select cp_id
+    $res = sql_pdo_query(" select cp_id
                 from {$g5['g5_shop_coupon_table']}
-                where mb_id IN ( '{$mb_id}', '전체회원' )
-                  and cp_start <= '".G5_TIME_YMD."'
-                  and cp_end >= '".G5_TIME_YMD."' ";
-    $res = sql_query($sql);
+                where mb_id IN ( :mb_id, '전체회원' )
+                  and cp_start <= :today
+                  and cp_end >= :today ",
+                [':mb_id' => $mb_id, ':today' => G5_TIME_YMD]);
 
     for($k=0; $cp=sql_fetch_array($res); $k++) {
         if(!is_used_coupon($mb_id, $cp['cp_id']))
@@ -194,8 +199,8 @@ function get_shop_item_options($it_id, $subject, $no)
     if(!$it_id || !$subject)
         return '';
 
-    $sql = " select * from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = '$it_id' and io_use = '1' order by io_no asc ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = :it_id and io_use = '1' order by io_no asc ",
+                            [':it_id' => $it_id]);
     if(!sql_num_rows($result))
         return '';
 
