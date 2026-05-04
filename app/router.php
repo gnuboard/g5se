@@ -101,8 +101,8 @@ class Router
         //     → /admin/admin.menu100 / /admin/menu.d/foo / /admin/_layout 등
         //       internal 파일이 web 으로 노출되지 않도록 차단
         //   - 서브디렉토리 가능 (segment/segment) — 단 모든 segment 가 같은 룰
-        '#^/admin/?$#'                                                              => 'admin/index.php',
-        '#^/admin/(?P<page>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)/?$#' => 'admin/{page}.php',
+        '#^/admin/?$#'                                                                       => 'admin/index.php',
+        '#^/admin/(?P<page>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'admin/{page}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
