@@ -86,9 +86,27 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
     <link rel="stylesheet" href="/admin/css/admin.css">
+    <!-- UnoCSS FOUC 방지: body 를 처음에 invisible 로 두고, UnoCSS 가 첫 utility 주입을 마친 뒤 가시화.
+         (UnoCSS runtime 은 MutationObserver 로 body 를 관찰하며 클래스 → CSS 를 비동기 주입하므로,
+          그 사이에 body 가 paint 되면 layout 이 잠시 어긋난 채 보였다 재배치되는 flicker 가 발생.) -->
+    <style id="uno-fouc-guard">html.uno-loading body{visibility:hidden}</style>
+    <script>document.documentElement.classList.add('uno-loading');</script>
+
     <!-- UnoCSS runtime — utility class 를 런타임에 생성. admin-primary 팔레트 등록 -->
     <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>
+    <script>
+        // body 가 파싱되며 UnoCSS 가 클래스를 감지·주입할 시간을 한 frame 남긴 뒤 unhide.
+        // DOMContentLoaded 후 + requestAnimationFrame 두 번이면 첫 paint 시점엔 모든 utility CSS 가 inject 끝난 상태.
+        function unoFoucReady(){requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('uno-loading');});});}
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', unoFoucReady);
+        } else {
+            unoFoucReady();
+        }
+        // 안전망: 1.5s 안에 무조건 가시화 (네트워크 장애로 unoCSS 가 안 와도 페이지 영구 hidden 방지)
+        setTimeout(function(){document.documentElement.classList.remove('uno-loading');}, 1500);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <style>
