@@ -57,8 +57,8 @@ $sort_link = function (string $col) use ($sst, $sod, $sfl, $stx, $page, $gr_id, 
     $arrow = '';
     if ($sst === $col) {
         $arrow = $sod === 'desc'
-            ? '<svg class="w-3 h-3 inline-block opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
-            : '<svg class="w-3 h-3 inline-block opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+            ? '<span class="sort-arrow">▾</span>'
+            : '<span class="sort-arrow">▴</span>';
     }
     return '<a href="/admin/boardgroupmember_list?'.$h($qs).'" class="inline-flex items-center gap-0.5 hover:text-admin-primary-700 dark:hover:text-admin-primary-300">';
 };
