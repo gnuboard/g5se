@@ -183,15 +183,19 @@ if ($w == '' || $w == 'u') {
         $begin_reply_char = 'A';
         $end_reply_char = 'Z';
         $reply_number = +1;
-        $sql = " select MAX(SUBSTRING(wr_reply, $reply_len, 1)) as reply from {$write_table} where wr_num = '{$reply_array['wr_num']}' and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
+        $sql = " select MAX(SUBSTRING(wr_reply, $reply_len, 1)) as reply from {$write_table} where wr_num = :wr_num and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
     } else {
         $begin_reply_char = 'Z';
         $end_reply_char = 'A';
         $reply_number = -1;
-        $sql = " select MIN(SUBSTRING(wr_reply, {$reply_len}, 1)) as reply from {$write_table} where wr_num = '{$reply_array['wr_num']}' and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
+        $sql = " select MIN(SUBSTRING(wr_reply, {$reply_len}, 1)) as reply from {$write_table} where wr_num = :wr_num and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
     }
-    if ($reply_array['wr_reply']) $sql .= " and wr_reply like '{$reply_array['wr_reply']}%' ";
-    $row = sql_fetch($sql);
+    $sql_params = [':wr_num' => $reply_array['wr_num']];
+    if ($reply_array['wr_reply']) {
+        $sql .= " and wr_reply like :wr_reply ";
+        $sql_params[':wr_reply'] = $reply_array['wr_reply'].'%';
+    }
+    $row = sql_pdo_fetch($sql, $sql_params);
 
     if (!$row['reply']) {
         $reply_char = $begin_reply_char;
@@ -234,20 +238,21 @@ if ($w == '' || $w == 'r') {
 
     if ($member['mb_id']) {
         $mb_id = $member['mb_id'];
-        $wr_name = addslashes(clean_xss_tags($board['bo_use_name'] ? $member['mb_name'] : $member['mb_nick']));
+        // PDO placeholder 와 충돌 방지 — addslashes 제거 (raw 값 그대로 바인딩)
+        $wr_name = clean_xss_tags($board['bo_use_name'] ? $member['mb_name'] : $member['mb_nick']);
         $wr_password = '';
-        $wr_email = addslashes($member['mb_email']);
-        $wr_homepage = addslashes(clean_xss_tags($member['mb_homepage']));
+        $wr_email = $member['mb_email'];
+        $wr_homepage = clean_xss_tags($member['mb_homepage']);
     } else {
         $mb_id = '';
         // 비회원의 경우 이름이 누락되는 경우가 있음
-        $wr_name = addslashes(clean_xss_tags(stripslashes(trim($_POST['wr_name']))));
+        $wr_name = clean_xss_tags(trim($_POST['wr_name']));
         $wr_name = preg_replace("#[\\\]+$#", "", $wr_name);
         if (!$wr_name)
             alert('이름은 필히 입력하셔야 합니다.');
         $wr_password = get_encrypt_string($wr_password);
         $wr_email = get_email_address(trim($_POST['wr_email']));
-        $wr_homepage = addslashes(clean_xss_tags(stripslashes($wr_homepage)));
+        $wr_homepage = clean_xss_tags($wr_homepage);
     }
 
     if ($w == 'r') {
@@ -265,58 +270,80 @@ if ($w == '' || $w == 'r') {
         $wr_reply = '';
     }
     
-    $sql = " insert into $write_table
-                set wr_num = " . ($w == 'r' ? "'$wr_num'" : "(SELECT IFNULL(MIN(wr_num) - 1, -1) FROM $write_table as sq) ") . ",
-                     wr_reply = '$wr_reply',
+    // INSERT 의 wr_num 은 'r' 분기에서 정수, 그 외 분기에서 SQL subquery (식별자) — placeholder 못 받아 보간 유지
+    $wr_num_sql = ($w == 'r') ? ':wr_num' : "(SELECT IFNULL(MIN(wr_num) - 1, -1) FROM $write_table as sq) ";
+
+    sql_pdo_query(" insert into $write_table
+                set wr_num = {$wr_num_sql},
+                     wr_reply = :wr_reply,
                      wr_comment = 0,
-                     ca_name = '$ca_name',
-                     wr_option = '$wr_option',
-                     wr_subject = '$wr_subject',
-                     wr_content = '$wr_content',
-                     wr_seo_title = '$wr_seo_title',
-                     wr_link1 = '$wr_link1',
-                     wr_link2 = '$wr_link2',
+                     ca_name = :ca_name,
+                     wr_option = :wr_option,
+                     wr_subject = :wr_subject,
+                     wr_content = :wr_content,
+                     wr_seo_title = :wr_seo_title,
+                     wr_link1 = :wr_link1,
+                     wr_link2 = :wr_link2,
                      wr_link1_hit = 0,
                      wr_link2_hit = 0,
                      wr_hit = 0,
                      wr_good = 0,
                      wr_nogood = 0,
-                     mb_id = '{$member['mb_id']}',
-                     wr_password = '$wr_password',
-                     wr_name = '$wr_name',
-                     wr_email = '$wr_email',
-                     wr_homepage = '$wr_homepage',
-                     wr_datetime = '".G5_TIME_YMDHIS."',
-                     wr_last = '".G5_TIME_YMDHIS."',
-                     wr_ip = '{$_SERVER['REMOTE_ADDR']}',
-                     wr_1 = '$wr_1',
-                     wr_2 = '$wr_2',
-                     wr_3 = '$wr_3',
-                     wr_4 = '$wr_4',
-                     wr_5 = '$wr_5',
-                     wr_6 = '$wr_6',
-                     wr_7 = '$wr_7',
-                     wr_8 = '$wr_8',
-                     wr_9 = '$wr_9',
-                     wr_10 = '$wr_10' ";
-    sql_query($sql);
+                     mb_id = :mb_id,
+                     wr_password = :wr_password,
+                     wr_name = :wr_name,
+                     wr_email = :wr_email,
+                     wr_homepage = :wr_homepage,
+                     wr_datetime = :wr_datetime,
+                     wr_last = :wr_last,
+                     wr_ip = :wr_ip,
+                     wr_1 = :wr_1, wr_2 = :wr_2, wr_3 = :wr_3, wr_4 = :wr_4, wr_5 = :wr_5,
+                     wr_6 = :wr_6, wr_7 = :wr_7, wr_8 = :wr_8, wr_9 = :wr_9, wr_10 = :wr_10 ",
+        array_merge($w == 'r' ? [':wr_num' => $wr_num] : [], [
+            ':wr_reply'     => $wr_reply,
+            ':ca_name'      => stripslashes($ca_name),
+            ':wr_option'    => $wr_option,
+            ':wr_subject'   => stripslashes($wr_subject),
+            ':wr_content'   => stripslashes($wr_content),
+            ':wr_seo_title' => $wr_seo_title,
+            ':wr_link1'     => stripslashes($wr_link1),
+            ':wr_link2'     => stripslashes($wr_link2),
+            ':mb_id'        => $member['mb_id'],
+            ':wr_password'  => $wr_password,
+            ':wr_name'      => $wr_name,        // 이미 위에서 clean (addslashes 제거됨)
+            ':wr_email'     => $wr_email,
+            ':wr_homepage'  => $wr_homepage,
+            ':wr_datetime'  => G5_TIME_YMDHIS,
+            ':wr_last'      => G5_TIME_YMDHIS,
+            ':wr_ip'        => $_SERVER['REMOTE_ADDR'],
+            ':wr_1'  => stripslashes($wr_1),  ':wr_2'  => stripslashes($wr_2),
+            ':wr_3'  => stripslashes($wr_3),  ':wr_4'  => stripslashes($wr_4),
+            ':wr_5'  => stripslashes($wr_5),  ':wr_6'  => stripslashes($wr_6),
+            ':wr_7'  => stripslashes($wr_7),  ':wr_8'  => stripslashes($wr_8),
+            ':wr_9'  => stripslashes($wr_9),  ':wr_10' => stripslashes($wr_10),
+        ])
+    );
 
     $wr_id = sql_insert_id();
 
     // 부모 아이디에 UPDATE
-    sql_query(" update $write_table set wr_parent = '$wr_id' where wr_id = '$wr_id' ");
+    sql_pdo_query(" update $write_table set wr_parent = :wr_id where wr_id = :wr_id ", [':wr_id' => $wr_id]);
 
     // 새글 INSERT
-    sql_query(" insert into {$g5['board_new_table']} ( bo_table, wr_id, wr_parent, bn_datetime, mb_id ) values ( '{$bo_table}', '{$wr_id}', '{$wr_id}', '".G5_TIME_YMDHIS."', '{$member['mb_id']}' ) ");
+    sql_pdo_query(" insert into {$g5['board_new_table']} ( bo_table, wr_id, wr_parent, bn_datetime, mb_id )
+                    values ( :bo_table, :wr_id, :wr_id, :bn_datetime, :mb_id ) ",
+                  [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bn_datetime' => G5_TIME_YMDHIS, ':mb_id' => $member['mb_id']]);
 
     // 게시글 1 증가
-    sql_query("update {$g5['board_table']} set bo_count_write = bo_count_write + 1 where bo_table = '{$bo_table}'");
+    sql_pdo_query("update {$g5['board_table']} set bo_count_write = bo_count_write + 1 where bo_table = :bo_table",
+                  [':bo_table' => $bo_table]);
 
     // 쓰기 포인트 부여
     if ($w == '') {
         if ($notice) {
             $bo_notice = $wr_id.($board['bo_notice'] ? ",".$board['bo_notice'] : '');
-            sql_query(" update {$g5['board_table']} set bo_notice = '{$bo_notice}' where bo_table = '{$bo_table}' ");
+            sql_pdo_query(" update {$g5['board_table']} set bo_notice = :bo_notice where bo_table = :bo_table ",
+                          [':bo_notice' => $bo_notice, ':bo_table' => $bo_table]);
         }
 
         insert_point($member['mb_id'], $board['bo_write_point'], "{$board['bo_subject']} {$wr_id} 글쓰기", $bo_table, $wr_id, '쓰기');
@@ -355,74 +382,76 @@ if ($w == '' || $w == 'r') {
     }
 
     if ($member['mb_id']) {
-        // 자신의 글이라면
+        // 자신의 글이라면 — addslashes 제거 (PDO placeholder 와 충돌)
         if ($member['mb_id'] === $wr['mb_id']) {
             $mb_id = $member['mb_id'];
-            $wr_name = addslashes(clean_xss_tags($board['bo_use_name'] ? $member['mb_name'] : $member['mb_nick']));
-            $wr_email = addslashes($member['mb_email']);
-            $wr_homepage = addslashes(clean_xss_tags($member['mb_homepage']));
+            $wr_name = clean_xss_tags($board['bo_use_name'] ? $member['mb_name'] : $member['mb_nick']);
+            $wr_email = $member['mb_email'];
+            $wr_homepage = clean_xss_tags($member['mb_homepage']);
         } else {
             $mb_id = $wr['mb_id'];
             if(isset($_POST['wr_name']) && $_POST['wr_name']) {
-                $wr_name = addslashes(clean_xss_tags(stripslashes(trim($_POST['wr_name']))));
+                $wr_name = clean_xss_tags(trim($_POST['wr_name']));
                 $wr_name = preg_replace("#[\\\]+$#", "", $wr_name);
             } else
-                $wr_name = addslashes(clean_xss_tags($wr['wr_name']));
+                $wr_name = clean_xss_tags($wr['wr_name']);
             if(isset($_POST['wr_email']) && $_POST['wr_email'])
                 $wr_email = get_email_address(trim($_POST['wr_email']));
             else
-                $wr_email = addslashes($wr['wr_email']);
+                $wr_email = $wr['wr_email'];
             if(isset($_POST['wr_homepage']) && $_POST['wr_homepage'])
-                $wr_homepage = addslashes(clean_xss_tags(stripslashes($_POST['wr_homepage'])));
+                $wr_homepage = clean_xss_tags($_POST['wr_homepage']);
             else
-                $wr_homepage = addslashes(clean_xss_tags($wr['wr_homepage']));
+                $wr_homepage = clean_xss_tags($wr['wr_homepage']);
         }
     } else {
         $mb_id = "";
         // 비회원의 경우 이름이 누락되는 경우가 있음
         if (!trim($wr_name)) alert("이름은 필히 입력하셔야 합니다.");
-        $wr_name = addslashes(clean_xss_tags(stripslashes(trim($_POST['wr_name']))));
+        $wr_name = clean_xss_tags(trim($_POST['wr_name']));
         $wr_name = preg_replace("#[\\\]+$#", "", $wr_name);
         $wr_email = get_email_address(trim($_POST['wr_email']));
     }
 
-    $sql_password = $wr_password ? " , wr_password = '".get_encrypt_string($wr_password)."' " : "";
-
-    $sql_ip = '';
-    if (!$is_admin)
-        $sql_ip = " , wr_ip = '{$_SERVER['REMOTE_ADDR']}' ";
-
-    $sql = " update {$write_table}
-                set ca_name = '{$ca_name}',
-                     wr_option = '{$wr_option}',
-                     wr_subject = '{$wr_subject}',
-                     wr_content = '{$wr_content}',
-                     wr_seo_title = '$wr_seo_title',
-                     wr_link1 = '{$wr_link1}',
-                     wr_link2 = '{$wr_link2}',
-                     mb_id = '{$mb_id}',
-                     wr_name = '{$wr_name}',
-                     wr_email = '{$wr_email}',
-                     wr_homepage = '{$wr_homepage}',
-                     wr_1 = '{$wr_1}',
-                     wr_2 = '{$wr_2}',
-                     wr_3 = '{$wr_3}',
-                     wr_4 = '{$wr_4}',
-                     wr_5 = '{$wr_5}',
-                     wr_6 = '{$wr_6}',
-                     wr_7 = '{$wr_7}',
-                     wr_8 = '{$wr_8}',
-                     wr_9 = '{$wr_9}',
-                     wr_10= '{$wr_10}'
-                     {$sql_ip}
-                     {$sql_password}
-              where wr_id = '{$wr['wr_id']}' ";
-    sql_query($sql);
+    // UPDATE — named placeholder + 옵션 필드 동적 추가
+    $sql_set = " ca_name = :ca_name, wr_option = :wr_option, wr_subject = :wr_subject,
+                 wr_content = :wr_content, wr_seo_title = :wr_seo_title,
+                 wr_link1 = :wr_link1, wr_link2 = :wr_link2, mb_id = :mb_id,
+                 wr_name = :wr_name, wr_email = :wr_email, wr_homepage = :wr_homepage,
+                 wr_1 = :wr_1, wr_2 = :wr_2, wr_3 = :wr_3, wr_4 = :wr_4, wr_5 = :wr_5,
+                 wr_6 = :wr_6, wr_7 = :wr_7, wr_8 = :wr_8, wr_9 = :wr_9, wr_10 = :wr_10 ";
+    $sql_params = [
+        ':ca_name'      => stripslashes($ca_name),
+        ':wr_option'    => $wr_option,
+        ':wr_subject'   => stripslashes($wr_subject),
+        ':wr_content'   => stripslashes($wr_content),
+        ':wr_seo_title' => $wr_seo_title,
+        ':wr_link1'     => stripslashes($wr_link1),
+        ':wr_link2'     => stripslashes($wr_link2),
+        ':mb_id'        => $mb_id,
+        ':wr_name'      => $wr_name,
+        ':wr_email'     => $wr_email,
+        ':wr_homepage'  => $wr_homepage,
+        ':wr_1' => stripslashes($wr_1), ':wr_2' => stripslashes($wr_2),
+        ':wr_3' => stripslashes($wr_3), ':wr_4' => stripslashes($wr_4),
+        ':wr_5' => stripslashes($wr_5), ':wr_6' => stripslashes($wr_6),
+        ':wr_7' => stripslashes($wr_7), ':wr_8' => stripslashes($wr_8),
+        ':wr_9' => stripslashes($wr_9), ':wr_10' => stripslashes($wr_10),
+    ];
+    if (!$is_admin) {
+        $sql_set .= " , wr_ip = :wr_ip ";
+        $sql_params[':wr_ip'] = $_SERVER['REMOTE_ADDR'];
+    }
+    if ($wr_password) {
+        $sql_set .= " , wr_password = :wr_password ";
+        $sql_params[':wr_password'] = get_encrypt_string($wr_password);
+    }
+    sql_pdo_query(" update {$write_table} set {$sql_set} where wr_id = :wr_id_where ",
+                  array_merge($sql_params, [':wr_id_where' => $wr['wr_id']]));
 
     // 분류가 수정되는 경우 해당되는 코멘트의 분류명도 모두 수정함
-    // 코멘트의 분류를 수정하지 않으면 검색이 제대로 되지 않음
-    $sql = " update {$write_table} set ca_name = '{$ca_name}' where wr_parent = '{$wr['wr_id']}' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$write_table} set ca_name = :ca_name where wr_parent = :wr_parent ",
+                  [':ca_name' => stripslashes($ca_name), ':wr_parent' => $wr['wr_id']]);
 
     /*
     if ($notice) {
@@ -444,7 +473,8 @@ if ($w == '' || $w == 'r') {
     */
 
     $bo_notice = board_notice($board['bo_notice'], $wr_id, $notice);
-    sql_query(" update {$g5['board_table']} set bo_notice = '{$bo_notice}' where bo_table = '{$bo_table}' ");
+    sql_pdo_query(" update {$g5['board_table']} set bo_notice = :bo_notice where bo_table = :bo_table ",
+                  [':bo_notice' => $bo_notice, ':bo_table' => $bo_table]);
 
     // 글을 수정한 경우에는 제목이 달라질수도 있으니 static variable 를 새로고침합니다.
     $write = get_write( $write_table, $wr['wr_id'], false);
@@ -501,7 +531,8 @@ if(isset($_FILES['bf_file']['name']) && is_array($_FILES['bf_file']['name'])) {
         if (isset($_POST['bf_file_del'][$i]) && $_POST['bf_file_del'][$i]) {
             $upload[$i]['del_check'] = true;
 
-            $row = sql_fetch(" select * from {$g5['board_file_table']} where bo_table = '{$bo_table}' and wr_id = '{$wr_id}' and bf_no = '{$i}' ");
+            $row = sql_pdo_fetch(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                                 [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bf_no' => $i]);
 
             $delete_file = run_replace('delete_file_path', G5_DATA_PATH.'/file/'.$bo_table.'/'.str_replace('../', '', $row['bf_file']), $row);
             if( file_exists($delete_file) ){
@@ -558,7 +589,8 @@ if(isset($_FILES['bf_file']['name']) && is_array($_FILES['bf_file']['name'])) {
             // 4.00.11 - 글답변에서 파일 업로드시 원글의 파일이 삭제되는 오류를 수정
             if ($w == 'u') {
                 // 존재하는 파일이 있다면 삭제합니다.
-                $row = sql_fetch(" select * from {$g5['board_file_table']} where bo_table = '$bo_table' and wr_id = '$wr_id' and bf_no = '$i' ");
+                $row = sql_pdo_fetch(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                                     [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bf_no' => $i]);
                 
                 if(isset($row['bf_file']) && $row['bf_file']){
                     $delete_file = run_replace('delete_file_path', G5_DATA_PATH.'/file/'.$bo_table.'/'.str_replace('../', '', $row['bf_file']), $row);
@@ -603,65 +635,73 @@ if(isset($_FILES['bf_file']['name']) && is_array($_FILES['bf_file']['name'])) {
 $upload_cnt = count($upload);
 for ($i=0; $i<$upload_cnt; $i++)
 {
-    $upload[$i]['source'] = sql_real_escape_string($upload[$i]['source']);
-    $bf_content[$i] = isset($bf_content[$i]) ? sql_real_escape_string($bf_content[$i]) : '';
+    // sql_real_escape_string 제거 — PDO placeholder 가 알아서 처리 (raw 값 그대로)
+    $bf_content[$i] = isset($bf_content[$i]) ? $bf_content[$i] : '';
     $bf_width = isset($upload[$i]['image'][0]) ? (int) $upload[$i]['image'][0] : 0;
     $bf_height = isset($upload[$i]['image'][1]) ? (int) $upload[$i]['image'][1] : 0;
     $bf_type = isset($upload[$i]['image'][2]) ? (int) $upload[$i]['image'][2] : 0;
 
-    $row = sql_fetch(" select count(*) as cnt from {$g5['board_file_table']} where bo_table = '{$bo_table}' and wr_id = '{$wr_id}' and bf_no = '{$i}' ");
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                         [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bf_no' => $i]);
     if ($row['cnt'])
     {
-        // 삭제에 체크가 있거나 파일이 있다면 업데이트를 합니다.
-        // 그렇지 않다면 내용만 업데이트 합니다.
         if ($upload[$i]['del_check'] || $upload[$i]['file'])
         {
-            $sql = " update {$g5['board_file_table']}
-                        set bf_source = '{$upload[$i]['source']}',
-                             bf_file = '{$upload[$i]['file']}',
-                             bf_content = '{$bf_content[$i]}',
-                             bf_fileurl = '{$upload[$i]['fileurl']}',
-                             bf_thumburl = '{$upload[$i]['thumburl']}',
-                             bf_storage = '{$upload[$i]['storage']}',
-                             bf_filesize = '".(int)$upload[$i]['filesize']."',
-                             bf_width = '".$bf_width."',
-                             bf_height = '".$bf_height."',
-                             bf_type = '".$bf_type."',
-                             bf_datetime = '".G5_TIME_YMDHIS."'
-                      where bo_table = '{$bo_table}'
-                                and wr_id = '{$wr_id}'
-                                and bf_no = '{$i}' ";
-            sql_query($sql);
+            sql_pdo_query(" update {$g5['board_file_table']} set
+                        bf_source = :bf_source, bf_file = :bf_file, bf_content = :bf_content,
+                        bf_fileurl = :bf_fileurl, bf_thumburl = :bf_thumburl, bf_storage = :bf_storage,
+                        bf_filesize = :bf_filesize, bf_width = :bf_width, bf_height = :bf_height,
+                        bf_type = :bf_type, bf_datetime = :bf_datetime
+                      where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                [
+                    ':bf_source'   => $upload[$i]['source'],
+                    ':bf_file'     => $upload[$i]['file'],
+                    ':bf_content'  => $bf_content[$i],
+                    ':bf_fileurl'  => $upload[$i]['fileurl'],
+                    ':bf_thumburl' => $upload[$i]['thumburl'],
+                    ':bf_storage'  => $upload[$i]['storage'],
+                    ':bf_filesize' => (int)$upload[$i]['filesize'],
+                    ':bf_width'    => $bf_width,
+                    ':bf_height'   => $bf_height,
+                    ':bf_type'     => $bf_type,
+                    ':bf_datetime' => G5_TIME_YMDHIS,
+                    ':bo_table'    => $bo_table,
+                    ':wr_id'       => $wr_id,
+                    ':bf_no'       => $i,
+                ]);
         }
         else
         {
-            $sql = " update {$g5['board_file_table']}
-                        set bf_content = '{$bf_content[$i]}'
-                        where bo_table = '{$bo_table}'
-                                  and wr_id = '{$wr_id}'
-                                  and bf_no = '{$i}' ";
-            sql_query($sql);
+            sql_pdo_query(" update {$g5['board_file_table']} set bf_content = :bf_content
+                        where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                [':bf_content' => $bf_content[$i], ':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bf_no' => $i]);
         }
     }
     else
     {
-        $sql = " insert into {$g5['board_file_table']}
-                    set bo_table = '{$bo_table}',
-                         wr_id = '{$wr_id}',
-                         bf_no = '{$i}',
-                         bf_source = '{$upload[$i]['source']}',
-                         bf_file = '{$upload[$i]['file']}',
-                         bf_content = '{$bf_content[$i]}',
-                         bf_fileurl = '{$upload[$i]['fileurl']}',
-                         bf_thumburl = '{$upload[$i]['thumburl']}',
-                         bf_storage = '{$upload[$i]['storage']}',
-                         bf_download = 0,
-                         bf_filesize = '".(int)$upload[$i]['filesize']."',
-                         bf_width = '".$bf_width."',
-                         bf_height = '".$bf_height."',
-                         bf_type = '".$bf_type."',
-                         bf_datetime = '".G5_TIME_YMDHIS."' ";
-        sql_query($sql);
+        sql_pdo_query(" insert into {$g5['board_file_table']} set
+                    bo_table = :bo_table, wr_id = :wr_id, bf_no = :bf_no,
+                    bf_source = :bf_source, bf_file = :bf_file, bf_content = :bf_content,
+                    bf_fileurl = :bf_fileurl, bf_thumburl = :bf_thumburl, bf_storage = :bf_storage,
+                    bf_download = 0,
+                    bf_filesize = :bf_filesize, bf_width = :bf_width, bf_height = :bf_height,
+                    bf_type = :bf_type, bf_datetime = :bf_datetime ",
+            [
+                ':bo_table'    => $bo_table,
+                ':wr_id'       => $wr_id,
+                ':bf_no'       => $i,
+                ':bf_source'   => $upload[$i]['source'],
+                ':bf_file'     => $upload[$i]['file'],
+                ':bf_content'  => $bf_content[$i],
+                ':bf_fileurl'  => $upload[$i]['fileurl'],
+                ':bf_thumburl' => $upload[$i]['thumburl'],
+                ':bf_storage'  => $upload[$i]['storage'],
+                ':bf_filesize' => (int)$upload[$i]['filesize'],
+                ':bf_width'    => $bf_width,
+                ':bf_height'   => $bf_height,
+                ':bf_type'     => $bf_type,
+                ':bf_datetime' => G5_TIME_YMDHIS,
+            ]);
 
         run_event('write_update_file_insert', $bo_table, $wr_id, $upload[$i], $w);
     }
@@ -669,24 +709,29 @@ for ($i=0; $i<$upload_cnt; $i++)
 
 // 업로드된 파일 내용에서 가장 큰 번호를 얻어 거꾸로 확인해 가면서
 // 파일 정보가 없다면 테이블의 내용을 삭제합니다.
-$row = sql_fetch(" select max(bf_no) as max_bf_no from {$g5['board_file_table']} where bo_table = '{$bo_table}' and wr_id = '{$wr_id}' ");
+$row = sql_pdo_fetch(" select max(bf_no) as max_bf_no from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id ",
+                     [':bo_table' => $bo_table, ':wr_id' => $wr_id]);
 for ($i=(int)$row['max_bf_no']; $i>=0; $i--)
 {
-    $row2 = sql_fetch(" select bf_file from {$g5['board_file_table']} where bo_table = '{$bo_table}' and wr_id = '{$wr_id}' and bf_no = '{$i}' ");
+    $row2 = sql_pdo_fetch(" select bf_file from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                          [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bf_no' => $i]);
 
     // 정보가 있다면 빠집니다.
     if (isset($row2['bf_file']) && $row2['bf_file']) break;
 
     // 그렇지 않다면 정보를 삭제합니다.
-    sql_query(" delete from {$g5['board_file_table']} where bo_table = '{$bo_table}' and wr_id = '{$wr_id}' and bf_no = '{$i}' ");
+    sql_pdo_query(" delete from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id and bf_no = :bf_no ",
+                  [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':bf_no' => $i]);
 }
 
 // 파일의 개수를 게시물에 업데이트 한다.
-$row = sql_fetch(" select count(*) as cnt from {$g5['board_file_table']} where bo_table = '{$bo_table}' and wr_id = '{$wr_id}' ");
-sql_query(" update {$write_table} set wr_file = '{$row['cnt']}' where wr_id = '{$wr_id}' ");
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id ",
+                     [':bo_table' => $bo_table, ':wr_id' => $wr_id]);
+sql_pdo_query(" update {$write_table} set wr_file = :cnt where wr_id = :wr_id ",
+              [':cnt' => $row['cnt'], ':wr_id' => $wr_id]);
 
 // 자동저장된 레코드를 삭제한다.
-sql_query(" delete from {$g5['autosave_table']} where as_uid = '{$uid}' ");
+sql_pdo_query(" delete from {$g5['autosave_table']} where as_uid = :as_uid ", [':as_uid' => $uid]);
 //------------------------------------------------------------------------------
 
 // 비밀글이라면 세션에 비밀글의 아이디를 저장한다. 자신의 글은 다시 비밀번호를 묻지 않기 위함
