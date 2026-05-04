@@ -35,8 +35,12 @@ usort($_menu_files, function ($a, $b) {
 foreach ($_menu_files as $_f) {
     $_entry = require $_f;
     if (is_array($_entry) && !empty($_entry['items'])) {
+        // 파일명의 숫자를 그룹 ID 로 — 안정적이고 unique (admin.menu100.php → 100)
+        if (preg_match('#admin\.menu(\d+)\.php$#', basename($_f), $_m)) {
+            $_entry['_id'] = (int)$_m[1];
+        }
         $_admin_nav[] = $_entry;
     }
 }
 
-unset($_menu_files, $_f, $_entry);
+unset($_menu_files, $_f, $_entry, $_m);
