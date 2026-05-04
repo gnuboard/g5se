@@ -29,27 +29,33 @@ for ($i = 0; $i < $chk_count; $i++) {
 
     if ($act_button == '선택수정') {
         $sql = " update {$g5['group_table']}
-                    set gr_subject    = '{$gr_subject}',
-                        gr_device     = '" . sql_real_escape_string($gr_device) . "',
-                        gr_admin      = '" . sql_real_escape_string($gr_admin) . "',
-                        gr_use_access = '" . $gr_use_access . "',
-                        gr_order      = '" . $gr_order . "'
-                  where gr_id         = '{$gr_id}' ";
+                    set gr_subject = :gr_subject, gr_device = :gr_device, gr_admin = :gr_admin,
+                        gr_use_access = :gr_use_access, gr_order = :gr_order
+                  where gr_id = :gr_id ";
+        $update_params = [
+            ':gr_subject'    => $gr_subject,
+            ':gr_device'     => $gr_device,
+            ':gr_admin'      => $gr_admin,
+            ':gr_use_access' => $gr_use_access,
+            ':gr_order'      => $gr_order,
+            ':gr_id'         => $gr_id,
+        ];
         if ($is_admin != 'super') {
-            $sql .= " and gr_admin    = '{$gr_admin}' ";
+            $sql .= " and gr_admin = :gr_admin_check ";
+            $update_params[':gr_admin_check'] = $gr_admin;
         }
-        sql_query($sql);
+        sql_pdo_query($sql, $update_params);
     } elseif ($act_button == '선택삭제') {
-        $row = sql_fetch(" select count(*) as cnt from {$g5['board_table']} where gr_id = '$gr_id' ");
+        $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_table']} where gr_id = :gr_id ", [':gr_id' => $gr_id]);
         if ($row['cnt']) {
             alert("이 그룹에 속한 게시판이 존재하여 게시판 그룹을 삭제할 수 없습니다.\\n\\n이 그룹에 속한 게시판을 먼저 삭제하여 주십시오.", './board_list.php?sfl=gr_id&amp;stx=' . $gr_id);
         }
 
         // 그룹 삭제
-        sql_query(" delete from {$g5['group_table']} where gr_id = '$gr_id' ");
+        sql_pdo_query(" delete from {$g5['group_table']} where gr_id = :gr_id ", [':gr_id' => $gr_id]);
 
         // 그룹접근 회원 삭제
-        sql_query(" delete from {$g5['group_member_table']} where gr_id = '$gr_id' ");
+        sql_pdo_query(" delete from {$g5['group_member_table']} where gr_id = :gr_id ", [':gr_id' => $gr_id]);
     }
 }
 

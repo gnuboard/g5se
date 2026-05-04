@@ -45,51 +45,54 @@ foreach ($check_keys as $key => $value) {
     }
 }
 
-$sql_common = " gr_subject = '{$posts['gr_subject']}',
-                gr_device = '{$posts['gr_device']}',
-                gr_admin  = '{$posts['gr_admin']}',
-                gr_1_subj = '{$posts['gr_1_subj']}',
-                gr_2_subj = '{$posts['gr_2_subj']}',
-                gr_3_subj = '{$posts['gr_3_subj']}',
-                gr_4_subj = '{$posts['gr_4_subj']}',
-                gr_5_subj = '{$posts['gr_5_subj']}',
-                gr_6_subj = '{$posts['gr_6_subj']}',
-                gr_7_subj = '{$posts['gr_7_subj']}',
-                gr_8_subj = '{$posts['gr_8_subj']}',
-                gr_9_subj = '{$posts['gr_9_subj']}',
-                gr_10_subj = '{$posts['gr_10_subj']}',
-                gr_1 = '{$posts['gr_1']}',
-                gr_2 = '{$posts['gr_2']}',
-                gr_3 = '{$posts['gr_3']}',
-                gr_4 = '{$posts['gr_4']}',
-                gr_5 = '{$posts['gr_5']}',
-                gr_6 = '{$posts['gr_6']}',
-                gr_7 = '{$posts['gr_7']}',
-                gr_8 = '{$posts['gr_8']}',
-                gr_9 = '{$posts['gr_9']}',
-                gr_10 = '{$posts['gr_10']}' ";
-if (isset($_POST['gr_use_access'])) {
-    $sql_common .= ", gr_use_access = '{$_POST['gr_use_access']}' ";
-} else {
-    $sql_common .= ", gr_use_access = '' ";
-}
+// PDO named placeholder — :col_name 형태로 컬럼명과 1:1 매칭, 순서 무관
+$sql_set = " gr_subject = :gr_subject, gr_device = :gr_device, gr_admin = :gr_admin,
+             gr_1_subj = :gr_1_subj, gr_2_subj = :gr_2_subj, gr_3_subj = :gr_3_subj,
+             gr_4_subj = :gr_4_subj, gr_5_subj = :gr_5_subj, gr_6_subj = :gr_6_subj,
+             gr_7_subj = :gr_7_subj, gr_8_subj = :gr_8_subj, gr_9_subj = :gr_9_subj,
+             gr_10_subj = :gr_10_subj,
+             gr_1 = :gr_1, gr_2 = :gr_2, gr_3 = :gr_3, gr_4 = :gr_4, gr_5 = :gr_5,
+             gr_6 = :gr_6, gr_7 = :gr_7, gr_8 = :gr_8, gr_9 = :gr_9, gr_10 = :gr_10,
+             gr_use_access = :gr_use_access ";
+$sql_params = [
+    ':gr_subject'    => $posts['gr_subject'],
+    ':gr_device'     => $posts['gr_device'],
+    ':gr_admin'      => $posts['gr_admin'],
+    ':gr_1_subj'     => $posts['gr_1_subj'],
+    ':gr_2_subj'     => $posts['gr_2_subj'],
+    ':gr_3_subj'     => $posts['gr_3_subj'],
+    ':gr_4_subj'     => $posts['gr_4_subj'],
+    ':gr_5_subj'     => $posts['gr_5_subj'],
+    ':gr_6_subj'     => $posts['gr_6_subj'],
+    ':gr_7_subj'     => $posts['gr_7_subj'],
+    ':gr_8_subj'     => $posts['gr_8_subj'],
+    ':gr_9_subj'     => $posts['gr_9_subj'],
+    ':gr_10_subj'    => $posts['gr_10_subj'],
+    ':gr_1'          => $posts['gr_1'],
+    ':gr_2'          => $posts['gr_2'],
+    ':gr_3'          => $posts['gr_3'],
+    ':gr_4'          => $posts['gr_4'],
+    ':gr_5'          => $posts['gr_5'],
+    ':gr_6'          => $posts['gr_6'],
+    ':gr_7'          => $posts['gr_7'],
+    ':gr_8'          => $posts['gr_8'],
+    ':gr_9'          => $posts['gr_9'],
+    ':gr_10'         => $posts['gr_10'],
+    ':gr_use_access' => isset($_POST['gr_use_access']) ? $_POST['gr_use_access'] : '',
+];
 
 if ($w == '') {
-    $sql = " select count(*) as cnt from {$g5['group_table']} where gr_id = '{$gr_id}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_table']} where gr_id = :gr_id ",
+                         [':gr_id' => $gr_id]);
     if ($row['cnt']) {
         alert('이미 존재하는 그룹 ID 입니다.');
     }
 
-    $sql = " insert into {$g5['group_table']}
-                set gr_id = '{$gr_id}',
-                     {$sql_common} ";
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['group_table']} set gr_id = :gr_id, {$sql_set} ",
+                  array_merge([':gr_id' => $gr_id], $sql_params));
 } elseif ($w == "u") {
-    $sql = " update {$g5['group_table']}
-                set {$sql_common}
-                where gr_id = '{$gr_id}' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['group_table']} set {$sql_set} where gr_id = :gr_id ",
+                  array_merge($sql_params, [':gr_id' => $gr_id]));
 } else {
     alert('제대로 된 값이 넘어오지 않았습니다.');
 }

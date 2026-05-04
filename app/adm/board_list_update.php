@@ -36,11 +36,9 @@ if ($act_button === "선택수정") {
         $post_board_table = isset($_POST['board_table'][$k]) ? clean_xss_tags($_POST['board_table'][$k], 1, 1) : '';
 
         if ($is_admin != 'super') {
-            $sql = " select count(*) as cnt from {$g5['board_table']} a, {$g5['group_table']} b
-                      where a.gr_id = '" . sql_real_escape_string($post_gr_id) . "'
-                        and a.gr_id = b.gr_id
-                        and b.gr_admin = '{$member['mb_id']}' ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_table']} a, {$g5['group_table']} b
+                      where a.gr_id = :gr_id and a.gr_id = b.gr_id and b.gr_admin = :gr_admin ",
+                      [':gr_id' => $post_gr_id, ':gr_admin' => $member['mb_id']]);
             if (!$row['cnt']) {
                 alert('최고관리자가 아닌 경우 다른 관리자의 게시판(' . $board_table[$k] . ')은 수정이 불가합니다.');
             }
@@ -48,22 +46,28 @@ if ($act_button === "선택수정") {
 
         $p_bo_subject = is_array($_POST['bo_subject']) ? strip_tags(clean_xss_attributes($_POST['bo_subject'][$k])) : '';
 
-        $sql = " update {$g5['board_table']}
-                    set gr_id               = '" . sql_real_escape_string($post_gr_id) . "',
-                        bo_subject          = '" . $p_bo_subject . "',
-                        bo_device           = '" . sql_real_escape_string($post_bo_device) . "',
-                        bo_skin             = '" . sql_real_escape_string($post_bo_skin) . "',
-                        bo_mobile_skin      = '" . sql_real_escape_string($post_bo_mobile_skin) . "',
-                        bo_read_point       = '" . sql_real_escape_string($post_bo_read_point) . "',
-                        bo_write_point      = '" . sql_real_escape_string($post_bo_write_point) . "',
-                        bo_comment_point    = '" . sql_real_escape_string($post_bo_comment_point) . "',
-                        bo_download_point   = '" . sql_real_escape_string($post_bo_download_point) . "',
-                        bo_use_search       = '" . sql_real_escape_string($post_bo_use_search) . "',
-                        bo_use_sns          = '" . sql_real_escape_string($post_bo_use_sns) . "',
-                        bo_order            = '" . sql_real_escape_string($post_bo_order) . "'
-                  where bo_table            = '" . sql_real_escape_string($post_board_table) . "' ";
-
-        sql_query($sql);
+        sql_pdo_query(" update {$g5['board_table']}
+                    set gr_id = :gr_id, bo_subject = :bo_subject, bo_device = :bo_device,
+                        bo_skin = :bo_skin, bo_mobile_skin = :bo_mobile_skin,
+                        bo_read_point = :bo_read_point, bo_write_point = :bo_write_point,
+                        bo_comment_point = :bo_comment_point, bo_download_point = :bo_download_point,
+                        bo_use_search = :bo_use_search, bo_use_sns = :bo_use_sns, bo_order = :bo_order
+                  where bo_table = :bo_table ",
+                  [
+                      ':gr_id'             => $post_gr_id,
+                      ':bo_subject'        => $p_bo_subject,
+                      ':bo_device'         => $post_bo_device,
+                      ':bo_skin'           => $post_bo_skin,
+                      ':bo_mobile_skin'    => $post_bo_mobile_skin,
+                      ':bo_read_point'     => $post_bo_read_point,
+                      ':bo_write_point'    => $post_bo_write_point,
+                      ':bo_comment_point'  => $post_bo_comment_point,
+                      ':bo_download_point' => $post_bo_download_point,
+                      ':bo_use_search'     => $post_bo_use_search,
+                      ':bo_use_sns'        => $post_bo_use_sns,
+                      ':bo_order'          => $post_bo_order,
+                      ':bo_table'          => $post_board_table,
+                  ]);
     }
 } elseif ($act_button === "선택삭제") {
     if ($is_admin != 'super') {
