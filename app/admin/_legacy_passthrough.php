@@ -154,18 +154,6 @@ window.delete_cookie = window.delete_cookie || function (n) {
     }
 })();
 
-// SmartEditor2 단축키 일람의 "닫기" 버튼 — 원본 JS 가 이 버튼 핸들러를 안 만들어
-// 두므로 위임으로 .cke_sc_def 를 제거.
-document.addEventListener('click', function (e) {
-    var b = e.target.closest('.legacy-admin-content .btn_cke_sc_close');
-    if (b) {
-        var def = b.closest('.cke_sc_def');
-        if (def) def.remove();
-        var trigger = def && def.parentElement && def.parentElement.querySelector('.btn_cke_sc');
-        if (trigger) trigger.textContent = '단축키 일람';
-    }
-});
-
 // SmartEditor2 / cheditor 의 iframe 내부는 별도 문서 — same-origin 이므로 JS 로
 // style 태그를 주입해 라이트 톤 강제 (다크모드에서도 읽기 좋게).
 (function () {
