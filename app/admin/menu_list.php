@@ -24,8 +24,8 @@ if (!isset($g5['menu_table'])) {
     die('<meta charset="utf-8">/data/dbconfig.php 파일에 <strong>$g5[\'menu_table\'] = G5_TABLE_PREFIX.\'menu\';</strong> 를 추가해 주세요.');
 }
 
-// 메뉴 테이블 보장
-sql_query(
+// 메뉴 테이블 보장 — DDL placeholder 불가, sql_pdo_query 로 통일 (params 빈 배열)
+sql_pdo_query(
     " CREATE TABLE IF NOT EXISTS `{$g5['menu_table']}` (
           `me_id` int(11) NOT NULL AUTO_INCREMENT,
           `me_code` varchar(255) NOT NULL DEFAULT '',
@@ -36,7 +36,7 @@ sql_query(
           `me_use` tinyint(4) NOT NULL DEFAULT '0',
           `me_mobile_use` tinyint(4) NOT NULL DEFAULT '0',
           PRIMARY KEY (`me_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", true);
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", [], true);
 
 $result = sql_pdo_query(" select * from {$g5['menu_table']} order by me_id ");
 
