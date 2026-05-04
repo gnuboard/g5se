@@ -18,6 +18,49 @@
 .hidden { display: none; }
 [hidden] { display: none; }
 
+/* admin-primary utility 클래스 (정적) — UnoCSS runtime 이 hyphen 두 개 이상의
+ * 사용자 정의 팔레트 (admin-primary-XXX) 를 일관되게 처리하지 못하는 경우가 있어
+ * 정적 CSS 로 미리 깔아 둔다. */
+.bg-admin-primary-50  { background-color: var(--admin-primary-50); }
+.bg-admin-primary-100 { background-color: var(--admin-primary-100); }
+.bg-admin-primary-200 { background-color: var(--admin-primary-200); }
+.bg-admin-primary-300 { background-color: var(--admin-primary-300); }
+.bg-admin-primary-400 { background-color: var(--admin-primary-400); }
+.bg-admin-primary-500 { background-color: var(--admin-primary-500); }
+.bg-admin-primary-600 { background-color: var(--admin-primary-600); }
+.bg-admin-primary-700 { background-color: var(--admin-primary-700); }
+.bg-admin-primary-800 { background-color: var(--admin-primary-800); }
+.bg-admin-primary-900 { background-color: var(--admin-primary-900); }
+.bg-admin-primary-950 { background-color: var(--admin-primary-950); }
+.text-admin-primary-50  { color: var(--admin-primary-50); }
+.text-admin-primary-100 { color: var(--admin-primary-100); }
+.text-admin-primary-200 { color: var(--admin-primary-200); }
+.text-admin-primary-300 { color: var(--admin-primary-300); }
+.text-admin-primary-400 { color: var(--admin-primary-400); }
+.text-admin-primary-500 { color: var(--admin-primary-500); }
+.text-admin-primary-600 { color: var(--admin-primary-600); }
+.text-admin-primary-700 { color: var(--admin-primary-700); }
+.text-admin-primary-800 { color: var(--admin-primary-800); }
+.text-admin-primary-900 { color: var(--admin-primary-900); }
+.text-admin-primary-950 { color: var(--admin-primary-950); }
+.border-admin-primary-200 { border-color: var(--admin-primary-200); }
+.border-admin-primary-500 { border-color: var(--admin-primary-500); }
+.border-admin-primary-600 { border-color: var(--admin-primary-600); }
+.border-admin-primary-800 { border-color: var(--admin-primary-800); }
+.hover\:bg-admin-primary-50:hover  { background-color: var(--admin-primary-50); }
+.hover\:bg-admin-primary-100:hover { background-color: var(--admin-primary-100); }
+.hover\:bg-admin-primary-600:hover { background-color: var(--admin-primary-600); }
+.hover\:bg-admin-primary-700:hover { background-color: var(--admin-primary-700); }
+.hover\:text-admin-primary-700:hover { color: var(--admin-primary-700); }
+.hover\:text-admin-primary-300:hover { color: var(--admin-primary-300); }
+.focus\:ring-admin-primary-500\/30:focus { box-shadow: 0 0 0 3px rgba(52, 100, 245, 0.3); }
+.focus\:border-admin-primary-500:focus { border-color: var(--admin-primary-500); }
+.dark .dark\:bg-admin-primary-950 { background-color: var(--admin-primary-950); }
+.dark .dark\:text-admin-primary-200 { color: var(--admin-primary-200); }
+.dark .dark\:text-admin-primary-300 { color: var(--admin-primary-300); }
+.dark .dark\:hover\:bg-admin-primary-900:hover { background-color: var(--admin-primary-900); }
+.dark .dark\:hover\:text-admin-primary-300:hover { color: var(--admin-primary-300); }
+
 /* 사이드바 / 헤더 / 메인 column 의 핵심 레이아웃 — UnoCSS runtime 의 generation 순서나
  * 누락 가능성과 무관하게 항상 보이도록 ID 셀렉터로 강하게 고정.
  * (UnoCSS 가 .lg:flex 보다 .hidden 을 늦게 inject 하면 사이드바가 사라지는 현상 방지) */
