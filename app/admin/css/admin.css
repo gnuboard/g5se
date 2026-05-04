@@ -336,6 +336,10 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 .list-none { list-style: none; }
 .select-none { user-select: none; }
 .overflow-y-auto { overflow-y: auto; }
+.overflow-x-auto { overflow-x: auto; }
+.overflow-hidden { overflow: hidden; }
+.overflow-x-hidden { overflow-x: hidden; }
+.overflow-y-hidden { overflow-y: hidden; }
 .backdrop-blur { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .h-full { height: 100%; }
 .h-14 { height: 3.5rem; }
@@ -1124,6 +1128,116 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 }
 [data-theme="dark"] .legacy-admin-content #captcha_info {
     color: var(--slate-400);
+}
+
+/* 글,댓글 현황 (/admin/write_count) — 폼 + 범례 + 그래프 영역 카드화 */
+.legacy-admin-content #wr_cont {
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--slate-200);
+    background-color: #fff;
+}
+[data-theme="dark"] .legacy-admin-content #wr_cont {
+    border-color: var(--slate-800);
+    background-color: var(--slate-900);
+}
+.legacy-admin-content #wr_cont form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+}
+.legacy-admin-content #grp_color {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0.625rem 0 0;
+    border-top: 1px solid var(--slate-100);
+    font-size: 0.8125rem;
+    color: var(--slate-600);
+}
+[data-theme="dark"] .legacy-admin-content #grp_color {
+    border-top-color: var(--slate-800);
+    color: var(--slate-300);
+}
+.legacy-admin-content #grp_color li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.legacy-admin-content #grp_color li span {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+    background-color: var(--admin-primary-500);
+}
+.legacy-admin-content #grp_color li.color2 span {
+    background-color: #f59e0b;
+}
+.legacy-admin-content #chart_wr {
+    margin-top: 1rem;
+    padding: 2rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px dashed var(--slate-200);
+    background-color: var(--slate-50);
+    text-align: center;
+}
+[data-theme="dark"] .legacy-admin-content #chart_wr {
+    border-color: var(--slate-700);
+    background-color: #15202b;
+}
+.legacy-admin-content #chart_wr h5 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--slate-500);
+}
+[data-theme="dark"] .legacy-admin-content #chart_wr h5 {
+    color: var(--slate-400);
+}
+
+/* 접속자로그삭제 (/admin/visit_delete) — visit_del 폼 카드화 + select 정렬 정돈 */
+.legacy-admin-content form.visit_del {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--slate-200);
+    background-color: #fff;
+}
+[data-theme="dark"] .legacy-admin-content form.visit_del {
+    border-color: var(--slate-800);
+    background-color: var(--slate-900);
+}
+.legacy-admin-content form.visit_del > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--slate-600);
+}
+[data-theme="dark"] .legacy-admin-content form.visit_del > div {
+    color: var(--slate-400);
+}
+.legacy-admin-content form.visit_del .visit_del_bt {
+    border-top: 1px solid var(--slate-100);
+    padding-top: 0.875rem;
+    margin-top: 0.25rem;
+}
+[data-theme="dark"] .legacy-admin-content form.visit_del .visit_del_bt {
+    border-top-color: var(--slate-800);
+}
+.legacy-admin-content form.visit_del .visit_del_bt label {
+    font-weight: 500;
+    color: var(--slate-700);
+}
+[data-theme="dark"] .legacy-admin-content form.visit_del .visit_del_bt label {
+    color: var(--slate-300);
 }
 
 /* 회원관리파일 (/admin/member_list_exel) — 검색 필터 + 엑셀 다운로드 */
