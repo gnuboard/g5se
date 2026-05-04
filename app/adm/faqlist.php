@@ -14,18 +14,16 @@ $fm_id = isset($fm_id) ? (int) $fm_id : 0;
 
 require_once G5_ADMIN_PATH . '/admin.head.php';
 
-$sql = " select * from {$g5['faq_master_table']} where fm_id = '$fm_id' ";
-$fm = sql_fetch($sql);
+$fm = sql_pdo_fetch(" select * from {$g5['faq_master_table']} where fm_id = :fm_id ", [':fm_id' => $fm_id]);
 
-$sql_common = " from {$g5['faq_table']} where fm_id = '$fm_id' ";
+$sql_common = " from {$g5['faq_table']} where fm_id = :fm_id ";
+$params     = [':fm_id' => $fm_id];
 
 // 테이블의 전체 레코드수만 얻음
-$sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt " . $sql_common, $params);
 $total_count = $row['cnt'];
 
-$sql = "select * $sql_common order by fa_order , fa_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query("select * $sql_common order by fa_order , fa_id ", $params);
 ?>
 
 <div class="local_ov01 local_ov">
@@ -58,7 +56,7 @@ $result = sql_query($sql);
         <tbody>
             <?php
             for ($i = 0; $row = sql_fetch_array($result); $i++) {
-                $row1 = sql_fetch(" select COUNT(*) as cnt from {$g5['faq_table']} where fm_id = '{$row['fm_id']}' ");
+                $row1 = sql_pdo_fetch(" select COUNT(*) as cnt from {$g5['faq_table']} where fm_id = :fm_id ", [':fm_id' => $row['fm_id']]);
                 $cnt = $row1['cnt'];
 
                 $s_mod = icon("수정", "");
