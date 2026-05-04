@@ -18,6 +18,10 @@ RewriteRule ^data/.+\.(php|phtml|phar|html?|cgi|pl|py|jsp|asp|sh)$ - [F,L]
 RewriteRule ^adm/?$ app/adm/index.php [END]
 RewriteRule ^(theme|skin|img|js|css|mobile|plugin|adm)/(.*)$ app/$1/$2 [END]
 
+#    모던 admin 의 정적 자산: /admin/(css|js|img)/... → app/admin/$1/$2
+#    (.php 컨트롤러는 front controller 가 처리해야 하므로 정적 자산만 매핑)
+RewriteRule ^admin/(css|js|img)/(.*)$ app/admin/$1/$2 [END]
+
 # 5) 실제 파일/디렉토리는 그대로 (favicon, robots.txt 등)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
