@@ -49,6 +49,16 @@
 }
 .nav-group[open] > summary.nav-summary::before { transform: rotate(90deg); }
 
+/* 사이드바 / 헤더의 emoji 아이콘 — 시스템 emoji 폰트로 즉시 렌더 (FOUC 없음, 외부 리소스 없음) */
+.nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
 /* 정렬 화살표 — text(▾/▴)로 표시. 폰트 글리프라 paint 시점에 즉시 그려짐 (FOUC 없음) */
 .sort-arrow {
     display: inline-block;
