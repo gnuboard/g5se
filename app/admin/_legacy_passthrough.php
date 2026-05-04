@@ -87,6 +87,13 @@ admin_layout_start($page_title, $legacy_menu_key ?? '');
     </div>
 </main>
 <script>
+// gnuboard admin.js 가 form submit 시 ajax 로 토큰을 가져와 채워넣는다.
+// admin.head.php 에서 정의되는 JS 전역 두 개를 미리 노출.
+var g5_admin_url = "/adm";
+var g5_admin_csrf_token_key = "<?php echo function_exists('admin_csrf_token_key') ? admin_csrf_token_key() : '' ?>";
+</script>
+<script src="/adm/admin.js"></script>
+<script>
 // 레거시 admin 이 사용하는 헬퍼 (gnuboard 의 admin.head 안 inline JS 정의분)
 window.is_checked = window.is_checked || function (name) {
     var els = document.getElementsByName(name);

@@ -13,6 +13,21 @@ admin_require_login();
 
 require_once G5_PATH.'/adm/admin.lib.php';
 
+// 비밀번호 변경 시 캡챠 검사 우회 (admin 인증+토큰으로 충분).
+// gnuboard 의 chk_captcha 는 $_POST['captcha_key'] 와 session ss_captcha_key 비교 →
+// 양쪽을 같은 값으로 미리 세팅해 통과시킨다.
+if (!empty($_POST['mb_password'])) {
+    $bypass = 'admin_bypass_captcha';
+    $_POST['captcha_key'] = $bypass;
+    $ip_key = md5(sha1($_SERVER['REMOTE_ADDR'] ?? ''));
+    if (function_exists('get_string_encrypt')) {
+        $_SESSION['ss_captcha_key'] = get_string_encrypt($ip_key.$bypass);
+    } else {
+        $_SESSION['ss_captcha_key'] = $bypass;
+    }
+    $_SESSION['ss_captcha_count'] = 0;
+}
+
 // gnuboard 의 redirect 들을 /admin/* 클린 URL 로 변환.
 add_event('goto_url', function ($url) {
     $u = str_replace('&amp;', '&', (string)$url);
