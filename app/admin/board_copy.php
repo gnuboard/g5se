@@ -94,12 +94,25 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
             border-top-color: var(--slate-800) !important;
         }
         html.dark .legacy-admin-content .btn,
-        html.dark .legacy-admin-content input[type="submit"]:not([class*="btn_submit"]):not([class*="btn_01"]),
+        html.dark .legacy-admin-content input[type="submit"],
         html.dark .legacy-admin-content input[type="button"],
-        html.dark .legacy-admin-content button:not([class*="rounded"]):not([class*="btn_submit"]):not([class*="btn_01"]) {
+        html.dark .legacy-admin-content button:not([class*="rounded"]) {
             border-color: var(--slate-700) !important;
             background-color: var(--slate-800) !important;
             color: var(--slate-300) !important;
+        }
+        /* Primary 버튼 (.btn_submit / .btn_01) 은 admin-primary 톤 강제 */
+        html.dark .legacy-admin-content .btn_submit,
+        html.dark .legacy-admin-content .btn_01,
+        html.dark .legacy-admin-content input[type="submit"].btn_submit,
+        html.dark .legacy-admin-content input[type="submit"].btn_01 {
+            background-color: var(--admin-primary-600) !important;
+            border-color: var(--admin-primary-600) !important;
+            color: #fff !important;
+        }
+        html.dark .legacy-admin-content .btn_submit:hover,
+        html.dark .legacy-admin-content .btn_01:hover {
+            background-color: var(--admin-primary-700) !important;
         }
     </style>
 </head>
