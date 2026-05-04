@@ -125,8 +125,8 @@ function admin_layout_start(string $title, string $active_key = ''): void
                 $group_id = 'navgrp-'.($group['_id'] ?? $group_index);
             ?>
             <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_has_active ? 'open' : '' ?>>
-                <summary class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
-                    <svg class="w-3 h-3 transition-transform shrink-0 chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                <summary class="cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
+                    <svg class="w-4 h-4 transition-transform shrink-0 chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     <span><?php echo get_text($group['group']) ?></span>
                 </summary>
                 <ul class="mt-1">
