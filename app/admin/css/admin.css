@@ -12,9 +12,11 @@
 
 /* UnoCSS runtime 가 DOM 스캔 후에 CSS 를 생성하므로, 페이지 첫 paint 와 runtime 이
  * 처리되는 사이에 .hidden 같은 핵심 utility 가 빠진 채 보일 수 있음 (모달 깜빡임).
- * 이런 FOUC-방지용 기본 utility 만 정적 CSS 로 미리 깔아둔다. */
-.hidden { display: none !important; }
-[hidden] { display: none !important; }
+ * 이런 FOUC-방지용 기본 utility 만 정적 CSS 로 미리 깔아둔다.
+ * !important 는 쓰지 않는다 — UnoCSS 의 .lg:flex 같은 responsive 변형이 source 순서로
+ * 자연스럽게 .hidden 을 덮어써야 하기 때문. */
+.hidden { display: none; }
+[hidden] { display: none; }
 
 :root {
     /* admin primary — cool blue */
