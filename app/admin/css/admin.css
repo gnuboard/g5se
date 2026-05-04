@@ -552,6 +552,25 @@
     border: 1px solid #ccc !important; background: #fafafa !important; color: #000 !important; cursor: pointer !important;
 }
 
+/* 단축키 일람 다크모드 — BBS 글쓰기와 동일 (theme/basic/modern/_head.inc.php 패턴):
+ * 짙은 surface 배경 + 밝은 글자 + border 다크 톤. */
+[data-theme="dark"] .legacy-admin-content .cke_sc_def {
+    background: #131825 !important;
+    border-color: #2a3344 !important;
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .legacy-admin-content .cke_sc_def dt,
+[data-theme="dark"] .legacy-admin-content .cke_sc_def dd {
+    border-bottom-color: #2a3344 !important;
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] .legacy-admin-content .btn_cke_sc,
+[data-theme="dark"] .legacy-admin-content .btn_cke_sc_close {
+    background: #131825 !important;
+    border-color: #2a3344 !important;
+    color: #f1f5f9 !important;
+}
+
 /* SE2 하단 모드 탭 */
 .legacy-admin-content .se2_to_editor,
 .legacy-admin-content .se2_to_html,
