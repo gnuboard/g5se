@@ -9,12 +9,12 @@ if (!isset($g5['faq_table']) || !isset($g5['faq_master_table'])) {
     die('<meta charset="utf-8">/data/dbconfig.php 파일에 <br ><strong>$g5[\'faq_table\'] = G5_TABLE_PREFIX.\'faq\';</strong><br ><strong>$g5[\'faq_master_table\'] = G5_TABLE_PREFIX.\'faq_master\';</strong><br > 를 추가해 주세요.');
 }
 
-//자주하시는 질문 마스터 테이블이 있는지 검사한다.
-if (!sql_query(" DESCRIBE {$g5['faq_master_table']} ", false)) {
-    if (sql_query(" DESCRIBE {$g5['g5_shop_faq_master_table']} ", false)) {
-        sql_query(" ALTER TABLE {$g5['g5_shop_faq_master_table']} RENAME TO `{$g5['faq_master_table']}` ;", false);
+//자주하시는 질문 마스터 테이블이 있는지 검사한다. (DDL placeholder 불가, sql_pdo_query 로 통일)
+if (!sql_pdo_query(" DESCRIBE {$g5['faq_master_table']} ", [], false)) {
+    if (sql_pdo_query(" DESCRIBE {$g5['g5_shop_faq_master_table']} ", [], false)) {
+        sql_pdo_query(" ALTER TABLE {$g5['g5_shop_faq_master_table']} RENAME TO `{$g5['faq_master_table']}` ;", [], false);
     } else {
-        $query_cp = sql_query(
+        $query_cp = sql_pdo_query(
             " CREATE TABLE IF NOT EXISTS `{$g5['faq_master_table']}` (
                       `fm_id` int(11) NOT NULL AUTO_INCREMENT,
                       `fm_subject` varchar(255) NOT NULL DEFAULT '',
@@ -23,19 +23,20 @@ if (!sql_query(" DESCRIBE {$g5['faq_master_table']} ", false)) {
                       `fm_order` int(11) NOT NULL DEFAULT '0',
                       PRIMARY KEY (`fm_id`)
                     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ",
-            true
+            [], true
         );
     }
-    // FAQ Master
-    sql_query(" insert into `{$g5['faq_master_table']}` set fm_id = '1', fm_subject = '자주하시는 질문' ", false);
+    // FAQ Master seed
+    sql_pdo_query(" insert into `{$g5['faq_master_table']}` set fm_id = :fm_id, fm_subject = :fm_subject ",
+                  [':fm_id' => 1, ':fm_subject' => '자주하시는 질문'], false);
 }
 
 //자주하시는 질문 테이블이 있는지 검사한다.
-if (!sql_query(" DESCRIBE {$g5['faq_table']} ", false)) {
-    if (sql_query(" DESCRIBE {$g5['g5_shop_faq_table']} ", false)) {
-        sql_query(" ALTER TABLE {$g5['g5_shop_faq_table']} RENAME TO `{$g5['faq_table']}` ;", false);
+if (!sql_pdo_query(" DESCRIBE {$g5['faq_table']} ", [], false)) {
+    if (sql_pdo_query(" DESCRIBE {$g5['g5_shop_faq_table']} ", [], false)) {
+        sql_pdo_query(" ALTER TABLE {$g5['g5_shop_faq_table']} RENAME TO `{$g5['faq_table']}` ;", [], false);
     } else {
-        $query_cp = sql_query(
+        $query_cp = sql_pdo_query(
             " CREATE TABLE IF NOT EXISTS `{$g5['faq_table']}` (
                       `fa_id` int(11) NOT NULL AUTO_INCREMENT,
                       `fm_id` int(11) NOT NULL DEFAULT '0',
@@ -45,7 +46,7 @@ if (!sql_query(" DESCRIBE {$g5['faq_table']} ", false)) {
                       PRIMARY KEY (`fa_id`),
                       KEY `fm_id` (`fm_id`)
                     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ",
-            true
+            [], true
         );
     }
 }
@@ -56,8 +57,7 @@ require_once G5_ADMIN_PATH . '/admin.head.php';
 $sql_common = " from {$g5['faq_master_table']} ";
 
 // 테이블의 전체 레코드수만 얻음
-$sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt " . $sql_common);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -67,8 +67,8 @@ if ($page < 1) {
 } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = "select * $sql_common order by fm_order, fm_id limit $from_record, {$config['cf_page_rows']} ";
-$result = sql_query($sql);
+// LIMIT 의 from_record / cf_page_rows 는 정수 — 보간 안전
+$result = sql_pdo_query("select * $sql_common order by fm_order, fm_id limit $from_record, {$config['cf_page_rows']} ");
 ?>
 
 <div class="local_ov01 local_ov">
@@ -104,8 +104,7 @@ $result = sql_query($sql);
         </thead>
         <tbody>
             <?php for ($i = 0; $row = sql_fetch_array($result); $i++) {
-                $sql1 = " select COUNT(*) as cnt from {$g5['faq_table']} where fm_id = '{$row['fm_id']}' ";
-                $row1 = sql_fetch($sql1);
+                $row1 = sql_pdo_fetch(" select COUNT(*) as cnt from {$g5['faq_table']} where fm_id = :fm_id ", [':fm_id' => $row['fm_id']]);
                 $cnt = $row1['cnt'];
                 $bg = 'bg' . ($i % 2);
                 ?>

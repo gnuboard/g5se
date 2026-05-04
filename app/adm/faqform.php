@@ -8,8 +8,7 @@ auth_check_menu($auth, $sub_menu, "w");
 $fm_id = isset($_GET['fm_id']) ? (int) $_GET['fm_id'] : 0;
 $fa_id = isset($_GET['fa_id']) ? (int) $_GET['fa_id'] : 0;
 
-$sql = " select * from {$g5['faq_master_table']} where fm_id = '$fm_id' ";
-$fm = sql_fetch($sql);
+$fm = sql_pdo_fetch(" select * from {$g5['faq_master_table']} where fm_id = :fm_id ", [':fm_id' => $fm_id]);
 
 $html_title = 'FAQ '.$fm['fm_subject'];
 
@@ -20,8 +19,7 @@ if ($w == "u")
     $html_title .= " 수정";
     $readonly = " readonly";
 
-    $sql = " select * from {$g5['faq_table']} where fa_id = '$fa_id' ";
-    $fa = sql_fetch($sql);
+    $fa = sql_pdo_fetch(" select * from {$g5['faq_table']} where fa_id = :fa_id ", [':fa_id' => $fa_id]);
     if (!$fa['fa_id']) alert("등록된 자료가 없습니다.");
 }
 else

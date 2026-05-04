@@ -13,8 +13,7 @@ if ($w == "u") {
     $html_title .= ' 수정';
     $readonly = ' readonly';
 
-    $sql = " select * from {$g5['faq_master_table']} where fm_id = '$fm_id' ";
-    $fm = sql_fetch($sql);
+    $fm = sql_pdo_fetch(" select * from {$g5['faq_master_table']} where fm_id = :fm_id ", [':fm_id' => $fm_id]);
     if (!$fm['fm_id']) {
         alert('등록된 자료가 없습니다.');
     }
@@ -25,13 +24,13 @@ if ($w == "u") {
 
 $g5['title'] = $html_title . ' 관리';
 
-// 모바일 상하단 내용 필드추가
-if (!sql_query(" select fm_mobile_head_html from {$g5['faq_master_table']} limit 1 ", false)) {
-    sql_query(
+// 모바일 상하단 내용 필드추가 — DDL placeholder 불가, sql_pdo_query 로 통일
+if (!sql_pdo_query(" select fm_mobile_head_html from {$g5['faq_master_table']} limit 1 ", [], false)) {
+    sql_pdo_query(
         " ALTER TABLE `{$g5['faq_master_table']}`
                     ADD `fm_mobile_head_html` text NOT NULL AFTER `fm_tail_html`,
                     ADD `fm_mobile_tail_html` text NOT NULL AFTER `fm_mobile_head_html` ",
-        true
+        [], true
     );
 }
 
