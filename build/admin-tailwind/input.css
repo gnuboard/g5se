@@ -492,6 +492,30 @@
         border: 1px solid #ccc; background: #fafafa; color: #000; cursor: pointer;
     }
 
+    /* 다크모드에서 에디터를 포함하는 td 전체를 흰 카드로 감싸 통일감 부여.
+     * (editor wrapper / .cke_sc 단축키 영역 / 모드 탭 / resize 핸들 / textarea
+     * 모두 한 컨테이너 안에 있어 td 단위 white bg 가 가장 안정적.) */
+    .legacy-admin-content .tbl_frm01 td:has(textarea.smarteditor2),
+    .legacy-admin-content .tbl_frm01 td:has(.cke_sc),
+    .legacy-admin-content .tbl_frm01 td:has(#smart_editor2),
+    .legacy-admin-content td:has(textarea.smarteditor2) {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+    }
+    .legacy-admin-content .tbl_frm01 td:has(textarea.smarteditor2) *,
+    .legacy-admin-content .tbl_frm01 td:has(.cke_sc) *,
+    .legacy-admin-content .tbl_frm01 td:has(#smart_editor2) *,
+    .legacy-admin-content td:has(textarea.smarteditor2) * {
+        color: inherit;
+    }
+    /* SE2 하단 탭 (Editor / HTML / TEXT) 의 가독성 */
+    .legacy-admin-content .se2_to_editor,
+    .legacy-admin-content .se2_to_html,
+    .legacy-admin-content .se2_to_text {
+        color: #1e293b !important;
+        background-color: #fafafa !important;
+    }
+
     /* SmartEditor2 / cheditor — 다크모드에서 에디터 안쪽은 항상 라이트 톤으로 고정.
      * 에디터 본문은 iframe 이라 외부에서 색을 직접 못 주지만, 에디터 wrapper /
      * 툴바 / textarea 영역은 다크 페이지 위에서 강제로 흰 배경 + 어두운 글자로
