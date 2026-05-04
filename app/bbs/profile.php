@@ -28,8 +28,8 @@ include_once(G5_PATH.'/head.sub.php');
 $mb_nick = get_sideview($mb['mb_id'], get_text($mb['mb_nick']), $mb['mb_email'], $mb['mb_homepage'], $mb['mb_open']);
 
 // 회원가입후 몇일째인지? + 1 은 당일을 포함한다는 뜻
-$sql = " select (TO_DAYS('".G5_TIME_YMDHIS."') - TO_DAYS('{$mb['mb_datetime']}') + 1) as days ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select (TO_DAYS(:now) - TO_DAYS(:mb_datetime) + 1) as days ",
+                     [':now' => G5_TIME_YMDHIS, ':mb_datetime' => $mb['mb_datetime']]);
 $mb_reg_after = $row['days'];
 
 $mb_homepage = set_http(get_text(clean_xss_tags($mb['mb_homepage'])));

@@ -30,13 +30,14 @@ include_once(G5_LIB_PATH.'/latest.lib.php');
 //  최신글
 $sql = " select bo_table, bo_subject
             from {$g5['board_table']}
-            where gr_id = '{$gr_id}'
-              and bo_list_level <= '{$member['mb_level']}'
+            where gr_id = :gr_id
+              and bo_list_level <= :mb_level
               and bo_device <> 'mobile' ";
+$params = [':gr_id' => $gr_id, ':mb_level' => $member['mb_level']];
 if(!$is_admin)
     $sql .= " and bo_use_cert = '' ";
 $sql .= " order by bo_order ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql, $params);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $lt_style = "";
     if ($i%3 !== 0) $lt_style = "margin-left:2%";

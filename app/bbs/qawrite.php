@@ -29,12 +29,14 @@ if(is_file($skin_file)) {
     ==========================*/
 
     if($w == 'u' || $w == 'r') {
-        $sql = " select * from {$g5['qa_content_table']} where qa_id = '$qa_id' ";
+        $sql = " select * from {$g5['qa_content_table']} where qa_id = :qa_id ";
+        $params = [':qa_id' => $qa_id];
         if(!$is_admin) {
-            $sql .= " and mb_id = '{$member['mb_id']}' ";
+            $sql .= " and mb_id = :mb_id ";
+            $params[':mb_id'] = $member['mb_id'];
         }
 
-        $write = sql_fetch($sql);
+        $write = sql_pdo_fetch($sql, $params);
 
         if($w == 'u') {
             if(!$write['qa_id'])

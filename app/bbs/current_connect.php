@@ -6,11 +6,11 @@ include_once('./_head.php');
 
 $list = array();
 
-$sql = " select a.mb_id, b.mb_nick, b.mb_name, b.mb_email, b.mb_homepage, b.mb_open, b.mb_point, a.lo_ip, a.lo_location, a.lo_url
+$result = sql_pdo_query(" select a.mb_id, b.mb_nick, b.mb_name, b.mb_email, b.mb_homepage, b.mb_open, b.mb_point, a.lo_ip, a.lo_location, a.lo_url
             from {$g5['login_table']} a left join {$g5['member_table']} b on (a.mb_id = b.mb_id)
-            where a.mb_id <> '{$config['cf_admin']}'
-            order by a.lo_datetime desc ";
-$result = sql_query($sql);
+            where a.mb_id <> :admin_id
+            order by a.lo_datetime desc ",
+            [':admin_id' => $config['cf_admin']]);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $row['lo_url'] = get_text($row['lo_url']);
     $list[$i] = $row;
