@@ -39,8 +39,7 @@ require_once G5_ADMIN_PATH . '/admin.head.php';
 $sql_common = " from {$g5['content_table']} ";
 
 // 테이블의 전체 레코드수만 얻음
-$sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt " . $sql_common);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -50,8 +49,8 @@ if ($page < 1) {
 } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = "select * $sql_common order by co_id limit $from_record, {$config['cf_page_rows']} ";
-$result = sql_query($sql);
+// LIMIT 의 from_record / cf_page_rows 는 정수 — 보간 안전
+$result = sql_pdo_query("select * $sql_common order by co_id limit $from_record, {$config['cf_page_rows']} ");
 ?>
 
 <div class="local_ov01 local_ov">

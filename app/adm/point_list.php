@@ -7,15 +7,20 @@ auth_check_menu($auth, $sub_menu, 'r');
 $sql_common = " from {$g5['point_table']} po";
 
 $sql_search = " where (1) ";
-
+$params     = [];
 if ($stx) {
+    // {$sfl} 화이트리스트 매칭된 컬럼명 — 식별자라 보간 안전
+    $allowed_sfl = ['mb_id', 'po_content', 'po_point', 'po_datetime'];
+    if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'mb_id';
     $sql_search .= " and ( ";
     switch ($sfl) {
         case 'mb_id':
-            $sql_search .= " (po.{$sfl} = '{$stx}') ";
+            $sql_search .= " (po.{$sfl} = :stx) ";
+            $params[':stx'] = $stx;
             break;
         default:
-            $sql_search .= " ({$sfl} like '%{$stx}%') ";
+            $sql_search .= " ({$sfl} like :stx) ";
+            $params[':stx'] = '%'.$stx.'%';
             break;
     }
     $sql_search .= " ) ";
@@ -30,11 +35,7 @@ if ($sst && !in_array($sst, $allowed_sst)) $sst = 'po_id';
 if ($sod && !in_array(strtolower($sod), array('asc', 'desc'))) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
-$sql = " select count(*) as cnt
-            {$sql_common}
-            {$sql_search}
-            {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} {$sql_order} ", $params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -44,13 +45,13 @@ if ($page < 1) {
 }
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " select po.*, mb.mb_name, mb.mb_nick, mb.mb_email, mb.mb_homepage, mb.mb_point
+// LIMIT 의 from_record/rows 는 정수 — 보간 안전
+$result = sql_pdo_query(" select po.*, mb.mb_name, mb.mb_nick, mb.mb_email, mb.mb_homepage, mb.mb_point
             {$sql_common}
-            LEFT JOIN {$g5['member_table']} mb ON po.mb_id = mb.mb_id 
+            LEFT JOIN {$g5['member_table']} mb ON po.mb_id = mb.mb_id
             {$sql_search}
             {$sql_order}
-            limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+            limit {$from_record}, {$rows} ", $params);
 
 $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체목록</a>';
 
@@ -83,7 +84,7 @@ if (strpos($sfl, "mb_id") !== false) {
     if (isset($mb['mb_id']) && $mb['mb_id']) {
         echo '&nbsp;<span class="btn_ov01"><span class="ov_txt">' . $mb['mb_id'] . ' 님 포인트 합계 </span><span class="ov_num"> ' . number_format($mb['mb_point']) . '점</span></span>';
     } else {
-        $row2 = sql_fetch(" select sum(po_point) as sum_point from {$g5['point_table']} ");
+        $row2 = sql_pdo_fetch(" select sum(po_point) as sum_point from {$g5['point_table']} ");
         echo '&nbsp;<span class="btn_ov01"><span class="ov_txt">전체 합계</span><span class="ov_num">' . number_format($row2['sum_point']) . '점 </span></span>';
     }
     ?>
