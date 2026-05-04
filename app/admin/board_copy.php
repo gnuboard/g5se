@@ -45,13 +45,24 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
     <link rel="stylesheet" href="/admin/css/admin.css">
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
-        body { background-color: var(--slate-50); color: var(--slate-900); padding: 1.5rem; }
-        html.dark body, html[data-theme="dark"] body { background-color: var(--slate-950); color: var(--slate-100); }
+        html, body { background-color: var(--slate-50); }
+        body { color: var(--slate-900); padding: 1.5rem; margin: 0; min-height: 100vh; }
+        html.dark, html.dark body, html[data-theme="dark"], html[data-theme="dark"] body {
+            background-color: var(--slate-950) !important;
+            color: var(--slate-100);
+        }
         .popup-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
         .popup-head h1 { font-size: 1.125rem; font-weight: 700; }
 
-        /* 다크모드 폴백 — 일부 브라우저에서 [data-theme="dark"] 셀렉터 cascade 가
-           popup 컨텍스트에 늦게 적용되는 경우 대비. .dark 클래스로도 동일 톤 강제. */
+        /* 다크모드 폴백 — popup 안의 .new_win / .legacy-admin-content / form 영역에서
+           라이트 톤이 새지 않도록 모든 컨테이너에 다크 bg 강제. */
+        html.dark .legacy-admin-content,
+        html.dark .legacy-admin-content .new_win,
+        html.dark .legacy-admin-content form,
+        html.dark .legacy-admin-content .new_win_con {
+            background-color: transparent !important;
+            color: var(--slate-100);
+        }
         html.dark .legacy-admin-content .frm_input,
         html.dark .legacy-admin-content input[type="text"]:not([class*="rounded"]),
         html.dark .legacy-admin-content input[type="password"]:not([class*="rounded"]),
@@ -63,7 +74,8 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
             background-color: var(--slate-800) !important;
             color: var(--slate-100) !important;
         }
-        html.dark .legacy-admin-content .tbl_frm01 {
+        html.dark .legacy-admin-content .tbl_frm01,
+        html.dark .legacy-admin-content .tbl_frm01.tbl_wrap {
             border-color: var(--slate-800) !important;
             background-color: var(--slate-900) !important;
         }
@@ -73,7 +85,20 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
             border-bottom-color: var(--slate-800) !important;
         }
         html.dark .legacy-admin-content .tbl_frm01 tbody td {
+            background-color: var(--slate-900) !important;
             border-bottom-color: var(--slate-800) !important;
+            color: var(--slate-300) !important;
+        }
+        html.dark .legacy-admin-content .win_btn {
+            background-color: transparent !important;
+            border-top-color: var(--slate-800) !important;
+        }
+        html.dark .legacy-admin-content .btn,
+        html.dark .legacy-admin-content input[type="submit"]:not([class*="btn_submit"]):not([class*="btn_01"]),
+        html.dark .legacy-admin-content input[type="button"],
+        html.dark .legacy-admin-content button:not([class*="rounded"]):not([class*="btn_submit"]):not([class*="btn_01"]) {
+            border-color: var(--slate-700) !important;
+            background-color: var(--slate-800) !important;
             color: var(--slate-300) !important;
         }
     </style>
