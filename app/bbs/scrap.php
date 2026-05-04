@@ -7,25 +7,23 @@ if (!$is_member)
 $g5['title'] = get_text($member['mb_nick']).'님의 스크랩';
 include_once(G5_PATH.'/head.sub.php');
 
-$sql_common = " from {$g5['scrap_table']} where mb_id = '{$member['mb_id']}' ";
+$sql_common = " from {$g5['scrap_table']} where mb_id = :mb_id ";
+$common_params = [':mb_id' => $member['mb_id']];
 $sql_order = " order by ms_id desc ";
 
-$sql = " select count(*) as cnt $sql_common ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt $sql_common ", $common_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
+$from_record_i = (int) $from_record;
+$rows_i        = (int) $rows;
 
 $list = array();
 
-$sql = " select *
-            $sql_common
-            $sql_order
-            limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * $sql_common $sql_order limit $from_record_i, $rows_i ", $common_params);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
 
     $list[$i] = $row;
@@ -34,14 +32,14 @@ for ($i=0; $row=sql_fetch_array($result); $i++) {
     $num = $total_count - ($page - 1) * $rows - $i;
 
     // 게시판 제목
-    $sql2 = " select bo_subject from {$g5['board_table']} where bo_table = '{$row['bo_table']}' ";
-    $row2 = sql_fetch($sql2);
+    $row2 = sql_pdo_fetch(" select bo_subject from {$g5['board_table']} where bo_table = :bo_table ",
+                          [':bo_table' => $row['bo_table']]);
     if (!$row2['bo_subject']) $row2['bo_subject'] = '[게시판 없음]';
 
     // 게시물 제목
     $tmp_write_table = $g5['write_prefix'] . $row['bo_table'];
-    $sql3 = " select wr_subject from $tmp_write_table where wr_id = '{$row['wr_id']}' ";
-    $row3 = sql_fetch($sql3, FALSE);
+    $row3 = sql_pdo_fetch(" select wr_subject from $tmp_write_table where wr_id = :wr_id ",
+                          [':wr_id' => $row['wr_id']], FALSE);
     $subject = get_text(cut_str($row3['wr_subject'], 100));
     if (!$row3['wr_subject'])
         $row3['wr_subject'] = '[글 없음]';
