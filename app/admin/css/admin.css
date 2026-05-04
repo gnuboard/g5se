@@ -1354,13 +1354,19 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
  * 클래스를 admin 톤의 카드 그리드로 매핑. 외부 결제·인증·SMS 서비스 신청 링크 모음. */
 .legacy-admin-content .local_desc02 {
     margin: 0.5rem 0 1.25rem;
-    padding: 0.875rem 1rem;
+    /* local_desc 와 함께 쓰일 때 ::before 아이콘 (좌측 0.875rem, 폭 1.125rem) 가
+     * 본문과 안 겹치도록 좌측 padding 을 2.625rem 로 일치시킨다. */
+    padding: 0.875rem 1rem 0.875rem 2.625rem;
     border-radius: 0.5rem;
     background-color: var(--admin-primary-50);
     border-left: 3px solid var(--admin-primary-500);
     color: var(--slate-700);
     font-size: 0.8125rem;
     line-height: 1.6;
+}
+/* local_desc02 단독 (아이콘 ::before 없음) — 좌측 padding 정상 복원 */
+.legacy-admin-content .local_desc02:not(.local_desc) {
+    padding: 0.875rem 1rem;
 }
 [data-theme="dark"] .legacy-admin-content .local_desc02 {
     background-color: var(--admin-primary-950);
