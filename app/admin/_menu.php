@@ -3,7 +3,7 @@
  * Admin 좌측 메뉴 빌더 — 데이터-driven, 외부 확장 가능.
  *
  * 새 메뉴 그룹을 추가하려면:
- *   app/admin/menu.d/admin.menu{N}.php  파일 한 개만 추가하면 끝.
+ *   app/admin/menu/admin.menu{N}.php  파일 한 개만 추가하면 끝.
  *   N 은 정렬 번호 — 파일이름의 숫자 오름차순으로 좌측 nav 에 노출된다.
  *   예: 100(회원) ↔ 200(게시판) 사이에 'admin.menu150.php' 를 두면 그 자리에 삽입.
  *
@@ -23,7 +23,7 @@
 if (!defined('_GNUBOARD_')) exit;
 
 $_admin_nav = [];
-$_menu_files = glob(__DIR__.'/menu.d/admin.menu*.php');
+$_menu_files = glob(__DIR__.'/menu/admin.menu*.php');
 
 // 파일이름의 숫자 (admin.menu{N}.php) 오름차순으로 정렬 — 새 파일이 중간에 자유롭게 끼어듦
 usort($_menu_files, function ($a, $b) {
