@@ -210,6 +210,47 @@ html.dark .nav-icon {
 .dark .dark\:hover\:bg-admin-primary-900:hover { background-color: var(--admin-primary-900); }
 .dark .dark\:hover\:text-admin-primary-300:hover { color: var(--admin-primary-300); }
 
+/* 팝업 스타일 페이지 (board_copy 등) — gnuboard 의 .new_win 마크업이 admin shell
+ * 안에서 렌더링될 때 자연스럽게 보이도록 정돈. */
+.legacy-admin-content .new_win {
+    max-width: 720px;
+}
+/* 페이지 제목 — admin shell 헤더가 이미 보여주므로 본문 h1 숨김 */
+.legacy-admin-content .new_win > h1 {
+    display: none;
+}
+.legacy-admin-content .new_win_con {
+    margin: 0 0 1rem;
+}
+.legacy-admin-content .new_win .win_btn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.875rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--slate-100);
+}
+[data-theme="dark"] .legacy-admin-content .new_win .win_btn {
+    border-top-color: var(--slate-800);
+}
+.legacy-admin-content .btn_close {
+    background-color: #fff !important;
+    color: var(--slate-700) !important;
+    border: 1px solid var(--slate-200) !important;
+}
+[data-theme="dark"] .legacy-admin-content .btn_close {
+    background-color: var(--slate-800) !important;
+    color: var(--slate-300) !important;
+    border-color: var(--slate-700) !important;
+}
+.legacy-admin-content .btn_close:hover {
+    background-color: var(--slate-50) !important;
+}
+[data-theme="dark"] .legacy-admin-content .btn_close:hover {
+    background-color: var(--slate-700) !important;
+}
+
 /* phpinfo() 등 인라인 스타일이 흰 배경을 가정하는 페이지 — 다크모드에서도 본문만 라이트 톤 강제.
  * .legacy-admin-content.force-light 로 wrapper 가 표시되며, 카드처럼 패딩/라운드도 부여. */
 .legacy-admin-content.force-light {

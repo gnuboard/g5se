@@ -125,6 +125,17 @@ window.check_all = window.check_all || function (f) {
     if (!ck) return;
     f.querySelectorAll('input[type="checkbox"][name="chk[]"]').forEach(function (i) { i.checked = ck.checked; });
 };
+// 팝업용 .btn_close (onclick=window.close()) 가 admin shell 안에서 직접 진입했을 때
+// 동작하도록 history.back() 으로 대체.
+document.addEventListener('click', function (e) {
+    var b = e.target.closest('.legacy-admin-content .btn_close');
+    if (!b) return;
+    if (window.opener && !window.opener.closed) return; // 진짜 팝업이면 그대로 close
+    e.preventDefault();
+    if (history.length > 1) history.back();
+    else location.href = '/admin';
+});
+
 window.delete_confirm = window.delete_confirm || function (a) {
     return confirm('정말 삭제하시겠습니까?');
 };
