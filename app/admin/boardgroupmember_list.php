@@ -66,7 +66,7 @@ $sort_link = function (string $col) use ($sst, $sod, $sfl, $stx, $page, $gr_id, 
 admin_layout_start('그룹 접근 회원 — '.$gr['gr_subject'], 'groups');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <a href="/admin/boardgroup_list" class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="그룹 목록">

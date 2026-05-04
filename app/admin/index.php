@@ -46,7 +46,7 @@ while ($row = sql_fetch_array($res)) {
 admin_layout_start('대시보드', 'home');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <!-- 카운트 카드 6개 -->
     <section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-6">

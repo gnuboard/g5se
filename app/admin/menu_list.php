@@ -45,7 +45,7 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 admin_layout_start('메뉴 설정', 'menus');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <div>

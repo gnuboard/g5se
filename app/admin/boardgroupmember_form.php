@@ -43,7 +43,7 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-5xl mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex items-center gap-3 mb-5">
         <a href="/admin/member_list" class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="회원 목록">

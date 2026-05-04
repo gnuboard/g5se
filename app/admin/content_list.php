@@ -43,7 +43,7 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 admin_layout_start('내용 관리', 'contents');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <div>
