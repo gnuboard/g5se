@@ -18,7 +18,7 @@ $fa_id = isset($_GET['fa_id']) ? (int)$_GET['fa_id'] : 0;
 
 $fm = $fm_id ? sql_fetch(" select * from {$g5['faq_master_table']} where fm_id = '{$fm_id}' ") : null;
 if (!$fm || empty($fm['fm_id'])) {
-    admin_layout_start('FAQ 항목', 'faq');
+    admin_layout_start('FAQ 항목', 'scf_faq');
     echo '<main class="flex-1 p-6 max-w-3xl mx-auto"><div class="rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-900/30 dark:border-rose-800 p-6 text-rose-800 dark:text-rose-200">존재하지 않는 FAQ 분류입니다.</div></main>';
     admin_layout_end();
     exit;
@@ -29,7 +29,7 @@ $fa_default = ['fa_id'=>0, 'fm_id'=>$fm_id, 'fa_subject'=>'', 'fa_content'=>'', 
 if ($w === 'u') {
     $row = sql_fetch(" select * from {$g5['faq_table']} where fa_id = '{$fa_id}' ");
     if (empty($row['fa_id'])) {
-        admin_layout_start('FAQ 항목 수정', 'faq');
+        admin_layout_start('FAQ 항목 수정', 'scf_faq');
         echo '<main class="flex-1 p-6 max-w-3xl mx-auto"><div class="rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-900/30 dark:border-rose-800 p-6 text-rose-800 dark:text-rose-200">등록된 자료가 없습니다.</div></main>';
         admin_layout_end();
         exit;
@@ -43,7 +43,7 @@ if ($w === 'u') {
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 
-admin_layout_start($page_title.' — '.$fm['fm_subject'], 'faq');
+admin_layout_start($page_title.' — '.$fm['fm_subject'], 'scf_faq');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">

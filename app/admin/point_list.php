@@ -64,7 +64,7 @@ $sort_link = function (string $col) use ($sst, $sod, $sfl, $stx, $page, $h): str
     return '<a href="/admin/point_list?'.$h($qs).'" class="inline-flex items-center gap-0.5 hover:text-admin-primary-700 dark:hover:text-admin-primary-300">';
 };
 
-admin_layout_start('포인트 내역', 'points');
+admin_layout_start('포인트 내역', 'mb_point');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">

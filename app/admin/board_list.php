@@ -81,7 +81,7 @@ $sort_link = function (string $col, string $default = 'asc') use ($sst, $sod, $s
     return '<a href="/admin/board_list?'.$h($qs).'" class="inline-flex items-center gap-0.5 hover:text-admin-primary-700 dark:hover:text-admin-primary-300">';
 };
 
-admin_layout_start('게시판 관리', 'boards');
+admin_layout_start('게시판 관리', 'bbs_board');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">

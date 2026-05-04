@@ -15,7 +15,7 @@ $fm_id = isset($_GET['fm_id']) ? (int)$_GET['fm_id'] : 0;
 $fm = $fm_id ? sql_fetch(" select * from {$g5['faq_master_table']} where fm_id = '{$fm_id}' ") : null;
 
 if (!$fm || empty($fm['fm_id'])) {
-    admin_layout_start('FAQ 상세', 'faq');
+    admin_layout_start('FAQ 상세', 'scf_faq');
     echo '<main class="flex-1 p-6 max-w-3xl mx-auto"><div class="rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-900/30 dark:border-rose-800 p-6 text-rose-800 dark:text-rose-200">존재하지 않는 FAQ 분류입니다. <a href="/admin/faqmasterlist" class="underline">목록으로</a></div></main>';
     admin_layout_end();
     exit;
@@ -26,7 +26,7 @@ $total_count = (int)sql_fetch(" select count(*) as cnt from {$g5['faq_table']} w
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 
-admin_layout_start('FAQ 상세 — '.$fm['fm_subject'], 'faq');
+admin_layout_start('FAQ 상세 — '.$fm['fm_subject'], 'scf_faq');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
