@@ -7,8 +7,8 @@ function connect($skin_dir='basic')
     global $config, $g5;
 
     // 회원, 방문객 카운트
-    $sql = " select sum(IF(mb_id<>'',1,0)) as mb_cnt, count(*) as total_cnt from {$g5['login_table']}  where mb_id <> '{$config['cf_admin']}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select sum(IF(mb_id<>'',1,0)) as mb_cnt, count(*) as total_cnt from {$g5['login_table']} where mb_id <> :admin_id ",
+                         [':admin_id' => $config['cf_admin']]);
 
     if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
         if (G5_IS_MOBILE) {
