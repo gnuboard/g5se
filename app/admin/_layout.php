@@ -32,6 +32,14 @@ function admin_require_login(): void
         header('Location: /', true, 302);
         exit;
     }
+
+    // 레거시 admin.lib.php 의 admin_referer_check / admin_check_xss_params 가
+    // referer path 에 /adm/ 를 요구한다. 모던 URL 은 /admin/... 이라 매번 실패해서
+    // POST 시 'XSS 공격' alert 가 떴음 (특히 contentform 의 editor HTML 본문).
+    // admin.lib.php 가 require 되기 전에 referer 를 패치해 검증을 통과시킨다.
+    if (!empty($_SERVER['HTTP_REFERER'])) {
+        $_SERVER['HTTP_REFERER'] = preg_replace('#(/+)admin(/+)#', '$1adm$2', $_SERVER['HTTP_REFERER']);
+    }
 }
 
 function admin_layout_start(string $title, string $active_key = ''): void
