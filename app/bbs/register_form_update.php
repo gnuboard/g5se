@@ -322,7 +322,7 @@ if ($w == '') {
         // 어떠한 회원정보도 포함되지 않은 일회용 난수를 생성하여 인증에 사용 (CSPRNG 사용)
         if ($config['cf_use_email_certify']) {
             $mb_md5 = get_random_token_string(16);
-            sql_query(" update {$g5['member_table']} set mb_email_certify2 = '$mb_md5' where mb_id = '$mb_id' ");
+            sql_pdo_query(" update {$g5['member_table']} set mb_email_certify2 = ? where mb_id = ? ", [$mb_md5, $mb_id]);
             $certify_href = G5_BBS_URL.'/email_certify.php?mb_id='.$mb_id.'&amp;mb_md5='.$mb_md5;
         }
 
@@ -607,7 +607,7 @@ if ($config['cf_use_email_certify'] && $old_email != $mb_email) {
     // 어떠한 회원정보도 포함되지 않은 일회용 난수를 생성하여 인증에 사용 (CSPRNG 사용)
     $mb_md5 = get_random_token_string(16);
 
-    sql_query(" update {$g5['member_table']} set mb_email_certify2 = '$mb_md5' where mb_id = '$mb_id' ");
+    sql_pdo_query(" update {$g5['member_table']} set mb_email_certify2 = ? where mb_id = ? ", [$mb_md5, $mb_id]);
 
     $certify_href = G5_BBS_URL.'/email_certify.php?mb_id='.$mb_id.'&amp;mb_md5='.$mb_md5;
 
@@ -686,7 +686,7 @@ run_event('register_form_update_after', $mb_id, $w);
 if ($w == '') {
     goto_url(G5_HTTP_BBS_URL.'/register_result.php');
 } else if ($w == 'u') {
-    $row  = sql_fetch(" select mb_password from {$g5['member_table']} where mb_id = '{$member['mb_id']}' ");
+    $row  = sql_pdo_fetch(" select mb_password from {$g5['member_table']} where mb_id = ? ", [$member['mb_id']]);
     $tmp_password = $row['mb_password'];
 
     if ($old_email != $mb_email && $config['cf_use_email_certify']) {

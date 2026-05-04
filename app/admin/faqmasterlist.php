@@ -89,7 +89,7 @@ admin_layout_start('FAQ 관리', 'scf_faq');
             <?php
             $i = 0;
             while ($row = sql_fetch_array($result)):
-                $cnt = (int)sql_fetch(" select count(*) as cnt from {$g5['faq_table']} where fm_id = '".(int)$row['fm_id']."' ")['cnt'];
+                $cnt = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['faq_table']} where fm_id = ? ", [(int)$row['fm_id']])['cnt'];
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
                     <td class="px-4 py-3 text-center font-mono text-xs text-slate-500"><?php echo (int)$row['fm_id'] ?></td>

@@ -1908,6 +1908,8 @@ function sql_data_seek($result, $offset=0)
 }
 
 // PDO 기반 query — 결과는 PDOStatement (또는 실패 시 false).
+// raw SQL 만 받음 (시그니처 보존). 변수 바인딩이 필요한 신규 코드는
+// sql_pdo_query() / sql_pdo_fetch() 사용 (lib/sql_pdo.lib.php).
 function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 {
     global $g5, $g5_debug;
@@ -2016,6 +2018,7 @@ function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 
 
 // 쿼리를 실행한 후 결과값에서 한행을 얻는다.
+//   sql_fetch("... where id = ?", [$id])  ← prepared 모드 (sql_query 와 동일한 분기)
 function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 {
     global $g5;

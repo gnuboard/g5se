@@ -12,7 +12,7 @@ $sub_menu = '300700';
 auth_check_menu($auth, $sub_menu, 'r');
 
 $fm_id = isset($_GET['fm_id']) ? (int)$_GET['fm_id'] : 0;
-$fm = $fm_id ? sql_fetch(" select * from {$g5['faq_master_table']} where fm_id = '{$fm_id}' ") : null;
+$fm = $fm_id ? sql_pdo_fetch(" select * from {$g5['faq_master_table']} where fm_id = ? ", [$fm_id]) : null;
 
 if (!$fm || empty($fm['fm_id'])) {
     admin_layout_start('FAQ 상세', 'scf_faq');
@@ -21,8 +21,8 @@ if (!$fm || empty($fm['fm_id'])) {
     exit;
 }
 
-$result = sql_query(" select * from {$g5['faq_table']} where fm_id = '{$fm_id}' order by fa_order, fa_id ");
-$total_count = (int)sql_fetch(" select count(*) as cnt from {$g5['faq_table']} where fm_id = '{$fm_id}' ")['cnt'];
+$result = sql_pdo_query(" select * from {$g5['faq_table']} where fm_id = ? order by fa_order, fa_id ", [$fm_id]);
+$total_count = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['faq_table']} where fm_id = ? ", [$fm_id])['cnt'];
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 

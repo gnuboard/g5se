@@ -22,7 +22,7 @@ $fm_default = ['fm_id'=>0, 'fm_subject'=>'', 'fm_order'=>0, 'fm_head_html'=>'', 
 
 if ($w === 'u') {
     if (!$fm_id) { header('Location: /admin/faqmasterlist', true, 302); exit; }
-    $row = sql_fetch(" select * from {$g5['faq_master_table']} where fm_id = '{$fm_id}' ");
+    $row = sql_pdo_fetch(" select * from {$g5['faq_master_table']} where fm_id = ? ", [$fm_id]);
     if (empty($row['fm_id'])) {
         admin_layout_start('FAQ 분류 수정', 'scf_faq');
         echo '<main class="flex-1 p-6 max-w-3xl mx-auto"><div class="rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-900/30 dark:border-rose-800 p-6 text-rose-800 dark:text-rose-200">등록된 자료가 없습니다.</div></main>';

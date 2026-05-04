@@ -81,8 +81,7 @@ if(function_exists('update_auth_session_token')) update_auth_session_token($mb['
 if($config['cf_use_point']) {
     $sum_point = get_point_sum($mb['mb_id']);
 
-    $sql= " update {$g5['member_table']} set mb_point = '$sum_point' where mb_id = '{$mb['mb_id']}' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['member_table']} set mb_point = ? where mb_id = ? ", [$sum_point, $mb['mb_id']]);
 }
 
 // 3.26
@@ -101,19 +100,15 @@ if (isset($auto_login) && $auto_login) {
     $auto_expire = date('Y-m-d H:i:s', G5_SERVER_TIME + 86400 * 31);
 
     // 만료된 토큰 정리 (해당 회원 한정)
-    sql_query(" delete from {$g5['member_auto_login_table']}
-                 where mb_id = '{$mb['mb_id']}'
-                   and al_expire < '{$auto_now}' ");
+    sql_pdo_query(" delete from {$g5['member_auto_login_table']}
+                     where mb_id = ? and al_expire < ? ",
+                  [$mb['mb_id'], $auto_now]);
 
     // 새 토큰 INSERT (해시값만 저장)
-    sql_query(" insert into {$g5['member_auto_login_table']}
-                  set mb_id = '{$mb['mb_id']}',
-                      al_token = '{$auto_token_hash}',
-                      al_user_agent = '".addslashes($auto_ua)."',
-                      al_ip = '".addslashes($auto_ip)."',
-                      al_created = '{$auto_now}',
-                      al_last_used = '{$auto_now}',
-                      al_expire = '{$auto_expire}' ");
+    sql_pdo_query(" insert into {$g5['member_auto_login_table']}
+                      set mb_id = ?, al_token = ?, al_user_agent = ?,
+                          al_ip = ?, al_created = ?, al_last_used = ?, al_expire = ? ",
+                  [$mb['mb_id'], $auto_token_hash, $auto_ua, $auto_ip, $auto_now, $auto_now, $auto_expire]);
 
     set_cookie('ck_mb_id', $mb['mb_id'], 86400 * 31);
     set_cookie('ck_auto', $auto_token, 86400 * 31);   // 쿠키에는 원본 토큰
