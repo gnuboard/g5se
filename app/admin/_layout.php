@@ -50,6 +50,13 @@ function admin_layout_start(string $title, string $active_key = ''): void
     // 수동으로 \$active_key 를 넘길 필요 없음. \$active_key 는 옛 호환용 폴백.
     $active_code = $sub_menu ?? '';
 
+    // 사이드바 그룹 토글 상태 — 쿠키로 저장해 서버가 첫 paint 부터 정확히 렌더 (FOUC 방지).
+    // 쿠키 형식: 'admin-nav-groups' = JSON {"navgrp-100":1,"navgrp-200":0,...}
+    $_admin_nav_state = [];
+    if (!empty($_COOKIE['admin-nav-groups'])) {
+        $_admin_nav_state = json_decode($_COOKIE['admin-nav-groups'], true) ?: [];
+    }
+
     // 가드 한 번 더 — admin_require_login 을 호출 안 했더라도 안전하게.
     admin_require_login();
 
@@ -121,10 +128,18 @@ function admin_layout_start(string $title, string $active_key = ''): void
                     }
                 }
                 // 그룹 ID — admin.menu{N}.php 의 숫자 N 을 사용 (_menu.php 가 _id 로 노출).
-                // 파일명 숫자는 안정적/고유하므로 한글 그룹명 정규식 충돌 문제 없음.
                 $group_id = 'navgrp-'.($group['_id'] ?? $group_index);
+
+                // open 상태: 활성 그룹은 항상 open. 그 외엔 쿠키 우선, 없으면 닫힘.
+                if ($group_has_active) {
+                    $group_open = true;
+                } elseif (array_key_exists($group_id, $_admin_nav_state)) {
+                    $group_open = !empty($_admin_nav_state[$group_id]);
+                } else {
+                    $group_open = false;
+                }
             ?>
-            <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_has_active ? 'open' : '' ?>>
+            <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_open ? 'open' : '' ?>>
                 <summary class="cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
                     <svg class="w-4 h-4 transition-transform shrink-0 chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     <span><?php echo get_text($group['group']) ?></span>
@@ -219,25 +234,28 @@ function admin_layout_end(): void
         if (window.innerWidth >= 1024) closeSidebar();
     });
 
-    // 사이드바 그룹 토글 — open/close 상태를 localStorage 에 그룹 ID 별로 저장.
-    // 단, 현재 활성 메뉴를 포함한 그룹(data-has-active=1)은 항상 open 유지 — 사용자가
-    // 그 그룹을 보고 있으니 강제로 펼쳐 둬야 한다.
-    try {
-        var navState = JSON.parse(localStorage.getItem('admin-nav-groups') || '{}');
+    // 사이드바 그룹 토글 상태 — 쿠키로 영속화 (서버가 다음 페이지에서 정확한 open 으로 렌더 → FOUC 없음).
+    // 초기 open 상태는 PHP 가 이미 쿠키 읽고 렌더했으므로 JS 는 토글 이벤트만 처리.
+    (function () {
+        function readState() {
+            var raw = (document.cookie.match(/(?:^|;\s*)admin-nav-groups=([^;]*)/) || [])[1];
+            if (!raw) return {};
+            try { return JSON.parse(decodeURIComponent(raw)); } catch (e) { return {}; }
+        }
+        function writeState(s) {
+            var v = encodeURIComponent(JSON.stringify(s));
+            // 30 일 보관, path=/, SameSite=Lax
+            var d = new Date(); d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000);
+            document.cookie = 'admin-nav-groups=' + v + '; expires=' + d.toUTCString() + '; path=/; SameSite=Lax';
+        }
         document.querySelectorAll('.nav-group').forEach(function (g) {
-            var id = g.dataset.groupId;
-            var hasActive = g.dataset.hasActive === '1';
-            if (hasActive) {
-                g.open = true; // 활성 그룹은 무조건 펼침
-            } else if (Object.prototype.hasOwnProperty.call(navState, id)) {
-                g.open = !!navState[id];
-            }
             g.addEventListener('toggle', function () {
-                navState[id] = g.open;
-                try { localStorage.setItem('admin-nav-groups', JSON.stringify(navState)); } catch (e) {}
+                var s = readState();
+                s[g.dataset.groupId] = g.open;
+                writeState(s);
             });
         });
-    } catch (e) {}
+    })();
 
     // 다크모드 토글 — main site 와 localStorage key 'm-theme' 공유.
     // data-theme 속성 + .dark 클래스 동시 토글 (UnoCSS dark: variant 가 .dark 사용).
