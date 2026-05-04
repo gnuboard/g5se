@@ -12,8 +12,7 @@ function get_config($is_cache=false){
         return $cache;
     }
 
-    $sql = " select * from {$g5['config_table']} ";
-    $cache = run_replace('get_config', sql_fetch($sql));
+    $cache = run_replace('get_config', sql_pdo_fetch(" select * from {$g5['config_table']} "));
 
     return $cache;
 }
@@ -34,9 +33,9 @@ function get_content_db($co_id, $is_cache=false){
         $co = g5_get_cache($cache_file_name, 10800);
         
         if( $co === false ){
-            $sql = " select * from {$g5['content_table']} where co_id = '$co_id' ";
-            $co = sql_fetch($sql);
-            
+            $co = sql_pdo_fetch(" select * from {$g5['content_table']} where co_id = :co_id ",
+                                [':co_id' => $co_id]);
+
             g5_set_cache($cache_file_name, $co, 10800);
         }
 
@@ -54,8 +53,7 @@ function get_board_names(){
 	$boards = run_replace('get_board_names_cache', $boards);
 
     if( ! $boards ){
-        $sql = " select bo_table from {$g5['board_table']} ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select bo_table from {$g5['board_table']} ");
 
         while ($row = sql_fetch_array($result)) {
             $boards[] = $row['bo_table'];
@@ -80,10 +78,9 @@ function get_board_db($bo_table, $is_cache=false){
 
     if( !($cache[$key] = run_replace('get_board_db', array(), $bo_table)) ){
 
-        $sql = " select * from {$g5['board_table']} where bo_table = '$bo_table' ";
+        $board = sql_pdo_fetch(" select * from {$g5['board_table']} where bo_table = :bo_table ",
+                               [':bo_table' => $bo_table]);
 
-        $board = sql_fetch($sql);
-        
         $board_defaults = array('bo_table'=>'', 'bo_skin'=>'', 'bo_mobile_skin'=>'', 'bo_upload_count' => 0, 'bo_use_dhtml_editor'=>'', 'bo_subject'=>'', 'bo_image_width'=>0);
 
         $cache[$key] = array_merge($board_defaults, (array) $board);
@@ -108,12 +105,12 @@ function get_menu_db($use_mobile=0, $is_cache=false){
     $where = $use_mobile ? "me_mobile_use = '1'" : "me_use = '1'";
 
     if( !($cache[$key] = run_replace('get_menu_db', array(), $use_mobile)) ){
-        $sql = " select *
+        // $where 는 코드내 고정 — 안전
+        $result = sql_pdo_query(" select *
                 from {$g5['menu_table']}
                 where $where
                 and length(me_code) = '2'
-                order by me_order, me_id ";
-        $result = sql_query($sql, false);
+                order by me_order, me_id ", [], false);
 
         for ($i=0; $row=sql_fetch_array($result); $i++) {
 
@@ -122,13 +119,13 @@ function get_menu_db($use_mobile=0, $is_cache=false){
             $row['sub'] = isset($row['sub']) ? $row['sub'] : array();
             $cache[$key][$i] = $row;
 
-            $sql2 = " select *
+            $result2 = sql_pdo_query(" select *
                     from {$g5['menu_table']}
                     where $where
                     and length(me_code) = '4'
-                    and substring(me_code, 1, 2) = '{$row['me_code']}'
-                    order by me_order, me_id ";
-            $result2 = sql_query($sql2);
+                    and substring(me_code, 1, 2) = :me_code
+                    order by me_order, me_id ",
+                    [':me_code' => $row['me_code']]);
             for ($k=0; $row2=sql_fetch_array($result2); $k++) {
                 $row2['ori_me_link'] = $row2['me_link'];
                 $row2['me_link'] = short_url_clean($row2['me_link']);
@@ -168,9 +165,9 @@ function get_content_by_field($write_table, $type='bbs', $where_field='', $where
         return $cache[$key];
     }
 
-    $sql = " select * from {$write_table} where $where_field = '".sql_real_escape_string($where_value)."' order by $order_key desc limit 1 ";
-
-    $cache[$key] = sql_fetch($sql);
+    // $where_field/$order_key 는 위 check_array 에서 검증
+    $cache[$key] = sql_pdo_fetch(" select * from {$write_table} where $where_field = :where_value order by $order_key desc limit 1 ",
+                                 [':where_value' => $where_value]);
 
     if( $type === 'content' ){
         
@@ -200,10 +197,10 @@ function get_board_file_db($bo_table, $wr_id, $fields='*', $add_where='', $is_ca
         return $cache[$key];
     }
 
-    $sql = " select $fields from {$g5['board_file_table']}
-                where bo_table = '$bo_table' and wr_id = '$wr_id' $add_where order by bf_no limit 0, 1 ";
-
-    $cache[$key] = sql_fetch($sql);
+    // $fields/$add_where 는 호출자가 안전한 SQL fragment 로 전달
+    $cache[$key] = sql_pdo_fetch(" select $fields from {$g5['board_file_table']}
+                where bo_table = :bo_table and wr_id = :wr_id $add_where order by bf_no limit 0, 1 ",
+                [':bo_table' => $bo_table, ':wr_id' => $wr_id]);
 
     return $cache[$key];
 }
@@ -220,9 +217,8 @@ function get_poll_db($po_id, $is_cache=false){
         return $cache[$key];
     }
 
-    $sql = " select * from {$g5['poll_table']} where po_id = '{$po_id}' ";
-
-    $cache[$key] = sql_fetch($sql);
+    $cache[$key] = sql_pdo_fetch(" select * from {$g5['poll_table']} where po_id = :po_id ",
+                                 [':po_id' => $po_id]);
 
     return $cache[$key];
 }
@@ -239,9 +235,8 @@ function get_point_db($po_id, $is_cache=false){
         return $cache[$key];
     }
 
-    $sql = " select * from {$g5['point_table']} where po_id = '{$po_id}' ";
-
-    $cache[$key] = sql_fetch($sql);
+    $cache[$key] = sql_pdo_fetch(" select * from {$g5['point_table']} where po_id = :po_id ",
+                                 [':po_id' => $po_id]);
 
     return $cache[$key];
 }
@@ -258,9 +253,8 @@ function get_mail_content_db($ma_id, $is_cache=false){
         return $cache[$key];
     }
 
-    $sql = " select * from {$g5['mail_table']} where ma_id = '{$ma_id}' ";
-
-    $cache[$key] = sql_fetch($sql);
+    $cache[$key] = sql_pdo_fetch(" select * from {$g5['mail_table']} where ma_id = :ma_id ",
+                                 [':ma_id' => $ma_id]);
 
     return $cache[$key];
 }
@@ -277,9 +271,8 @@ function get_qacontent_db($qa_id, $is_cache=false){
         return $cache[$key];
     }
 
-    $sql = " select * from {$g5['qa_content_table']} where qa_id = '{$qa_id}' ";
-
-    $cache[$key] = sql_fetch($sql);
+    $cache[$key] = sql_pdo_fetch(" select * from {$g5['qa_content_table']} where qa_id = :qa_id ",
+                                 [':qa_id' => $qa_id]);
 
     return $cache[$key];
 }
@@ -482,8 +475,9 @@ function get_memo_not_read($mb_id, $add_where='')
 {
     global $g5;
 
-    $sql = " SELECT count(*) as cnt FROM {$g5['memo_table']} WHERE me_recv_mb_id = '$mb_id' and me_type= 'recv' and me_read_datetime like '0%' $add_where ";
-    $row = sql_fetch($sql, false);
+    // $add_where 는 호출자가 안전한 SQL fragment 로 전달
+    $row = sql_pdo_fetch(" SELECT count(*) as cnt FROM {$g5['memo_table']} WHERE me_recv_mb_id = :mb_id and me_type = 'recv' and me_read_datetime like '0%' $add_where ",
+                         [':mb_id' => $mb_id], false);
 
     return isset($row['cnt']) ? $row['cnt'] : 0;
 }
@@ -491,10 +485,13 @@ function get_memo_not_read($mb_id, $add_where='')
 function get_scrap_totals($mb_id=''){
     global $g5;
 
-    $add_where = $mb_id ? " and mb_id = '$mb_id' " : '';
-
-    $sql = " select count(*) as cnt from {$g5['scrap_table']} where 1=1 $add_where";
-    $row = sql_fetch($sql, false);
+    $sql = " select count(*) as cnt from {$g5['scrap_table']} where 1=1 ";
+    $params = [];
+    if ($mb_id) {
+        $sql .= " and mb_id = :mb_id ";
+        $params[':mb_id'] = $mb_id;
+    }
+    $row = sql_pdo_fetch($sql, $params, false);
 
     return isset($row['cnt']) ? $row['cnt'] : 0;
 }
