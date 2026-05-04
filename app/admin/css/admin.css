@@ -16,15 +16,16 @@
  * !important 는 쓰지 않는다 — UnoCSS 의 .lg:flex 같은 responsive 변형이 source 순서로
  * 자연스럽게 .hidden 을 덮어써야 하기 때문. */
 /* 핵심 display utility — UnoCSS 가 처리하기 전 paint 시점에 span 등이 기본 inline 으로
- * 잠깐 보이는 현상 방지. 자주 쓰는 것들만 정적으로 미리. */
-.hidden { display: none; }
-[hidden] { display: none; }
+ * 잠깐 보이는 현상 방지. 자주 쓰는 것들만 정적으로 미리.
+ * 순서 중요: .hidden 은 다른 display 보다 늦게 와야 같은 specificity 에서 우선. */
 .block { display: block; }
 .inline { display: inline; }
 .inline-block { display: inline-block; }
 .flex { display: flex; }
 .inline-flex { display: inline-flex; }
 .grid { display: grid; }
+.hidden { display: none; }
+[hidden] { display: none; }
 
 /* UnoCSS 가 처리하기 전 paint 시점에 잘못 표시되는 변형 utility 들을 정적으로 미리.
  * 특히 테마 토글의 두 아이콘 (block dark:hidden / hidden dark:block) 이 동시에 잠깐
@@ -178,7 +179,13 @@
 
 /* 사이드바 / 헤더 / 메인 column 의 핵심 레이아웃 — UnoCSS runtime 의 generation 순서나
  * 누락 가능성과 무관하게 항상 보이도록 ID 셀렉터로 강하게 고정.
- * (UnoCSS 가 .lg:flex 보다 .hidden 을 늦게 inject 하면 사이드바가 사라지는 현상 방지) */
+ * 사이드바는 hidden/lg:flex 조합 대신 이 정적 CSS 로 제어해 초기 paint 깜빡임을 막는다. */
+#adm-sidebar {
+    display: none;
+}
+#adm-sidebar.adm-sidebar-open {
+    display: flex;
+}
 @media (min-width: 1024px) {
     #adm-sidebar {
         display: flex !important;
@@ -870,6 +877,14 @@
     color: var(--slate-400);
 }
 .legacy-admin-content .is-hidden { display: none !important; }
+.legacy-admin-content .cf_cert_hide,
+.legacy-admin-content .cf_tr_hide,
+.legacy-admin-content tr.cf_tr_hide {
+    display: none !important;
+}
+.legacy-admin-content .icode_old_version th {
+    background-color: #fffced;
+}
 .legacy-admin-content .sch_btn {
     display: flex;
     justify-content: flex-end;
