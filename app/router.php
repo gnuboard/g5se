@@ -251,9 +251,13 @@ class Router
                         $_REQUEST[$k] = $v;
                     }
                 }
-                // 캡처 그룹을 target 의 {N} placeholder 로 치환 ({1}, {2}, ...)
-                $resolved = preg_replace_callback('/\{(\d+)\}/', function ($ph) use ($m) {
-                    return isset($m[(int)$ph[1]]) ? $m[(int)$ph[1]] : '';
+                // 캡처 그룹을 target 의 placeholder 로 치환:
+                //   {1}, {2} ...  → 숫자 인덱스 캡처
+                //   {name}        → 명명 캡처 (?P<name>...)
+                $resolved = preg_replace_callback('/\{(\w+)\}/', function ($ph) use ($m) {
+                    $key = $ph[1];
+                    if (ctype_digit($key)) $key = (int)$key;
+                    return isset($m[$key]) ? $m[$key] : '';
                 }, $target);
                 // 명명 그룹은 $_GET 에 주입
                 foreach ($m as $k => $v) {

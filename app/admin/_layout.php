@@ -15,20 +15,31 @@
 
 if (!defined('_GNUBOARD_')) exit;
 
-function admin_layout_start(string $title, string $active_key = ''): void
+/**
+ * 페이지의 auth_check_menu() 호출 전에 먼저 부르는 가드.
+ * 미로그인 → /login, 일반 회원 → /. admin (super 또는 그룹/게시판 admin) 만 통과.
+ * gnuboard 의 auth_check_menu() 는 비-super 에 대해 alert() 로 죽으므로 그 이전에 실행해야 redirect 가 동작.
+ */
+function admin_require_login(): void
 {
-    global $is_admin, $is_member, $member, $config;
-
+    global $is_admin, $is_member;
     if (!$is_member) {
         $back = urlencode($_SERVER['REQUEST_URI'] ?? '/admin');
         header('Location: /login?url='.$back, true, 302);
         exit;
     }
     if (!$is_admin) {
-        // 일반 회원이 admin 으로 들어왔을 때
         header('Location: /', true, 302);
         exit;
     }
+}
+
+function admin_layout_start(string $title, string $active_key = ''): void
+{
+    global $is_admin, $member, $config;
+
+    // 가드 한 번 더 — admin_require_login 을 호출 안 했더라도 안전하게.
+    admin_require_login();
 
     require_once __DIR__.'/_menu.php';
     /** @var array $_admin_nav */
