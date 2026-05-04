@@ -18,7 +18,8 @@ switch ($w) {
     case 'x' :
         set_session('ss_delete_comment_'.$comment_id.'_token', $token = uniqid(time()));
         $action = https_url(G5_BBS_DIR).'/delete_comment.php?token='.$token;
-        $row = sql_fetch(" select wr_parent from $write_table where wr_id = '$comment_id' ");
+        $row = sql_pdo_fetch(" select wr_parent from $write_table where wr_id = :wr_id ",
+                             [':wr_id' => $comment_id]);
         $return_url = short_url_clean(G5_HTTP_BBS_URL.'/board.php?bo_table='.$bo_table.'&amp;wr_id='.$row['wr_parent']);
         break;
     case 's' :
@@ -50,11 +51,11 @@ include_once(G5_PATH.'/head.sub.php');
 
 /* 비밀글의 제목을 가져옴 지운아빠 2013-01-29 */
 if (isset($write['wr_num'])) {
-    $sql = " select wr_subject from {$write_table}
-                        where wr_num = '{$write['wr_num']}'
+    $row = sql_pdo_fetch(" select wr_subject from {$write_table}
+                        where wr_num = :wr_num
                         and wr_reply = ''
-                        and wr_is_comment = 0 ";
-    $row = sql_fetch($sql);
+                        and wr_is_comment = 0 ",
+                        [':wr_num' => $write['wr_num']]);
 
     $g5['title'] = get_text((string)$row['wr_subject']);
 }

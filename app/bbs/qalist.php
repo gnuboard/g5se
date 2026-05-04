@@ -46,15 +46,19 @@ if ($qaconfig['qa_category']) {
 if(is_file($skin_file)) {
     $sql_common = " from {$g5['qa_content_table']} ";
     $sql_search = " where qa_type = '0' ";
+    $search_params = [];
 
-    if(!$is_admin)
-        $sql_search .= " and mb_id = '{$member['mb_id']}' ";
+    if(!$is_admin) {
+        $sql_search .= " and mb_id = :mb_id ";
+        $search_params[':mb_id'] = $member['mb_id'];
+    }
 
     if($sca) {
         if (preg_match("/[a-zA-Z]/", $sca))
-            $sql_search .= " and INSTR(LOWER(qa_category), LOWER('$sca')) > 0 ";
+            $sql_search .= " and INSTR(LOWER(qa_category), LOWER(:sca)) > 0 ";
         else
-            $sql_search .= " and INSTR(qa_category, '$sca') > 0 ";
+            $sql_search .= " and INSTR(qa_category, :sca) > 0 ";
+        $search_params[':sca'] = stripslashes($sca);
     }
 
     $stx = trim($stx);
@@ -67,41 +71,31 @@ if(is_file($skin_file)) {
                 case "qa_name" :
                 case "mb_id" :
                     break;
-                default : 
+                default :
                     $sfl = "qa_subject";
             }
         } else {
             $sfl = "qa_subject";
         }
-        $sql_search .= " and (`{$sfl}` like '%{$stx}%') ";
+        $sfl_safe = preg_replace('/[^a-z0-9_]/i', '', $sfl);
+        $sql_search .= " and (`{$sfl_safe}` like :stx) ";
+        $search_params[':stx'] = '%'.stripslashes($stx).'%';
     }
-    // $stx = trim($stx);
-    // if($stx) {
-    //     if (preg_match("/[a-zA-Z]/", $stx))
-    //         $sql_search .= " and ( INSTR(LOWER(qa_subject), LOWER('$stx')) > 0 or INSTR(LOWER(qa_content), LOWER('$stx')) > 0 )";
-    //     else
-    //         $sql_search .= " and ( INSTR(qa_subject, '$stx') > 0 or INSTR(qa_content, '$stx') > 0 ) ";
-    // }
 
     $sql_order = " order by qa_num ";
 
-    $sql = " select count(*) as cnt 
-                $sql_common
-                $sql_search ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt $sql_common $sql_search ", $search_params);
     $total_count = $row['cnt'];
 
     $page_rows = G5_IS_MOBILE ? $qaconfig['qa_mobile_page_rows'] : $qaconfig['qa_page_rows'];
     $total_page  = ceil($total_count / $page_rows);  // 전체 페이지 계산
     if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
     $from_record = ($page - 1) * $page_rows; // 시작 열을 구함
+    $from_record_i = (int) $from_record;
+    $page_rows_i   = (int) $page_rows;
 
-    $sql = " select *
-                $sql_common
-                $sql_search
-                $sql_order
-                limit $from_record, $page_rows ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query(" select * $sql_common $sql_search $sql_order limit $from_record_i, $page_rows_i ",
+                            $search_params);
 
     $list = array();
     $num = $total_count - ($page - 1) * $page_rows;

@@ -9,24 +9,22 @@ include_once(G5_PATH.'/head.sub.php');
 
 $list = array();
 
-$sql_common = " from {$g5['point_table']} where mb_id = '".escape_trim($member['mb_id'])."' ";
+$sql_common = " from {$g5['point_table']} where mb_id = :mb_id ";
+$common_params = [':mb_id' => $member['mb_id']];
 $sql_order = " order by po_id desc ";
 
-$sql = " select count(*) as cnt {$sql_common} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt {$sql_common} ", $common_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
+$from_record_i = (int) $from_record;
+$rows_i        = (int) $rows;
 
-$sql = " select *
-            {$sql_common}
-            {$sql_order}
-            limit {$from_record}, {$rows} ";
-
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * {$sql_common} {$sql_order} limit {$from_record_i}, {$rows_i} ",
+                        $common_params);
 
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $list[] = $row;
