@@ -47,7 +47,7 @@ $result = sql_pdo_query(" select po.*, mb.mb_name, mb.mb_nick, mb.mb_email, mb.m
     {$sql_search} {$sql_order} limit {$from}, {$rows} ", $params);
 
 $mb = ($sfl === 'mb_id' && $stx !== '') ? get_member($stx) : [];
-$total_sum = sql_fetch(" select sum(po_point) as s from {$g5['point_table']} ")['s'] ?? 0;
+$total_sum = sql_pdo_fetch(" select sum(po_point) as s from {$g5['point_table']} ")['s'] ?? 0;
 
 $po_expire_term = ((int)$config['cf_point_term'] > 0) ? (int)$config['cf_point_term'] : '';
 

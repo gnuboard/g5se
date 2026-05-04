@@ -44,10 +44,11 @@ if (!sql_query(" DESCRIBE {$g5['faq_table']} ", false)) {
 
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $rows = (int)$config['cf_page_rows'];
-$total_count = (int)sql_fetch(" select count(*) as cnt from {$g5['faq_master_table']} ")['cnt'];
+$total_count = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['faq_master_table']} ")['cnt'];
 $total_page  = max(1, (int)ceil($total_count / max(1, $rows)));
 $from        = ($page - 1) * $rows;
-$result = sql_query(" select * from {$g5['faq_master_table']} order by fm_order, fm_id limit {$from}, {$rows} ");
+// LIMIT 의 from/rows 는 (int) 캐스트 정수라 보간 안전
+$result = sql_pdo_query(" select * from {$g5['faq_master_table']} order by fm_order, fm_id limit {$from}, {$rows} ");
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 
