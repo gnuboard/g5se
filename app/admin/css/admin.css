@@ -42,12 +42,18 @@
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 4px 0 4px 6px;
+    border-width: 6px 0 6px 9px;   /* 닫힘: 우측 가리키는 더 큰 삼각형 */
     border-color: transparent transparent transparent currentColor;
-    opacity: 0.7;
+    opacity: 0.85;
+    margin-right: 0.125rem;
     transition: transform .15s ease;
 }
 .nav-group[open] > summary.nav-summary::before { transform: rotate(90deg); }
+
+/* 하위 메뉴 들여쓰기 — 대메뉴 라벨보다 들여 자식임을 시각적으로 표시 */
+.nav-group > ul > li > a {
+    padding-left: 1.75rem;
+}
 
 /* 사이드바 / 헤더의 emoji 아이콘 — 시스템 emoji 폰트로 즉시 렌더 (FOUC 없음, 외부 리소스 없음) */
 .nav-icon {
