@@ -120,11 +120,22 @@ admin_layout_start('테마 설정', 'theme');
             </li>
         <?php endforeach; ?>
         </ul>
-
-        <div id="theme_detail_wrap" class="mt-6"></div>
     <?php endif; ?>
 
 </main>
+
+<!-- 테마 상세 모달 -->
+<div id="theme_detail_modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center p-4 sm:p-10 overflow-y-auto">
+    <div class="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-3 px-5 py-3 border-b border-slate-200 dark:border-slate-800">
+            <h3 id="theme_detail_title" class="font-semibold">테마 상세</h3>
+            <button type="button" id="theme_detail_close" class="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="닫기">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="theme_detail_body" class="p-5 max-h-[75vh] overflow-y-auto legacy-admin-content"></div>
+    </div>
+</div>
 
 <script>
 (function () {
@@ -166,18 +177,29 @@ admin_layout_start('테마 설정', 'theme');
         });
     });
 
-    var detailWrap = document.getElementById('theme_detail_wrap');
+    // 상세 모달
+    var modal      = document.getElementById('theme_detail_modal');
+    var modalTitle = document.getElementById('theme_detail_title');
+    var modalBody  = document.getElementById('theme_detail_body');
+    var modalClose = document.getElementById('theme_detail_close');
+    function openModal() { modal.classList.remove('hidden'); document.documentElement.style.overflow = 'hidden'; }
+    function closeModal() { modal.classList.add('hidden'); document.documentElement.style.overflow = ''; modalBody.innerHTML = ''; }
+    modalClose && modalClose.addEventListener('click', closeModal);
+    modal && modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(); });
+
     document.querySelectorAll('button.theme_detail').forEach(function (btn) {
         btn.addEventListener('click', function () {
-            if (!detailWrap) return;
             var theme = btn.dataset.theme;
+            modalTitle.textContent = theme + ' — 테마 상세';
+            modalBody.innerHTML = '<p class="text-center py-10 text-slate-400 text-sm">불러오는 중…</p>';
+            openModal();
             var fd = new FormData();
             fd.append('theme', theme);
             fetch('/admin/theme_detail', { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function (r) { return r.text(); })
                 .then(function (html) {
-                    detailWrap.innerHTML = '<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 legacy-admin-content">'+html+'</div>';
-                    detailWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    modalBody.innerHTML = html;
                 });
         });
     });
