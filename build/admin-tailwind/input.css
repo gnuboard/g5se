@@ -469,6 +469,50 @@
     /* 레거시 fa-* 아이콘 자리 */
     .legacy-admin-content .fa { font-style: normal; }
 
+    /* SmartEditor2 / cheditor — 다크모드에서 에디터 안쪽은 항상 라이트 톤으로 고정.
+     * 에디터 본문은 iframe 이라 외부에서 색을 직접 못 주지만, 에디터 wrapper /
+     * 툴바 / textarea 영역은 다크 페이지 위에서 강제로 흰 배경 + 어두운 글자로
+     * 가독성 확보. */
+    .legacy-admin-content #smart_editor2,
+    .legacy-admin-content #smart_editor2_content,
+    .legacy-admin-content .smart_editor2,
+    .legacy-admin-content .se2_tool,
+    .legacy-admin-content .se2_inputarea,
+    .legacy-admin-content .se2_iframe_holder,
+    .legacy-admin-content textarea#smart_editor2_src,
+    .legacy-admin-content textarea[id$="_html"],
+    .legacy-admin-content .cke_sc {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+    }
+    .legacy-admin-content #smart_editor2 *,
+    .legacy-admin-content .smart_editor2 * {
+        color: inherit;
+    }
+    .legacy-admin-content #smart_editor2 input,
+    .legacy-admin-content #smart_editor2 select,
+    .legacy-admin-content #smart_editor2 textarea {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+    /* 에디터 textarea (HTML/TEXT 탭 전환 시 노출) */
+    .legacy-admin-content [id^="smart_editor2"] textarea,
+    .legacy-admin-content textarea[name="co_content"],
+    .legacy-admin-content textarea[name="co_mobile_content"],
+    .legacy-admin-content textarea[name="bo_content_head"],
+    .legacy-admin-content textarea[name="bo_content_tail"] {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+    }
+    /* 에디터 iframe 자체 — 외곽 배경만 흰색 (내부는 cross-origin 아니라 같은 origin 이지만
+     *  CSS 직접 주입은 X) */
+    .legacy-admin-content iframe[id^="ifr"],
+    .legacy-admin-content iframe[id$="_ifr"],
+    .legacy-admin-content #se2_iframe {
+        background-color: #ffffff !important;
+    }
+
     /* 사이드뷰 (회원 닉네임 클릭 시 메뉴 popover) */
     .legacy-admin-content .sv_wrap {
         display: inline-block;
