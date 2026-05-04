@@ -97,9 +97,12 @@ class Router
 
         // 모던 admin (/adm 와 별개로 점진적 마이그레이션)
         // .php 만 제거한 path-rewrite — /admin/foo → app/admin/foo.php
-        // /admin (정확히 매치) 또는 /admin/ → app/admin/index.php (대시보드)
-        '#^/admin/?$#'                                  => 'admin/index.php',
-        '#^/admin/(?P<page>[a-zA-Z0-9_./-]+)/?$#'       => 'admin/{page}.php',
+        //   - 각 segment 는 글자로 시작 ([a-zA-Z]) + 영문/숫자/_/- (점 금지)
+        //     → /admin/admin.menu100 / /admin/menu.d/foo / /admin/_layout 등
+        //       internal 파일이 web 으로 노출되지 않도록 차단
+        //   - 서브디렉토리 가능 (segment/segment) — 단 모든 segment 가 같은 룰
+        '#^/admin/?$#'                                                              => 'admin/index.php',
+        '#^/admin/(?P<page>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)/?$#' => 'admin/{page}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
