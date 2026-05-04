@@ -42,7 +42,7 @@ switch ($type) {
         }
         break;
     case 'content':
-        if (isset($g5['content_table']) && sql_query(" describe {$g5['content_table']} ", false)) {
+        if (isset($g5['content_table']) && sql_pdo_query(" describe {$g5['content_table']} ", [], false)) {
             $r = sql_pdo_query(" select co_id as id, co_subject as subject from {$g5['content_table']} order by co_id ");
             while ($row = sql_fetch_array($r)) {
                 $items[] = [
