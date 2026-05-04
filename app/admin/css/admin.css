@@ -18,6 +18,20 @@
 .hidden { display: none; }
 [hidden] { display: none; }
 
+/* 사이드바 / 헤더 / 메인 column 의 핵심 레이아웃 — UnoCSS runtime 의 generation 순서나
+ * 누락 가능성과 무관하게 항상 보이도록 ID 셀렉터로 강하게 고정.
+ * (UnoCSS 가 .lg:flex 보다 .hidden 을 늦게 inject 하면 사이드바가 사라지는 현상 방지) */
+@media (min-width: 1024px) {
+    #adm-sidebar {
+        display: flex !important;
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 15rem;
+        flex-direction: column;
+        z-index: 40;
+    }
+}
+
 :root {
     /* admin primary — cool blue */
     --admin-primary-50:  #f0f7ff;
