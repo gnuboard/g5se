@@ -32,11 +32,11 @@ HEREDOC;
 if ($write['wr_is_comment'])
     alert_close('코멘트는 스크랩 할 수 없습니다.');
 
-$sql = " select count(*) as cnt from {$g5['scrap_table']}
-            where mb_id = '{$member['mb_id']}'
-            and bo_table = '$bo_table'
-            and wr_id = '$wr_id' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['scrap_table']}
+            where mb_id = :mb_id
+            and bo_table = :bo_table
+            and wr_id = :wr_id ",
+            [':mb_id' => $member['mb_id'], ':bo_table' => $bo_table, ':wr_id' => $wr_id]);
 if ($row['cnt']) {
 
     $back_url = get_pretty_url($bo_table, $wr_id);

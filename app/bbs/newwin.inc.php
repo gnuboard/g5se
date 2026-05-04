@@ -7,11 +7,11 @@ if (!defined('_SHOP_')) {
     $pop_division = 'shop';
 }
 
-$sql = " select * from {$g5['new_win_table']}
-          where '".G5_TIME_YMDHIS."' between nw_begin_time and nw_end_time
-            and nw_device IN ( 'both', 'pc' ) and nw_division IN ( 'both', '".$pop_division."' )
-          order by nw_id asc ";
-$result = sql_query($sql, false);
+$result = sql_pdo_query(" select * from {$g5['new_win_table']}
+          where :now between nw_begin_time and nw_end_time
+            and nw_device IN ( 'both', 'pc' ) and nw_division IN ( 'both', :division )
+          order by nw_id asc ",
+          [':now' => G5_TIME_YMDHIS, ':division' => $pop_division], false);
 ?>
 
 <!-- 팝업레이어 시작 { -->

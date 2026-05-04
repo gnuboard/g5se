@@ -13,8 +13,8 @@ if (!$member['mb_open'] && $is_admin != 'super' && $member['mb_id'] != $mb_id) {
 }
 
 $content = "";
-$me_recv_mb_id   = isset($_REQUEST['me_recv_mb_id']) ? addslashes(clean_xss_tags(stripslashes($_REQUEST['me_recv_mb_id']), 1, 1)) : '';
-$me_id           = isset($_REQUEST['me_id']) ? addslashes(clean_xss_tags(stripslashes($_REQUEST['me_id']), 1, 1)) : '';
+$me_recv_mb_id   = isset($_REQUEST['me_recv_mb_id']) ? clean_xss_tags(stripslashes($_REQUEST['me_recv_mb_id']), 1, 1) : '';
+$me_id           = isset($_REQUEST['me_id']) ? clean_xss_tags(stripslashes($_REQUEST['me_id']), 1, 1) : '';
 
 // 탈퇴한 회원에게 쪽지 보낼 수 없음
 if ($me_recv_mb_id)
@@ -27,7 +27,8 @@ if ($me_recv_mb_id)
         alert_close('정보공개를 하지 않았습니다.');
 
     // 4.00.15
-    $row = sql_fetch(" select me_memo from {$g5['memo_table']} where me_id = '{$me_id}' and (me_recv_mb_id = '{$member['mb_id']}' or me_send_mb_id = '{$member['mb_id']}') ");
+    $row = sql_pdo_fetch(" select me_memo from {$g5['memo_table']} where me_id = :me_id and (me_recv_mb_id = :mb_id or me_send_mb_id = :mb_id) ",
+                         [':me_id' => $me_id, ':mb_id' => $member['mb_id']]);
     if (isset($row['me_memo']) && $row['me_memo'])
     {
         $content = "\n\n\n".' >'

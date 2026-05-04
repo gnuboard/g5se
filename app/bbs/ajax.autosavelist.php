@@ -3,8 +3,8 @@ include_once('./_common.php');
 
 if (!$is_member) die('');
 
-$sql = " select as_id, as_uid, as_subject, as_datetime from {$g5['autosave_table']} where mb_id = '{$member['mb_id']}' order by as_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select as_id, as_uid, as_subject, as_datetime from {$g5['autosave_table']} where mb_id = :mb_id order by as_id desc ",
+                        [':mb_id' => $member['mb_id']]);
 echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 echo "<list>\n";
 for ($i=0; $row=sql_fetch_array($result); $i++) {

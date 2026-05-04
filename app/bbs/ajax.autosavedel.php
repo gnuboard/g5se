@@ -5,8 +5,8 @@ if (!$is_member) die("0");
 
 $as_id = isset($_REQUEST['as_id']) ? (int)$_REQUEST['as_id'] : 0;
 
-$sql = " delete from {$g5['autosave_table']} where mb_id = '{$member['mb_id']}' and as_id = {$as_id} ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" delete from {$g5['autosave_table']} where mb_id = :mb_id and as_id = :as_id ",
+                        [':mb_id' => $member['mb_id'], ':as_id' => $as_id]);
 if (!$result) {
     echo "-1";
 }

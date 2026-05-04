@@ -19,9 +19,10 @@ $logout_mb_id = get_cookie('ck_mb_id');
 if (isset($g5['member_auto_login_table']) && $logout_token && $logout_mb_id && preg_match('/^[a-f0-9]{64}$/', $logout_token)) {
     $logout_mb_id = substr(preg_replace("/[^a-zA-Z0-9_]*/", "", $logout_mb_id), 0, 20);
     $logout_token_hash = hash('sha256', $logout_token);
-    sql_query(" delete from {$g5['member_auto_login_table']}
-                 where mb_id = '{$logout_mb_id}'
-                   and al_token = '{$logout_token_hash}' ");
+    sql_pdo_query(" delete from {$g5['member_auto_login_table']}
+                     where mb_id = :mb_id
+                       and al_token = :al_token ",
+                  [':mb_id' => $logout_mb_id, ':al_token' => $logout_token_hash]);
 }
 set_cookie('ck_mb_id', '', 0);
 set_cookie('ck_auto', '', 0);

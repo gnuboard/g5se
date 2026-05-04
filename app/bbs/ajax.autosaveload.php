@@ -5,8 +5,8 @@ if (!$is_member) die('');
 
 $as_id = isset($_REQUEST['as_id']) ? (int) $_REQUEST['as_id'] : 0;
 
-$sql = " select as_subject, as_content from {$g5['autosave_table']} where mb_id = '{$member['mb_id']}' and as_id = {$as_id} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select as_subject, as_content from {$g5['autosave_table']} where mb_id = :mb_id and as_id = :as_id ",
+                     [':mb_id' => $member['mb_id'], ':as_id' => $as_id]);
 $subject = $row['as_subject'];
 $content = $row['as_content'];
 

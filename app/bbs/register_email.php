@@ -5,9 +5,9 @@ include_once(G5_CAPTCHA_PATH.'/captcha.lib.php');
 $g5['title'] = '메일인증 메일주소 변경';
 include_once('./_head.php');
 
-$mb_id = isset($_GET['mb_id']) ? substr(addslashes(clean_xss_tags(stripslashes($_GET['mb_id']), 1, 1)), 0, 20) : '';
-$sql = " select mb_email, mb_datetime, mb_ip, mb_email_certify, mb_id from {$g5['member_table']} where mb_id = '{$mb_id}' ";
-$mb = sql_fetch($sql);
+$mb_id = isset($_GET['mb_id']) ? substr(clean_xss_tags(stripslashes($_GET['mb_id']), 1, 1), 0, 20) : '';
+$mb = sql_pdo_fetch(" select mb_email, mb_datetime, mb_ip, mb_email_certify, mb_id from {$g5['member_table']} where mb_id = :mb_id ",
+                    [':mb_id' => $mb_id]);
 
 if(! (isset($mb['mb_id']) && $mb['mb_id'])){
     alert("해당 회원이 존재하지 않습니다.", G5_URL);
