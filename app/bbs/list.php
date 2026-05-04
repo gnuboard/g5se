@@ -54,11 +54,6 @@ if ($sca || $stx || $stx === '0') {     //검색이면
     // NOTE: $sql_search 는 get_sql_search() 가 빌드 — addslashes 로 escape 된 값이 이미 인라인 (lib/ 이관 후 placeholder 화 예정)
     $row = sql_pdo_fetch(" SELECT COUNT(DISTINCT `wr_parent`) AS `cnt` FROM {$write_table} WHERE {$sql_search} ");
     $total_count = $row['cnt'];
-    /*
-    $sql = " select distinct wr_parent from {$write_table} where {$sql_search} ";
-    $result = sql_query($sql);
-    $total_count = sql_num_rows($result);
-    */
 } else {
     $sql_search = "";
 
