@@ -5,10 +5,12 @@ $g5['title'] = '새글';
 include_once('./_head.php');
 
 $sql_common = " from {$g5['board_new_table']} a, {$g5['board_table']} b, {$g5['group_table']} c where a.bo_table = b.bo_table and b.gr_id = c.gr_id and b.bo_use_search = 1 ";
+$common_params = [];
 
 $gr_id = isset($_GET['gr_id']) ? substr(preg_replace('#[^a-z0-9_]#i', '', $_GET['gr_id']), 0, 10) : '';
 if ($gr_id) {
-    $sql_common .= " and b.gr_id = '$gr_id' ";
+    $sql_common .= " and b.gr_id = :gr_id ";
+    $common_params[':gr_id'] = $gr_id;
 }
 
 $view = isset($_GET['view']) ? $_GET['view'] : "";
@@ -24,30 +26,31 @@ $mb_id = isset($_GET['mb_id']) ? ($_GET['mb_id']) : '';
 $mb_id = substr(preg_replace('#[^a-z0-9_]#i', '', $mb_id), 0, 20);
 
 if ($mb_id) {
-    $sql_common .= " and a.mb_id = '{$mb_id}' ";
+    $sql_common .= " and a.mb_id = :mb_id ";
+    $common_params[':mb_id'] = $mb_id;
 }
 $sql_order = " order by a.bn_id desc ";
 
-$sql = " select count(*) as cnt {$sql_common} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt {$sql_common} ", $common_params);
 $total_count = $row['cnt'];
 
 $rows = G5_IS_MOBILE ? $config['cf_mobile_page_rows'] : $config['cf_new_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
+$from_record_i = (int) $from_record;
+$rows_i        = (int) $rows;
 
 $group_select = '<label for="gr_id" class="sound_only">그룹</label><select name="gr_id" id="gr_id"><option value="">전체그룹';
-$sql = " select gr_id, gr_subject from {$g5['group_table']} order by gr_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select gr_id, gr_subject from {$g5['group_table']} order by gr_id ");
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $group_select .= "<option value=\"".$row['gr_id']."\">".$row['gr_subject'];
 }
 $group_select .= '</select>';
 
 $list = array();
-$sql = " select a.*, b.bo_subject, b.bo_mobile_subject, c.gr_subject, c.gr_id {$sql_common} {$sql_order} limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select a.*, b.bo_subject, b.bo_mobile_subject, c.gr_subject, c.gr_id {$sql_common} {$sql_order} limit {$from_record_i}, {$rows_i} ",
+                        $common_params);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $tmp_write_table = $g5['write_prefix'].$row['bo_table'];
 
@@ -56,7 +59,8 @@ for ($i=0; $row=sql_fetch_array($result); $i++) {
         // 원글
         $comment = "";
         $comment_link = "";
-        $row2 = sql_fetch(" select * from {$tmp_write_table} where wr_id = '{$row['wr_id']}' ");
+        $row2 = sql_pdo_fetch(" select * from {$tmp_write_table} where wr_id = :wr_id ",
+                              [':wr_id' => $row['wr_id']]);
         $list[$i] = $row2;
 
         $name = get_sideview($row2['mb_id'], get_text(cut_str($row2['wr_name'], $config['cf_cut_name'])), $row2['wr_email'], $row2['wr_homepage']);
@@ -74,8 +78,10 @@ for ($i=0; $row=sql_fetch_array($result); $i++) {
         // 코멘트
         $comment = '[코] ';
         $comment_link = '#c_'.$row['wr_id'];
-        $row2 = sql_fetch(" select * from {$tmp_write_table} where wr_id = '{$row['wr_parent']}' ");
-        $row3 = sql_fetch(" select mb_id, wr_name, wr_email, wr_homepage, wr_datetime from {$tmp_write_table} where wr_id = '{$row['wr_id']}' ");
+        $row2 = sql_pdo_fetch(" select * from {$tmp_write_table} where wr_id = :wr_id ",
+                              [':wr_id' => $row['wr_parent']]);
+        $row3 = sql_pdo_fetch(" select mb_id, wr_name, wr_email, wr_homepage, wr_datetime from {$tmp_write_table} where wr_id = :wr_id ",
+                              [':wr_id' => $row['wr_id']]);
         $list[$i] = $row2;
         $list[$i]['wr_id'] = $row['wr_id'];
         $list[$i]['mb_id'] = $row3['mb_id'];
