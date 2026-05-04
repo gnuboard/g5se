@@ -1847,38 +1847,35 @@ function html_symbol($str)
 *************************************************************************/
 
 // DB 연결
+// PDO 기반 SQL 함수군 — 시그니처/리턴 의미는 그대로 유지하여 기존 호출처 무수정.
+// $g5['connect_db'] 는 PDO 인스턴스, sql_query() 결과는 PDOStatement.
 function sql_connect($host, $user, $pass, $db=G5_MYSQL_DB)
 {
-    global $g5;
-
-    if(function_exists('mysqli_connect') && G5_MYSQLI_USE) {
-        mysqli_report(MYSQLI_REPORT_OFF);
-        $link = @mysqli_connect($host, $user, $pass, $db) or die('MySQL Host, User, Password, DB 정보에 오류가 있습니다.');
-
-        // 연결 오류 발생 시 스크립트 종료
-        if (mysqli_connect_errno()) {
-            die('Connect Error: '.mysqli_connect_error());
-        }
-    } else {
-        if (!function_exists('mysql_connect')) {
-            die('MySQL이 설치되지 않아 mysql_connect 함수를 사용할 수 없습니다.');
-        }
-        $link = mysql_connect($host, $user, $pass) or die('MySQL Host, User, Password 정보에 오류가 있습니다.');
+    if (!class_exists('PDO')) {
+        die('PHP PDO 확장이 설치되지 않았습니다. (php-mysql / php-pdo-mysql 설치 필요)');
     }
-
-    return $link;
+    try {
+        // DB 명을 DSN 에 포함 — sql_select_db 는 noop 으로 처리
+        $dsn = "mysql:host={$host};dbname={$db}";
+        $opts = [
+            PDO::ATTR_ERRMODE              => PDO::ERRMODE_SILENT,   // gnuboard 가 직접 에러 핸들 (Exception 던지면 안 됨)
+            PDO::ATTR_DEFAULT_FETCH_MODE   => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES     => true,                  // prepared 도 동일하게 동작
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,              // rowCount() / 재 iterate 가능하도록
+        ];
+        $pdo = new PDO($dsn, $user, $pass, $opts);
+    } catch (Exception $e) {
+        die('MySQL Host, User, Password, DB 정보에 오류가 있습니다.');
+    }
+    return $pdo;
 }
 
 
-// DB 선택
+// DB 선택 — PDO 는 DSN 으로 이미 선택됨. 호환을 위해 noop (성공 시 true).
 function sql_select_db($db, $connect)
 {
-    global $g5;
-
-    if(function_exists('mysqli_select_db') && G5_MYSQLI_USE)
-        return @mysqli_select_db($connect, $db);
-    else
-        return @mysql_select_db($db, $connect);
+    if (!$connect instanceof PDO) return false;
+    return true;
 }
 
 
@@ -1886,27 +1883,31 @@ function sql_set_charset($charset, $link=null)
 {
     global $g5;
 
-    if(!$link)
-        $link = $g5['connect_db'];
-
-    if(function_exists('mysqli_set_charset') && G5_MYSQLI_USE)
-        mysqli_set_charset($link, $charset);
-    else
-        mysql_query(" set names {$charset} ", $link);
+    if (!$link) $link = $g5['connect_db'];
+    if ($link instanceof PDO) {
+        @$link->exec("SET NAMES {$charset}");
+    }
 }
 
 function sql_data_seek($result, $offset=0)
 {
-    if ( ! $result ) return;
+    if (!$result) return;
 
-    if(function_exists('mysqli_set_charset') && G5_MYSQLI_USE)
-        mysqli_data_seek($result, $offset);
-    else
-        mysql_data_seek($result, $offset);
+    // PDOStatement 는 일반 cursor 가 backward seek 을 지원하지 않으므로
+    // closeCursor() 후 execute() 로 재실행 — 가장 호환성 높은 접근.
+    if ($result instanceof PDOStatement) {
+        @$result->closeCursor();
+        @$result->execute();
+        if ($offset > 0) {
+            for ($i = 0; $i < $offset; $i++) {
+                if (!$result->fetch()) break;
+            }
+        }
+        return;
+    }
 }
 
-// mysqli_query 와 mysqli_error 를 한꺼번에 처리
-// mysql connect resource 지정 - 명랑폐인님 제안
+// PDO 기반 query — 결과는 PDOStatement (또는 실패 시 false).
 function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 {
     global $g5, $g5_debug;
@@ -1916,63 +1917,40 @@ function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 
     // Blind SQL Injection 취약점 해결
     $sql = trim($sql);
-    // union의 사용을 허락하지 않습니다.
-    //$sql = preg_replace("#^select.*from.*union.*#i", "select 1", $sql);
-    //$sql = preg_replace("#^select.*from.*[\s\(]+union[\s\)]+.*#i ", "select 1", $sql);
     $sql = preg_replace("#^select.*from.*([\s\(]+union[\s\)]+|/\*.*union.*\*/).*#i", "select 1", $sql);
     // `information_schema` DB로의 접근을 허락하지 않습니다.
     $sql = preg_replace("#^select.*from.*where.*`?information_schema`?.*#i", "select 1", $sql);
 
     $is_debug = get_permission_debug_show();
-    
+
     $start_time = ($is_debug || G5_COLLECT_QUERY) ? get_microtime() : 0;
 
-    if(function_exists('mysqli_query') && G5_MYSQLI_USE) {
-        if ($error) {
-            $result = @mysqli_query($link, $sql);
-            if (!$result) {
-                $err_no   = mysqli_errno($link);
-                $err_msg  = mysqli_error($link);
-                $err_file = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
-
-                // 서버 로그에는 항상 상세 기록 (운영자가 추적 가능하도록)
-                @error_log("[g5 sql_query] {$err_no}: {$err_msg} | SQL: {$sql} | file: {$err_file}");
-
-                if ($is_debug) {
-                    // 디버그 모드: 상세 표시 (XSS 방지를 위해 escape)
-                    die("<p>" . htmlspecialchars($sql, ENT_QUOTES, 'UTF-8')
-                        . "<p>" . (int)$err_no . " : " . htmlspecialchars($err_msg, ENT_QUOTES, 'UTF-8')
-                        . "<p>error file : " . htmlspecialchars($err_file, ENT_QUOTES, 'UTF-8'));
-                }
-                // 운영 환경: 일반 메시지로만 처리하여 DB 구조/경로 정보 노출 방지
-                die('데이터베이스 처리 중 오류가 발생했습니다.');
-            }
-        } else {
-            try {
-                $result = @mysqli_query($link, $sql);
-            } catch (Exception $e) {
-                $result = null;
-            }
+    /** @var PDO|null $link */
+    $result = false;
+    if ($link instanceof PDO) {
+        try {
+            $result = @$link->query($sql);
+        } catch (Exception $e) {
+            $result = false;
         }
-    } else {
-        if ($error) {
-            $result = @mysql_query($sql, $link);
-            if (!$result) {
-                $err_no   = mysql_errno();
-                $err_msg  = mysql_error();
-                $err_file = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
+        // get_sql_affected_rows() 가 마지막 query 의 rowCount 를 사용
+        if ($result instanceof PDOStatement) {
+            $g5['last_stmt'] = $result;
+        }
+        if (!$result && $error) {
+            $info     = $link->errorInfo();
+            $err_no   = isset($info[1]) ? (int)$info[1] : 0;
+            $err_msg  = isset($info[2]) ? (string)$info[2] : '';
+            $err_file = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
 
-                @error_log("[g5 sql_query] {$err_no}: {$err_msg} | SQL: {$sql} | file: {$err_file}");
+            @error_log("[g5 sql_query] {$err_no}: {$err_msg} | SQL: {$sql} | file: {$err_file}");
 
-                if ($is_debug) {
-                    die("<p>" . htmlspecialchars($sql, ENT_QUOTES, 'UTF-8')
-                        . "<p>" . (int)$err_no . " : " . htmlspecialchars($err_msg, ENT_QUOTES, 'UTF-8')
-                        . "<p>error file : " . htmlspecialchars($err_file, ENT_QUOTES, 'UTF-8'));
-                }
-                die('데이터베이스 처리 중 오류가 발생했습니다.');
+            if ($is_debug) {
+                die("<p>" . htmlspecialchars($sql, ENT_QUOTES, 'UTF-8')
+                    . "<p>" . (int)$err_no . " : " . htmlspecialchars($err_msg, ENT_QUOTES, 'UTF-8')
+                    . "<p>error file : " . htmlspecialchars($err_file, ENT_QUOTES, 'UTF-8'));
             }
-        } else {
-            $result = @mysql_query($sql, $link);
+            die('데이터베이스 처리 중 오류가 발생했습니다.');
         }
     }
 
@@ -1981,17 +1959,11 @@ function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
     $error = null;
     $source = array();
     if ($is_debug || G5_COLLECT_QUERY) {
-        if(function_exists('mysqli_error') && G5_MYSQLI_USE) {
-            $error = array(
-                'error_code' => mysqli_errno($link),
-                'error_message' => mysqli_error($link),
-            );
-        } else {
-            $error = array(
-                'error_code' => mysql_errno($link),
-                'error_message' => mysql_error($link),
-            );
-        }
+        $info = ($link instanceof PDO) ? $link->errorInfo() : [null, 0, ''];
+        $error = array(
+            'error_code'    => isset($info[1]) ? (int)$info[1] : 0,
+            'error_message' => isset($info[2]) ? (string)$info[2] : '',
+        );
 
         $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $found = false;
@@ -2061,32 +2033,26 @@ function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 // 결과값에서 한행 연관배열(이름으로)로 얻는다.
 function sql_fetch_array($result)
 {
-    if( ! $result) return array();
-
-    if(function_exists('mysqli_fetch_assoc') && G5_MYSQLI_USE)
+    if (!$result) return array();
+    if ($result instanceof PDOStatement) {
         try {
-            $row = @mysqli_fetch_assoc($result);
+            $row = @$result->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             $row = null;
         }
-    else
-        $row = @mysql_fetch_assoc($result);
-
-    return $row;
+        return $row !== false ? $row : null;
+    }
+    return null;
 }
 
 
 // $result에 대한 메모리(memory)에 있는 내용을 모두 제거한다.
-// sql_free_result()는 결과로부터 얻은 질의 값이 커서 많은 메모리를 사용할 염려가 있을 때 사용된다.
-// 단, 결과 값은 스크립트(script) 실행부가 종료되면서 메모리에서 자동적으로 지워진다.
 function sql_free_result($result)
 {
-    if(!is_resource($result)) return;
-
-    if(function_exists('mysqli_free_result') && G5_MYSQLI_USE)
-        return mysqli_free_result($result);
-    else
-        return mysql_free_result($result);
+    if (!$result) return;
+    if ($result instanceof PDOStatement) {
+        @$result->closeCursor();
+    }
 }
 
 
@@ -2114,52 +2080,32 @@ function sql_password($value)
 function sql_insert_id($link=null)
 {
     global $g5;
-
-    if(!$link)
-        $link = $g5['connect_db'];
-
-    if(function_exists('mysqli_insert_id') && G5_MYSQLI_USE)
-        return mysqli_insert_id($link);
-    else
-        return mysql_insert_id($link);
+    if (!$link) $link = $g5['connect_db'];
+    return ($link instanceof PDO) ? (int)$link->lastInsertId() : 0;
 }
 
 
 function sql_num_rows($result)
 {
-    if(function_exists('mysqli_num_rows') && G5_MYSQLI_USE)
-        return mysqli_num_rows($result);
-    else
-        return mysql_num_rows($result);
+    if (!$result) return 0;
+    return ($result instanceof PDOStatement) ? (int)$result->rowCount() : 0;
 }
 
 
 function sql_field_names($table, $link=null)
 {
     global $g5;
-
-    if(!$link)
-        $link = $g5['connect_db'];
+    if (!$link) $link = $g5['connect_db'];
 
     $columns = array();
-
-    $sql = " select * from `$table` limit 1 ";
-    $result = sql_query($sql, $link);
-
-    if(function_exists('mysqli_fetch_field') && G5_MYSQLI_USE) {
-        while($field = mysqli_fetch_field($result)) {
-            $columns[] = $field->name;
-        }
-    } else {
-        $i = 0;
-        $cnt = mysql_num_fields($result);
-        while($i < $cnt) {
-            $field = mysql_fetch_field($result, $i);
-            $columns[] = $field->name;
-            $i++;
+    $result  = sql_query(" select * from `{$table}` limit 1 ", G5_DISPLAY_SQL_ERROR, $link);
+    if ($result instanceof PDOStatement) {
+        $cnt = $result->columnCount();
+        for ($i = 0; $i < $cnt; $i++) {
+            $meta = $result->getColumnMeta($i);
+            if ($meta && isset($meta['name'])) $columns[] = $meta['name'];
         }
     }
-
     return $columns;
 }
 
@@ -2167,15 +2113,12 @@ function sql_field_names($table, $link=null)
 function sql_error_info($link=null)
 {
     global $g5;
-
-    if(!$link)
-        $link = $g5['connect_db'];
-
-    if(function_exists('mysqli_error') && G5_MYSQLI_USE) {
-        return mysqli_errno($link) . ' : ' . mysqli_error($link);
-    } else {
-        return mysql_errno($link) . ' : ' . mysql_error($link);
+    if (!$link) $link = $g5['connect_db'];
+    if ($link instanceof PDO) {
+        $info = $link->errorInfo();
+        return (isset($info[1]) ? (int)$info[1] : 0) . ' : ' . (isset($info[2]) ? (string)$info[2] : '');
     }
+    return '0 : ';
 }
 
 
@@ -2824,19 +2767,20 @@ function convert_charset($from_charset, $to_charset, $str)
 }
 
 
-// mysqli_real_escape_string 의 alias 기능을 한다.
+// PDO::quote() 는 결과를 따옴표로 감싸서 돌려주므로 외곽 따옴표를 제거해
+// mysqli_real_escape_string 의 시그니처 (escape 결과만, 따옴표 없음) 에 맞춘다.
+// 호출처가 SQL 문에서 '{$escaped}' 형태로 따옴표를 직접 붙이는 패턴이라 동일 동작.
 function sql_real_escape_string($str, $link=null)
 {
     global $g5;
-
-    if(!$link)
-        $link = $g5['connect_db'];
-    
-    if(function_exists('mysqli_connect') && G5_MYSQLI_USE) {
-        return mysqli_real_escape_string($link, $str);
+    if (!$link) $link = $g5['connect_db'];
+    if ($link instanceof PDO) {
+        $quoted = $link->quote((string)$str);
+        // PDO::quote() 가 false 를 반환하면 (드물게) addslashes 폴백
+        if ($quoted === false) return addslashes((string)$str);
+        return substr($quoted, 1, -1);
     }
-
-    return mysql_real_escape_string($str, $link);
+    return addslashes((string)$str);
 }
 
 function escape_trim($field)
@@ -4376,20 +4320,16 @@ class str_encrypt
     }
 }
 
-// 26년도에 너무 늦게 만들어서 기존의 사용자들과 충돌을 피하기 위해 get_sql_affected_rows 이라 네이밍함
+// PDO 에는 connection 단위 affected_rows 가 없음 — sql_query() 가 마지막 PDOStatement 를
+// $g5['last_stmt'] 에 저장하므로 그 rowCount() 를 반환.
 function get_sql_affected_rows($link=null)
 {
     global $g5;
-
-    if (!$link) {
-        $link = $g5['connect_db'];
+    $stmt = $g5['last_stmt'] ?? null;
+    if ($stmt instanceof PDOStatement) {
+        return (int)$stmt->rowCount();
     }
-
-    if (function_exists('mysqli_affected_rows') && G5_MYSQLI_USE) {
-        return @mysqli_affected_rows($link);
-    } else {
-        return @mysql_affected_rows($link);
-    }
+    return 0;
 }
 
 // 불법접근을 막도록 토큰을 생성하면서 토큰값을 리턴
