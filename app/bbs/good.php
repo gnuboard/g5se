@@ -35,7 +35,7 @@ if(isset($_POST['js']) && $_POST['js'] === "on") {
         print_result($error, $count);
     }
 
-    $row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} ", FALSE);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} ", [], FALSE);
     if (!$row['cnt']) {
         $error = '존재하는 게시판이 아닙니다.';
         print_result($error, $count);
@@ -58,12 +58,12 @@ if(isset($_POST['js']) && $_POST['js'] === "on") {
             print_result($error, $count);
         }
 
-        $sql = " select bg_flag from {$g5['board_good_table']}
-                    where bo_table = '{$bo_table}'
-                    and wr_id = '{$wr_id}'
-                    and mb_id = '{$member['mb_id']}'
-                    and bg_flag in ('good', 'nogood') ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select bg_flag from {$g5['board_good_table']}
+                    where bo_table = :bo_table
+                    and wr_id = :wr_id
+                    and mb_id = :mb_id
+                    and bg_flag in ('good', 'nogood') ",
+                    [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':mb_id' => $member['mb_id']]);
         if (isset($row['bg_flag']) && $row['bg_flag'])
         {
             if ($row['bg_flag'] == 'good')
@@ -78,17 +78,25 @@ if(isset($_POST['js']) && $_POST['js'] === "on") {
         {
             // 레이스 컨디션 방지: g5_board_good 테이블의 UNIQUE KEY(bo_table, wr_id, mb_id)를
             // 이용해 INSERT IGNORE를 먼저 수행하고, 성공한 경우에만 카운터를 증가시킨다.
-            sql_query(" insert ignore into {$g5['board_good_table']} set bo_table = '{$bo_table}', wr_id = '{$wr_id}', mb_id = '{$member['mb_id']}', bg_flag = '{$good}', bg_datetime = '".G5_TIME_YMDHIS."' ");
+            sql_pdo_query(" insert ignore into {$g5['board_good_table']} set
+                                bo_table    = :bo_table,
+                                wr_id       = :wr_id,
+                                mb_id       = :mb_id,
+                                bg_flag     = :bg_flag,
+                                bg_datetime = :bg_datetime ",
+                          [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':mb_id' => $member['mb_id'],
+                           ':bg_flag' => $good, ':bg_datetime' => G5_TIME_YMDHIS]);
             if (get_sql_affected_rows() <= 0) {
                 $error = '이미 추천 또는 비추천 하신 글 입니다.';
                 print_result($error, $count);
             }
 
-            // INSERT 성공 시에만 카운터 증가
-            sql_query(" update {$g5['write_prefix']}{$bo_table} set wr_{$good} = wr_{$good} + 1 where wr_id = '{$wr_id}' ");
+            // INSERT 성공 시에만 카운터 증가 — wr_{$good} 컬럼명은 whitelist (good|nogood) 검증 후
+            sql_pdo_query(" update {$g5['write_prefix']}{$bo_table} set wr_{$good} = wr_{$good} + 1 where wr_id = :wr_id ",
+                          [':wr_id' => $wr_id]);
 
-            $sql = " select wr_{$good} as count from {$g5['write_prefix']}{$bo_table} where wr_id = '$wr_id' ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch(" select wr_{$good} as count from {$g5['write_prefix']}{$bo_table} where wr_id = :wr_id ",
+                                 [':wr_id' => $wr_id]);
 
             $count = $row['count'];
 
@@ -114,7 +122,7 @@ if(isset($_POST['js']) && $_POST['js'] === "on") {
     if (!get_session($ss_name))
         alert('해당 게시물에서만 추천 또는 비추천 하실 수 있습니다.');
 
-    $row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} ", FALSE);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} ", [], FALSE);
     if (!$row['cnt'])
         alert('존재하는 게시판이 아닙니다.');
 
@@ -129,12 +137,12 @@ if(isset($_POST['js']) && $_POST['js'] === "on") {
         if (!$board['bo_use_nogood'] && $good == 'nogood')
             alert('이 게시판은 비추천 기능을 사용하지 않습니다.');
 
-        $sql = " select bg_flag from {$g5['board_good_table']}
-                    where bo_table = '{$bo_table}'
-                    and wr_id = '{$wr_id}'
-                    and mb_id = '{$member['mb_id']}'
-                    and bg_flag in ('good', 'nogood') ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select bg_flag from {$g5['board_good_table']}
+                    where bo_table = :bo_table
+                    and wr_id = :wr_id
+                    and mb_id = :mb_id
+                    and bg_flag in ('good', 'nogood') ",
+                    [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':mb_id' => $member['mb_id']]);
         if (isset($row['bg_flag']) && $row['bg_flag'])
         {
             if ($row['bg_flag'] == 'good')
@@ -148,13 +156,21 @@ if(isset($_POST['js']) && $_POST['js'] === "on") {
         {
             // 레이스 컨디션 방지: g5_board_good 테이블의 UNIQUE KEY(bo_table, wr_id, mb_id)를
             // 이용해 INSERT IGNORE를 먼저 수행하고, 성공한 경우에만 카운터를 증가시킨다.
-            sql_query(" insert ignore into {$g5['board_good_table']} set bo_table = '{$bo_table}', wr_id = '{$wr_id}', mb_id = '{$member['mb_id']}', bg_flag = '{$good}', bg_datetime = '".G5_TIME_YMDHIS."' ");
+            sql_pdo_query(" insert ignore into {$g5['board_good_table']} set
+                                bo_table    = :bo_table,
+                                wr_id       = :wr_id,
+                                mb_id       = :mb_id,
+                                bg_flag     = :bg_flag,
+                                bg_datetime = :bg_datetime ",
+                          [':bo_table' => $bo_table, ':wr_id' => $wr_id, ':mb_id' => $member['mb_id'],
+                           ':bg_flag' => $good, ':bg_datetime' => G5_TIME_YMDHIS]);
             if (get_sql_affected_rows() <= 0) {
                 alert('이미 추천 또는 비추천 하신 글 입니다.');
             }
 
-            // INSERT 성공 시에만 카운터 증가
-            sql_query(" update {$g5['write_prefix']}{$bo_table} set wr_{$good} = wr_{$good} + 1 where wr_id = '{$wr_id}' ");
+            // INSERT 성공 시에만 카운터 증가 — wr_{$good} 컬럼명은 whitelist (good|nogood) 검증 후
+            sql_pdo_query(" update {$g5['write_prefix']}{$bo_table} set wr_{$good} = wr_{$good} + 1 where wr_id = :wr_id ",
+                          [':wr_id' => $wr_id]);
 
             if ($good == 'good')
                 $status = '추천';
