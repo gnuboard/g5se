@@ -19,13 +19,16 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 
 $sql_common = " from {$g5['point_table']} po ";
 $sql_search = " where (1) ";
+$params     = [];
 if ($stx !== '') {
-    $stx_q = addslashes($stx);
     if ($sfl === 'mb_id') {
-        $sql_search .= " and (po.mb_id = '{$stx_q}') ";
+        $sql_search .= " and (po.mb_id = ?) ";
+        $params[] = $stx;
     } else {
         if (!in_array($sfl, ['po_content'], true)) $sfl = 'po_content';
-        $sql_search .= " and ({$sfl} like '%{$stx_q}%') ";
+        // 컬럼명은 화이트리스트 매칭 — placeholder 못 쓰는 식별자라 보간
+        $sql_search .= " and ({$sfl} like ?) ";
+        $params[] = '%'.$stx.'%';
     }
 }
 
@@ -34,14 +37,14 @@ if (!$sst || !in_array($sst, $allowed, true)) { $sst = 'po_id'; $sod = 'desc'; }
 if ($sod && !in_array(strtolower($sod), ['asc','desc'], true)) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
-$total_count = (int)sql_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ")['cnt'];
+$total_count = (int)sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ", $params)['cnt'];
 $rows = (int)$config['cf_page_rows'];
 $total_page = max(1, (int)ceil($total_count / max(1, $rows)));
 $from = ($page - 1) * $rows;
 
-$result = sql_query(" select po.*, mb.mb_name, mb.mb_nick, mb.mb_email, mb.mb_homepage, mb.mb_point
+$result = sql_pdo_query(" select po.*, mb.mb_name, mb.mb_nick, mb.mb_email, mb.mb_homepage, mb.mb_point
     {$sql_common} LEFT JOIN {$g5['member_table']} mb ON po.mb_id = mb.mb_id
-    {$sql_search} {$sql_order} limit {$from}, {$rows} ");
+    {$sql_search} {$sql_order} limit {$from}, {$rows} ", $params);
 
 $mb = ($sfl === 'mb_id' && $stx !== '') ? get_member($stx) : [];
 $total_sum = sql_fetch(" select sum(po_point) as s from {$g5['point_table']} ")['s'] ?? 0;

@@ -125,7 +125,7 @@ admin_layout_start('그룹 접근 회원 — '.$gr['gr_subject'], 'groups');
             <?php
             $i = 0;
             while ($row = sql_fetch_array($result)):
-                $row2 = sql_fetch(" select count(*) as cnt from {$g5['group_member_table']} where mb_id = '".addslashes($row['mb_id'])."' ");
+                $row2 = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_member_table']} where mb_id = ? ", [$row['mb_id']]);
                 $cnt = (int)$row2['cnt'];
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">

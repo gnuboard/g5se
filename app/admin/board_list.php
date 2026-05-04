@@ -24,23 +24,25 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 
 $sql_common = " from {$g5['board_table']} a ";
 $sql_search = " where (1) ";
+$params     = [];
 
 if ($is_admin !== 'super') {
     $sql_common .= " , {$g5['group_table']} b ";
-    $sql_search .= " and (a.gr_id = b.gr_id and b.gr_admin = '".addslashes($member['mb_id'])."') ";
+    $sql_search .= " and (a.gr_id = b.gr_id and b.gr_admin = ?) ";
+    $params[] = $member['mb_id'];
 }
 
 if ($stx !== '') {
-    $stx_q = addslashes($stx);
     $sql_search .= " and ( ";
     switch ($sfl) {
-        case 'bo_table':  $sql_search .= " (bo_table like '{$stx_q}%') "; break;
-        case 'a.gr_id':   $sql_search .= " (a.gr_id = '{$stx_q}') "; break;
-        case 'bo_subject':default: $sql_search .= " (bo_subject like '%{$stx_q}%') "; $sfl = 'bo_subject'; break;
+        case 'bo_table':  $sql_search .= " (bo_table like ?) ";    $params[] = $stx.'%';     break;
+        case 'a.gr_id':   $sql_search .= " (a.gr_id = ?) ";        $params[] = $stx;         break;
+        case 'bo_subject':default: $sql_search .= " (bo_subject like ?) "; $params[] = '%'.$stx.'%'; $sfl = 'bo_subject'; break;
     }
     $sql_search .= " ) ";
 }
 
+// 정렬 컬럼/방향은 화이트리스트 매칭이라 안전 — placeholder 못 쓰는 식별자 영역이라 그대로 보간
 $allowed_sst = ['a.gr_id','bo_table','bo_skin','bo_mobile_skin','bo_subject','bo_use_sns','bo_use_search','bo_order','a.gr_id, a.bo_table'];
 if (!$sst || !in_array($sst, $allowed_sst, true)) {
     $sst = 'a.gr_id, a.bo_table';
@@ -49,14 +51,15 @@ if (!$sst || !in_array($sst, $allowed_sst, true)) {
 if ($sod && !in_array(strtolower($sod), ['asc','desc'], true)) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
-$row = sql_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ");
+$row = sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ", $params);
 $total_count = (int)$row['cnt'];
 
 $rows        = (int)$config['cf_page_rows'];
 $total_page  = max(1, (int)ceil($total_count / max(1, $rows)));
 $from_record = ($page - 1) * $rows;
 
-$result = sql_query(" select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ");
+// LIMIT 의 from_record / rows 는 (int) 캐스트된 정수라 보간 안전
+$result = sql_pdo_query(" select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ", $params);
 
 // 헬퍼
 $h    = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
