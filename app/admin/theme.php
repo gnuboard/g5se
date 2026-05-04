@@ -200,6 +200,11 @@ admin_layout_start('테마 설정', 'theme');
                 .then(function (r) { return r.text(); })
                 .then(function (html) {
                     modalBody.innerHTML = html;
+                    // gnuboard 의 .close_btn 은 jQuery 로 #theme_detail 만 remove 하므로
+                    // 우리는 같은 버튼을 모달 닫기로 재바인딩
+                    modalBody.querySelectorAll('.close_btn').forEach(function (b) {
+                        b.addEventListener('click', closeModal);
+                    });
                 });
         });
     });
