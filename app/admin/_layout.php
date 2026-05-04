@@ -86,11 +86,24 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
     <link rel="stylesheet" href="/admin/css/admin.css">
+    <!-- FOUC 가드: UnoCSS runtime 이 로드되어 첫 utility 주입을 마치기 전까지 body 를 invisible.
+         느린 네트워크에서 utility 가 비어있는 raw HTML 이 paint 되는 것을 차단. -->
+    <style>html:not(.uno-ready) body{visibility:hidden}</style>
+
     <!-- UnoCSS runtime — utility class 를 런타임에 생성. admin-primary 팔레트 등록.
-         sync 로드 (parser-blocking): body 파싱 전에 runtime 이 준비돼 있어야 MutationObserver 가
-         body 노드 추가 시 즉시 CSS 를 inject → 첫 paint 부터 모든 utility 적용된 상태로 그려짐. -->
+         자체 호스팅 (/admin/js/uno.global.js) — 같은 origin 이라 CDN 보다 훨씬 빠르고 안정적. -->
     <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
-    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>
+    <script src="/admin/js/uno.global.js"></script>
+    <script>
+        // UnoCSS runtime 이 body 노드들을 처리할 시간 (microtask 한 번) 후 reveal.
+        // body invisible 상태에서는 requestAnimationFrame 이 throttled 되어 1초 이상 지연되므로
+        // setTimeout(0) + DCL 조합으로 가능한 빠르게 가시화.
+        function unoReveal(){setTimeout(function(){document.documentElement.classList.add('uno-ready');},0);}
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', unoReveal);
+        else unoReveal();
+        // 안전망 (UnoCSS 로드 실패 시): 2s 후 무조건 reveal
+        setTimeout(function(){document.documentElement.classList.add('uno-ready');}, 2000);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <style>
@@ -103,7 +116,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
 
     <!-- 좌측 사이드바 (모바일: hidden 토글, lg 이상: 항상 노출) -->
     <aside id="adm-sidebar"
-           class="hidden lg:flex flex-col fixed inset-y-0 left-0 w-60 z-40
+           class="flex-col fixed inset-y-0 left-0 w-60 z-40
                   bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <div class="h-14 flex items-center justify-between px-5 border-b border-slate-200 dark:border-slate-800">
             <a href="/admin" class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
@@ -211,16 +224,14 @@ function admin_layout_end(): void
     var toggle = document.getElementById('adm-mobile-toggle');
     var themeBtn = document.getElementById('adm-theme-toggle');
     function openSidebar(){
-        sidebar.classList.remove('hidden');
-        sidebar.classList.add('flex');
+        sidebar.classList.add('adm-sidebar-open');
         backdrop.classList.remove('hidden');
         document.documentElement.style.overflow = 'hidden';
     }
     function closeSidebar(){
         // lg 이상에서는 항상 노출 (lg:flex 로 자동 복원되지만 명시적으로 hidden 제거 안함)
         if (window.innerWidth < 1024) {
-            sidebar.classList.remove('flex');
-            sidebar.classList.add('hidden');
+            sidebar.classList.remove('adm-sidebar-open');
         }
         backdrop.classList.add('hidden');
         document.documentElement.style.overflow = '';
