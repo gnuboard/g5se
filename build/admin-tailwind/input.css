@@ -405,4 +405,50 @@
 
     /* 레거시 fa-* 아이콘 자리 */
     .legacy-admin-content .fa { font-style: normal; }
+
+    /* 사이드뷰 (회원 닉네임 클릭 시 메뉴 popover) */
+    .legacy-admin-content .sv_wrap {
+        display: inline-block;
+        position: relative;
+    }
+    .legacy-admin-content .sv {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        z-index: 30;
+        min-width: 9rem;
+        padding: 0.375rem 0;
+        border-radius: 0.5rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+        white-space: nowrap;
+    }
+    [data-theme="dark"] .legacy-admin-content .sv {
+        border-color: var(--color-slate-700);
+        background-color: var(--color-slate-800);
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+    }
+    .legacy-admin-content .sv.sv_on { display: block; }
+    .legacy-admin-content .sv > a {
+        display: block;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8125rem;
+        color: var(--color-slate-700);
+        text-decoration: none;
+    }
+    [data-theme="dark"] .legacy-admin-content .sv > a {
+        color: var(--color-slate-300);
+    }
+    .legacy-admin-content .sv > a:hover {
+        background-color: var(--color-slate-50);
+        color: var(--color-admin-primary-700);
+        text-decoration: none;
+    }
+    [data-theme="dark"] .legacy-admin-content .sv > a:hover {
+        background-color: var(--color-slate-700);
+        color: var(--color-admin-primary-300);
+    }
+    .legacy-admin-content .sv_nojs { display: none; }
 }

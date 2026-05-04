@@ -108,6 +108,27 @@ window.set_cookie = window.set_cookie || function (n, v, h, d) {
 window.delete_cookie = window.delete_cookie || function (n) {
     document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 };
+
+// 사이드뷰 (.sv_member / .sv_guest 클릭 시 같은 .sv_wrap 안의 .sv 토글)
+document.addEventListener('click', function (e) {
+    var trigger = e.target.closest('.legacy-admin-content .sv_member, .legacy-admin-content .sv_guest');
+    if (trigger) {
+        e.preventDefault();
+        var wrap = trigger.closest('.sv_wrap');
+        if (!wrap) return;
+        var sv = wrap.querySelector('.sv');
+        if (!sv) return;
+        var wasOn = sv.classList.contains('sv_on');
+        // 다른 열린 sv 닫기
+        document.querySelectorAll('.legacy-admin-content .sv.sv_on').forEach(function (s) { s.classList.remove('sv_on'); });
+        if (!wasOn) sv.classList.add('sv_on');
+        return;
+    }
+    // 외부 클릭 시 닫기
+    if (!e.target.closest('.legacy-admin-content .sv')) {
+        document.querySelectorAll('.legacy-admin-content .sv.sv_on').forEach(function (s) { s.classList.remove('sv_on'); });
+    }
+});
 </script>
 <?php
 admin_layout_end();
