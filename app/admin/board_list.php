@@ -115,7 +115,7 @@ admin_layout_start('게시판 관리', 'bbs_board');
     </header>
 
     <form name="fboardlist" id="fboardlist" action="/admin/board_list_update" method="post"
-          class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+          class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <input type="hidden" name="sst"   value="<?php echo $h($sst) ?>">
         <input type="hidden" name="sod"   value="<?php echo $h($sod) ?>">
         <input type="hidden" name="sfl"   value="<?php echo $h($sfl) ?>">
