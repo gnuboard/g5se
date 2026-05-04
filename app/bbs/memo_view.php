@@ -11,15 +11,15 @@ if ($kind == 'recv')
     $t = '받은';
     $unkind = 'send';
 
-    $sql = " update {$g5['memo_table']}
-                set me_read_datetime = '".G5_TIME_YMDHIS."'
-                where (me_id = '$me_id' or me_send_id = '$me_id' )
-                and me_recv_mb_id = '{$member['mb_id']}'
-                and me_read_datetime = '0000-00-00 00:00:00' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['memo_table']} set
+                        me_read_datetime = :now
+                    where (me_id = :me_id or me_send_id = :me_id)
+                      and me_recv_mb_id = :mb_id
+                      and me_read_datetime = '0000-00-00 00:00:00' ",
+                  [':now' => G5_TIME_YMDHIS, ':me_id' => $me_id, ':mb_id' => $member['mb_id']]);
 
-    $sql = " update `{$g5['member_table']}` set mb_memo_cnt = '".get_memo_not_read($member['mb_id'])."' where mb_id = '{$member['mb_id']}' ";
-    sql_query($sql);
+    sql_pdo_query(" update `{$g5['member_table']}` set mb_memo_cnt = :cnt where mb_id = :mb_id ",
+                  [':cnt' => get_memo_not_read($member['mb_id']), ':mb_id' => $member['mb_id']]);
 }
 else if ($kind == 'send')
 {
@@ -31,10 +31,11 @@ else
     alert($kind.' 값을 넘겨주세요.');
 }
 
-$sql = " select * from {$g5['memo_table']}
-            where me_id = '$me_id'
-            and me_{$kind}_mb_id = '{$member['mb_id']}' ";
-$memo = sql_fetch($sql);
+// $kind 는 위에서 'recv'/'send' 로 검증됨 — 식별자 보간 안전
+$memo = sql_pdo_fetch(" select * from {$g5['memo_table']}
+            where me_id = :me_id
+            and me_{$kind}_mb_id = :mb_id ",
+            [':me_id' => $me_id, ':mb_id' => $member['mb_id']]);
 
 set_session('ss_memo_delete_token', $token = uniqid(time()));
 $del_link = 'memo_delete.php?me_id='.$memo['me_id'].'&amp;token='.$token.'&amp;kind='.$kind;
@@ -42,10 +43,19 @@ $del_link = 'memo_delete.php?me_id='.$memo['me_id'].'&amp;token='.$token.'&amp;k
 $g5['title'] = $t.' 쪽지 보기';
 include_once(G5_PATH.'/head.sub.php');
 
-// 이전 쪽지
-$sql = " select me.*, a.rownum from `{$g5['memo_table']}` as me inner join ( select me_id , (@rownum:=@rownum+1) as rownum from `{$g5['memo_table']}` as memo, (select @rownum:=0) tmp where me_{$kind}_mb_id = '{$member['mb_id']}' and memo.me_type = '$kind' order by me_id desc ) as a on a.me_id = me.me_id where me.me_id < '$me_id' and me.me_{$kind}_mb_id = '{$member['mb_id']}' and me.me_type = '$kind' order by me.me_id desc limit 1 ";
-
-$prev = sql_fetch($sql);
+// 이전 쪽지 — $kind 는 'recv'/'send' 로 검증됨
+$prev = sql_pdo_fetch(" select me.*, a.rownum from `{$g5['memo_table']}` as me
+                        inner join (
+                            select me_id, (@rownum:=@rownum+1) as rownum
+                            from `{$g5['memo_table']}` as memo, (select @rownum:=0) tmp
+                            where me_{$kind}_mb_id = :mb_id and memo.me_type = :kind
+                            order by me_id desc
+                        ) as a on a.me_id = me.me_id
+                        where me.me_id < :me_id
+                          and me.me_{$kind}_mb_id = :mb_id
+                          and me.me_type = :kind
+                        order by me.me_id desc limit 1 ",
+                      [':mb_id' => $member['mb_id'], ':kind' => $kind, ':me_id' => $me_id]);
 if (isset($prev['me_id']) && $prev['me_id']) {
     $prev_link = './memo_view.php?kind='.$kind.'&amp;me_id='.$prev['me_id'];
     $prev['page']  = ceil( (int)$prev['rownum'] / $config['cf_page_rows']);  // 이동할 페이지 계산
@@ -55,9 +65,18 @@ if (isset($prev['me_id']) && $prev['me_id']) {
 }
 
 // 다음 쪽지
-$sql = " select me.*, a.rownum from `{$g5['memo_table']}` as me inner join ( select me_id , (@rownum:=@rownum+1) as rownum from `{$g5['memo_table']}` as memo, (select @rownum:=0) tmp where me_{$kind}_mb_id = '{$member['mb_id']}' and memo.me_type = '$kind' order by me_id asc ) as a on a.me_id = me.me_id where me.me_id > '$me_id' and me.me_{$kind}_mb_id = '{$member['mb_id']}' and me.me_type = '$kind' order by me.me_id asc limit 1 ";
-
-$next = sql_fetch($sql);
+$next = sql_pdo_fetch(" select me.*, a.rownum from `{$g5['memo_table']}` as me
+                        inner join (
+                            select me_id, (@rownum:=@rownum+1) as rownum
+                            from `{$g5['memo_table']}` as memo, (select @rownum:=0) tmp
+                            where me_{$kind}_mb_id = :mb_id and memo.me_type = :kind
+                            order by me_id asc
+                        ) as a on a.me_id = me.me_id
+                        where me.me_id > :me_id
+                          and me.me_{$kind}_mb_id = :mb_id
+                          and me.me_type = :kind
+                        order by me.me_id asc limit 1 ",
+                      [':mb_id' => $member['mb_id'], ':kind' => $kind, ':me_id' => $me_id]);
 if (isset($next['me_id']) && $next['me_id']) {
     $next_link = './memo_view.php?kind='.$kind.'&amp;me_id='.$next['me_id'];
     $next['page']  = ceil( (int)$next['rownum'] / $config['cf_page_rows']);  // 이동할 페이지 계산

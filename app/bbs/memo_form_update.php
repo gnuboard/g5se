@@ -25,7 +25,8 @@ for ($i=0; $i<$recv_list_cnt; $i++) {
 
     $recv_list_id = substr(preg_replace("/[^a-zA-Z0-9_]*/", "", $recv_list[$i]), 0, 20);
 
-    $row = sql_fetch(" select mb_id, mb_nick, mb_open, mb_leave_date, mb_intercept_date from {$g5['member_table']} where mb_id = '{$recv_list_id}' ");
+    $row = sql_pdo_fetch(" select mb_id, mb_nick, mb_open, mb_leave_date, mb_intercept_date from {$g5['member_table']} where mb_id = :mb_id ",
+                         [':mb_id' => $recv_list_id]);
     if ($row) {
         if ($is_admin || ($row['mb_open'] && (!$row['mb_leave_date'] && !$row['mb_intercept_date']))) {
             $member_list['id'][]   = $row['mb_id'];
@@ -68,29 +69,48 @@ if (!$is_admin) {
 
 $member_list_cnt = count($member_list['id']);
 for ($i=0; $i<$member_list_cnt; $i++) {
-    $tmp_row = sql_fetch(" select max(me_id) as max_me_id from {$g5['memo_table']} ");
+    $tmp_row = sql_pdo_fetch(" select max(me_id) as max_me_id from {$g5['memo_table']} ");
     $me_id = $tmp_row['max_me_id'] + 1;
 
     $recv_mb_id   = $member_list['id'][$i];
     $recv_mb_nick = get_text($member_list['nick'][$i]);
 
     // 받는 회원 쪽지 INSERT
-    $sql = " insert into {$g5['memo_table']} ( me_recv_mb_id, me_send_mb_id, me_send_datetime, me_memo, me_read_datetime, me_type, me_send_ip ) values ( '$recv_mb_id', '{$member['mb_id']}', '".G5_TIME_YMDHIS."', '{$me_memo}', '0000-00-00 00:00:00' , 'recv', '{$_SERVER['REMOTE_ADDR']}' ) ";
-
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['memo_table']} (
+                        me_recv_mb_id, me_send_mb_id, me_send_datetime,
+                        me_memo, me_read_datetime, me_type, me_send_ip
+                    ) values (
+                        :recv_mb_id, :send_mb_id, :send_datetime,
+                        :me_memo, '0000-00-00 00:00:00', 'recv', :send_ip
+                    ) ",
+                  [':recv_mb_id' => $recv_mb_id, ':send_mb_id' => $member['mb_id'],
+                   ':send_datetime' => G5_TIME_YMDHIS, ':me_memo' => stripslashes($me_memo),
+                   ':send_ip' => $_SERVER['REMOTE_ADDR']]);
 
     if( $me_id = sql_insert_id() ){
 
         // 보내는 회원 쪽지 INSERT
-        $sql = " insert into {$g5['memo_table']} ( me_recv_mb_id, me_send_mb_id, me_send_datetime, me_memo, me_read_datetime, me_send_id, me_type , me_send_ip ) values ( '$recv_mb_id', '{$member['mb_id']}', '".G5_TIME_YMDHIS."', '{$me_memo}', '0000-00-00 00:00:00', '$me_id', 'send', '{$_SERVER['REMOTE_ADDR']}' ) ";
-        sql_query($sql);
-		
+        sql_pdo_query(" insert into {$g5['memo_table']} (
+                            me_recv_mb_id, me_send_mb_id, me_send_datetime,
+                            me_memo, me_read_datetime, me_send_id, me_type, me_send_ip
+                        ) values (
+                            :recv_mb_id, :send_mb_id, :send_datetime,
+                            :me_memo, '0000-00-00 00:00:00', :send_id, 'send', :send_ip
+                        ) ",
+                      [':recv_mb_id' => $recv_mb_id, ':send_mb_id' => $member['mb_id'],
+                       ':send_datetime' => G5_TIME_YMDHIS, ':me_memo' => stripslashes($me_memo),
+                       ':send_id' => $me_id, ':send_ip' => $_SERVER['REMOTE_ADDR']]);
+
 		$member_list['me_id'][$i] = $me_id;
     }
 
     // 실시간 쪽지 알림 기능
-    $sql = " update {$g5['member_table']} set mb_memo_call = '{$member['mb_id']}', mb_memo_cnt = '".get_memo_not_read($recv_mb_id)."' where mb_id = '$recv_mb_id' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['member_table']} set
+                        mb_memo_call = :sender_id,
+                        mb_memo_cnt  = :cnt
+                    where mb_id = :recv_mb_id ",
+                  [':sender_id' => $member['mb_id'], ':cnt' => get_memo_not_read($recv_mb_id),
+                   ':recv_mb_id' => $recv_mb_id]);
 
     if (!$is_admin) {
         insert_point($member['mb_id'], (int)$config['cf_memo_send_point'] * (-1), $recv_mb_nick.'('.$recv_mb_id.')님께 쪽지 발송', '@memo', $recv_mb_id, $me_id);
