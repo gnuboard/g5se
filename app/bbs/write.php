@@ -78,21 +78,21 @@ if ($w == '') {
     $reply = substr($write['wr_reply'], 0, $len);
 
     // 원글만 구한다.
-    $sql = " select count(*) as cnt from {$write_table}
-                where wr_reply like '{$reply}%'
-                and wr_id <> '{$write['wr_id']}'
-                and wr_num = '{$write['wr_num']}'
-                and wr_is_comment = 0 ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$write_table}
+                where wr_reply like :reply
+                and wr_id <> :wr_id
+                and wr_num = :wr_num
+                and wr_is_comment = 0 ",
+                [':reply' => $reply.'%', ':wr_id' => $write['wr_id'], ':wr_num' => $write['wr_num']]);
     if ($row['cnt'] && !$is_admin)
         alert('이 글과 관련된 답변글이 존재하므로 수정 할 수 없습니다.\\n\\n답변글이 있는 원글은 수정할 수 없습니다.');
 
     // 코멘트 달린 원글의 수정 여부
-    $sql = " select count(*) as cnt from {$write_table}
-                where wr_parent = '{$wr_id}'
-                and mb_id <> '{$member['mb_id']}'
-                and wr_is_comment = 1 ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$write_table}
+                where wr_parent = :wr_parent
+                and mb_id <> :mb_id
+                and wr_is_comment = 1 ",
+                [':wr_parent' => $wr_id, ':mb_id' => $member['mb_id']]);
     if ($board['bo_count_modify'] && $row['cnt'] >= $board['bo_count_modify'] && !$is_admin)
         alert('이 글과 관련된 댓글이 존재하므로 수정 할 수 없습니다.\\n\\n댓글이 '.$board['bo_count_modify'].'건 이상 달린 원글은 수정할 수 없습니다.');
 
@@ -140,20 +140,24 @@ if ($w == '') {
     if (strlen($reply_array['wr_reply']) == 10)
         alert('더 이상 답변하실 수 없습니다.\\n\\n답변은 10단계 까지만 가능합니다.');
 
-    $reply_len = strlen($reply_array['wr_reply']) + 1;
+    $reply_len = (int) (strlen($reply_array['wr_reply']) + 1);
+    $reply_params = [':wr_num' => $reply_array['wr_num']];
     if ($board['bo_reply_order']) {
         $begin_reply_char = 'A';
         $end_reply_char = 'Z';
         $reply_number = +1;
-        $sql = " select MAX(SUBSTRING(wr_reply, {$reply_len}, 1)) as reply from {$write_table} where wr_num = '{$reply_array['wr_num']}' and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
+        $sql = " select MAX(SUBSTRING(wr_reply, {$reply_len}, 1)) as reply from {$write_table} where wr_num = :wr_num and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
     } else {
         $begin_reply_char = 'Z';
         $end_reply_char = 'A';
         $reply_number = -1;
-        $sql = " select MIN(SUBSTRING(wr_reply, {$reply_len}, 1)) as reply from {$write_table} where wr_num = '{$reply_array['wr_num']}' and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
+        $sql = " select MIN(SUBSTRING(wr_reply, {$reply_len}, 1)) as reply from {$write_table} where wr_num = :wr_num and SUBSTRING(wr_reply, {$reply_len}, 1) <> '' ";
     }
-    if ($reply_array['wr_reply']) $sql .= " and wr_reply like '{$reply_array['wr_reply']}%' ";
-    $row = sql_fetch($sql);
+    if ($reply_array['wr_reply']) {
+        $sql .= " and wr_reply like :wr_reply ";
+        $reply_params[':wr_reply'] = $reply_array['wr_reply'].'%';
+    }
+    $row = sql_pdo_fetch($sql, $reply_params);
 
     if (!$row['reply'])
         $reply_char = $begin_reply_char;
@@ -179,8 +183,8 @@ if (!empty($group['gr_use_access'])) {
         ; // 통과
     } else {
         // 그룹접근
-        $sql = " select gr_id from {$g5['group_member_table']} where gr_id = '{$board['gr_id']}' and mb_id = '{$member['mb_id']}' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select gr_id from {$g5['group_member_table']} where gr_id = :gr_id and mb_id = :mb_id ",
+                             [':gr_id' => $board['gr_id'], ':mb_id' => $member['mb_id']]);
         if (!$row['gr_id'])
             alert('접근 권한이 없으므로 글쓰기가 불가합니다.\\n\\n궁금하신 사항은 관리자에게 문의 바랍니다.');
     }

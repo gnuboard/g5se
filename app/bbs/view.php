@@ -26,22 +26,28 @@ if (!$board['bo_use_list_view']) {
     if ($sql_search)
         $sql_search = " and " . $sql_search;
 
-    // 윗글을 얻음
-    $sql = " select wr_id, wr_subject, wr_datetime from {$write_table} where wr_is_comment = 0 and wr_num = '{$write['wr_num']}' and wr_reply < '{$write['wr_reply']}' {$sql_search} order by wr_num desc, wr_reply desc limit 1 ";
-    $prev = sql_fetch($sql);
-    // 위의 쿼리문으로 값을 얻지 못했다면
+    // 윗글을 얻음 — $sql_search 는 lib/get_sql_search() 가 빌드 (lib 단계서 placeholder 화 예정)
+    $prev = sql_pdo_fetch(" select wr_id, wr_subject, wr_datetime from {$write_table}
+                            where wr_is_comment = 0 and wr_num = :wr_num and wr_reply < :wr_reply {$sql_search}
+                            order by wr_num desc, wr_reply desc limit 1 ",
+                          [':wr_num' => $write['wr_num'], ':wr_reply' => $write['wr_reply']]);
     if (! (isset($prev['wr_id']) && $prev['wr_id'])) {
-        $sql = " select wr_id, wr_subject, wr_datetime from {$write_table} where wr_is_comment = 0 and wr_num < '{$write['wr_num']}' {$sql_search} order by wr_num desc, wr_reply desc limit 1 ";
-        $prev = sql_fetch($sql);
+        $prev = sql_pdo_fetch(" select wr_id, wr_subject, wr_datetime from {$write_table}
+                                where wr_is_comment = 0 and wr_num < :wr_num {$sql_search}
+                                order by wr_num desc, wr_reply desc limit 1 ",
+                              [':wr_num' => $write['wr_num']]);
     }
 
     // 아래글을 얻음
-    $sql = " select wr_id, wr_subject, wr_datetime from {$write_table} where wr_is_comment = 0 and wr_num = '{$write['wr_num']}' and wr_reply > '{$write['wr_reply']}' {$sql_search} order by wr_num, wr_reply limit 1 ";
-    $next = sql_fetch($sql);
-    // 위의 쿼리문으로 값을 얻지 못했다면
+    $next = sql_pdo_fetch(" select wr_id, wr_subject, wr_datetime from {$write_table}
+                            where wr_is_comment = 0 and wr_num = :wr_num and wr_reply > :wr_reply {$sql_search}
+                            order by wr_num, wr_reply limit 1 ",
+                          [':wr_num' => $write['wr_num'], ':wr_reply' => $write['wr_reply']]);
     if (! (isset($next['wr_id']) && $next['wr_id'])) {
-        $sql = " select wr_id, wr_subject, wr_datetime from {$write_table} where wr_is_comment = 0 and wr_num > '{$write['wr_num']}' {$sql_search} order by wr_num, wr_reply limit 1 ";
-        $next = sql_fetch($sql);
+        $next = sql_pdo_fetch(" select wr_id, wr_subject, wr_datetime from {$write_table}
+                                where wr_is_comment = 0 and wr_num > :wr_num {$sql_search}
+                                order by wr_num, wr_reply limit 1 ",
+                              [':wr_num' => $write['wr_num']]);
     }
 }
 
