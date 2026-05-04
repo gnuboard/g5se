@@ -51,7 +51,7 @@ $result = sql_query(" select * from {$g5['faq_master_table']} order by fm_order,
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 
-admin_layout_start('FAQ 관리', 'faq');
+admin_layout_start('FAQ 관리', 'scf_faq');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">

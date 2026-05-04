@@ -24,7 +24,7 @@ if ($w === 'u') {
     if (!$fm_id) { header('Location: /admin/faqmasterlist', true, 302); exit; }
     $row = sql_fetch(" select * from {$g5['faq_master_table']} where fm_id = '{$fm_id}' ");
     if (empty($row['fm_id'])) {
-        admin_layout_start('FAQ 분류 수정', 'faq');
+        admin_layout_start('FAQ 분류 수정', 'scf_faq');
         echo '<main class="flex-1 p-6 max-w-3xl mx-auto"><div class="rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-900/30 dark:border-rose-800 p-6 text-rose-800 dark:text-rose-200">등록된 자료가 없습니다.</div></main>';
         admin_layout_end();
         exit;
@@ -40,7 +40,7 @@ $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 $himg_exists = $fm['fm_id'] && file_exists(G5_DATA_PATH.'/faq/'.$fm['fm_id'].'_h');
 $timg_exists = $fm['fm_id'] && file_exists(G5_DATA_PATH.'/faq/'.$fm['fm_id'].'_t');
 
-admin_layout_start($page_title, 'faq');
+admin_layout_start($page_title, 'scf_faq');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">

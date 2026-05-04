@@ -48,7 +48,7 @@ $ago = static function (string $datetime): string {
     return (int)($diff/86400).'일 전';
 };
 
-admin_layout_start('현재 접속자', 'connect');
+admin_layout_start('현재 접속자', 'mb_connect');
 ?>
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
