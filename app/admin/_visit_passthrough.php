@@ -1,23 +1,13 @@
 <?php
 /*
  * Visit 통계 페이지 패스스루 헬퍼.
- *
- * 14개 visit_*.php 가 같은 패턴 (chdir+require + visit.sub.php 의 anchor 서브메뉴) 을
- * 반복해서 갖고 있어, 각 admin wrapper 가 이 파일 하나만 require 하면 끝.
- *
- * 호출 예 (admin/visit_list.php 에서):
- *   $visit_target = 'visit_list.php';
- *   require __DIR__.'/_visit_passthrough.php';
- *
- * - $visit_target: G5_ADMIN_PATH 안의 실제 페이지 파일명
- * - $visit_is_post (선택): POST 핸들러일 때 true (visit_delete_update 등)
- *   → ob_start 없이 그대로 require (HTML 출력 없음, goto_url 만 처리)
+ * 14개 visit_*.php 가 같은 패턴 (admin.head + visit.sub + 컨텐츠 + admin.tail) 이라
+ * _legacy_passthrough.php 와 동일하게 추출 후 modern shell 안에 wrap.
  */
 if (!defined('_GNUBOARD_')) exit;
 
 require_once G5_PATH.'/adm/admin.lib.php';
 
-// goto_url 로 visit_*.php 가 들어오면 클린 URL 로 변환
 add_event('goto_url', function ($url) {
     $u = str_replace('&amp;', '&', (string)$url);
     if (preg_match('#^\.?/?(visit_[a-z_]+)\.php(\?.*)?$#', $u, $m)) {
@@ -37,11 +27,36 @@ chdir(G5_ADMIN_PATH);
 require G5_ADMIN_PATH.'/'.$visit_target;
 $html = ob_get_clean();
 
-// visit.sub.php 의 anchor (./visit_xxx.php) 와 form action 을 클린 URL 로 치환
-$html = preg_replace_callback(
+$page_title = $g5['title'] ?? '방문자 통계';
+
+$content = '';
+if (preg_match('#<div class="container_wr">(.*?)<footer\s+id="ft"#si', $html, $m)) {
+    $content = $m[1];
+    $content = preg_replace('#(\s*</div>){2,4}\s*$#', '', $content);
+} else {
+    $content = $html;
+}
+
+// visit.sub.php 의 anchor 와 form action 을 클린 URL 로
+$content = preg_replace_callback(
     '#(href|action)="\./(visit_[a-z_]+)\.php([^"]*)"#i',
     static fn($m) => $m[1].'="/admin/'.$m[2].$m[3].'"',
-    $html
+    $content
 );
 
-echo $html;
+admin_layout_start($page_title, 'visit');
+?>
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+    <header class="flex items-center gap-3 mb-5">
+        <h2 class="text-xl font-bold tracking-tight"><?php echo htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?></h2>
+        <span class="text-xs text-slate-400">방문자 통계</span>
+    </header>
+    <div class="legacy-admin-content space-y-4">
+        <?php echo $content ?>
+    </div>
+</main>
+<script>
+window.is_checked = window.is_checked || function (n) { var e = document.getElementsByName(n); for (var i=0;i<e.length;i++) if (e[i].checked) return true; return false; };
+</script>
+<?php
+admin_layout_end();
