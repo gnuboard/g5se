@@ -32,10 +32,31 @@
 .shrink-0 { flex-shrink: 0; }
 .inline-block { display: inline-block; }
 
-/* 사이드바 메뉴 그룹 토글 — <details>/<summary> 의 기본 marker 제거 + chevron 회전 */
+/* 사이드바 메뉴 그룹 토글 — <details>/<summary> 기본 marker 제거 + CSS 삼각형 chevron.
+ * SVG 대신 border 로 그린 삼각형이라 외부 리소스 의존 없음 → FOUC 원천 차단. */
 .nav-group > summary { list-style: none; }
 .nav-group > summary::-webkit-details-marker { display: none; }
-.nav-group[open] > summary .chev { transform: rotate(90deg); }
+.nav-group > summary.nav-summary::before {
+    content: '';
+    flex-shrink: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4px 0 4px 6px;
+    border-color: transparent transparent transparent currentColor;
+    opacity: 0.7;
+    transition: transform .15s ease;
+}
+.nav-group[open] > summary.nav-summary::before { transform: rotate(90deg); }
+
+/* 정렬 화살표 — text(▾/▴)로 표시. 폰트 글리프라 paint 시점에 즉시 그려짐 (FOUC 없음) */
+.sort-arrow {
+    display: inline-block;
+    margin-left: 0.125rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    opacity: 0.6;
+}
 
 /* admin-primary utility 클래스 (정적) — UnoCSS runtime 이 hyphen 두 개 이상의
  * 사용자 정의 팔레트 (admin-primary-XXX) 를 일관되게 처리하지 못하는 경우가 있어
