@@ -100,7 +100,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
         </div>
 
         <nav class="flex-1 overflow-y-auto py-3 px-3 text-sm">
-            <?php foreach ($_admin_nav as $group) {
+            <?php foreach ($_admin_nav as $group_index => $group) {
                 // super 만 볼 수 있는 항목 필터
                 $items = array_values(array_filter($group['items'], function ($it) use ($is_admin) {
                     return ($it['level'] === '') || ($it['level'] === $is_admin) || $is_admin === 'super';
@@ -110,7 +110,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
                 // 활성 항목이 이 그룹에 있으면 기본 펼침
                 $group_has_active = false;
                 foreach ($items as $it) { if ($it['key'] === $active_key) { $group_has_active = true; break; } }
-                $group_id = 'navgrp-'.preg_replace('/[^a-z0-9]+/i', '-', $group['group']);
+                // 그룹 ID — 한글 그룹명은 정규식 후 모두 비어 같은 키 충돌이 발생하므로
+                // md5 해시 + 인덱스로 고유성 보장.
+                $group_id = 'navgrp-'.$group_index.'-'.substr(md5($group['group']), 0, 6);
             ?>
             <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" <?php echo $group_has_active ? 'open' : '' ?>>
                 <summary class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
