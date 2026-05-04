@@ -453,25 +453,6 @@ if ($w == '' || $w == 'r') {
     sql_pdo_query(" update {$write_table} set ca_name = :ca_name where wr_parent = :wr_parent ",
                   [':ca_name' => stripslashes($ca_name), ':wr_parent' => $wr['wr_id']]);
 
-    /*
-    if ($notice) {
-        //if (!preg_match("/[^0-9]{0,1}{$wr_id}[\r]{0,1}/",$board['bo_notice']))
-        if (!in_array((int)$wr_id, $notice_array)) {
-            $bo_notice = $wr_id . ',' . $board['bo_notice'];
-            sql_query(" update {$g5['board_table']} set bo_notice = '{$bo_notice}' where bo_table = '{$bo_table}' ");
-        }
-    } else {
-        $bo_notice = '';
-        $notice_array_cnt = count($notice_array);
-        for ($i=0; $i<$notice_array_cnt; $i++)
-            if ((int)$wr_id != (int)$notice_array[$i])
-                $bo_notice .= $notice_array[$i] . ',';
-        $bo_notice = trim($bo_notice);
-        //$bo_notice = preg_replace("/^".$wr_id."[\n]?$/m", "", $board['bo_notice']);
-        sql_query(" update {$g5['board_table']} set bo_notice = '{$bo_notice}' where bo_table = '{$bo_table}' ");
-    }
-    */
-
     $bo_notice = board_notice($board['bo_notice'], $wr_id, $notice);
     sql_pdo_query(" update {$g5['board_table']} set bo_notice = :bo_notice where bo_table = :bo_table ",
                   [':bo_notice' => $bo_notice, ':bo_table' => $bo_table]);

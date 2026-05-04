@@ -7,8 +7,6 @@ set_session('ss_delete_token', '');
 if (!($token && $delete_token == $token))
     alert('토큰 에러로 삭제 불가합니다.');
 
-//$wr = sql_fetch(" select * from $write_table where wr_id = '$wr_id' ");
-
 $count_write = $count_comment = 0;
 
 @include_once($board_skin_path.'/delete.head.skin.php');
