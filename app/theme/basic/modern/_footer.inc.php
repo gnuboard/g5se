@@ -24,14 +24,14 @@ if ($notice_check) {
     while ($r = sql_fetch_array($rs)) $_ft_notices[] = $r;
 }
 
-// 접속자 통계
+// 접속자 통계 — gnuboard 는 g5_config.cf_visit 에 "오늘:N,어제:N,최대:N,전체:N" 문자열로 저장.
+// (g5_visit_sum 테이블은 일자별 합계만 있어 직접 집계할 수 없음.)
 $_ft_visit = ['today' => 0, 'yesterday' => 0, 'max' => 0, 'total' => 0];
-$vs = sql_fetch(" SELECT vi_today, vi_yesterday, vi_max, vi_total FROM `{$g5['visit_sum_table']}` LIMIT 1 ");
-if ($vs) {
-    $_ft_visit['today']     = (int)$vs['vi_today'];
-    $_ft_visit['yesterday'] = (int)$vs['vi_yesterday'];
-    $_ft_visit['max']       = (int)$vs['vi_max'];
-    $_ft_visit['total']     = (int)$vs['vi_total'];
+if (!empty($config['cf_visit']) && preg_match('/오늘:(\d+),어제:(\d+),최대:(\d+),전체:(\d+)/', $config['cf_visit'], $_vm)) {
+    $_ft_visit['today']     = (int)$_vm[1];
+    $_ft_visit['yesterday'] = (int)$_vm[2];
+    $_ft_visit['max']       = (int)$_vm[3];
+    $_ft_visit['total']     = (int)$_vm[4];
 }
 
 $_ft_year = date('Y');
