@@ -42,21 +42,21 @@ if ($len < 0) $len = 0;
 $reply = substr($write['wr_reply'], 0, $len);
 
 // 원글만 구한다.
-$sql = " select count(*) as cnt from $write_table
-            where wr_reply like '$reply%'
-            and wr_id <> '{$write['wr_id']}'
-            and wr_num = '{$write['wr_num']}'
-            and wr_is_comment = 0 ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from $write_table
+            where wr_reply like :reply
+            and wr_id <> :wr_id
+            and wr_num = :wr_num
+            and wr_is_comment = 0 ",
+            [':reply' => $reply.'%', ':wr_id' => $write['wr_id'], ':wr_num' => $write['wr_num']]);
 if ($row['cnt'] && !$is_admin)
     alert('이 글과 관련된 답변글이 존재하므로 삭제 할 수 없습니다.\\n\\n우선 답변글부터 삭제하여 주십시오.');
 
 // 코멘트 달린 원글의 삭제 여부
-$sql = " select count(*) as cnt from $write_table
-            where wr_parent = '$wr_id'
-            and mb_id <> '{$member['mb_id']}'
-            and wr_is_comment = 1 ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from $write_table
+            where wr_parent = :wr_parent
+            and mb_id <> :mb_id
+            and wr_is_comment = 1 ",
+            [':wr_parent' => $wr_id, ':mb_id' => $member['mb_id']]);
 if ($row['cnt'] >= $board['bo_count_delete'] && !$is_admin)
     alert('이 글과 관련된 코멘트가 존재하므로 삭제 할 수 없습니다.\\n\\n코멘트가 '.$board['bo_count_delete'].'건 이상 달린 원글은 삭제할 수 없습니다.');
 
@@ -66,9 +66,8 @@ if ($row['cnt'] >= $board['bo_count_delete'] && !$is_admin)
 
 
 // 나라오름님 수정 : 원글과 코멘트수가 정상적으로 업데이트 되지 않는 오류를 잡아 주셨습니다.
-//$sql = " select wr_id, mb_id, wr_comment from $write_table where wr_parent = '$write[wr_id]' order by wr_id ";
-$sql = " select wr_id, mb_id, wr_is_comment, wr_content from $write_table where wr_parent = '{$write['wr_id']}' order by wr_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select wr_id, mb_id, wr_is_comment, wr_content from $write_table where wr_parent = :wr_parent order by wr_id ",
+                        [':wr_parent' => $write['wr_id']]);
 while ($row = sql_fetch_array($result))
 {
     // 원글이라면
@@ -79,8 +78,8 @@ while ($row = sql_fetch_array($result))
             insert_point($row['mb_id'], $board['bo_write_point'] * (-1), "{$board['bo_subject']} {$row['wr_id']} 글삭제");
 
         // 업로드된 파일이 있다면 파일삭제
-        $sql2 = " select * from {$g5['board_file_table']} where bo_table = '$bo_table' and wr_id = '{$row['wr_id']}' ";
-        $result2 = sql_query($sql2);
+        $result2 = sql_pdo_query(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id ",
+                                 [':bo_table' => $bo_table, ':wr_id' => $row['wr_id']]);
         while ($row2 = sql_fetch_array($result2)) {
 
             $delete_file = run_replace('delete_file_path', G5_DATA_PATH.'/file/'.$bo_table.'/'.str_replace('../', '', $row2['bf_file']), $row2);
@@ -97,7 +96,8 @@ while ($row = sql_fetch_array($result))
         delete_editor_thumbnail($row['wr_content']);
 
         // 파일테이블 행 삭제
-        sql_query(" delete from {$g5['board_file_table']} where bo_table = '$bo_table' and wr_id = '{$row['wr_id']}' ");
+        sql_pdo_query(" delete from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id ",
+                      [':bo_table' => $bo_table, ':wr_id' => $row['wr_id']]);
 
         $count_write++;
     }
@@ -112,29 +112,24 @@ while ($row = sql_fetch_array($result))
 }
 
 // 게시글과 댓글 삭제
-sql_query(" delete from $write_table where wr_parent = '{$write['wr_id']}' ");
+sql_pdo_query(" delete from $write_table where wr_parent = :wr_parent ", [':wr_parent' => $write['wr_id']]);
 
 // 최근게시물 삭제
-sql_query(" delete from {$g5['board_new_table']} where bo_table = '$bo_table' and wr_parent = '{$write['wr_id']}' ");
+sql_pdo_query(" delete from {$g5['board_new_table']} where bo_table = :bo_table and wr_parent = :wr_parent ",
+              [':bo_table' => $bo_table, ':wr_parent' => $write['wr_id']]);
 
 // 스크랩 삭제
-sql_query(" delete from {$g5['scrap_table']} where bo_table = '$bo_table' and wr_id = '{$write['wr_id']}' ");
+sql_pdo_query(" delete from {$g5['scrap_table']} where bo_table = :bo_table and wr_id = :wr_id ",
+              [':bo_table' => $bo_table, ':wr_id' => $write['wr_id']]);
 
-/*
-// 공지사항 삭제
-$notice_array = explode("\n", trim($board['bo_notice']));
-$bo_notice = "";
-for ($k=0; $k<count($notice_array); $k++)
-    if ((int)$write[wr_id] != (int)$notice_array[$k])
-        $bo_notice .= $notice_array[$k] . "\n";
-$bo_notice = trim($bo_notice);
-*/
 $bo_notice = board_notice($board['bo_notice'], $write['wr_id']);
-sql_query(" update {$g5['board_table']} set bo_notice = '$bo_notice' where bo_table = '$bo_table' ");
+sql_pdo_query(" update {$g5['board_table']} set bo_notice = :bo_notice where bo_table = :bo_table ",
+              [':bo_notice' => $bo_notice, ':bo_table' => $bo_table]);
 
 // 글숫자 감소
 if ($count_write > 0 || $count_comment > 0)
-    sql_query(" update {$g5['board_table']} set bo_count_write = bo_count_write - '$count_write', bo_count_comment = bo_count_comment - '$count_comment' where bo_table = '$bo_table' ");
+    sql_pdo_query(" update {$g5['board_table']} set bo_count_write = bo_count_write - :cw, bo_count_comment = bo_count_comment - :cc where bo_table = :bo_table ",
+                  [':cw' => $count_write, ':cc' => $count_comment, ':bo_table' => $bo_table]);
 
 @include_once($board_skin_path.'/delete.tail.skin.php');
 
