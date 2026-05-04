@@ -79,10 +79,10 @@ if (!$select_db) {
 
 $mysql_set_mode = 'false';
 sql_set_charset(G5_DB_CHARSET, $dblink);
-$result = sql_query(" SELECT @@sql_mode as mode ", true, $dblink);
+$result = sql_pdo_query(" SELECT @@sql_mode as mode ", [], true, $dblink);
 $row = sql_fetch_array($result);
 if($row['mode']) {
-    sql_query("SET SESSION sql_mode = ''", true, $dblink);
+    sql_pdo_query("SET SESSION sql_mode = ''", [], true, $dblink);
     $mysql_set_mode = 'true';
 }
 unset($result);
@@ -94,8 +94,10 @@ unset($row);
 
     <ol>
 <?php
-$sql = "SHOW TABLES LIKE '{$table_prefix}config'";
-$is_install = sql_query($sql, false, $dblink)->num_rows > 0;
+// $table_prefix 는 위에서 [^0-9a-z_] 검사 거침 — 식별자 보간 안전
+// 기존: sql_query()->num_rows (mysqli 잔재) → PDOStatement 호환 sql_num_rows() 사용
+$check_stmt = sql_pdo_query("SHOW TABLES LIKE '{$table_prefix}config'", [], false, $dblink);
+$is_install = sql_num_rows($check_stmt) > 0;
 
 // 그누보드5 재설치에 체크하였거나 그누보드5가 설치되어 있지 않다면
 if ($g5_install || $is_install === false) {
@@ -112,7 +114,7 @@ if ($g5_install || $is_install === false) {
         }
 
         $sql = get_db_create_replace($f[$i]);
-        sql_query($sql, true, $dblink);
+        sql_pdo_query($sql, [], true, $dblink);
     }
 }
 
@@ -129,7 +131,7 @@ if($g5_shop_install) {
         }
 
         $sql = get_db_create_replace($f[$i]);
-        sql_query($sql, true, $dblink);
+        sql_pdo_query($sql, [], true, $dblink);
     }
 }
 // 테이블 생성 ------------------------------------
@@ -153,11 +155,13 @@ if ($g5_install || $is_install === false) {
         $image_extension .= "|webp";
     }
 
+    // $table_prefix 는 [a-z0-9_] 검증 — 식별자 보간 안전
+    // 사용자 입력값($admin_id, $admin_email, $admin_pass, $admin_name) 만 placeholder
     $sql = " insert into `{$table_prefix}config`
                 set cf_title = '".G5_VERSION."',
                     cf_theme = 'basic',
-                    cf_admin = '$admin_id',
-                    cf_admin_email = '$admin_email',
+                    cf_admin = :admin_id,
+                    cf_admin_email = :admin_email,
                     cf_admin_email_name = '".G5_VERSION.'_'.substr(base_convert(mt_rand(), 10, 36), 0, 6)."',
                     cf_use_point = '1',
                     cf_use_copy_log = '1',
@@ -219,48 +223,48 @@ if ($g5_install || $is_install === false) {
                     cf_stipulation = '해당 홈페이지에 맞는 회원가입약관을 입력합니다.',
                     cf_privacy = '해당 홈페이지에 맞는 개인정보처리방침을 입력합니다.'
                     ";
-    sql_query($sql, true, $dblink);
+    sql_pdo_query($sql, [':admin_id' => $admin_id, ':admin_email' => $admin_email], true, $dblink);
 
     // 1:1문의 설정
-    $sql = " insert into `{$table_prefix}qa_config`
+    sql_pdo_query(" insert into `{$table_prefix}qa_config`
                 ( qa_title, qa_category, qa_skin, qa_mobile_skin, qa_use_email, qa_req_email, qa_use_hp, qa_req_hp, qa_use_editor, qa_subject_len, qa_mobile_subject_len, qa_page_rows, qa_mobile_page_rows, qa_image_width, qa_upload_size, qa_insert_content )
               values
-                ( '1:1문의', '회원|포인트', 'basic', 'basic', '1', '0', '1', '0', '1', '60', '30', '15', '15', '600', '1048576', '' ) ";
-    sql_query($sql, true, $dblink);
+                ( '1:1문의', '회원|포인트', 'basic', 'basic', '1', '0', '1', '0', '1', '60', '30', '15', '15', '600', '1048576', '' ) ", [], true, $dblink);
 
     // 관리자 회원가입
-    $sql = " insert into `{$table_prefix}member`
-                set mb_id = '$admin_id',
-                     mb_password = '".get_encrypt_string($admin_pass)."',
-                     mb_name = '$admin_name',
-                     mb_nick = '$admin_name',
-                     mb_email = '$admin_email',
-                     mb_level = '10',
-                     mb_mailling = '1',
-                     mb_open = '1',
-                     mb_nick_date = '".G5_TIME_YMDHIS."',
-                     mb_email_certify = '".G5_TIME_YMDHIS."',
-                     mb_datetime = '".G5_TIME_YMDHIS."',
-                     mb_ip = '{$_SERVER['REMOTE_ADDR']}'
-                     ";
-    sql_query($sql, true, $dblink);
+    sql_pdo_query(" insert into `{$table_prefix}member` set
+                        mb_id            = :mb_id,
+                        mb_password      = :mb_password,
+                        mb_name          = :mb_name,
+                        mb_nick          = :mb_nick,
+                        mb_email         = :mb_email,
+                        mb_level         = '10',
+                        mb_mailling      = '1',
+                        mb_open          = '1',
+                        mb_nick_date     = :nick_date,
+                        mb_email_certify = :email_certify,
+                        mb_datetime      = :datetime,
+                        mb_ip            = :mb_ip ",
+                  [':mb_id' => $admin_id, ':mb_password' => get_encrypt_string($admin_pass),
+                   ':mb_name' => $admin_name, ':mb_nick' => $admin_name, ':mb_email' => $admin_email,
+                   ':nick_date' => G5_TIME_YMDHIS, ':email_certify' => G5_TIME_YMDHIS,
+                   ':datetime' => G5_TIME_YMDHIS, ':mb_ip' => $_SERVER['REMOTE_ADDR']],
+                  true, $dblink);
 
     // 내용관리 생성
-    sql_query(" insert into `{$table_prefix}content` set co_id = 'company', co_html = '1', co_subject = '회사소개', co_content= '<p align=center><b>회사소개에 대한 내용을 입력하십시오.</b></p>', co_skin = 'basic', co_mobile_skin = 'basic' ", true, $dblink);
-    sql_query(" insert into `{$table_prefix}content` set co_id = 'privacy', co_html = '1', co_subject = '개인정보 처리방침', co_content= '<p align=center><b>개인정보 처리방침에 대한 내용을 입력하십시오.</b></p>', co_skin = 'basic', co_mobile_skin = 'basic' ", true, $dblink);
-    sql_query(" insert into `{$table_prefix}content` set co_id = 'provision', co_html = '1', co_subject = '서비스 이용약관', co_content= '<p align=center><b>서비스 이용약관에 대한 내용을 입력하십시오.</b></p>', co_skin = 'basic', co_mobile_skin = 'basic' ", true, $dblink);
+    sql_pdo_query(" insert into `{$table_prefix}content` set co_id = 'company', co_html = '1', co_subject = '회사소개', co_content= '<p align=center><b>회사소개에 대한 내용을 입력하십시오.</b></p>', co_skin = 'basic', co_mobile_skin = 'basic' ", [], true, $dblink);
+    sql_pdo_query(" insert into `{$table_prefix}content` set co_id = 'privacy', co_html = '1', co_subject = '개인정보 처리방침', co_content= '<p align=center><b>개인정보 처리방침에 대한 내용을 입력하십시오.</b></p>', co_skin = 'basic', co_mobile_skin = 'basic' ", [], true, $dblink);
+    sql_pdo_query(" insert into `{$table_prefix}content` set co_id = 'provision', co_html = '1', co_subject = '서비스 이용약관', co_content= '<p align=center><b>서비스 이용약관에 대한 내용을 입력하십시오.</b></p>', co_skin = 'basic', co_mobile_skin = 'basic' ", [], true, $dblink);
 
     // FAQ Master
-    sql_query(" insert into `{$table_prefix}faq_master` set fm_id = '1', fm_subject = '자주하시는 질문' ", true, $dblink);
+    sql_pdo_query(" insert into `{$table_prefix}faq_master` set fm_id = '1', fm_subject = '자주하시는 질문' ", [], true, $dblink);
 
-    // 그누보드, 영카트 통합으로 인하여 게시판그룹을 커뮤니티(community)로 생성 (NaviGator님,210624)
-    // $tmp_gr_id = defined('G5_YOUNGCART_VER') ? 'shop' : 'community';
-    // $tmp_gr_subject = defined('G5_YOUNGCART_VER') ? '쇼핑몰' : '커뮤니티';
     $tmp_gr_id = 'community';
     $tmp_gr_subject = '커뮤니티';
 
     // 게시판 그룹 생성
-    sql_query(" insert into `{$table_prefix}group` set gr_id = '$tmp_gr_id', gr_subject = '$tmp_gr_subject' ", true, $dblink);
+    sql_pdo_query(" insert into `{$table_prefix}group` set gr_id = :gr_id, gr_subject = :gr_subject ",
+                  [':gr_id' => $tmp_gr_id, ':gr_subject' => $tmp_gr_subject], true, $dblink);
 
     // 게시판 생성
     $tmp_bo_subject = array ("공지사항", "질문답변", "자유게시판", "갤러리");
@@ -281,10 +285,10 @@ if ($g5_install || $is_install === false) {
             $download_bo_point = $download_point;
         }
 
-        $sql = " insert into `{$table_prefix}board`
-                    set bo_table = '$tmp_bo_table[$i]',
-                        gr_id = '$tmp_gr_id',
-                        bo_subject = '$tmp_bo_subject[$i]',
+        sql_pdo_query(" insert into `{$table_prefix}board` set
+                        bo_table            = :bo_table,
+                        gr_id               = :gr_id,
+                        bo_subject          = :bo_subject,
                         bo_device           = 'both',
                         bo_admin            = '',
                         bo_list_level       = '1',
@@ -298,10 +302,10 @@ if ($g5_install || $is_install === false) {
                         bo_count_delete     = '1',
                         bo_upload_level     = '1',
                         bo_download_level   = '1',
-                        bo_read_point       = '$read_bo_point',
-                        bo_write_point      = '$write_bo_point',
-                        bo_comment_point    = '$comment_bo_point',
-                        bo_download_point   = '$download_bo_point',
+                        bo_read_point       = :read_bo_point,
+                        bo_write_point      = :write_bo_point,
+                        bo_comment_point    = :comment_bo_point,
+                        bo_download_point   = :download_bo_point,
                         bo_use_category     = '0',
                         bo_category_list    = '',
                         bo_use_sideview     = '0',
@@ -319,46 +323,49 @@ if ($g5_install || $is_install === false) {
                         bo_use_email        = '0',
                         bo_table_width      = '100',
                         bo_subject_len      = '60',
-                        bo_mobile_subject_len      = '30',
+                        bo_mobile_subject_len = '30',
                         bo_page_rows        = '15',
                         bo_mobile_page_rows = '15',
                         bo_new              = '24',
                         bo_hot              = '100',
                         bo_image_width      = '835',
-                        bo_skin             = '$bo_skin',
-                        bo_mobile_skin      = '$bo_skin',
+                        bo_skin             = :bo_skin,
+                        bo_mobile_skin      = :bo_skin,
                         bo_include_head     = '_head.php',
                         bo_include_tail     = '_tail.php',
                         bo_content_head     = '',
                         bo_content_tail     = '',
-                        bo_mobile_content_head     = '',
-                        bo_mobile_content_tail     = '',
+                        bo_mobile_content_head = '',
+                        bo_mobile_content_tail = '',
                         bo_insert_content   = '',
                         bo_gallery_cols     = '4',
                         bo_gallery_width    = '202',
                         bo_gallery_height   = '150',
-                        bo_mobile_gallery_width = '125',
-                        bo_mobile_gallery_height= '100',
+                        bo_mobile_gallery_width  = '125',
+                        bo_mobile_gallery_height = '100',
                         bo_upload_count     = '2',
                         bo_upload_size      = '1048576',
                         bo_reply_order      = '1',
                         bo_use_search       = '0',
-                        bo_order            = '0'
-                        ";
-        sql_query($sql, true, $dblink);
+                        bo_order            = '0' ",
+                  [':bo_table' => $tmp_bo_table[$i], ':gr_id' => $tmp_gr_id,
+                   ':bo_subject' => $tmp_bo_subject[$i],
+                   ':read_bo_point' => $read_bo_point, ':write_bo_point' => $write_bo_point,
+                   ':comment_bo_point' => $comment_bo_point, ':download_bo_point' => $download_bo_point,
+                   ':bo_skin' => $bo_skin],
+                  true, $dblink);
 
-        // 게시판 테이블 생성
+        // 게시판 테이블 생성 (DDL — placeholder 미지원, 식별자 보간)
         $file = file("../".G5_ADMIN_DIR."/sql_write.sql");
         $file = get_db_create_replace($file);
         $sql = implode("\n", $file);
 
         $create_table = $table_prefix.'write_' . $tmp_bo_table[$i];
 
-        // sql_board.sql 파일의 테이블명을 변환
         $source = array("/__TABLE_NAME__/", "/;/");
         $target = array($create_table, "");
         $sql = preg_replace($source, $target, $sql);
-        sql_query($sql, false, $dblink);
+        sql_pdo_query($sql, [], false, $dblink);
     }
 }
 
@@ -516,7 +523,7 @@ if($g5_shop_install) {
                     de_sms_cont4 = '{이름}님 입금 감사합니다.\n{입금액}원\n주문번호:\n{주문번호}\n{회사명}',
                     de_sms_cont5 = '{이름}님 배송합니다.\n택배:{택배회사}\n운송장번호:\n{운송장번호}\n{회사명}'
                     ";
-    sql_query($sql, true, $dblink);
+    sql_pdo_query($sql, [], true, $dblink);
 }
 ?>
 
