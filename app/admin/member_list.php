@@ -103,7 +103,7 @@ $chip_url = function ($s) use ($sfl, $stx, $sst, $sod) {
 
 admin_layout_start('회원 관리', 'members');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <!-- 상단 카운트 + 액션 -->
     <header class="flex flex-wrap items-center justify-between gap-3 mb-4">

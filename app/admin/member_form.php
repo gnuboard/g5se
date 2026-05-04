@@ -69,7 +69,7 @@ $level_select_html = ob_get_clean();
 admin_layout_start($page_title, 'members');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex items-center gap-3 mb-6">
         <a href="/admin/member_list" class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="목록으로">

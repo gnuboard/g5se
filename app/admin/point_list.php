@@ -67,7 +67,7 @@ $sort_link = function (string $col) use ($sst, $sod, $sfl, $stx, $page, $h): str
 admin_layout_start('포인트 내역', 'points');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <div>

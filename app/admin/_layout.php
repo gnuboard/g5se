@@ -122,8 +122,8 @@ function admin_layout_start(string $title, string $active_key = ''): void
         </div>
     </aside>
 
-    <!-- 메인 영역 (대시보드/컨텐츠/헤더 모두 max-w-7xl=1280px 로 제한, 좌측 정렬) -->
-    <div class="flex-1 lg:ml-60 flex flex-col min-w-0 max-w-7xl">
+    <!-- 메인 영역 -->
+    <div class="flex-1 lg:ml-60 flex flex-col min-w-0">
 
         <!-- 상단 헤더 -->
         <header class="sticky top-0 z-20 h-14 bg-white/85 dark:bg-slate-900/85 backdrop-blur border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 px-4">
