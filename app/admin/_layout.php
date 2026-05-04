@@ -86,29 +86,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
     <link rel="stylesheet" href="/admin/css/admin.css">
-    <!-- FOUC 가드: admin.css 가 로드될 때까지만 body 를 invisible.
-         admin.css 안에 admin shell 의 모든 layout/타이포그래피가 정적으로 베이킹되어 있어
-         UnoCSS runtime 을 기다리지 않고 stylesheet load 직후 즉시 reveal.
-         (UnoCSS runtime 이 늦거나 실패해도 broken layout 이 보이지 않음.) -->
-    <style>html:not(.uno-ready) body{visibility:hidden}</style>
-    <script>
-        // admin.css link 가 load 되면 즉시 reveal — 정적 CSS 만으로 admin shell 이 완성됨.
-        // 안전망 (CSS 로드 실패 시): 1s 후 무조건 reveal.
-        (function(){
-            var ready = function(){document.documentElement.classList.add('uno-ready');};
-            var links = document.querySelectorAll('link[rel="stylesheet"]');
-            var pending = links.length;
-            if (!pending) { ready(); return; }
-            for (var i = 0; i < links.length; i++) {
-                if (links[i].sheet) { if (--pending <= 0) ready(); }
-                else {
-                    links[i].addEventListener('load', function(){ if (--pending <= 0) ready(); });
-                    links[i].addEventListener('error', function(){ if (--pending <= 0) ready(); });
-                }
-            }
-            setTimeout(ready, 1000);
-        })();
-    </script>
+    <!-- admin shell 레이아웃은 admin.css 에 모두 정적으로 베이킹되어 있어 FOUC 가드 불필요.
+         (가드를 두면 body invisible→visible 전환이 "창이 다시 뜨는" 느낌을 줘서 제거함.)
+         브라우저는 stylesheet 가 도착하면 자연스럽게 progressive paint 한다. -->
 
     <!-- UnoCSS runtime — 베이킹 안 된 보조 utility 들을 런타임에 생성. layout 이 이미 정적이라
          실패해도 안전. admin-primary 팔레트 컬러도 정적 CSS 로 커버됨. -->
