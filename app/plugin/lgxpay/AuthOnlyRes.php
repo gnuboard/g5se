@@ -135,8 +135,8 @@ if ($xpay->TX()) {
         }
         
         if($mb_dupinfo) {
-            $sql = " select mb_id from {$g5['member_table']} where mb_id <> '{$member['mb_id']}' and mb_dupinfo = '{$mb_dupinfo}' ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch(" select mb_id from {$g5['member_table']} where mb_id <> :cur_mb_id and mb_dupinfo = :dupinfo ",
+                                 [':cur_mb_id' => $member['mb_id'], ':dupinfo' => $mb_dupinfo]);
             if (isset($row['mb_id']) && $row['mb_id']) {
                 alert_close("입력하신 본인확인 정보로 가입된 내역이 존재합니다.\\n회원아이디 : ".$row['mb_id']);
             }

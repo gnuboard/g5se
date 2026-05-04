@@ -115,22 +115,20 @@ function social_before_join_check($url=''){
         //재가입 방지
         if( $user_profile = social_session_exists_check() ){
 
-            $sql = sprintf("select * from {$g5['social_profile_table']} where provider = '%s' and identifier = '%s' ", $provider_name, $user_profile->identifier);
-
             $is_exist = false;
 
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch("select * from {$g5['social_profile_table']} where provider = :provider and identifier = :identifier ",
+                                 [':provider' => $provider_name, ':identifier' => $user_profile->identifier]);
 
             if( isset($row['provider']) && $row['provider'] ){
                 $is_exist = true;
 
                 $time = time() - (86400 * (int) G5_SOCIAL_DELETE_DAY);
-                
+
                 if( empty($row['mb_id']) && ( 0 == G5_SOCIAL_DELETE_DAY || strtotime($row['mp_latest_day']) < $time) ){
 
-                    $sql = "delete from {$g5['social_profile_table']} where mp_no =".$row['mp_no'];
-
-                    sql_query($sql);
+                    sql_pdo_query("delete from {$g5['social_profile_table']} where mp_no = :mp_no",
+                                  [':mp_no' => $row['mp_no']]);
 
                     $is_exist = false;
                 }
@@ -156,10 +154,9 @@ function social_get_data($by, $provider, $user_profile){
 
     // 소셜 가입이 되어 있는지 체크
     if( $by == 'provider' ){
-        
-        $sql = sprintf("select * from {$g5['social_profile_table']} where provider = '%s' and identifier = '%s' order by mb_id desc ", $provider, $user_profile->identifier);
 
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch("select * from {$g5['social_profile_table']} where provider = :provider and identifier = :identifier order by mb_id desc ",
+                             [':provider' => $provider, ':identifier' => $user_profile->identifier]);
 
         if( !empty($row['mb_id']) ){
             return $row;    //mb_id 가 있는 경우에만 데이터를 리턴합니다.
@@ -177,13 +174,15 @@ function social_get_data($by, $provider, $user_profile){
             $nick = $tmp[0];
         }
 
-        $sql = "select mb_nick, mb_email from {$g5['member_table']} where mb_nick = '".$nick."' ";
+        $sql = "select mb_nick, mb_email from {$g5['member_table']} where mb_nick = :nick ";
+        $params = [':nick' => $nick];
 
         if( !empty($email) ){
-            $sql .= sprintf(" or mb_email = '%s' ", $email);
+            $sql .= " or mb_email = :email ";
+            $params[':email'] = $email;
         }
 
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql, $params);
 
         $exists = array();
 
@@ -216,28 +215,20 @@ function social_user_profile_replace( $mb_id, $provider, $profile ){
     
     $provider = strtolower($provider);
 
-    $sql = sprintf("SELECT mp_no, mb_id from {$g5['social_profile_table']} where provider= '%s' and identifier = '%s' ", $provider, $profile->identifier);
-    $result = sql_query($sql);
+    $result = sql_pdo_query("SELECT mp_no, mb_id from {$g5['social_profile_table']} where provider = :provider and identifier = :identifier ",
+                            [':provider' => $provider, ':identifier' => $profile->identifier]);
     for($i=0;$row=sql_fetch_array($result);$i++){   //혹시 맞지 않는 데이터가 있으면 삭제합니다.
         if( $row['mb_id'] != $mb_id ){
-           sql_query(sprintf("DELETE FROM {$g5['social_profile_table']} where mp_no=%d", $row['mp_no']));
+            sql_pdo_query("DELETE FROM {$g5['social_profile_table']} where mp_no = :mp_no",
+                          [':mp_no' => (int) $row['mp_no']]);
         }
     }
-    
-    $sql = sprintf("SELECT mp_no, object_sha, mp_register_day from {$g5['social_profile_table']} where mb_id= '%s' and provider= '%s' and identifier = '%s' ", $mb_id, $provider, $profile->identifier);
 
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch("SELECT mp_no, object_sha, mp_register_day from {$g5['social_profile_table']} where mb_id = :mb_id and provider = :provider and identifier = :identifier ",
+                        [':mb_id' => $mb_id, ':provider' => $provider, ':identifier' => $profile->identifier]);
 
-    $table_data = array(
-        "mp_no"    =>  ! empty($row) ? $row['mp_no'] : 'NULL',
-        'mb_id' =>  "'". $mb_id. "'",
-        'provider'  => "'".  $provider . "'",
-        'object_sha'    => "'". $object_sha . "'",
-        'mp_register_day' => ! empty($row) ? "'".$row['mp_register_day']."'" : "'". G5_TIME_YMDHIS . "'",
-        'mp_latest_day' => "'". G5_TIME_YMDHIS . "'",
-    );
-
-    $fields = array( 
+    // 컬럼명 화이트리스트
+    $allowed_profile_fields = array(
         'identifier',
         'profileurl',
         'photourl',
@@ -245,22 +236,34 @@ function social_user_profile_replace( $mb_id, $provider, $profile ){
         'description',
     );
 
+    $columns = array('mb_id', 'provider', 'object_sha', 'mp_register_day', 'mp_latest_day');
+    $params = array(
+        ':mb_id'           => $mb_id,
+        ':provider'        => $provider,
+        ':object_sha'      => $object_sha,
+        ':mp_register_day' => ! empty($row) ? $row['mp_register_day'] : G5_TIME_YMDHIS,
+        ':mp_latest_day'   => G5_TIME_YMDHIS,
+    );
+
+    if( ! empty($row) ){
+        $columns[] = 'mp_no';
+        $params[':mp_no'] = $row['mp_no'];
+    }
+
     foreach( (array) $profile as $key => $value ){
         $key = strtolower($key);
 
-        if( in_array( $key, $fields ) )
+        if( in_array( $key, $allowed_profile_fields ) )
         {
-            $value = (string) $value;
-            $table_data[ $key ] = "'". sql_real_escape_string($value). "'";
+            $columns[]        = $key;
+            $params[':'.$key] = (string) $value;
         }
     }
-    
-    $fields  = '`' . implode( '`, `', array_keys( $table_data ) ) . '`';
-    $values = implode( ", ", array_values( $table_data )  );
 
-    $sql = "REPLACE INTO {$g5['social_profile_table']} ($fields) VALUES ($values) ";
+    $col_sql = '`' . implode( '`, `', $columns ) . '`';
+    $val_sql = ':' . implode( ', :', $columns );
 
-    sql_query($sql);
+    sql_pdo_query("REPLACE INTO {$g5['social_profile_table']} ($col_sql) VALUES ($val_sql) ", $params);
 
     return sql_insert_id();
 
@@ -807,9 +810,8 @@ function social_is_login_password_check($mb_id){
     if(!$mb_id || $action === 'link'){ //아이디가 없거나, 계정 연결이면
         if($action === 'link'){    //계정연결이면 같은 서비스명이 있는 경우
 
-            $sql = sprintf("select count(*) as num from {$g5['social_profile_table']} where provider = '%s' and mb_id = '%s' ", $provider_name, $mb_id);
-
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch("select count(*) as num from {$g5['social_profile_table']} where provider = :provider and mb_id = :mb_id ",
+                                 [':provider' => $provider_name, ':mb_id' => $mb_id]);
             if( $row['num'] ){
                 alert("해당 계정에 이미 $provider_name ID 가 연결되어 있습니다. 연결을 해제 후 다시 시도해 주세요.");
             }
@@ -866,9 +868,8 @@ function social_login_link_account($mb_id, $is_buffer=false, $is_type=''){
     if( !$mb_id )
         return;
 
-    $sql = "select * from {$g5['social_profile_table']} where mb_id = '".$mb_id."' ";
-
-    $result = sql_query($sql);
+    $result = sql_pdo_query("select * from {$g5['social_profile_table']} where mb_id = :mb_id ",
+                            [':mb_id' => $mb_id]);
 
     $my_social_accounts = array();
 
@@ -980,19 +981,29 @@ function social_member_link_delete($mb_id, $mp_no=''){
         //mb_id가 없는 소셜 데이터 중에 해당 기간이 넘어간 db 데이터를 삭제합니다.
         $time = date("Y-m-d H:i:s", time() - (86400 * (int) G5_SOCIAL_DELETE_DAY));
 
-        $sql = "delete from {$g5['social_profile_table']} where mb_id = '' and mp_latest_day < '$time' ";
-        sql_query($sql);
+        sql_pdo_query("delete from {$g5['social_profile_table']} where mb_id = '' and mp_latest_day < :cutoff ",
+                      [':cutoff' => $time]);
 
-        $sql = "update {$g5['social_profile_table']} set mb_id='', object_sha='', profileurl='', photourl='', displayname='', mp_latest_day = '".G5_TIME_YMDHIS."' where mb_id= '".$mb_id."'";
+        $sql = "update {$g5['social_profile_table']} set
+                    mb_id          = '',
+                    object_sha     = '',
+                    profileurl     = '',
+                    photourl       = '',
+                    displayname    = '',
+                    mp_latest_day  = :latest_day
+                where mb_id = :mb_id ";
+        $params = [':latest_day' => G5_TIME_YMDHIS, ':mb_id' => $mb_id];
     } else {
-        $sql = "delete from {$g5['social_profile_table']} where mb_id= '".$mb_id."'"; //바로 삭제합니다.
+        $sql = "delete from {$g5['social_profile_table']} where mb_id = :mb_id "; //바로 삭제합니다.
+        $params = [':mb_id' => $mb_id];
     }
 
     if($mp_no){
-        $sql .= " and mp_no=$mp_no";
+        $sql .= " and mp_no = :mp_no";
+        $params[':mp_no'] = $mp_no;
     }
 
-    sql_query($sql, false);
+    sql_pdo_query($sql, $params, false);
 }
 
 function social_service_check($provider){

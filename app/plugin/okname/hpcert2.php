@@ -119,8 +119,8 @@ if (!empty($member['mb_certify']) && !empty($member['mb_dupinfo']) && strlen($me
 }
 
 // 중복정보 체크
-$sql = " select mb_id from {$g5['member_table']} where mb_id <> '{$member['mb_id']}' and mb_dupinfo = '{$mb_dupinfo}' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select mb_id from {$g5['member_table']} where mb_id <> :cur_mb_id and mb_dupinfo = :dupinfo ",
+                     [':cur_mb_id' => $member['mb_id'], ':dupinfo' => $mb_dupinfo]);
 if (!empty($row['mb_id'])) {
     alert_close("입력하신 본인확인 정보로 가입된 내역이 존재합니다.\\n회원아이디 : ".$row['mb_id']);
 }
