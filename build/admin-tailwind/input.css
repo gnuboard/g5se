@@ -498,22 +498,6 @@
         border: 1px solid #ccc !important; background: #fafafa !important; color: #000 !important; cursor: pointer !important;
     }
 
-    /* 다크모드에서 에디터를 포함하는 td 전체를 흰 카드로 감싸 통일감 부여.
-     * (editor wrapper / .cke_sc 단축키 영역 / 모드 탭 / resize 핸들 / textarea
-     * 모두 한 컨테이너 안에 있어 td 단위 white bg 가 가장 안정적.) */
-    .legacy-admin-content .tbl_frm01 td:has(textarea.smarteditor2),
-    .legacy-admin-content .tbl_frm01 td:has(.cke_sc),
-    .legacy-admin-content .tbl_frm01 td:has(#smart_editor2),
-    .legacy-admin-content td:has(textarea.smarteditor2) {
-        background-color: #ffffff !important;
-        color: #1e293b !important;
-    }
-    .legacy-admin-content .tbl_frm01 td:has(textarea.smarteditor2) *,
-    .legacy-admin-content .tbl_frm01 td:has(.cke_sc) *,
-    .legacy-admin-content .tbl_frm01 td:has(#smart_editor2) *,
-    .legacy-admin-content td:has(textarea.smarteditor2) * {
-        color: inherit;
-    }
     /* SE2 하단 탭 (Editor / HTML / TEXT) 의 가독성 */
     .legacy-admin-content .se2_to_editor,
     .legacy-admin-content .se2_to_html,
