@@ -1,8 +1,7 @@
 <?php
 include_once('./_common.php');
 
-$sql = "select MAX(cr_id) as max_cr_id from {$g5['cert_history_table']} limit 1";
-$res = sql_fetch($sql);
+$res = sql_pdo_fetch("select MAX(cr_id) as max_cr_id from {$g5['cert_history_table']} limit 1");
 $max_cr_id = $res['max_cr_id'];
 if(empty($max_cr_id)) $max_cr_id = 0;
 

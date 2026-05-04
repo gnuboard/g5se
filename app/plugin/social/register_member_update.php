@@ -143,73 +143,87 @@ if($config['cf_cert_use']) {
     $mb_hp = hyphen_hp_number($mb_hp);
     if($config['cf_cert_use'] && get_session('ss_cert_type') && get_session('ss_cert_dupinfo')) {
         // 중복체크
-        $sql = " select mb_id from {$g5['member_table']} where mb_id <> '{$member['mb_id']}' and mb_dupinfo = '".get_session('ss_cert_dupinfo')."' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select mb_id from {$g5['member_table']} where mb_id <> :cur_mb_id and mb_dupinfo = :dupinfo ",
+                             [':cur_mb_id' => $member['mb_id'], ':dupinfo' => get_session('ss_cert_dupinfo')]);
         if (!empty($row['mb_id'])) {
             alert("입력하신 본인확인 정보로 가입된 내역이 존재합니다.");
         }
     }
 
     $sql_certify = '';
+    $cert_params = [];
     $md5_cert_no = get_session('ss_cert_no');
     $cert_type = get_session('ss_cert_type');
     if ($config['cf_cert_use'] && $cert_type && $md5_cert_no) {
-        // 해시값이 같은 경우에만 본인확인 값을 저장한다.
-        if ($cert_type == 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$md5_cert_no)) { // 아이핀일때 hash 값 체크 hp미포함
-            $sql_certify .= " , mb_hp = '{$mb_hp}' ";
-            $sql_certify .= " , mb_certify  = '{$cert_type}' ";
-            $sql_certify .= " , mb_adult = '".get_session('ss_cert_adult')."' ";
-            $sql_certify .= " , mb_birth = '".get_session('ss_cert_birth')."' ";
-            $sql_certify .= " , mb_sex = '".get_session('ss_cert_sex')."' ";
-            $sql_certify .= " , mb_dupinfo = '".get_session('ss_cert_dupinfo')."' ";
-            if($w == 'u')
-                $sql_certify .= " , mb_name = '{$mb_name}' ";
-        } else if($cert_type != 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$mb_hp.$md5_cert_no)) { // 간편인증, 휴대폰일때 hash 값 체크 hp포함
-            $sql_certify .= " , mb_hp = '{$mb_hp}' ";
-            $sql_certify .= " , mb_certify  = '{$cert_type}' ";
-            $sql_certify .= " , mb_adult = '".get_session('ss_cert_adult')."' ";
-            $sql_certify .= " , mb_birth = '".get_session('ss_cert_birth')."' ";
-            $sql_certify .= " , mb_sex = '".get_session('ss_cert_sex')."' ";
-            $sql_certify .= " , mb_dupinfo = '".get_session('ss_cert_dupinfo')."' ";
-            if($w == 'u')
-                $sql_certify .= " , mb_name = '{$mb_name}' ";
-        }else {
+        $hash_ok_ipin   = ($cert_type == 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$md5_cert_no));
+        $hash_ok_others = ($cert_type != 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$mb_hp.$md5_cert_no));
+        if ($hash_ok_ipin || $hash_ok_others) {
+            $sql_certify .= " , mb_hp = :cert_mb_hp, mb_certify = :cert_mb_certify, mb_adult = :cert_mb_adult,
+                               mb_birth = :cert_mb_birth, mb_sex = :cert_mb_sex, mb_dupinfo = :cert_mb_dupinfo ";
+            $cert_params[':cert_mb_hp']      = $mb_hp;
+            $cert_params[':cert_mb_certify'] = $cert_type;
+            $cert_params[':cert_mb_adult']   = get_session('ss_cert_adult');
+            $cert_params[':cert_mb_birth']   = get_session('ss_cert_birth');
+            $cert_params[':cert_mb_sex']     = get_session('ss_cert_sex');
+            $cert_params[':cert_mb_dupinfo'] = get_session('ss_cert_dupinfo');
+            if($w == 'u') {
+                $sql_certify .= " , mb_name = :cert_mb_name ";
+                $cert_params[':cert_mb_name'] = stripslashes($mb_name);
+            }
+        } else {
             alert('본인인증된 정보와 개인정보가 일치하지않습니다. 다시시도 해주세요');
         }
     } else {
         if (get_session("ss_reg_mb_name") != $mb_name || get_session("ss_reg_mb_hp") != $mb_hp) {
-            $sql_certify .= " , mb_hp = '{$mb_hp}' ";
-            $sql_certify .= " , mb_certify = '' ";
-            $sql_certify .= " , mb_adult = 0 ";
-            $sql_certify .= " , mb_birth = '' ";
-            $sql_certify .= " , mb_sex = '' ";
+            $sql_certify .= " , mb_hp = :cert_mb_hp, mb_certify = '', mb_adult = 0, mb_birth = '', mb_sex = '' ";
+            $cert_params[':cert_mb_hp'] = $mb_hp;
         }
     }
     //===============================================================
 }
-// 회원정보 입력
-$sql = " insert into {$g5['member_table']}
-            set mb_id = '{$mb_id}',
-                mb_password = '".get_encrypt_string($mb_password)."',
-                mb_name = '{$mb_name}',
-                mb_nick = '{$mb_nick}',
-                mb_nick_date = '".G5_TIME_YMD."',
-                mb_email = '{$mb_email}',
-                mb_email_certify = '".$mb_email_certify."',
-                mb_today_login = '".G5_TIME_YMDHIS."',
-                mb_datetime = '".G5_TIME_YMDHIS."',
-                mb_ip = '{$_SERVER['REMOTE_ADDR']}',
-                mb_level = '{$config['cf_register_level']}',
-                mb_login_ip = '{$_SERVER['REMOTE_ADDR']}',
-                mb_mailling = '{$mb_mailling}',
-                mb_sms = '{$mb_sms}',
-                mb_open = '{$mb_open}',
-                mb_open_date = '".G5_TIME_YMD."',
-                mb_marketing_agree = '{$mb_marketing_agree}',
-                mb_thirdparty_agree = '{$mb_thirdparty_agree}'
-                {$sql_agree}
-                {$sql_certify} ";
-$result = sql_query($sql, false);
+// 회원정보 입력 — $sql_agree 는 외부 빌더 산물
+$sql = " insert into {$g5['member_table']} set
+            mb_id               = :mb_id,
+            mb_password         = :mb_password,
+            mb_name             = :mb_name,
+            mb_nick             = :mb_nick,
+            mb_nick_date        = :nick_date,
+            mb_email            = :mb_email,
+            mb_email_certify    = :email_certify,
+            mb_today_login      = :today_login,
+            mb_datetime         = :datetime,
+            mb_ip               = :mb_ip,
+            mb_level            = :mb_level,
+            mb_login_ip         = :login_ip,
+            mb_mailling         = :mb_mailling,
+            mb_sms              = :mb_sms,
+            mb_open             = :mb_open,
+            mb_open_date        = :open_date,
+            mb_marketing_agree  = :mb_marketing_agree,
+            mb_thirdparty_agree = :mb_thirdparty_agree
+            {$sql_agree}
+            {$sql_certify} ";
+$params = array_merge([
+    ':mb_id'               => $mb_id,
+    ':mb_password'         => get_encrypt_string($mb_password),
+    ':mb_name'             => stripslashes($mb_name),
+    ':mb_nick'             => stripslashes($mb_nick),
+    ':nick_date'           => G5_TIME_YMD,
+    ':mb_email'            => $mb_email,
+    ':email_certify'       => $mb_email_certify,
+    ':today_login'         => G5_TIME_YMDHIS,
+    ':datetime'            => G5_TIME_YMDHIS,
+    ':mb_ip'               => $_SERVER['REMOTE_ADDR'],
+    ':mb_level'            => $config['cf_register_level'],
+    ':login_ip'            => $_SERVER['REMOTE_ADDR'],
+    ':mb_mailling'         => $mb_mailling,
+    ':mb_sms'              => $mb_sms,
+    ':mb_open'             => $mb_open,
+    ':open_date'           => G5_TIME_YMD,
+    ':mb_marketing_agree'  => $mb_marketing_agree,
+    ':mb_thirdparty_agree' => $mb_thirdparty_agree,
+], $cert_params);
+$result = sql_pdo_query($sql, $params, false);
 
 if($result) {
   
@@ -275,7 +289,8 @@ if($result) {
         // 어떠한 회원정보도 포함되지 않은 일회용 난수를 생성하여 인증에 사용 (CSPRNG 사용)
         $mb_md5 = get_random_token_string(16);
 
-        sql_query(" update {$g5['member_table']} set mb_email_certify2 = '$mb_md5' where mb_id = '$mb_id' ");
+        sql_pdo_query(" update {$g5['member_table']} set mb_email_certify2 = :mb_md5 where mb_id = :mb_id ",
+                      [':mb_md5' => $mb_md5, ':mb_id' => $mb_id]);
 
         $certify_href = G5_BBS_URL.'/email_certify.php?mb_id='.$mb_id.'&amp;mb_md5='.$mb_md5;
 
@@ -295,8 +310,8 @@ if($result) {
         do {
             $cp_id = get_coupon_id();
 
-            $sql3 = " select count(*) as cnt from {$g5['g5_shop_coupon_table']} where cp_id = '$cp_id' ";
-            $row3 = sql_fetch($sql3);
+            $row3 = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_coupon_table']} where cp_id = :cp_id ",
+                                  [':cp_id' => $cp_id]);
 
             if(!$row3['cnt']) {
                 $create_coupon = true;
@@ -319,12 +334,15 @@ if($result) {
             $cp_minimum = $default['de_member_reg_coupon_minimum'];
             $cp_maximum = 0;
 
-            $sql = " INSERT INTO {$g5['g5_shop_coupon_table']}
+            $res = sql_pdo_query(" INSERT INTO {$g5['g5_shop_coupon_table']}
                         ( cp_id, cp_subject, cp_method, cp_target, mb_id, cp_start, cp_end, cp_type, cp_price, cp_trunc, cp_minimum, cp_maximum, cp_datetime )
                     VALUES
-                        ( '$cp_id', '$cp_subject', '$cp_method', '$cp_target', '$mb_id', '$cp_start', '$cp_end', '$cp_type', '$cp_price', '$cp_trunc', '$cp_minimum', '$cp_maximum', '".G5_TIME_YMDHIS."' ) ";
-
-            $res = sql_query($sql, false);
+                        ( :cp_id, :cp_subject, :cp_method, :cp_target, :mb_id, :cp_start, :cp_end, :cp_type, :cp_price, :cp_trunc, :cp_minimum, :cp_maximum, :cp_datetime ) ",
+                    [':cp_id' => $cp_id, ':cp_subject' => $cp_subject, ':cp_method' => $cp_method,
+                     ':cp_target' => $cp_target, ':mb_id' => $mb_id, ':cp_start' => $cp_start,
+                     ':cp_end' => $cp_end, ':cp_type' => $cp_type, ':cp_price' => $cp_price,
+                     ':cp_trunc' => $cp_trunc, ':cp_minimum' => $cp_minimum, ':cp_maximum' => $cp_maximum,
+                     ':cp_datetime' => G5_TIME_YMDHIS], false);
 
             if($res)
                 set_session('ss_member_reg_coupon', 1);

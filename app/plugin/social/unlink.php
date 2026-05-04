@@ -12,7 +12,7 @@ $mb_id = $member['mb_id'];
 
 if($is_admin == 'super'){   //최고관리자인 경우
     if( isset($_REQUEST['mb_id']) && !empty($_REQUEST['mb_id']) ){      //mb_id 요청이 있다면
-        $mb_id = addslashes(strip_tags($_REQUEST['mb_id']));
+        $mb_id = strip_tags($_REQUEST['mb_id']);
     }
 } else {
     // 비회원인 경우 nonce를 체크한다.
@@ -23,11 +23,11 @@ if($is_admin == 'super'){   //최고관리자인 경우
 }
 
 if($mp_no){
-    $sql = "SELECT * from {$g5['social_profile_table']} where mb_id= '".$mb_id."' and mp_no= $mp_no";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch("SELECT * from {$g5['social_profile_table']} where mb_id = :mb_id and mp_no = :mp_no",
+                         [':mb_id' => $mb_id, ':mp_no' => $mp_no]);
 } else if($provider){
-    $sql = "SELECT * from {$g5['social_profile_table']} where mb_id= '".$mb_id."' and provider= '".$provider."'";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch("SELECT * from {$g5['social_profile_table']} where mb_id = :mb_id and provider = :provider",
+                         [':mb_id' => $mb_id, ':provider' => $provider]);
 }
 
 if( $row['mp_no'] ){

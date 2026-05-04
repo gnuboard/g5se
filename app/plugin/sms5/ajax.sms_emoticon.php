@@ -16,43 +16,51 @@ if (!$page) $page = 1;
 $fg_no = isset($_REQUEST['fg_no']) ? (int) $_REQUEST['fg_no'] : 0;
 $sv = isset($_REQUEST['sv']) ? get_search_string($_REQUEST['sv']) : '';
 
-if ($fg_no) 
-    $sql_group = " and fg_no='$fg_no' ";
-else
-    $sql_group = "";
+$sql_group = '';
+$sql_search = '';
+$params = [];
 
-if ($st == 'all') {
-    $sql_search = "and (fo_name like '%{$sv}%' or fo_content like '%{$sv}%')";
-} else if ($st == 'name') {
-    $sql_search = "and fo_name like '%{$sv}%'";
-} else if ($st == 'content') {
-    $sql_search = "and fo_content like '%{$sv}%'";
-} else {
-    $sql_search = '';
+if ($fg_no) {
+    $sql_group = " and fg_no = :fg_no ";
+    $params[':fg_no'] = $fg_no;
 }
 
-$total_res = sql_fetch("select count(*) as cnt from {$g5['sms5_form_table']} where fg_member = 1 $sql_group $sql_search");
+if ($st == 'all') {
+    $sql_search = "and (fo_name like :sv_name or fo_content like :sv_content)";
+    $params[':sv_name']    = '%'.$sv.'%';
+    $params[':sv_content'] = '%'.$sv.'%';
+} else if ($st == 'name') {
+    $sql_search = "and fo_name like :sv_name";
+    $params[':sv_name'] = '%'.$sv.'%';
+} else if ($st == 'content') {
+    $sql_search = "and fo_content like :sv_content";
+    $params[':sv_content'] = '%'.$sv.'%';
+}
+
+$total_res = sql_pdo_fetch("select count(*) as cnt from {$g5['sms5_form_table']} where fg_member = 1 $sql_group $sql_search", $params);
 $total_count = $total_res['cnt'];
 
 $total_page = (int)($total_count/$page_size) + ($total_count%$page_size==0 ? 0 : 1);
-$page_start = $page_size * ( $page - 1 );
+$page_start = (int) ($page_size * ( $page - 1 ));
+$page_size_i = (int) $page_size;
 
 $vnum = $total_count - (($page-1) * $page_size);
 
 $group = array();
-$qry = sql_query("select * from {$g5['sms5_form_group_table']} where fg_member = 1 order by fg_name");
+$qry = sql_pdo_query("select * from {$g5['sms5_form_group_table']} where fg_member = 1 order by fg_name");
 while ($res = sql_fetch_array($qry)) array_push($group, $res);
 
-$res = sql_fetch("select count(*) as cnt from {$g5['sms5_form_table']} where fg_no=0");
+$res = sql_pdo_fetch("select count(*) as cnt from {$g5['sms5_form_table']} where fg_no = 0");
 $no_count = $res['cnt'];
 
 $count = 1;
-$qry = sql_query("select * from {$g5['sms5_form_table']} where fg_member = 1 $sql_group $sql_search order by fo_no desc limit $page_start, $page_size");
+$qry = sql_pdo_query("select * from {$g5['sms5_form_table']} where fg_member = 1 $sql_group $sql_search order by fo_no desc limit $page_start, $page_size_i", $params);
 $list_text = array();
 
-for($k=0;$res = sql_fetch_array($qry);$k++) 
+for($k=0;$res = sql_fetch_array($qry);$k++)
 {
-    $tmp = sql_fetch("select fg_name from {$g5['sms5_form_group_table']} where fg_no='{$res['fg_no']}'");
+    $tmp = sql_pdo_fetch("select fg_name from {$g5['sms5_form_group_table']} where fg_no = :fg_no",
+                         [':fg_no' => $res['fg_no']]);
     if (!$tmp)
         $group_name = '미분류';
     else
