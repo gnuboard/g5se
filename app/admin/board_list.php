@@ -66,7 +66,7 @@ $qstr = http_build_query(array_filter([
 $base_qs = $qstr !== '' ? '?'.$qstr : '';
 
 // 정렬 링크 (gnuboard subject_sort_link 와 동일한 로직, 클린 URL 출력)
-$sort_link = function (string $col, string $default = 'asc') use ($sst, $sod, $sfl, $stx, $page): string {
+$sort_link = function (string $col, string $default = 'asc') use ($sst, $sod, $sfl, $stx, $page, $h): string {
     $next_sod = $default;
     if ($sst === $col) $next_sod = ($sod === 'asc') ? 'desc' : 'asc';
     $qs = http_build_query(array_filter([
