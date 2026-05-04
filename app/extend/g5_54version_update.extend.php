@@ -42,28 +42,34 @@ function g54_user_memo_insert($kind, $unkind, $page=1){
 
     if( ! $is_member || $kind !== 'send' ) return;
 
-    $sql = " select count(*) as cnt from {$g5['memo_table']} where me_send_mb_id = '{$member['mb_id']}' and me_type = 'recv' and me_send_ip = '' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['memo_table']} where me_send_mb_id = :mb_id and me_type = 'recv' and me_send_ip = '' ",
+                         [':mb_id' => $member['mb_id']]);
 
     if ( !$row['cnt'] ) return;
 
-    $sql = " select count(*) as cnt from {$g5['memo_table']} where me_send_mb_id = '{$member['mb_id']}' and me_type = 'send' ";
-    $row2 = sql_fetch($sql);
+    $row2 = sql_pdo_fetch(" select count(*) as cnt from {$g5['memo_table']} where me_send_mb_id = :mb_id and me_type = 'send' ",
+                          [':mb_id' => $member['mb_id']]);
 
     if( $row['cnt'] && ! $row2['cnt'] ){
-        $sql = " select * from {$g5['memo_table']} where me_send_mb_id = '{$member['mb_id']}' and me_type = 'recv' ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select * from {$g5['memo_table']} where me_send_mb_id = :mb_id and me_type = 'recv' ",
+                                [':mb_id' => $member['mb_id']]);
 
         while ($row = sql_fetch_array($result))
         {
-            $sql = " insert into {$g5['memo_table']} ( me_recv_mb_id, me_send_mb_id, me_send_datetime, me_read_datetime, me_memo, me_send_id, me_type ) values ( '".addslashes($row['me_recv_mb_id'])."', '".addslashes($row['me_send_mb_id'])."', '".addslashes($row['me_send_datetime'])."', '".addslashes($row['me_read_datetime'])."', '".addslashes($row['me_memo'])."', '".$row['me_id']."', 'send' ) ";
-
-            sql_query($sql);
+            sql_pdo_query(" insert into {$g5['memo_table']} (
+                                me_recv_mb_id, me_send_mb_id, me_send_datetime, me_read_datetime,
+                                me_memo, me_send_id, me_type
+                            ) values (
+                                :recv_mb_id, :send_mb_id, :send_datetime, :read_datetime,
+                                :me_memo, :send_id, 'send'
+                            ) ",
+                          [':recv_mb_id' => $row['me_recv_mb_id'], ':send_mb_id' => $row['me_send_mb_id'],
+                           ':send_datetime' => $row['me_send_datetime'], ':read_datetime' => $row['me_read_datetime'],
+                           ':me_memo' => $row['me_memo'], ':send_id' => $row['me_id']]);
         }
 
-        $sql = " update {$g5['memo_table']} set me_send_ip = '{$_SERVER['REMOTE_ADDR']}' where me_send_mb_id = '{$member['mb_id']}' and me_type = 'recv' and me_send_ip = '' ";
-
-        sql_query($sql);
+        sql_pdo_query(" update {$g5['memo_table']} set me_send_ip = :send_ip where me_send_mb_id = :mb_id and me_type = 'recv' and me_send_ip = '' ",
+                      [':send_ip' => $_SERVER['REMOTE_ADDR'], ':mb_id' => $member['mb_id']]);
     }
 
 }

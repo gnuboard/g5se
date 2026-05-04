@@ -36,7 +36,7 @@ if (G5_HTTPS_DOMAIN) {
 //==============================================================================
 
 // 쇼핑몰 설정값 배열변수
-$default = sql_fetch(" select * from {$g5['g5_shop_default_table']} ");
+$default = sql_pdo_fetch(" select * from {$g5['g5_shop_default_table']} ");
 
 if(!defined('_THEME_PREVIEW_')) {
     // 테마 경로 설정
