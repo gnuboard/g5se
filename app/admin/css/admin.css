@@ -136,9 +136,9 @@ img, video { max-width: 100%; height: auto; }
 }
 .nav-group[open] > summary.nav-summary::before { transform: rotate(135deg); }  /* 열림 (˅) */
 
-/* 하위 메뉴 살짝 들여쓰기 (대메뉴 라벨 왼쪽 위치보다 조금 우측) */
+/* 하위 메뉴 들여쓰기 (대메뉴 라벨 왼쪽 위치보다 우측으로 더) */
 .nav-group > ul > li > a {
-    padding-left: 1rem;
+    padding-left: 1.75rem;
 }
 
 /* 사이드바 / 헤더의 emoji 아이콘 — 시스템 emoji 폰트로 즉시 렌더 (FOUC 없음, 외부 리소스 없음).
