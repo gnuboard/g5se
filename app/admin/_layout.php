@@ -78,9 +78,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <title><?php echo get_text($g5_title) ?></title>
     <!-- 다크모드 FOUC 방지 — data-theme 와 .dark 클래스를 동시에 토글 (UnoCSS dark: 변형이 .dark 셀렉터 사용) -->
     <script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
-    <!-- UnoCSS reset (Tailwind 호환) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
-    <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
+    <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 + Tailwind reset 흡수.
+         (CDN reset 을 별도 link 로 두면 늦게 도착해서 body margin 8px 이 잠깐 적용됐다
+         사라지는 reflow — '컨텐츠가 벽에 붙었다 떨어지는' 느낌 — 이 발생.) -->
     <link rel="stylesheet" href="/admin/css/admin.css">
     <!-- Pretendard 는 admin 에서 미사용 — 시스템 폰트로 즉시 paint (font-swap 으로 인한
          '창이 새로 뜨는' 느낌 차단). Apple SD Gothic Neo / Malgun Gothic / Noto Sans 등

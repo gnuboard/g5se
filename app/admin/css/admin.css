@@ -3,12 +3,53 @@
  *
  * UnoCSS runtime (CDN) 이 utility 클래스를 런타임에 생성하므로 빌드 불필요.
  * 이 파일은 다음만 담는다:
- *   1) CSS 변수 (admin-primary 팔레트, slate/amber 등 자주 쓰는 토큰)
- *   2) 레거시 admin (gnuboard adm/*) 의 .frm_input / .tbl_frm01 / .btn 등을
+ *   1) Tailwind 호환 reset (CDN 별도 link 시 늦게 도착해 reflow 발생 — 직접 흡수)
+ *   2) CSS 변수 (admin-primary 팔레트, slate/amber 등 자주 쓰는 토큰)
+ *   3) 레거시 admin (gnuboard adm/*) 의 .frm_input / .tbl_frm01 / .btn 등을
  *      모던 톤으로 매핑하는 컴포넌트 레이어 — .legacy-admin-content 스코프
  *
  * 다크모드는 [data-theme="dark"] 셀렉터로 분기 (사용자 사이트와 동일한 키 'm-theme').
  */
+
+/* ─── Tailwind/UnoCSS reset (필수 부분만) ─────────────────────────────
+ * CDN reset 이 늦게 도착해서 body margin 8px 이 잠깐 적용됐다 사라지는
+ * '컨텐츠가 벽에 붙었다 떨어지는' reflow 를 차단. */
+*, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; }
+html { -webkit-text-size-adjust: 100%; tab-size: 4; line-height: 1.5; }
+/* 스크롤바 자리 항상 예약 — 컨텐츠 스트리밍 중 scrollbar 등장으로 인한 가로 점프 차단 */
+html { scrollbar-gutter: stable; }
+body { margin: 0; line-height: inherit; }
+hr { height: 0; color: inherit; border-top-width: 1px; }
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+a { color: inherit; text-decoration: inherit; }
+b, strong { font-weight: bolder; }
+code, kbd, samp, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 1em; }
+small { font-size: 80%; }
+sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+sub { bottom: -0.25em; }
+sup { top: -0.5em; }
+table { text-indent: 0; border-color: inherit; border-collapse: collapse; }
+button, input, optgroup, select, textarea { font-family: inherit; font-size: 100%; line-height: inherit; color: inherit; margin: 0; padding: 0; }
+button, select { text-transform: none; }
+button, [type="button"], [type="reset"], [type="submit"] { -webkit-appearance: button; background-color: transparent; background-image: none; }
+:-moz-focusring { outline: auto; }
+:-moz-ui-invalid { box-shadow: none; }
+progress { vertical-align: baseline; }
+::-webkit-inner-spin-button, ::-webkit-outer-spin-button { height: auto; }
+[type="search"] { -webkit-appearance: textfield; outline-offset: -2px; }
+::-webkit-search-decoration { -webkit-appearance: none; }
+::-webkit-file-upload-button { -webkit-appearance: button; font: inherit; }
+summary { display: list-item; }
+blockquote, dl, dd, h1, h2, h3, h4, h5, h6, hr, figure, p, pre { margin: 0; }
+fieldset { margin: 0; padding: 0; }
+legend { padding: 0; }
+ol, ul, menu { list-style: none; margin: 0; padding: 0; }
+textarea { resize: vertical; }
+input::placeholder, textarea::placeholder { opacity: 1; color: #9ca3af; }
+button, [role="button"] { cursor: pointer; }
+:disabled { cursor: default; }
+img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
 
 /* UnoCSS runtime 가 DOM 스캔 후에 CSS 를 생성하므로, 페이지 첫 paint 와 runtime 이
  * 처리되는 사이에 .hidden 같은 핵심 utility 가 빠진 채 보일 수 있음 (모달 깜빡임).
