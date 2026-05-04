@@ -2024,7 +2024,6 @@ function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
         $link = $g5['connect_db'];
 
     $result = sql_query($sql, $error, $link);
-    //$row = @sql_fetch_array($result) or die("<p>$sql<p>" . mysqli_errno() . " : " .  mysqli_error() . "<p>error file : $_SERVER['SCRIPT_NAME']");
     $row = sql_fetch_array($result);
     return $row;
 }
@@ -2768,7 +2767,7 @@ function convert_charset($from_charset, $to_charset, $str)
 
 
 // PDO::quote() 는 결과를 따옴표로 감싸서 돌려주므로 외곽 따옴표를 제거해
-// mysqli_real_escape_string 의 시그니처 (escape 결과만, 따옴표 없음) 에 맞춘다.
+// 기존 sql_real_escape_string 시그니처 (escape 결과만, 따옴표 없음) 에 맞춘다.
 // 호출처가 SQL 문에서 '{$escaped}' 형태로 따옴표를 직접 붙이는 패턴이라 동일 동작.
 function sql_real_escape_string($str, $link=null)
 {
