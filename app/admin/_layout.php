@@ -65,15 +65,19 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title><?php echo get_text($g5_title) ?></title>
-    <script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+    <!-- 다크모드 FOUC 방지 — data-theme 와 .dark 클래스를 동시에 토글 (UnoCSS dark: 변형이 .dark 셀렉터 사용) -->
+    <script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preload" as="font" type="font/woff2" crossorigin
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-    <link rel="stylesheet" href="/admin/css/tailwind.css">
-    <!-- UnoCSS runtime — 새로 추가하는 utility class 는 빌드 없이 즉시 적용. tailwind.css 는 base + 컴포넌트 레이어 -->
-    <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e' } } } };</script>
-    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js" defer></script>
+    <!-- UnoCSS reset (Tailwind 호환) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
+    <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <!-- UnoCSS runtime — utility class 를 런타임에 생성. admin-primary 팔레트 등록 -->
+    <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
+    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <style>
@@ -194,11 +198,13 @@ function admin_layout_end(): void
         if (window.innerWidth >= 1024) closeSidebar();
     });
 
-    // 다크모드 토글 — main site 와 localStorage key 'm-theme' 공유
+    // 다크모드 토글 — main site 와 localStorage key 'm-theme' 공유.
+    // data-theme 속성 + .dark 클래스 동시 토글 (UnoCSS dark: variant 가 .dark 사용).
     themeBtn && themeBtn.addEventListener('click', function(){
         var cur = document.documentElement.dataset.theme || 'light';
         var next = cur === 'dark' ? 'light' : 'dark';
         document.documentElement.dataset.theme = next;
+        document.documentElement.classList.toggle('dark', next === 'dark');
         try { localStorage.setItem('m-theme', next); } catch(e) {}
     });
 })();
