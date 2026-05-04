@@ -116,30 +116,32 @@ if ($w == 'c') // 댓글 입력
             alert('더 이상 답변하실 수 없습니다.\\n\\n답변은 5단계 까지만 가능합니다.');
 
         $reply_len = strlen($reply_array['wr_comment_reply']) + 1;
+        // $reply_len 은 정수, $write_table 은 화이트리스트 식별자 — 보간 안전
         if ($board['bo_reply_order']) {
             $begin_reply_char = 'A';
             $end_reply_char = 'Z';
             $reply_number = +1;
             $sql = " select MAX(SUBSTRING(wr_comment_reply, $reply_len, 1)) as reply
                         from $write_table
-                        where wr_parent = '$wr_id'
-                        and wr_comment = '$tmp_comment'
+                        where wr_parent = :wr_parent
+                        and wr_comment = :tmp_comment
                         and SUBSTRING(wr_comment_reply, $reply_len, 1) <> '' ";
-        }
-        else
-        {
+        } else {
             $begin_reply_char = 'Z';
             $end_reply_char = 'A';
             $reply_number = -1;
             $sql = " select MIN(SUBSTRING(wr_comment_reply, $reply_len, 1)) as reply
                         from $write_table
-                        where wr_parent = '$wr_id'
-                        and wr_comment = '$tmp_comment'
+                        where wr_parent = :wr_parent
+                        and wr_comment = :tmp_comment
                         and SUBSTRING(wr_comment_reply, $reply_len, 1) <> '' ";
         }
-        if ($reply_array['wr_comment_reply'])
-            $sql .= " and wr_comment_reply like '{$reply_array['wr_comment_reply']}%' ";
-        $row = sql_fetch($sql);
+        $reply_params = [':wr_parent' => $wr_id, ':tmp_comment' => $tmp_comment];
+        if ($reply_array['wr_comment_reply']) {
+            $sql .= " and wr_comment_reply like :reply ";
+            $reply_params[':reply'] = $reply_array['wr_comment_reply'].'%';
+        }
+        $row = sql_pdo_fetch($sql, $reply_params);
 
         if (!$row['reply'])
             $reply_char = $begin_reply_char;
@@ -152,9 +154,9 @@ if ($w == 'c') // 댓글 입력
     }
     else
     {
-        $sql = " select max(wr_comment) as max_comment from $write_table
-                    where wr_parent = '$wr_id' and wr_is_comment = 1 ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select max(wr_comment) as max_comment from $write_table
+                    where wr_parent = :wr_parent and wr_is_comment = 1 ",
+                [':wr_parent' => $wr_id]);
         //$row[max_comment] -= 1;
         $row['max_comment'] += 1;
         $tmp_comment = $row['max_comment'];
@@ -163,47 +165,54 @@ if ($w == 'c') // 댓글 입력
 
     $wr_subject = get_text(stripslashes($wr['wr_subject']));
 
-    $sql = " insert into $write_table
-                set ca_name = '{$wr['ca_name']}',
-                     wr_option = '$wr_secret',
-                     wr_num = '{$wr['wr_num']}',
-                     wr_reply = '',
-                     wr_parent = '$wr_id',
-                     wr_is_comment = 1,
-                     wr_comment = '$tmp_comment',
-                     wr_comment_reply = '$tmp_comment_reply',
-                     wr_subject = '',
-                     wr_content = '$wr_content',
-                     mb_id = '$mb_id',
-                     wr_password = '$wr_password',
-                     wr_name = '$wr_name',
-                     wr_email = '$wr_email',
-                     wr_homepage = '$wr_homepage',
-                     wr_datetime = '".G5_TIME_YMDHIS."',
-                     wr_last = '',
-                     wr_ip = '{$_SERVER['REMOTE_ADDR']}',
-                     wr_1 = '$wr_1',
-                     wr_2 = '$wr_2',
-                     wr_3 = '$wr_3',
-                     wr_4 = '$wr_4',
-                     wr_5 = '$wr_5',
-                     wr_6 = '$wr_6',
-                     wr_7 = '$wr_7',
-                     wr_8 = '$wr_8',
-                     wr_9 = '$wr_9',
-                     wr_10 = '$wr_10' ";
-    sql_query($sql);
+    sql_pdo_query(" insert into $write_table
+                set ca_name = :ca_name, wr_option = :wr_option, wr_num = :wr_num,
+                     wr_reply = '', wr_parent = :wr_parent, wr_is_comment = 1,
+                     wr_comment = :wr_comment, wr_comment_reply = :wr_comment_reply,
+                     wr_subject = '', wr_content = :wr_content,
+                     mb_id = :mb_id, wr_password = :wr_password,
+                     wr_name = :wr_name, wr_email = :wr_email, wr_homepage = :wr_homepage,
+                     wr_datetime = :wr_datetime, wr_last = '',
+                     wr_ip = :wr_ip,
+                     wr_1 = :wr_1, wr_2 = :wr_2, wr_3 = :wr_3, wr_4 = :wr_4, wr_5 = :wr_5,
+                     wr_6 = :wr_6, wr_7 = :wr_7, wr_8 = :wr_8, wr_9 = :wr_9, wr_10 = :wr_10 ",
+        [
+            ':ca_name'          => stripslashes($wr['ca_name']),
+            ':wr_option'        => $wr_secret,
+            ':wr_num'           => $wr['wr_num'],
+            ':wr_parent'        => $wr_id,
+            ':wr_comment'       => $tmp_comment,
+            ':wr_comment_reply' => $tmp_comment_reply,
+            ':wr_content'       => stripslashes($wr_content),
+            ':mb_id'            => $mb_id,
+            ':wr_password'      => $wr_password,
+            ':wr_name'          => $wr_name,
+            ':wr_email'         => $wr_email,
+            ':wr_homepage'      => $wr_homepage,
+            ':wr_datetime'      => G5_TIME_YMDHIS,
+            ':wr_ip'            => $_SERVER['REMOTE_ADDR'],
+            ':wr_1' => stripslashes($wr_1), ':wr_2' => stripslashes($wr_2),
+            ':wr_3' => stripslashes($wr_3), ':wr_4' => stripslashes($wr_4),
+            ':wr_5' => stripslashes($wr_5), ':wr_6' => stripslashes($wr_6),
+            ':wr_7' => stripslashes($wr_7), ':wr_8' => stripslashes($wr_8),
+            ':wr_9' => stripslashes($wr_9), ':wr_10' => stripslashes($wr_10),
+        ]);
 
     $comment_id = sql_insert_id();
 
     // 원글에 댓글수 증가 & 마지막 시간 반영
-    sql_query(" update $write_table set wr_comment = wr_comment + 1, wr_last = '".G5_TIME_YMDHIS."' where wr_id = '$wr_id' ");
+    sql_pdo_query(" update $write_table set wr_comment = wr_comment + 1, wr_last = :wr_last where wr_id = :wr_id ",
+                  [':wr_last' => G5_TIME_YMDHIS, ':wr_id' => $wr_id]);
 
     // 새글 INSERT
-    sql_query(" insert into {$g5['board_new_table']} ( bo_table, wr_id, wr_parent, bn_datetime, mb_id ) values ( '$bo_table', '$comment_id', '$wr_id', '".G5_TIME_YMDHIS."', '{$member['mb_id']}' ) ");
+    sql_pdo_query(" insert into {$g5['board_new_table']} ( bo_table, wr_id, wr_parent, bn_datetime, mb_id )
+                    values ( :bo_table, :wr_id, :wr_parent, :bn_datetime, :mb_id ) ",
+                  [':bo_table' => $bo_table, ':wr_id' => $comment_id, ':wr_parent' => $wr_id,
+                   ':bn_datetime' => G5_TIME_YMDHIS, ':mb_id' => $member['mb_id']]);
 
     // 댓글 1 증가
-    sql_query(" update {$g5['board_table']} set bo_count_comment = bo_count_comment + 1 where bo_table = '$bo_table' ");
+    sql_pdo_query(" update {$g5['board_table']} set bo_count_comment = bo_count_comment + 1 where bo_table = :bo_table ",
+                  [':bo_table' => $bo_table]);
 
     // 포인트 부여
     insert_point($member['mb_id'], $board['bo_comment_point'], "{$board['bo_subject']} {$wr_id}-{$comment_id} 댓글쓰기", $bo_table, $comment_id, '댓글');
@@ -245,10 +254,10 @@ if ($w == 'c') // 댓글 입력
 
         // 댓글 쓴 모든이에게 메일 발송이 되어 있다면 (자신에게는 발송하지 않는다)
         if ($config['cf_email_wr_comment_all']) {
-            $sql = " select distinct wr_email from {$write_table}
-                        where wr_email not in ( '{$wr['wr_email']}', '{$member['mb_email']}', '' )
-                        and wr_parent = '$wr_id' ";
-            $result = sql_query($sql);
+            $result = sql_pdo_query(" select distinct wr_email from {$write_table}
+                        where wr_email not in ( :wr_email, :mb_email, '' )
+                        and wr_parent = :wr_parent ",
+                [':wr_email' => $wr['wr_email'], ':mb_email' => $member['mb_email'], ':wr_parent' => $wr_id]);
             while ($row=sql_fetch_array($result))
                 $array_email[] = $row['wr_email'];
         }
@@ -265,18 +274,18 @@ if ($w == 'c') // 댓글 입력
     // SNS 등록
     include_once("./write_comment_update.sns.php");
     if($wr_facebook_user || $wr_twitter_user) {
-        $sql = " update $write_table
-                    set wr_facebook_user = '$wr_facebook_user',
-                        wr_twitter_user  = '$wr_twitter_user'
-                    where wr_id = '$comment_id' ";
-        sql_query($sql);
+        sql_pdo_query(" update $write_table
+                    set wr_facebook_user = :wr_facebook_user,
+                        wr_twitter_user  = :wr_twitter_user
+                    where wr_id = :wr_id ",
+                [':wr_facebook_user' => $wr_facebook_user, ':wr_twitter_user' => $wr_twitter_user, ':wr_id' => $comment_id]);
     }
 }
 else if ($w == 'cu') // 댓글 수정
 {
-    $sql = " select mb_id, wr_password, wr_comment, wr_comment_reply from $write_table
-                where wr_id = '$comment_id' ";
-    $comment = $reply_array = sql_fetch($sql);
+    $comment = $reply_array = sql_pdo_fetch(" select mb_id, wr_password, wr_comment, wr_comment_reply from $write_table
+                where wr_id = :wr_id ",
+                [':wr_id' => $comment_id]);
     $tmp_comment = $reply_array['wr_comment'];
 
     $len = strlen($reply_array['wr_comment_reply']);
@@ -312,40 +321,37 @@ else if ($w == 'cu') // 댓글 수정
             alert('댓글을 수정할 권한이 없습니다.');
     }
 
-    $sql = " select count(*) as cnt from $write_table
-                where wr_comment_reply like '$comment_reply%'
-                and wr_id <> '$comment_id'
-                and wr_parent = '$wr_id'
-                and wr_comment = '$tmp_comment'
-                and wr_is_comment = 1 ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from $write_table
+                where wr_comment_reply like :reply
+                and wr_id <> :wr_id
+                and wr_parent = :wr_parent
+                and wr_comment = :wr_comment
+                and wr_is_comment = 1 ",
+                [':reply' => $comment_reply.'%', ':wr_id' => $comment_id, ':wr_parent' => $wr_id, ':wr_comment' => $tmp_comment]);
     if ($row['cnt'] && !$is_admin)
         alert('이 댓글와 관련된 답변댓글이 존재하므로 수정 할 수 없습니다.');
 
-    $sql_ip = "";
-    if (!$is_admin)
-        $sql_ip = " , wr_ip = '{$_SERVER['REMOTE_ADDR']}' ";
+    $sql_set    = " wr_subject = :wr_subject, wr_content = :wr_content,
+                    wr_1 = :wr_1, wr_2 = :wr_2, wr_3 = :wr_3, wr_4 = :wr_4, wr_5 = :wr_5,
+                    wr_6 = :wr_6, wr_7 = :wr_7, wr_8 = :wr_8, wr_9 = :wr_9, wr_10 = :wr_10,
+                    wr_option = :wr_option ";
+    $sql_params = [
+        ':wr_subject' => stripslashes($wr_subject),
+        ':wr_content' => stripslashes($wr_content),
+        ':wr_1' => stripslashes($wr_1), ':wr_2' => stripslashes($wr_2),
+        ':wr_3' => stripslashes($wr_3), ':wr_4' => stripslashes($wr_4),
+        ':wr_5' => stripslashes($wr_5), ':wr_6' => stripslashes($wr_6),
+        ':wr_7' => stripslashes($wr_7), ':wr_8' => stripslashes($wr_8),
+        ':wr_9' => stripslashes($wr_9), ':wr_10' => stripslashes($wr_10),
+        ':wr_option' => $wr_secret,
+    ];
+    if (!$is_admin) {
+        $sql_set .= " , wr_ip = :wr_ip ";
+        $sql_params[':wr_ip'] = $_SERVER['REMOTE_ADDR'];
+    }
 
-    $sql_secret = " , wr_option = '$wr_secret' ";
-
-    $sql = " update $write_table
-                set wr_subject = '$wr_subject',
-                     wr_content = '$wr_content',
-                     wr_1 = '$wr_1',
-                     wr_2 = '$wr_2',
-                     wr_3 = '$wr_3',
-                     wr_4 = '$wr_4',
-                     wr_5 = '$wr_5',
-                     wr_6 = '$wr_6',
-                     wr_7 = '$wr_7',
-                     wr_8 = '$wr_8',
-                     wr_9 = '$wr_9',
-                     wr_10 = '$wr_10'
-                     $sql_ip
-                     $sql_secret
-              where wr_id = '$comment_id' ";
-
-    sql_query($sql);
+    sql_pdo_query(" update $write_table set {$sql_set} where wr_id = :wr_id_where ",
+                  array_merge($sql_params, [':wr_id_where' => $comment_id]));
 }
 
 // 사용자 코드 실행
