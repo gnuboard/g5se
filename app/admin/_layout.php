@@ -99,17 +99,25 @@ function admin_layout_start(string $title, string $active_key = ''): void
             </a>
         </div>
 
-        <nav class="flex-1 overflow-y-auto py-4 px-3 text-sm">
+        <nav class="flex-1 overflow-y-auto py-3 px-3 text-sm">
             <?php foreach ($_admin_nav as $group) {
                 // super 만 볼 수 있는 항목 필터
                 $items = array_values(array_filter($group['items'], function ($it) use ($is_admin) {
                     return ($it['level'] === '') || ($it['level'] === $is_admin) || $is_admin === 'super';
                 }));
                 if (!$items) continue;
+
+                // 활성 항목이 이 그룹에 있으면 기본 펼침
+                $group_has_active = false;
+                foreach ($items as $it) { if ($it['key'] === $active_key) { $group_has_active = true; break; } }
+                $group_id = 'navgrp-'.preg_replace('/[^a-z0-9]+/i', '-', $group['group']);
             ?>
-            <div class="mb-5">
-                <div class="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500"><?php echo get_text($group['group']) ?></div>
-                <ul>
+            <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" <?php echo $group_has_active ? 'open' : '' ?>>
+                <summary class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
+                    <svg class="w-3 h-3 transition-transform shrink-0 chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    <span><?php echo get_text($group['group']) ?></span>
+                </summary>
+                <ul class="mt-1">
                     <?php foreach ($items as $item) {
                         $is_active = ($item['key'] === $active_key);
                     ?>
@@ -125,7 +133,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
                     </li>
                     <?php } ?>
                 </ul>
-            </div>
+            </details>
             <?php } ?>
         </nav>
 
@@ -197,6 +205,22 @@ function admin_layout_end(): void
     window.addEventListener('resize', function(){
         if (window.innerWidth >= 1024) closeSidebar();
     });
+
+    // 사이드바 그룹 토글 — open/close 상태를 localStorage 에 그룹 ID 별로 저장.
+    // (활성 메뉴가 있는 그룹은 PHP 가 open 으로 렌더; 사용자가 명시적으로 닫으면 그 결정 우선)
+    try {
+        var navState = JSON.parse(localStorage.getItem('admin-nav-groups') || '{}');
+        document.querySelectorAll('.nav-group').forEach(function (g) {
+            var id = g.dataset.groupId;
+            if (Object.prototype.hasOwnProperty.call(navState, id)) {
+                g.open = !!navState[id];
+            }
+            g.addEventListener('toggle', function () {
+                navState[id] = g.open;
+                try { localStorage.setItem('admin-nav-groups', JSON.stringify(navState)); } catch (e) {}
+            });
+        });
+    } catch (e) {}
 
     // 다크모드 토글 — main site 와 localStorage key 'm-theme' 공유.
     // data-theme 속성 + .dark 클래스 동시 토글 (UnoCSS dark: variant 가 .dark 사용).
