@@ -29,3 +29,380 @@
 
 /* admin 페이지의 모든 PHP 파일 + layout / menu 파일을 스캔 */
 @source "../../app/admin/**/*.php";
+
+/* ────────────────────────────────────────────────────────────
+ * 레거시 admin 페이지 (gnuboard adm/*) 호환 컴포넌트 레이어.
+ * _legacy_passthrough.php 가 추출한 form HTML 이 modern shell 안에서
+ * 자연스럽게 보이도록 .frm_input / .tbl_frm01 / .btn 등 레거시 클래스를
+ * Tailwind 유틸리티로 매핑. .legacy-admin-content 안에서만 적용되도록 스코프.
+ * ──────────────────────────────────────────────────────────── */
+
+@layer components {
+    /* 입력 필드 */
+    .legacy-admin-content .frm_input,
+    .legacy-admin-content input[type="text"]:not([class*="rounded"]),
+    .legacy-admin-content input[type="password"]:not([class*="rounded"]),
+    .legacy-admin-content input[type="number"]:not([class*="rounded"]),
+    .legacy-admin-content input[type="email"]:not([class*="rounded"]),
+    .legacy-admin-content input[type="url"]:not([class*="rounded"]),
+    .legacy-admin-content textarea:not([class*="rounded"]),
+    .legacy-admin-content select:not([class*="rounded"]) {
+        height: 2.5rem;
+        padding: 0 0.75rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        font-size: 0.875rem;
+        outline: none;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .legacy-admin-content textarea:not([class*="rounded"]) {
+        height: auto;
+        padding: 0.5rem 0.75rem;
+        min-height: 5rem;
+    }
+    .legacy-admin-content .frm_input:focus,
+    .legacy-admin-content input:focus,
+    .legacy-admin-content textarea:focus,
+    .legacy-admin-content select:focus {
+        border-color: var(--color-admin-primary-500);
+        box-shadow: 0 0 0 3px oklch(62.3% 0.190 250 / 0.2);
+    }
+    [data-theme="dark"] .legacy-admin-content .frm_input,
+    [data-theme="dark"] .legacy-admin-content input[type="text"]:not([class*="rounded"]),
+    [data-theme="dark"] .legacy-admin-content input[type="password"]:not([class*="rounded"]),
+    [data-theme="dark"] .legacy-admin-content input[type="number"]:not([class*="rounded"]),
+    [data-theme="dark"] .legacy-admin-content input[type="email"]:not([class*="rounded"]),
+    [data-theme="dark"] .legacy-admin-content input[type="url"]:not([class*="rounded"]),
+    [data-theme="dark"] .legacy-admin-content textarea:not([class*="rounded"]),
+    [data-theme="dark"] .legacy-admin-content select:not([class*="rounded"]) {
+        border-color: var(--color-slate-700);
+        background-color: var(--color-slate-800);
+        color: var(--color-slate-100);
+    }
+    .legacy-admin-content .tbl_input {
+        height: 2.25rem;
+        padding: 0 0.625rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        font-size: 0.875rem;
+    }
+    [data-theme="dark"] .legacy-admin-content .tbl_input {
+        border-color: var(--color-slate-700);
+        background-color: var(--color-slate-800);
+        color: var(--color-slate-100);
+    }
+    .legacy-admin-content input[type="checkbox"],
+    .legacy-admin-content input[type="radio"] {
+        accent-color: var(--color-admin-primary-600);
+    }
+
+    /* 버튼 */
+    .legacy-admin-content .btn,
+    .legacy-admin-content input[type="submit"],
+    .legacy-admin-content input[type="button"],
+    .legacy-admin-content button:not([class*="rounded"]) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.25rem;
+        padding: 0 0.875rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        color: var(--color-slate-700);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all .15s;
+    }
+    [data-theme="dark"] .legacy-admin-content .btn,
+    [data-theme="dark"] .legacy-admin-content input[type="submit"],
+    [data-theme="dark"] .legacy-admin-content input[type="button"],
+    [data-theme="dark"] .legacy-admin-content button:not([class*="rounded"]) {
+        border-color: var(--color-slate-700);
+        background-color: var(--color-slate-800);
+        color: var(--color-slate-300);
+    }
+    .legacy-admin-content .btn:hover,
+    .legacy-admin-content button:not([class*="rounded"]):hover {
+        background-color: var(--color-slate-50);
+    }
+    [data-theme="dark"] .legacy-admin-content .btn:hover,
+    [data-theme="dark"] .legacy-admin-content button:not([class*="rounded"]):hover {
+        background-color: var(--color-slate-700);
+    }
+    .legacy-admin-content .btn_submit,
+    .legacy-admin-content .btn_01,
+    .legacy-admin-content input[type="submit"].btn_submit,
+    .legacy-admin-content input[type="submit"].btn_01 {
+        background-color: var(--color-admin-primary-600);
+        color: white;
+        border-color: var(--color-admin-primary-600);
+    }
+    .legacy-admin-content .btn_submit:hover,
+    .legacy-admin-content .btn_01:hover {
+        background-color: var(--color-admin-primary-700);
+    }
+    .legacy-admin-content .btn_03 {
+        background-color: var(--color-admin-primary-50);
+        color: var(--color-admin-primary-700);
+        border-color: var(--color-admin-primary-200);
+    }
+    [data-theme="dark"] .legacy-admin-content .btn_03 {
+        background-color: var(--color-admin-primary-950);
+        color: var(--color-admin-primary-300);
+        border-color: var(--color-admin-primary-800);
+    }
+    .legacy-admin-content .btn_frmline {
+        margin-left: 0.5rem;
+        padding: 0 0.625rem;
+        height: 2rem;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        color: var(--color-slate-700);
+    }
+
+    /* 테이블 — 폼/리스트 */
+    .legacy-admin-content .tbl_frm01,
+    .legacy-admin-content .tbl_head01 {
+        margin: 1rem 0;
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        overflow: hidden;
+    }
+    [data-theme="dark"] .legacy-admin-content .tbl_frm01,
+    [data-theme="dark"] .legacy-admin-content .tbl_head01 {
+        border-color: var(--color-slate-800);
+        background-color: var(--color-slate-900);
+    }
+    .legacy-admin-content .tbl_frm01 table,
+    .legacy-admin-content .tbl_head01 table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+    .legacy-admin-content .tbl_frm01 caption,
+    .legacy-admin-content .tbl_head01 caption {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+    }
+    .legacy-admin-content .tbl_head01 thead th,
+    .legacy-admin-content .tbl_frm01 thead th {
+        padding: 0.625rem 0.75rem;
+        background-color: var(--color-slate-50);
+        color: var(--color-slate-500);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: left;
+        border-bottom: 1px solid var(--color-slate-100);
+    }
+    [data-theme="dark"] .legacy-admin-content .tbl_head01 thead th,
+    [data-theme="dark"] .legacy-admin-content .tbl_frm01 thead th {
+        background-color: oklch(20% 0.01 252);
+        color: var(--color-slate-400);
+        border-bottom-color: var(--color-slate-800);
+    }
+    .legacy-admin-content .tbl_head01 tbody td,
+    .legacy-admin-content .tbl_frm01 tbody td {
+        padding: 0.625rem 0.75rem;
+        border-bottom: 1px solid var(--color-slate-100);
+        vertical-align: middle;
+    }
+    .legacy-admin-content .tbl_frm01 tbody th {
+        padding: 0.625rem 0.75rem;
+        background-color: var(--color-slate-50);
+        color: var(--color-slate-700);
+        font-weight: 500;
+        text-align: left;
+        width: 12rem;
+        border-bottom: 1px solid var(--color-slate-100);
+    }
+    [data-theme="dark"] .legacy-admin-content .tbl_head01 tbody td,
+    [data-theme="dark"] .legacy-admin-content .tbl_frm01 tbody td {
+        border-bottom-color: var(--color-slate-800);
+        color: var(--color-slate-300);
+    }
+    [data-theme="dark"] .legacy-admin-content .tbl_frm01 tbody th {
+        background-color: oklch(20% 0.01 252);
+        color: var(--color-slate-300);
+        border-bottom-color: var(--color-slate-800);
+    }
+    .legacy-admin-content .tbl_head01 tbody tr:hover {
+        background-color: var(--color-slate-50);
+    }
+    [data-theme="dark"] .legacy-admin-content .tbl_head01 tbody tr:hover {
+        background-color: oklch(22% 0.01 252);
+    }
+    .legacy-admin-content .empty_table {
+        padding: 3rem 1rem !important;
+        text-align: center;
+        color: var(--color-slate-400);
+    }
+
+    /* 페이지 상단 컨트롤 / 검색 / 설명 */
+    .legacy-admin-content .local_ov01,
+    .legacy-admin-content .local_ov {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0 0 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        background-color: var(--color-slate-50);
+        font-size: 0.875rem;
+        color: var(--color-slate-600);
+    }
+    [data-theme="dark"] .legacy-admin-content .local_ov01,
+    [data-theme="dark"] .legacy-admin-content .local_ov {
+        background-color: oklch(22% 0.01 252);
+        color: var(--color-slate-400);
+    }
+    .legacy-admin-content .local_ov01 .ov_num,
+    .legacy-admin-content .local_ov .ov_num {
+        margin-left: 0.25rem;
+        color: var(--color-admin-primary-700);
+        font-weight: 600;
+    }
+    [data-theme="dark"] .legacy-admin-content .local_ov01 .ov_num,
+    [data-theme="dark"] .legacy-admin-content .local_ov .ov_num {
+        color: var(--color-admin-primary-300);
+    }
+    .legacy-admin-content .local_ov01 .ov_listall {
+        text-decoration: underline;
+    }
+    .legacy-admin-content .local_sch01,
+    .legacy-admin-content .local_sch {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 1rem;
+    }
+    .legacy-admin-content .local_desc01,
+    .legacy-admin-content .local_desc {
+        margin: 1rem 0;
+        padding: 0.875rem 1rem;
+        border-radius: 0.5rem;
+        background-color: var(--color-amber-50);
+        border-left: 3px solid var(--color-amber-400);
+        color: var(--color-amber-900);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+    }
+    [data-theme="dark"] .legacy-admin-content .local_desc01,
+    [data-theme="dark"] .legacy-admin-content .local_desc {
+        background-color: oklch(28% 0.05 70);
+        color: var(--color-amber-200);
+    }
+    .legacy-admin-content .local_desc ol {
+        list-style: decimal;
+        margin-left: 1.25rem;
+    }
+    .legacy-admin-content .btn_fixed_top,
+    .legacy-admin-content .btn_confirm01,
+    .legacy-admin-content .btn_confirm,
+    .legacy-admin-content .btn_list01,
+    .legacy-admin-content .btn_list,
+    .legacy-admin-content .btn_win02,
+    .legacy-admin-content .btn_win {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    /* 폼 필드 라벨 / 도움말 */
+    .legacy-admin-content .help_box {
+        display: inline-block;
+        margin-left: 0.5rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        background-color: var(--color-amber-50);
+        color: var(--color-amber-800);
+        font-size: 0.75rem;
+    }
+
+    /* 페이징 */
+    .legacy-admin-content .pg_wrap {
+        display: flex;
+        gap: 0.25rem;
+        justify-content: center;
+        margin: 1.5rem 0;
+        font-size: 0.875rem;
+    }
+    .legacy-admin-content .pg_wrap a,
+    .legacy-admin-content .pg_wrap strong {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        height: 2rem;
+        padding: 0 0.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        color: var(--color-slate-600);
+        text-decoration: none;
+    }
+    [data-theme="dark"] .legacy-admin-content .pg_wrap a,
+    [data-theme="dark"] .legacy-admin-content .pg_wrap strong {
+        border-color: var(--color-slate-700);
+        color: var(--color-slate-300);
+    }
+    .legacy-admin-content .pg_wrap strong,
+    .legacy-admin-content .pg_wrap .pg_current {
+        background-color: var(--color-admin-primary-600);
+        color: white !important;
+        border-color: var(--color-admin-primary-600);
+        font-weight: 600;
+    }
+
+    /* h1, h2 등 페이지 헤딩 — 레거시는 그대로 출력됨 */
+    .legacy-admin-content h1,
+    .legacy-admin-content .h2_frm {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin: 1.5rem 0 0.75rem;
+        color: var(--color-slate-900);
+    }
+    [data-theme="dark"] .legacy-admin-content h1,
+    [data-theme="dark"] .legacy-admin-content .h2_frm {
+        color: var(--color-slate-100);
+    }
+
+    /* 링크 */
+    .legacy-admin-content a {
+        color: var(--color-admin-primary-700);
+    }
+    [data-theme="dark"] .legacy-admin-content a {
+        color: var(--color-admin-primary-300);
+    }
+    .legacy-admin-content a:hover { text-decoration: underline; }
+
+    /* sound_only — 스크린리더용 (그대로 유지) */
+    .legacy-admin-content .sound_only,
+    .legacy-admin-content #to_content {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0,0,0,0) !important;
+    }
+
+    /* 레거시 fa-* 아이콘 자리 */
+    .legacy-admin-content .fa { font-style: normal; }
+}
