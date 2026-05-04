@@ -25,16 +25,16 @@ if (!$email)
 // (이메일 열거 공격 방지). 원본의 단정적 표현 → 조건부 표현으로 UX 개선.
 $generic_message = '입력하신 이메일이 가입된 계정과 일치할 경우 비밀번호 재설정 안내 메일이 발송됩니다.\\n\\n메일이 도착하지 않으면 스팸함을 확인해 주세요.';
 
-$sql = " select count(*) as cnt from {$g5['member_table']} where mb_email = '$email' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['member_table']} where mb_email = :email ",
+                     [':email' => $email]);
 if ($row['cnt'] > 1) {
     // 시스템 데이터 무결성 이슈 - 운영자 로그에만 기록하고 사용자에겐 일반 메시지
     @error_log("[g5 password_lost2] Duplicate email detected: $email (count={$row['cnt']})");
     alert($generic_message, $login_url);
 }
 
-$sql = " select mb_no, mb_id, mb_name, mb_nick, mb_email, mb_datetime, mb_leave_date from {$g5['member_table']} where mb_email = '$email' ";
-$mb = sql_fetch($sql);
+$mb = sql_pdo_fetch(" select mb_no, mb_id, mb_name, mb_nick, mb_email, mb_datetime, mb_leave_date from {$g5['member_table']} where mb_email = :email ",
+                    [':email' => $email]);
 
 // 회원이 없거나 탈퇴했거나 관리자이면 메일 발송 없이 동일한 메시지로 응답
 if (empty($mb['mb_id']) || $mb['mb_leave_date'] || is_admin($mb['mb_id'])) {
@@ -49,8 +49,8 @@ $mb_lost_certify = get_encrypt_string($change_password);
 $mb_nonce = get_random_token_string(16);
 
 // 임시비밀번호와 난수를 mb_lost_certify 필드에 저장
-$sql = " update {$g5['member_table']} set mb_lost_certify = '$mb_nonce $mb_lost_certify' where mb_id = '{$mb['mb_id']}' ";
-sql_query($sql);
+sql_pdo_query(" update {$g5['member_table']} set mb_lost_certify = :certify where mb_id = :mb_id ",
+              [':certify' => $mb_nonce.' '.$mb_lost_certify, ':mb_id' => $mb['mb_id']]);
 
 // 인증 링크 생성
 $href = G5_BBS_URL.'/password_lost_certify.php?mb_no='.$mb['mb_no'].'&amp;mb_nonce='.$mb_nonce;

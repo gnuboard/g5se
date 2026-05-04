@@ -5,7 +5,8 @@ include_once(G5_CAPTCHA_PATH.'/captcha.lib.php');
 $po_id   = isset($_REQUEST['po_id']) ? (int) $_REQUEST['po_id'] : '';
 $skin_dir = isset($skin_dir) ? clean_relative_paths(strip_tags($skin_dir)) : '';
 
-$po = sql_fetch(" select * from {$g5['poll_table']} where po_id = '{$po_id}' ");
+$po = sql_pdo_fetch(" select * from {$g5['poll_table']} where po_id = :po_id ",
+                    [':po_id' => $po_id]);
 if (!$po['po_id'])
     alert('설문조사 정보가 없습니다.');
 
@@ -54,11 +55,11 @@ for ($i=1; $i<=$poll_max_count; $i++) {
 $list2 = array();
 
 // 기타의견 리스트
-$sql = " select a.*, b.mb_open
+$result = sql_pdo_query(" select a.*, b.mb_open
            from {$g5['poll_etc_table']} a
            left join {$g5['member_table']} b on (a.mb_id = b.mb_id)
-          where po_id = '{$po_id}' order by pc_id desc ";
-$result = sql_query($sql);
+          where po_id = :po_id order by pc_id desc ",
+          [':po_id' => $po_id]);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $list2[$i]['pc_name']  = get_text($row['pc_name']);
     $list2[$i]['name']     = get_sideview($row['mb_id'], get_text(cut_str($row['pc_name'],10)), '', '', $row['mb_open']);
@@ -84,8 +85,7 @@ if ($po['po_etc']) {
 $list3 = array();
 
 // 다른투표
-$sql = " select po_id, po_subject, po_date from {$g5['poll_table']} order by po_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select po_id, po_subject, po_date from {$g5['poll_table']} order by po_id desc ");
 for ($i=0; $row2=sql_fetch_array($result); $i++) {
     $list3[$i]['po_id'] = $row2['po_id'];
     $list3[$i]['date'] = substr($row2['po_date'],2,8);

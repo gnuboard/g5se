@@ -18,8 +18,8 @@ function specialchars_replace($str, $len=0) {
     return $str;
 }
 
-$sql = " select gr_id, bo_subject, bo_page_rows, bo_read_level, bo_use_rss_view from {$g5['board_table']} where bo_table = '$bo_table' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select gr_id, bo_subject, bo_page_rows, bo_read_level, bo_use_rss_view from {$g5['board_table']} where bo_table = :bo_table ",
+                     [':bo_table' => $bo_table]);
 $subj2 = specialchars_replace($row['bo_subject'], 255);
 $lines = $row['bo_page_rows'];
 
@@ -39,8 +39,8 @@ header('Content-type: text/xml');
 header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
 
-$sql = " select gr_subject from {$g5['group_table']} where gr_id = '{$row['gr_id']}' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select gr_subject from {$g5['group_table']} where gr_id = :gr_id ",
+                     [':gr_id' => $row['gr_id']]);
 $subj1 = specialchars_replace($row['gr_subject'], 255);
 
 echo '<?xml version="1.0" encoding="utf-8" ?>'."\n";
@@ -51,12 +51,12 @@ echo '<?xml version="1.0" encoding="utf-8" ?>'."\n";
 <link><?php echo specialchars_replace(get_pretty_url($bo_table)); ?></link>
 <language>ko</language>
 <?php
-$sql = " select wr_id, wr_subject, wr_content, wr_name, wr_datetime, wr_option
+$lines_i = (int) $lines;
+$result = sql_pdo_query(" select wr_id, wr_subject, wr_content, wr_name, wr_datetime, wr_option
             from {$g5['write_prefix']}$bo_table
             where wr_is_comment = 0
             and wr_option not like '%secret%'
-            order by wr_num, wr_reply limit 0, $lines ";
-$result = sql_query($sql);
+            order by wr_num, wr_reply limit 0, {$lines_i} ");
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $file = '';
 
