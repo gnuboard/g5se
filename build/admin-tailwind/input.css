@@ -517,8 +517,7 @@
     .legacy-admin-content .se2_inputarea,
     .legacy-admin-content .se2_iframe_holder,
     .legacy-admin-content textarea#smart_editor2_src,
-    .legacy-admin-content textarea[id$="_html"],
-    .legacy-admin-content .cke_sc {
+    .legacy-admin-content textarea[id$="_html"] {
         background-color: #ffffff !important;
         color: #1e293b !important;
     }
