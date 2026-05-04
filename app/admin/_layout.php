@@ -71,9 +71,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
 
 <div class="min-h-screen flex">
 
-    <!-- 좌측 사이드바 -->
+    <!-- 좌측 사이드바 (모바일: hidden 토글, lg 이상: 항상 노출) -->
     <aside id="adm-sidebar"
-           class="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 lg:w-60 z-30
+           class="hidden lg:flex flex-col fixed inset-y-0 left-0 w-60 z-40
                   bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <div class="h-14 flex items-center justify-between px-5 border-b border-slate-200 dark:border-slate-800">
             <a href="/admin" class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
@@ -158,13 +158,16 @@ function admin_layout_end(): void
     var themeBtn = document.getElementById('adm-theme-toggle');
     function openSidebar(){
         sidebar.classList.remove('hidden');
-        sidebar.classList.add('flex','fixed');
+        sidebar.classList.add('flex');
         backdrop.classList.remove('hidden');
         document.documentElement.style.overflow = 'hidden';
     }
     function closeSidebar(){
-        sidebar.classList.remove('flex','fixed');
-        sidebar.classList.add('hidden');
+        // lg 이상에서는 항상 노출 (lg:flex 로 자동 복원되지만 명시적으로 hidden 제거 안함)
+        if (window.innerWidth < 1024) {
+            sidebar.classList.remove('flex');
+            sidebar.classList.add('hidden');
+        }
         backdrop.classList.add('hidden');
         document.documentElement.style.overflow = '';
     }
