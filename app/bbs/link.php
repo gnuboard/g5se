@@ -12,8 +12,8 @@ $no = isset($_REQUEST['no']) ? preg_replace('/[^0-9]/i', '', $_REQUEST['no']) : 
 if (!($bo_table && $wr_id && $no))
     alert_close('값이 제대로 넘어오지 않았습니다.');
 
-// SQL Injection 예방
-$row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} ", FALSE);
+// SQL Injection 예방 — bo_table 은 _common.php 에서 [a-z0-9_] whitelist
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} ", [], FALSE);
 if (!(isset($row['cnt']) && $row['cnt']))
     alert_close('존재하는 게시판이 아닙니다.');
 
@@ -23,8 +23,9 @@ if (!(isset($write['wr_link'.$no]) && $write['wr_link'.$no]))
 $ss_name = 'ss_link_'.$bo_table.'_'.$wr_id.'_'.$no;
 if (empty($_SESSION[$ss_name]))
 {
-    $sql = " update {$g5['write_prefix']}{$bo_table} set wr_link{$no}_hit = wr_link{$no}_hit + 1 where wr_id = '{$wr_id}' ";
-    sql_query($sql);
+    // $no 는 [^0-9] 제거되어 컬럼명 보간 안전
+    sql_pdo_query(" update {$g5['write_prefix']}{$bo_table} set wr_link{$no}_hit = wr_link{$no}_hit + 1 where wr_id = :wr_id ",
+                  [':wr_id' => $wr_id]);
 
     set_session($ss_name, true);
 }
