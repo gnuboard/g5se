@@ -378,8 +378,8 @@ function get_file($bo_table, $wr_id)
     global $g5, $qstr, $board;
 
     $file['count'] = 0;
-    $sql = " select * from {$g5['board_file_table']} where bo_table = '$bo_table' and wr_id = '$wr_id' order by bf_no ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id order by bf_no ",
+                            [':bo_table' => $bo_table, ':wr_id' => $wr_id]);
     $nonce = download_file_nonce_key($bo_table, $wr_id);
     while ($row = sql_fetch_array($result))
     {
@@ -2083,7 +2083,7 @@ function sql_password($value)
 {
     // mysql 4.0x 이하 버전에서는 password() 함수의 결과가 16bytes
     // mysql 4.1x 이상 버전에서는 password() 함수의 결과가 41bytes
-    $row = sql_fetch(" SELECT password('{$value}') as pass ");
+    $row = sql_pdo_fetch(" SELECT password(:value) as pass ", [':value' => $value]);
 
     return $row['pass'];
 }
@@ -2142,8 +2142,8 @@ function get_table_define($table, $crlf="\n")
     // For MySQL < 3.23.20
     $schema_create = 'CREATE TABLE ' . $table . ' (' . $crlf;
 
-    $sql = 'SHOW FIELDS FROM ' . $table;
-    $result = sql_query($sql);
+    // SHOW FIELDS — 테이블명은 호출자 책임 (DDL placeholder 미지원)
+    $result = sql_pdo_query('SHOW FIELDS FROM ' . $table);
     while ($row = sql_fetch_array($result))
     {
         $schema_create .= '    ' . $row['Field'] . ' ' . $row['Type'];
@@ -2165,8 +2165,8 @@ function get_table_define($table, $crlf="\n")
 
     $schema_create = preg_replace('/,' . $crlf . '$/', '', $schema_create);
 
-    $sql = 'SHOW KEYS FROM ' . $table;
-    $result = sql_query($sql);
+    // SHOW KEYS — 테이블명은 호출자 책임
+    $result = sql_pdo_query('SHOW KEYS FROM ' . $table);
     while ($row = sql_fetch_array($result))
     {
         $kname    = $row['Key_name'];
@@ -2419,7 +2419,7 @@ function explain($sql)
     if (preg_match("/^(select)/i", trim($sql))) {
         $q = "explain $sql";
         echo $q;
-        $row = sql_fetch($q);
+        $row = sql_pdo_fetch($q);
         if (!$row['key']) $row['key'] = "NULL";
         echo " <font color=blue>(type={$row['type']} , key={$row['key']})</font>";
     }
@@ -2869,18 +2869,19 @@ function get_uniqid()
         return $get_uniqid_key;
     }
     
-    sql_query(" LOCK TABLE {$g5['uniqid_table']} WRITE ");
+    sql_pdo_query(" LOCK TABLE {$g5['uniqid_table']} WRITE ");
     while (1) {
         // 년월일시분초에 100분의 1초 두자리를 추가함 (1/100 초 앞에 자리가 모자르면 0으로 채움)
         $key = date('YmdHis', time()) . str_pad((int)((float)microtime()*100), 2, "0", STR_PAD_LEFT);
 
-        $result = sql_query(" insert into {$g5['uniqid_table']} set uq_id = '$key', uq_ip = '{$_SERVER['REMOTE_ADDR']}' ", false);
+        $result = sql_pdo_query(" insert into {$g5['uniqid_table']} set uq_id = :uq_id, uq_ip = :uq_ip ",
+                                [':uq_id' => $key, ':uq_ip' => $_SERVER['REMOTE_ADDR']], false);
         if ($result) break; // 쿼리가 정상이면 빠진다.
 
         // insert 하지 못했으면 일정시간 쉰다음 다시 유일키를 만든다.
         usleep(10000); // 100분의 1초를 쉰다
     }
-    sql_query(" UNLOCK TABLES ");
+    sql_pdo_query(" UNLOCK TABLES ");
 
     return $key;
 }
@@ -3197,27 +3198,34 @@ class html_process {
         self::$is_end = 1;
 
         // 현재접속자 처리
-        $tmp_sql = " select count(*) as cnt from {$g5['login_table']} where lo_ip = '{$_SERVER['REMOTE_ADDR']}' ";
-        $tmp_row = sql_fetch($tmp_sql);
-        $http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']; 
-        
+        $tmp_row = sql_pdo_fetch(" select count(*) as cnt from {$g5['login_table']} where lo_ip = :lo_ip ",
+                                 [':lo_ip' => $_SERVER['REMOTE_ADDR']]);
+        $http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
+
         if (!isset($member['mb_id'])) {
             $member['mb_id'] = '';
         }
-        
+
         if ($tmp_row['cnt']) {
-            $tmp_sql = " update {$g5['login_table']} set mb_id = '{$member['mb_id']}', lo_datetime = '".G5_TIME_YMDHIS."', lo_location = '{$g5['lo_location']}', lo_url = '{$g5['lo_url']}' where lo_ip = '{$_SERVER['REMOTE_ADDR']}' ";
-            sql_query($tmp_sql, FALSE);
+            sql_pdo_query(" update {$g5['login_table']} set
+                                mb_id        = :mb_id,
+                                lo_datetime  = :lo_datetime,
+                                lo_location  = :lo_location,
+                                lo_url       = :lo_url
+                            where lo_ip = :lo_ip ",
+                          [':mb_id' => $member['mb_id'], ':lo_datetime' => G5_TIME_YMDHIS,
+                           ':lo_location' => $g5['lo_location'], ':lo_url' => $g5['lo_url'],
+                           ':lo_ip' => $_SERVER['REMOTE_ADDR']], FALSE);
         } else {
-            $tmp_sql = " insert into {$g5['login_table']} ( lo_ip, mb_id, lo_datetime, lo_location, lo_url ) values ( '{$_SERVER['REMOTE_ADDR']}', '{$member['mb_id']}', '".G5_TIME_YMDHIS."', '{$g5['lo_location']}',  '{$g5['lo_url']}' ) ";
-            sql_query($tmp_sql, FALSE);
+            sql_pdo_query(" insert into {$g5['login_table']} ( lo_ip, mb_id, lo_datetime, lo_location, lo_url )
+                            values ( :lo_ip, :mb_id, :lo_datetime, :lo_location, :lo_url ) ",
+                          [':lo_ip' => $_SERVER['REMOTE_ADDR'], ':mb_id' => $member['mb_id'],
+                           ':lo_datetime' => G5_TIME_YMDHIS, ':lo_location' => $g5['lo_location'],
+                           ':lo_url' => $g5['lo_url']], FALSE);
 
             // 시간이 지난 접속은 삭제한다
-            sql_query(" delete from {$g5['login_table']} where lo_datetime < '".date("Y-m-d H:i:s", G5_SERVER_TIME - (60 * $config['cf_login_minutes']))."' ");
-
-            // 부담(overhead)이 있다면 테이블 최적화
-            //$row = sql_fetch(" SHOW TABLE STATUS FROM `$mysql_db` LIKE '$g5['login_table']' ");
-            //if ($row['Data_free'] > 0) sql_query(" OPTIMIZE TABLE $g5['login_table'] ");
+            sql_pdo_query(" delete from {$g5['login_table']} where lo_datetime < :cutoff ",
+                          [':cutoff' => date("Y-m-d H:i:s", G5_SERVER_TIME - (60 * $config['cf_login_minutes']))]);
         }
 
         $buffer = ob_get_contents();
@@ -3394,7 +3402,8 @@ function autosave_count($mb_id)
     global $g5;
 
     if ($mb_id) {
-        $row = sql_fetch(" select count(*) as cnt from {$g5['autosave_table']} where mb_id = '$mb_id' ");
+        $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['autosave_table']} where mb_id = :mb_id ",
+                             [':mb_id' => $mb_id]);
         return (int)$row['cnt'];
     } else {
         return 0;
@@ -3406,14 +3415,15 @@ function insert_cert_history($mb_id, $company, $method)
 {
     global $g5;
 
-    $sql = " insert into {$g5['cert_history_table']}
-                set mb_id = '$mb_id',
-                    cr_company = '$company',
-                    cr_method = '$method',
-                    cr_ip = '{$_SERVER['REMOTE_ADDR']}',
-                    cr_date = '".G5_TIME_YMD."',
-                    cr_time = '".G5_TIME_HIS."' ";
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['cert_history_table']} set
+                        mb_id      = :mb_id,
+                        cr_company = :cr_company,
+                        cr_method  = :cr_method,
+                        cr_ip      = :cr_ip,
+                        cr_date    = :cr_date,
+                        cr_time    = :cr_time ",
+                  [':mb_id' => $mb_id, ':cr_company' => $company, ':cr_method' => $method,
+                   ':cr_ip' => $_SERVER['REMOTE_ADDR'], ':cr_date' => G5_TIME_YMD, ':cr_time' => G5_TIME_HIS]);
 }
 
 // 본인확인 변경내역 기록
@@ -3427,8 +3437,8 @@ function insert_member_cert_history($mb_id, $name, $hp, $birth, $type)
     }
     
     // 멤버 본인인증 정보 변경 내역 테이블 없을 경우 생성
-    if(isset($g5['member_cert_history_table']) && !sql_query(" DESC {$g5['member_cert_history_table']} ", false)) {
-        sql_query(" CREATE TABLE IF NOT EXISTS `{$g5['member_cert_history_table']}` (
+    if(isset($g5['member_cert_history_table']) && !sql_pdo_query(" DESC {$g5['member_cert_history_table']} ", [], false)) {
+        sql_pdo_query(" CREATE TABLE IF NOT EXISTS `{$g5['member_cert_history_table']}` (
                         `ch_id` int(11) NOT NULL auto_increment,
                         `mb_id` varchar(20) NOT NULL DEFAULT '',
                         `ch_name` varchar(255) NOT NULL DEFAULT '',
@@ -3438,17 +3448,19 @@ function insert_member_cert_history($mb_id, $name, $hp, $birth, $type)
                         `ch_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
                         PRIMARY KEY (`ch_id`),
                         KEY `mb_id` (`mb_id`)
-                    ) ", true);
+                    ) ", [], true);
     }
 
-    $sql = " insert into {$g5['member_cert_history_table']}
-                set mb_id = '{$mb_id}',
-                    ch_name = '{$name}',
-                    ch_hp = '{$hp}',
-                    ch_birth = '{$birth}',
-                    ch_type = '{$type}',
-                    ch_datetime = '".G5_TIME_YMD." ".G5_TIME_HIS."'";
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['member_cert_history_table']} set
+                        mb_id       = :mb_id,
+                        ch_name     = :ch_name,
+                        ch_hp       = :ch_hp,
+                        ch_birth    = :ch_birth,
+                        ch_type     = :ch_type,
+                        ch_datetime = :ch_datetime ",
+                  [':mb_id' => $mb_id, ':ch_name' => $name, ':ch_hp' => $hp,
+                   ':ch_birth' => $birth, ':ch_type' => $type,
+                   ':ch_datetime' => G5_TIME_YMD.' '.G5_TIME_HIS]);
 }
 
 // 인증시도회수 체크
@@ -3463,16 +3475,19 @@ function certify_count_check($mb_id, $type)
         return;
 
     $sql = " select count(*) as cnt from {$g5['cert_history_table']} ";
+    $params = [':cr_method' => $type, ':cr_date' => G5_TIME_YMD];
 
     if($mb_id) {
-        $sql .= " where mb_id = '$mb_id' ";
+        $sql .= " where mb_id = :mb_id ";
+        $params[':mb_id'] = $mb_id;
     } else {
-        $sql .= " where cr_ip = '{$_SERVER['REMOTE_ADDR']}' ";
+        $sql .= " where cr_ip = :cr_ip ";
+        $params[':cr_ip'] = $_SERVER['REMOTE_ADDR'];
     }
 
-    $sql .= " and cr_method = '".$type."' and cr_date = '".G5_TIME_YMD."' ";
+    $sql .= " and cr_method = :cr_method and cr_date = :cr_date ";
 
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql, $params);
 
     switch($type) {
         case 'simple' :
@@ -3503,8 +3518,7 @@ function get_qa_config($fld='*', $is_cache=false)
         return $cache;
     }
 
-    $sql = " select * from {$g5['qa_config_table']} ";
-    $cache = run_replace('get_qa_config', sql_fetch($sql));
+    $cache = run_replace('get_qa_config', sql_pdo_fetch(" select * from {$g5['qa_config_table']} "));
 
     return $cache;
 }
@@ -3831,44 +3845,53 @@ function member_delete($mb_id)
     global $config;
     global $g5;
 
-    $sql = " select mb_name, mb_nick, mb_ip, mb_recommend, mb_memo, mb_level from {$g5['member_table']} where mb_id= '".$mb_id."' ";
-    $mb = sql_fetch($sql);
+    $mb = sql_pdo_fetch(" select mb_name, mb_nick, mb_ip, mb_recommend, mb_memo, mb_level from {$g5['member_table']} where mb_id = :mb_id ",
+                        [':mb_id' => $mb_id]);
 
     // 이미 삭제된 회원은 제외
     if(preg_match('#^[0-9]{8}.*삭제함#', $mb['mb_memo']))
         return;
 
     if ($mb['mb_recommend']) {
-        $row = sql_fetch(" select count(*) as cnt from {$g5['member_table']} where mb_id = '".addslashes($mb['mb_recommend'])."' ");
+        $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['member_table']} where mb_id = :rec_mb_id ",
+                             [':rec_mb_id' => $mb['mb_recommend']]);
         if ($row['cnt'])
             insert_point($mb['mb_recommend'], $config['cf_recommend_point'] * (-1), $mb_id.'님의 회원자료 삭제로 인한 추천인 포인트 반환', "@member", $mb['mb_recommend'], $mb_id.' 추천인 삭제');
     }
 
     // 회원자료는 정보만 없앤 후 아이디는 보관하여 다른 사람이 사용하지 못하도록 함 : 061025
-    $sql = " update {$g5['member_table']} set mb_password = '', mb_level = 1, mb_email = '', mb_homepage = '', mb_tel = '', mb_hp = '', mb_zip1 = '', mb_zip2 = '', mb_addr1 = '', mb_addr2 = '', mb_addr3 = '', mb_point = 0, mb_profile = '', mb_birth = '', mb_sex = '', mb_signature = '', mb_memo = '".date('Ymd', G5_SERVER_TIME)." 삭제함\n".sql_real_escape_string($mb['mb_memo'])."', mb_certify = '', mb_adult = 0, mb_dupinfo = '' where mb_id = '{$mb_id}' ";
-
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['member_table']} set
+                        mb_password = '', mb_level = 1, mb_email = '', mb_homepage = '',
+                        mb_tel = '', mb_hp = '', mb_zip1 = '', mb_zip2 = '',
+                        mb_addr1 = '', mb_addr2 = '', mb_addr3 = '',
+                        mb_point = 0, mb_profile = '', mb_birth = '', mb_sex = '', mb_signature = '',
+                        mb_memo = :mb_memo,
+                        mb_certify = '', mb_adult = 0, mb_dupinfo = ''
+                    where mb_id = :mb_id ",
+                  [':mb_memo' => date('Ymd', G5_SERVER_TIME)." 삭제함\n".$mb['mb_memo'],
+                   ':mb_id' => $mb_id]);
 
     // 포인트 테이블에서 삭제
-    sql_query(" delete from {$g5['point_table']} where mb_id = '$mb_id' ");
+    sql_pdo_query(" delete from {$g5['point_table']} where mb_id = :mb_id ", [':mb_id' => $mb_id]);
 
     // 그룹접근가능 삭제
-    sql_query(" delete from {$g5['group_member_table']} where mb_id = '$mb_id' ");
+    sql_pdo_query(" delete from {$g5['group_member_table']} where mb_id = :mb_id ", [':mb_id' => $mb_id]);
 
     // 쪽지 삭제
-    sql_query(" delete from {$g5['memo_table']} where me_recv_mb_id = '$mb_id' or me_send_mb_id = '$mb_id' ");
+    sql_pdo_query(" delete from {$g5['memo_table']} where me_recv_mb_id = :mb_id or me_send_mb_id = :mb_id ",
+                  [':mb_id' => $mb_id]);
 
     // 스크랩 삭제
-    sql_query(" delete from {$g5['scrap_table']} where mb_id = '$mb_id' ");
+    sql_pdo_query(" delete from {$g5['scrap_table']} where mb_id = :mb_id ", [':mb_id' => $mb_id]);
 
     // 관리권한 삭제
-    sql_query(" delete from {$g5['auth_table']} where mb_id = '$mb_id' ");
+    sql_pdo_query(" delete from {$g5['auth_table']} where mb_id = :mb_id ", [':mb_id' => $mb_id]);
 
     // 그룹관리자인 경우 그룹관리자를 공백으로
-    sql_query(" update {$g5['group_table']} set gr_admin = '' where gr_admin = '$mb_id' ");
+    sql_pdo_query(" update {$g5['group_table']} set gr_admin = '' where gr_admin = :mb_id ", [':mb_id' => $mb_id]);
 
     // 게시판관리자인 경우 게시판관리자를 공백으로
-    sql_query(" update {$g5['board_table']} set bo_admin = '' where bo_admin = '$mb_id' ");
+    sql_pdo_query(" update {$g5['board_table']} set bo_admin = '' where bo_admin = :mb_id ", [':mb_id' => $mb_id]);
 
     //소셜로그인에서 삭제 또는 해제
     if(function_exists('social_member_link_delete')){
@@ -3937,8 +3960,8 @@ function insert_popular($field, $str)
     global $g5;
 
     if(!in_array('mb_id', $field)) {
-        $sql = " insert into {$g5['popular_table']} set pp_word = '{$str}', pp_date = '".G5_TIME_YMD."', pp_ip = '{$_SERVER['REMOTE_ADDR']}' ";
-        sql_query($sql, FALSE);
+        sql_pdo_query(" insert into {$g5['popular_table']} set pp_word = :pp_word, pp_date = :pp_date, pp_ip = :pp_ip ",
+                      [':pp_word' => $str, ':pp_date' => G5_TIME_YMD, ':pp_ip' => $_SERVER['REMOTE_ADDR']], FALSE);
     }
 }
 
@@ -3980,13 +4003,12 @@ function login_password_check($mb, $pass, $hash)
         if( sql_password($pass) === $hash ){
 
             if( ! isset($mb['mb_password2']) ){
-                $sql = "ALTER TABLE `{$g5['member_table']}` ADD `mb_password2` varchar(255) NOT NULL default '' AFTER `mb_password`";
-                sql_query($sql);
+                sql_pdo_query("ALTER TABLE `{$g5['member_table']}` ADD `mb_password2` varchar(255) NOT NULL default '' AFTER `mb_password`");
             }
-            
+
             $new_password = create_hash($pass);
-            $sql = " update {$g5['member_table']} set mb_password = '$new_password', mb_password2 = '$hash' where mb_id = '$mb_id' ";
-            sql_query($sql);
+            sql_pdo_query(" update {$g5['member_table']} set mb_password = :pwd, mb_password2 = :pwd2 where mb_id = :mb_id ",
+                          [':pwd' => $new_password, ':pwd2' => $hash, ':mb_id' => $mb_id]);
             return true;
         }
     }
