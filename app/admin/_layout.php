@@ -86,24 +86,34 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
     <link rel="stylesheet" href="/admin/css/admin.css">
-    <!-- FOUC 가드: UnoCSS runtime 이 로드되어 첫 utility 주입을 마치기 전까지 body 를 invisible.
-         느린 네트워크에서 utility 가 비어있는 raw HTML 이 paint 되는 것을 차단. -->
+    <!-- FOUC 가드: admin.css 가 로드될 때까지만 body 를 invisible.
+         admin.css 안에 admin shell 의 모든 layout/타이포그래피가 정적으로 베이킹되어 있어
+         UnoCSS runtime 을 기다리지 않고 stylesheet load 직후 즉시 reveal.
+         (UnoCSS runtime 이 늦거나 실패해도 broken layout 이 보이지 않음.) -->
     <style>html:not(.uno-ready) body{visibility:hidden}</style>
-
-    <!-- UnoCSS runtime — utility class 를 런타임에 생성. admin-primary 팔레트 등록.
-         자체 호스팅 (/admin/js/uno.global.js) — 같은 origin 이라 CDN 보다 훨씬 빠르고 안정적. -->
-    <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
-    <script src="/admin/js/uno.global.js"></script>
     <script>
-        // UnoCSS runtime 이 body 노드들을 처리할 시간 (microtask 한 번) 후 reveal.
-        // body invisible 상태에서는 requestAnimationFrame 이 throttled 되어 1초 이상 지연되므로
-        // setTimeout(0) + DCL 조합으로 가능한 빠르게 가시화.
-        function unoReveal(){setTimeout(function(){document.documentElement.classList.add('uno-ready');},0);}
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', unoReveal);
-        else unoReveal();
-        // 안전망 (UnoCSS 로드 실패 시): 2s 후 무조건 reveal
-        setTimeout(function(){document.documentElement.classList.add('uno-ready');}, 2000);
+        // admin.css link 가 load 되면 즉시 reveal — 정적 CSS 만으로 admin shell 이 완성됨.
+        // 안전망 (CSS 로드 실패 시): 1s 후 무조건 reveal.
+        (function(){
+            var ready = function(){document.documentElement.classList.add('uno-ready');};
+            var links = document.querySelectorAll('link[rel="stylesheet"]');
+            var pending = links.length;
+            if (!pending) { ready(); return; }
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].sheet) { if (--pending <= 0) ready(); }
+                else {
+                    links[i].addEventListener('load', function(){ if (--pending <= 0) ready(); });
+                    links[i].addEventListener('error', function(){ if (--pending <= 0) ready(); });
+                }
+            }
+            setTimeout(ready, 1000);
+        })();
     </script>
+
+    <!-- UnoCSS runtime — 베이킹 안 된 보조 utility 들을 런타임에 생성. layout 이 이미 정적이라
+         실패해도 안전. admin-primary 팔레트 컬러도 정적 CSS 로 커버됨. -->
+    <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
+    <script src="/admin/js/uno.global.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <style>
