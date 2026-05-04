@@ -8,8 +8,7 @@ if( !isset($g5['faq_table']) || !isset($g5['faq_master_table']) ){
 
 // FAQ MASTER
 $faq_master_list = array();
-$sql = " select * from {$g5['faq_master_table']} order by fm_order,fm_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * from {$g5['faq_master_table']} order by fm_order,fm_id ");
 while ($row=sql_fetch_array($result))
 {
     $key = $row['fm_id'];
@@ -59,32 +58,34 @@ if(is_file($skin_file)) {
 
     $stx = trim($stx);
     $sql_search = '';
+    $search_params = [':fm_id' => $fm_id];
 
     if($stx) {
-       $sql_search = " and ( INSTR(fa_subject, '$stx') > 0 or INSTR(fa_content, '$stx') > 0 ) ";
+       $sql_search = " and ( INSTR(fa_subject, :stx) > 0 or INSTR(fa_content, :stx) > 0 ) ";
+       $search_params[':stx'] = stripslashes($stx);
     }
 
     if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 
     $page_rows = G5_IS_MOBILE ? $config['cf_mobile_page_rows'] : $config['cf_page_rows'];
 
-    $sql = " select count(*) as cnt
+    $total = sql_pdo_fetch(" select count(*) as cnt
                 from {$g5['faq_table']}
-                where fm_id = '$fm_id'
-                  $sql_search ";
-    $total = sql_fetch($sql);
+                where fm_id = :fm_id
+                  $sql_search ", $search_params);
     $total_count = $total['cnt'];
 
     $total_page  = ceil($total_count / $page_rows);  // 전체 페이지 계산
     $from_record = ($page - 1) * $page_rows; // 시작 열을 구함
+    $from_record_i = (int) $from_record;
+    $page_rows_i   = (int) $page_rows;
 
-    $sql = " select *
+    $result = sql_pdo_query(" select *
                 from {$g5['faq_table']}
-                where fm_id = '$fm_id'
+                where fm_id = :fm_id
                   $sql_search
                 order by fa_order , fa_id
-                limit $from_record, $page_rows ";
-    $result = sql_query($sql);
+                limit $from_record_i, $page_rows_i ", $search_params);
     for ($i=0;$row=sql_fetch_array($result);$i++){
         $faq_list[] = $row;
         if($stx) {
