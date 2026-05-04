@@ -95,6 +95,12 @@ class Router
         // 그룹 — /group/{gr_id}
         '#^/group/(?P<gr_id>[a-zA-Z0-9_-]+)/?$#' => 'bbs/group.php',
 
+        // 모던 admin (/adm 와 별개로 점진적 마이그레이션)
+        // .php 만 제거한 path-rewrite — /admin/foo → app/admin/foo.php
+        // /admin (정확히 매치) 또는 /admin/ → app/admin/index.php (대시보드)
+        '#^/admin/?$#'                                  => 'admin/index.php',
+        '#^/admin/(?P<page>[a-zA-Z0-9_./-]+)/?$#'       => 'admin/{page}.php',
+
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
         // 1:1 문의 수정 — /qa/{qa_id}/edit (resource-first; w=u 자동 주입)

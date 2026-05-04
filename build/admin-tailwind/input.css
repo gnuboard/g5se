@@ -1,0 +1,31 @@
+/*
+ * Admin Tailwind v4 input — admin 전용. 사용자 사이트 theme/tailwind 와 별개 빌드.
+ * 출력: ../../app/admin/css/tailwind.css
+ *
+ * 톤: cool blue + slate (사용자 사이트 cf_theme 무관, 항상 같음)
+ * 다크모드: [data-theme="dark"] (사용자 사이트와 localStorage key 'm-theme' 공유)
+ */
+
+@import "tailwindcss";
+
+/* 다크모드 셀렉터를 main site 와 같이 [data-theme="dark"] 에 매핑 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* admin 전용 토큰 — Tailwind v4 @theme 디렉티브로 색상 등록 */
+@theme {
+    /* admin primary: cool blue */
+    --color-admin-primary-50:  oklch(97.6% 0.011 251);
+    --color-admin-primary-100: oklch(94.6% 0.024 254);
+    --color-admin-primary-200: oklch(88.4% 0.054 256);
+    --color-admin-primary-300: oklch(80.6% 0.097 257);
+    --color-admin-primary-400: oklch(71.6% 0.143 254);
+    --color-admin-primary-500: oklch(62.3% 0.190 250);
+    --color-admin-primary-600: oklch(54.6% 0.211 247);
+    --color-admin-primary-700: oklch(48.8% 0.207 245);
+    --color-admin-primary-800: oklch(42.4% 0.181 246);
+    --color-admin-primary-900: oklch(37.9% 0.146 248);
+    --color-admin-primary-950: oklch(28.2% 0.092 249);
+}
+
+/* admin 페이지의 모든 PHP 파일 + layout / menu 파일을 스캔 */
+@source "../../app/admin/**/*.php";
