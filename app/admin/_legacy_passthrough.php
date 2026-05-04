@@ -154,6 +154,33 @@ window.delete_cookie = window.delete_cookie || function (n) {
     }
 })();
 
+// SmartEditor2 / cheditor 의 iframe 내부는 별도 문서 — same-origin 이므로 JS 로
+// style 태그를 주입해 라이트 톤 강제 (다크모드에서도 읽기 좋게).
+(function () {
+    var EDITOR_CSS = 'html,body{background:#fff !important;color:#1e293b !important}'
+        + 'body{font-family:"Pretendard Variable","Pretendard",-apple-system,system-ui,sans-serif}'
+        + 'a{color:#0369a1}';
+    function injectCss(iframe) {
+        try {
+            var doc = iframe.contentDocument || iframe.contentWindow.document;
+            if (!doc || doc.__cssInjected) return;
+            var s = doc.createElement('style');
+            s.textContent = EDITOR_CSS;
+            (doc.head || doc.documentElement).appendChild(s);
+            doc.__cssInjected = true;
+        } catch (e) { /* cross-origin 등 — 무시 */ }
+    }
+    function tryAll() {
+        document.querySelectorAll('.legacy-admin-content iframe').forEach(function (f) {
+            injectCss(f);
+            f.addEventListener('load', function () { injectCss(f); }, { once: false });
+        });
+    }
+    tryAll();
+    // SE2 가 늦게 iframe 을 만드므로 몇 차례 재시도
+    var n = 0; var t = setInterval(function () { tryAll(); if (++n > 10) clearInterval(t); }, 500);
+})();
+
 // 사이드뷰 (.sv_member / .sv_guest 클릭 시 같은 .sv_wrap 안의 .sv 토글)
 document.addEventListener('click', function (e) {
     var trigger = e.target.closest('.legacy-admin-content .sv_member, .legacy-admin-content .sv_guest');
