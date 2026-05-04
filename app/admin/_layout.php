@@ -110,9 +110,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
                 // 활성 항목이 이 그룹에 있으면 기본 펼침
                 $group_has_active = false;
                 foreach ($items as $it) { if ($it['key'] === $active_key) { $group_has_active = true; break; } }
-                // 그룹 ID — 한글 그룹명은 정규식 후 모두 비어 같은 키 충돌이 발생하므로
-                // md5 해시 + 인덱스로 고유성 보장.
-                $group_id = 'navgrp-'.$group_index.'-'.substr(md5($group['group']), 0, 6);
+                // 그룹 ID — admin.menu{N}.php 의 숫자 N 을 사용 (_menu.php 가 _id 로 노출).
+                // 파일명 숫자는 안정적/고유하므로 한글 그룹명 정규식 충돌 문제 없음.
+                $group_id = 'navgrp-'.($group['_id'] ?? $group_index);
             ?>
             <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_has_active ? 'open' : '' ?>>
                 <summary class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
