@@ -469,6 +469,72 @@
     /* 레거시 fa-* 아이콘 자리 */
     .legacy-admin-content .fa { font-style: normal; }
 
+    /* SmartEditor2 단축키 일람 popover */
+    .legacy-admin-content .cke_sc {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 0.25rem;
+    }
+    .legacy-admin-content .btn_cke_sc {
+        display: inline-flex;
+        align-items: center;
+        height: 1.875rem;
+        padding: 0 0.75rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        color: var(--color-slate-700);
+        font-size: 0.75rem;
+        cursor: pointer;
+    }
+    .legacy-admin-content .cke_sc_def {
+        position: absolute;
+        top: calc(100% + 0.25rem);
+        left: 0;
+        z-index: 30;
+        width: 18rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+    }
+    .legacy-admin-content .cke_sc_def dl {
+        display: grid;
+        grid-template-columns: 7rem 1fr;
+        gap: 0.25rem 0.75rem;
+        margin: 0;
+        font-size: 0.8125rem;
+    }
+    .legacy-admin-content .cke_sc_def dt {
+        margin: 0;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        background-color: var(--color-slate-100);
+        color: var(--color-slate-700);
+        font-family: ui-monospace, SFMono-Regular, monospace;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+    .legacy-admin-content .cke_sc_def dd {
+        margin: 0;
+        padding: 0.125rem 0;
+        color: var(--color-slate-600);
+    }
+    .legacy-admin-content .cke_sc_def .btn_cke_sc_close {
+        display: inline-flex;
+        align-items: center;
+        height: 1.75rem;
+        margin-top: 0.625rem;
+        padding: 0 0.875rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--color-slate-200);
+        background-color: var(--color-white);
+        color: var(--color-slate-700);
+        font-size: 0.75rem;
+        cursor: pointer;
+    }
+
     /* SmartEditor2 / cheditor — 다크모드에서 에디터 안쪽은 항상 라이트 톤으로 고정.
      * 에디터 본문은 iframe 이라 외부에서 색을 직접 못 주지만, 에디터 wrapper /
      * 툴바 / textarea 영역은 다크 페이지 위에서 강제로 흰 배경 + 어두운 글자로
