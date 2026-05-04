@@ -18,6 +18,39 @@
 .hidden { display: none; }
 [hidden] { display: none; }
 
+/* UnoCSS 가 처리하기 전 paint 시점에 잘못 표시되는 변형 utility 들을 정적으로 미리.
+ * 특히 테마 토글의 두 아이콘 (block dark:hidden / hidden dark:block) 이 동시에 잠깐
+ * 보였다 사라지는 깜빡임을 차단. */
+
+/* 다크모드 변형 — html 에 .dark 가 있을 때 */
+.dark .dark\:hidden { display: none !important; }
+.dark .dark\:block { display: block !important; }
+.dark .dark\:inline { display: inline !important; }
+.dark .dark\:inline-block { display: inline-block !important; }
+.dark .dark\:flex { display: flex !important; }
+.dark .dark\:grid { display: grid !important; }
+/* .dark 가 아닐 때 dark 변형 활성화된 항목은 기본으로 안 보임 처리 (block, etc 는 무관) */
+
+/* lg breakpoint (≥1024px) — 사이드바 / 헤더의 핵심 반응형 */
+@media (min-width: 1024px) {
+    .lg\:hidden { display: none !important; }
+    .lg\:block { display: block !important; }
+    .lg\:inline { display: inline !important; }
+    .lg\:flex { display: flex !important; }
+    .lg\:grid { display: grid !important; }
+    .lg\:flex-col { flex-direction: column !important; }
+    .lg\:ml-60 { margin-left: 15rem !important; }
+    .lg\:fixed { position: fixed !important; }
+}
+
+/* sm breakpoint (≥640px) */
+@media (min-width: 640px) {
+    .sm\:inline { display: inline !important; }
+    .sm\:block { display: block !important; }
+    .sm\:flex { display: flex !important; }
+    .sm\:hidden { display: none !important; }
+}
+
 /* SVG / 아이콘 폭·높이 유틸리티 — UnoCSS runtime 이 처리하기 전에 paint 되면 SVG 가
  * 본래 크기 (300×150) 로 찰나 표시되었다가 사라지는 FOUC 가 발생한다. 자주 쓰는
  * 사이즈만 정적 CSS 로 미리 깔아 paint 시점부터 정확한 크기로 그려지도록.
