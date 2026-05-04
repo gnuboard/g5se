@@ -7,5 +7,5 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 
 $legacy_target   = 'contentlist.php';
-$legacy_menu_key = 'contents';
+$legacy_menu_key = 'scf_contents';
 require __DIR__.'/_legacy_passthrough.php';
