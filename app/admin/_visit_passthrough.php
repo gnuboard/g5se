@@ -6,12 +6,8 @@
  */
 if (!defined('_GNUBOARD_')) exit;
 
+// referer 패치는 admin_require_login() 안에서 이미 처리됨 (_layout.php).
 require_once G5_PATH.'/adm/admin.lib.php';
-
-// 레거시 admin_referer_check 우회 — _legacy_passthrough 와 동일
-if (!empty($_SERVER['HTTP_REFERER'])) {
-    $_SERVER['HTTP_REFERER'] = preg_replace('#(/+)admin(/+)#', '$1adm$2', $_SERVER['HTTP_REFERER']);
-}
 
 add_event('goto_url', function ($url) {
     $u = str_replace('&amp;', '&', (string)$url);
