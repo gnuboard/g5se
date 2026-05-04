@@ -1686,7 +1686,7 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     color: #fff;
 }
 
-/* SmartEditor2 단축키 일람 — BBS 글쓰기 theme/tailwind/css/default.css 와 동일.
+/* SmartEditor2 단축키 일람 — BBS 글쓰기 theme/basic/css/default.css 와 동일.
  * cke_sc / btn_cke_sc / cke_sc_def 클래스는 editor 마크업에만 존재하므로
  * .legacy-admin-content 스코프 없이 admin 전역 — modern 재작성 페이지
  * (faqform 등 editor_html 직접 호출하는 곳) 에서도 동일하게 적용된다. */
