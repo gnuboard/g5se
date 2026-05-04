@@ -1151,38 +1151,49 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     background-color: var(--slate-800) !important;
     color: var(--slate-100) !important;
 }
+/* 캡챠 스피커/리프레시 — 사용자 테마와 동일하게 inline-SVG (Feather volume-2 / rotate-cw)
+ * 를 background-image 로 그려 정사각 아이콘 버튼화. 텍스트("숫자음성듣기"/"새로고침")는
+ * color:transparent + text-indent 로 숨김 (스크린리더는 인식). */
 .legacy-admin-content #captcha_mp3,
 .legacy-admin-content #captcha_reload {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.25rem;
-    height: 2.25rem !important;
-    padding: 0 0.75rem !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 !important;
     border: 1px solid var(--slate-200) !important;
     border-radius: 0.375rem !important;
     background-color: #fff !important;
-    color: var(--slate-700) !important;
-    font-size: 0.75rem !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 18px !important;
+    color: transparent !important;
+    text-indent: 0 !important;
     cursor: pointer;
+    flex-shrink: 0;
+}
+.legacy-admin-content #captcha_mp3 {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>") !important;
+}
+.legacy-admin-content #captcha_reload {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 4 23 10 17 10'/><path d='M20.49 15a9 9 0 1 1-2.12-9.36L23 10'/></svg>") !important;
 }
 [data-theme="dark"] .legacy-admin-content #captcha_mp3,
 [data-theme="dark"] .legacy-admin-content #captcha_reload {
     border-color: var(--slate-700) !important;
-    background-color: var(--slate-800) !important;
-    color: var(--slate-300) !important;
+    background-color: #fff !important;  /* 다크 모드에서도 흰 알약 + 다크 아이콘 */
 }
 .legacy-admin-content #captcha_mp3:hover,
 .legacy-admin-content #captcha_reload:hover {
     background-color: var(--slate-50) !important;
+    border-color: var(--slate-400) !important;
 }
 [data-theme="dark"] .legacy-admin-content #captcha_mp3:hover,
 [data-theme="dark"] .legacy-admin-content #captcha_reload:hover {
-    background-color: var(--slate-700) !important;
+    background-color: var(--slate-50) !important;
 }
-/* span 안의 빈 자리 (gnuboard 의 sprite 아이콘 자리) — 안 보이게 */
-.legacy-admin-content #captcha_mp3 > span,
-.legacy-admin-content #captcha_reload > span {
-    display: none;
+/* 텍스트 자리 + sprite 자리 모두 숨김 (스크린리더는 button text 직접 읽음) */
+.legacy-admin-content #captcha_mp3 > *,
+.legacy-admin-content #captcha_reload > * {
+    display: none !important;
 }
 .legacy-admin-content #captcha_info {
     flex: 1 1 100%;
