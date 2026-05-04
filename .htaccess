@@ -13,10 +13,10 @@ RewriteRule ^data/.+\.(php|phtml|phar|html?|cgi|pl|py|jsp|asp|sh)$ - [F,L]
 
 # 4) 정적 자산 폴더는 app/ 밑 실제 위치로 내부 매핑 (URL 은 root 기준)
 #    data/ 는 app 밖으로 분리되어 docroot 에 직접 존재하므로 매핑 대상에서 제외
-#    adm/ 는 관리자 영역 — 원본 gnuboard 디자인 그대로 사용 (모던화 미적용)
-#    /adm 와 /adm/ 은 [END] 후 DirectoryIndex 가 안 걸리므로 명시적으로 index.php 로 매핑
-RewriteRule ^adm/?$ app/adm/index.php [END]
-RewriteRule ^(theme|skin|img|js|css|mobile|plugin|adm)/(.*)$ app/$1/$2 [END]
+#    /adm 와 /adm/* 는 모던 /admin 으로 외부 redirect (사용자가 봐야 할 admin 은 /admin 한 곳)
+RewriteRule ^adm/?$ /admin [R=301,L]
+RewriteRule ^adm/(.*)$ /admin/$1 [R=301,L]
+RewriteRule ^(theme|skin|img|js|css|mobile|plugin)/(.*)$ app/$1/$2 [END]
 
 #    모던 admin 의 정적 자산: /admin/(css|js|img)/... → app/admin/$1/$2
 #    (.php 컨트롤러는 front controller 가 처리해야 하므로 정적 자산만 매핑)

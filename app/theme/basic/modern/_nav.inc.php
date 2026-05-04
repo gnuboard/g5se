@@ -195,7 +195,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             <div class="m-nav-drawer-actions">
                 <?php if ($is_member) { ?>
                     <?php if ($is_admin) { ?>
-                    <a href="<?php echo G5_ADMIN_URL ?>/" class="m-btn m-btn-ghost">관리자</a>
+                    <a href="/admin" class="m-btn m-btn-ghost">관리자</a>
                     <?php } ?>
                     <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
                 <?php } else { ?>
