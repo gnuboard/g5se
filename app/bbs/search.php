@@ -22,29 +22,34 @@ if ($stx) {
 
     $g5_search['tables'] = Array();
     $g5_search['read_level'] = Array();
-    $sql = " select gr_id, bo_table, bo_read_level from {$g5['board_table']} where bo_use_search = 1 and bo_list_level <= '{$member['mb_level']}' ";
-    if ($gr_id)
-        $sql .= " and gr_id = '{$gr_id}' ";
+    $sql_board = " select gr_id, bo_table, bo_read_level from {$g5['board_table']} where bo_use_search = 1 and bo_list_level <= :mb_level ";
+    $board_params = [':mb_level' => (int) $member['mb_level']];
+    if ($gr_id) {
+        $sql_board   .= " and gr_id = :gr_id ";
+        $board_params[':gr_id'] = $gr_id;
+    }
     $onetable = isset($onetable) ? preg_replace('/[^a-z0-9_]/i', '', $onetable) : '';
-    if ($onetable) // 하나의 게시판만 검색한다면
-        $sql .= " and bo_table = '{$onetable}' ";
-    $sql .= " order by bo_order, gr_id, bo_table ";
-    $result = sql_query($sql);
+    if ($onetable) { // 하나의 게시판만 검색한다면
+        $sql_board   .= " and bo_table = :onetable ";
+        $board_params[':onetable'] = $onetable;
+    }
+    $sql_board .= " order by bo_order, gr_id, bo_table ";
+    $result = sql_pdo_query($sql_board, $board_params);
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
         if ($is_admin != 'super')
         {
             // 그룹접근 사용에 대한 검색 차단
-            $sql2 = " select gr_use_access, gr_admin from {$g5['group_table']} where gr_id = '{$row['gr_id']}' ";
-            $row2 = sql_fetch($sql2);
+            $row2 = sql_pdo_fetch(" select gr_use_access, gr_admin from {$g5['group_table']} where gr_id = :gr_id ",
+                                  [':gr_id' => $row['gr_id']]);
             // 그룹접근을 사용한다면
             if ($row2['gr_use_access']) {
                 // 그룹관리자가 있으며 현재 회원이 그룹관리자라면 통과
                 if ($row2['gr_admin'] && $row2['gr_admin'] == $member['mb_id']) {
                     ;
                 } else {
-                    $sql3 = " select count(*) as cnt from {$g5['group_member_table']} where gr_id = '{$row['gr_id']}' and mb_id = '{$member['mb_id']}' and mb_id <> '' ";
-                    $row3 = sql_fetch($sql3);
+                    $row3 = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_member_table']} where gr_id = :gr_id and mb_id = :mb_id and mb_id <> '' ",
+                                          [':gr_id' => $row['gr_id'], ':mb_id' => $member['mb_id']]);
                     if (!$row3['cnt'])
                         continue;
                 }
@@ -72,12 +77,14 @@ if ($stx) {
     $field = explode('||', trim($sfl));
 
     $str = '(';
+    $search_params = array();
     $s_cnt = count($s);
     $field_cnt = count($field);
     for ($i=0; $i<$s_cnt; $i++) {
         if (trim($s[$i]) == '') continue;
 
-        $search_str = $s[$i];
+        // 글로벌 addslashes 가 $_GET 에 적용되어 있어 placeholder 바인딩에는 stripslashes
+        $search_str = stripslashes($s[$i]);
 
         // 인기검색어
         insert_popular($field, $search_str);
@@ -89,17 +96,22 @@ if ($stx) {
         // 필드의 수만큼 다중 필드 검색 가능 (필드1+필드2...)
         for ($k=0; $k<$field_cnt; $k++) {
             $str .= $op2;
+            $ph = ":s_{$i}_{$k}";
             switch ($field[$k]) {
                 case 'mb_id' :
                 case 'wr_name' :
-                    $str .= "$field[$k] = '$s[$i]'";
+                    $field_safe = preg_replace('/[^a-z0-9_]/i', '', $field[$k]);
+                    $str .= "{$field_safe} = {$ph}";
+                    $search_params[$ph] = $search_str;
                     break;
                 case 'wr_subject' :
                 case 'wr_content' :
+                    $field_safe = preg_replace('/[^a-z0-9_]/i', '', $field[$k]);
                     if (preg_match("/[a-zA-Z]/", $search_str))
-                        $str .= "INSTR(LOWER({$field[$k]}), LOWER('{$search_str}'))";
+                        $str .= "INSTR(LOWER({$field_safe}), LOWER({$ph}))";
                     else
-                        $str .= "INSTR({$field[$k]}, '{$search_str}')";
+                        $str .= "INSTR({$field_safe}, {$ph})";
+                    $search_params[$ph] = $search_str;
                     break;
                 default :
                     $str .= "1=0"; // 항상 거짓
@@ -125,8 +137,7 @@ if ($stx) {
     for ($i=0; $i<$tables_cnt; $i++) {
         $tmp_write_table   = $g5['write_prefix'] . $g5_search['tables'][$i];
 
-        $sql = " select wr_id from {$tmp_write_table} where {$sql_search} ";
-        $result = sql_query($sql, false);
+        $result = sql_pdo_query(" select wr_id from {$tmp_write_table} where {$sql_search} ", $search_params, false);
         $row['cnt'] = @sql_num_rows($result);
 
         $total_count += $row['cnt'];
@@ -136,8 +147,8 @@ if ($stx) {
             $read_level[]   = $g5_search['read_level'][$i];
             $search_table_count[] = $total_count;
 
-            $sql2 = " select bo_subject, bo_mobile_subject from {$g5['board_table']} where bo_table = '{$g5_search['tables'][$i]}' ";
-            $row2 = sql_fetch($sql2);
+            $row2 = sql_pdo_fetch(" select bo_subject, bo_mobile_subject from {$g5['board_table']} where bo_table = :bo_table ",
+                                  [':bo_table' => $g5_search['tables'][$i]]);
             $sch_class = "";
             $sch_all = "";
             if ($onetable == $g5_search['tables'][$i]) $sch_class = "class=sch_on";
@@ -165,14 +176,17 @@ if ($stx) {
 
     $k=0;
     for ($idx=$table_index; $idx<count($search_table); $idx++) {
-        $sql = " select bo_subject, bo_mobile_subject from {$g5['board_table']} where bo_table = '{$search_table[$idx]}' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select bo_subject, bo_mobile_subject from {$g5['board_table']} where bo_table = :bo_table ",
+                             [':bo_table' => $search_table[$idx]]);
         $bo_subject[$idx] = ((G5_IS_MOBILE && $row['bo_mobile_subject']) ? $row['bo_mobile_subject'] : $row['bo_subject']);
 
         $tmp_write_table = $g5['write_prefix'] . $search_table[$idx];
 
-        $sql = " select * from {$tmp_write_table} where {$sql_search} order by wr_id desc limit {$from_record}, {$rows} ";
-        $result = sql_query($sql);
+        // LIMIT 은 정수 캐스팅한 값을 보간 (PDO 가 LIMIT 에 placeholder 를 거부)
+        $from_record_i = (int) $from_record;
+        $rows_i        = (int) $rows;
+        $result = sql_pdo_query(" select * from {$tmp_write_table} where {$sql_search} order by wr_id desc limit {$from_record_i}, {$rows_i} ",
+                                $search_params);
         for ($i=0; $row=sql_fetch_array($result); $i++) {
             // 검색어까지 링크되면 게시판 부하가 일어남
             $list[$idx][$i] = $row;
@@ -180,8 +194,8 @@ if ($stx) {
 
             if ($row['wr_is_comment'])
             {
-                $sql2 = " select wr_subject, wr_option from {$tmp_write_table} where wr_id = '{$row['wr_parent']}' ";
-                $row2 = sql_fetch($sql2);
+                $row2 = sql_pdo_fetch(" select wr_subject, wr_option from {$tmp_write_table} where wr_id = :wr_id ",
+                                      [':wr_id' => $row['wr_parent']]);
                 //$row['wr_subject'] = $row2['wr_subject'];
                 $row['wr_subject'] = get_text($row2['wr_subject']);
             }
@@ -229,8 +243,7 @@ if ($stx) {
 }
 
 $group_select = '<label for="gr_id" class="sound_only">게시판 그룹선택</label><select name="gr_id" id="gr_id" class="select"><option value="">전체 분류';
-$sql = " select gr_id, gr_subject from {$g5['group_table']} order by gr_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select gr_id, gr_subject from {$g5['group_table']} order by gr_id ");
 for ($i=0; $row=sql_fetch_array($result); $i++)
     $group_select .= "<option value=\"".$row['gr_id']."\"".get_selected($gr_id, $row['gr_id']).">".$row['gr_subject']."</option>";
 $group_select .= '</select>';
