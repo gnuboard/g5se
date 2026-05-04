@@ -33,7 +33,7 @@ $sms5 = array('cf_skin'=>'', 'cf_datetime'=>'', 'cf_phone'=>'');
 
 if (!empty($config['cf_sms_use'])) {
 
-    $sms5 = sql_fetch("select * from {$g5['sms5_config_table']} ", false);
+    $sms5 = sql_pdo_fetch("select * from {$g5['sms5_config_table']} ", [], false);
 
     // Demo 설정
     if (file_exists(G5_PATH.'/DEMO'))
