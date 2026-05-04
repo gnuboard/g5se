@@ -590,47 +590,50 @@
 }
 .legacy-admin-content .sv_nojs { display: none; }
 
-/* SmartEditor2 단축키 일람 — BBS 글쓰기 theme/tailwind/css/default.css 와 동일 */
-.legacy-admin-content .cke_sc { margin: 0 0 5px !important; text-align: right !important; }
-.legacy-admin-content .btn_cke_sc {
+/* SmartEditor2 단축키 일람 — BBS 글쓰기 theme/tailwind/css/default.css 와 동일.
+ * cke_sc / btn_cke_sc / cke_sc_def 클래스는 editor 마크업에만 존재하므로
+ * .legacy-admin-content 스코프 없이 admin 전역 — modern 재작성 페이지
+ * (faqform 등 editor_html 직접 호출하는 곳) 에서도 동일하게 적용된다. */
+.cke_sc { margin: 0 0 5px !important; text-align: right !important; }
+.btn_cke_sc {
     display: inline-block !important; padding: 0 10px !important; height: 23px !important;
     border: 1px solid #ccc !important; background: #fafafa !important; color: #000 !important;
     text-decoration: none !important; line-height: 1.9em !important;
     vertical-align: middle !important; cursor: pointer !important;
 }
-.legacy-admin-content .cke_sc_def {
+.cke_sc_def {
     margin: 0 0 5px !important; padding: 10px !important;
     border: 1px solid #ccc !important; background: #f7f7f7 !important;
     text-align: center !important; color: #1e293b !important;
 }
-.legacy-admin-content .cke_sc_def dl { margin: 0 0 5px !important; text-align: left !important; zoom: 1; }
-.legacy-admin-content .cke_sc_def dl::after { display: block; visibility: hidden; clear: both; content: ""; }
-.legacy-admin-content .cke_sc_def dt,
-.legacy-admin-content .cke_sc_def dd {
+.cke_sc_def dl { margin: 0 0 5px !important; text-align: left !important; zoom: 1; }
+.cke_sc_def dl::after { display: block; visibility: hidden; clear: both; content: ""; }
+.cke_sc_def dt,
+.cke_sc_def dd {
     float: left !important; margin: 0 !important; padding: 5px 0 !important;
     border-bottom: 1px solid #e9e9e9 !important; color: #1e293b !important;
 }
-.legacy-admin-content .cke_sc_def dt { width: 20% !important; font-weight: bold !important; }
-.legacy-admin-content .cke_sc_def dd { width: 30% !important; }
-.legacy-admin-content .btn_cke_sc_close {
+.cke_sc_def dt { width: 20% !important; font-weight: bold !important; }
+.cke_sc_def dd { width: 30% !important; }
+.btn_cke_sc_close {
     display: inline-block !important; padding: 0 10px !important; height: 23px !important;
     border: 1px solid #ccc !important; background: #fafafa !important; color: #000 !important; cursor: pointer !important;
 }
 
 /* 단축키 일람 다크모드 — BBS 글쓰기와 동일 (theme/basic/modern/_head.inc.php 패턴):
  * 짙은 surface 배경 + 밝은 글자 + border 다크 톤. */
-[data-theme="dark"] .legacy-admin-content .cke_sc_def {
+[data-theme="dark"] .cke_sc_def {
     background: #131825 !important;
     border-color: #2a3344 !important;
     color: #f1f5f9 !important;
 }
-[data-theme="dark"] .legacy-admin-content .cke_sc_def dt,
-[data-theme="dark"] .legacy-admin-content .cke_sc_def dd {
+[data-theme="dark"] .cke_sc_def dt,
+[data-theme="dark"] .cke_sc_def dd {
     border-bottom-color: #2a3344 !important;
     color: #f1f5f9 !important;
 }
-[data-theme="dark"] .legacy-admin-content .btn_cke_sc,
-[data-theme="dark"] .legacy-admin-content .btn_cke_sc_close {
+[data-theme="dark"] .btn_cke_sc,
+[data-theme="dark"] .btn_cke_sc_close {
     background: #131825 !important;
     border-color: #2a3344 !important;
     color: #f1f5f9 !important;
