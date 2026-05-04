@@ -169,7 +169,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
                                   <?php echo $is_active
                                       ? 'bg-admin-primary-50 text-admin-primary-700 dark:bg-admin-primary-950 dark:text-admin-primary-200 font-semibold'
                                       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60' ?>">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><?php echo $item['icon'] ?></svg>
+                            <span class="nav-icon shrink-0" aria-hidden="true"><?php echo $item['icon'] ?></span>
                             <span class="truncate"><?php echo get_text($item['label']) ?></span>
                         </a>
                     </li>
@@ -181,7 +181,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
 
         <div class="border-t border-slate-200 dark:border-slate-800 p-3">
             <a href="/" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span class="nav-icon shrink-0" aria-hidden="true">←</span>
                 사이트로 돌아가기
             </a>
         </div>
@@ -193,13 +193,13 @@ function admin_layout_start(string $title, string $active_key = ''): void
         <!-- 상단 헤더 -->
         <header class="sticky top-0 z-20 h-14 bg-white/85 dark:bg-slate-900/85 backdrop-blur border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 px-4">
             <button type="button" id="adm-mobile-toggle" class="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" aria-label="메뉴 열기">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <span class="nav-icon" aria-hidden="true">☰</span>
             </button>
             <h1 class="font-semibold text-slate-900 dark:text-slate-100 truncate"><?php echo get_text($title) ?></h1>
             <div class="ml-auto flex items-center gap-2">
                 <button type="button" id="adm-theme-toggle" class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" aria-label="테마 전환">
-                    <svg class="block dark:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    <svg class="hidden dark:block" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                    <span class="nav-icon block dark:hidden" aria-hidden="true">🌙</span>
+                    <span class="nav-icon hidden dark:block" aria-hidden="true">☀️</span>
                 </button>
                 <span class="hidden sm:inline text-sm text-slate-600 dark:text-slate-400"><?php echo $admin_nick ?></span>
                 <a href="<?php echo G5_BBS_URL ?>/logout.php" class="inline-flex items-center px-3 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">로그아웃</a>
