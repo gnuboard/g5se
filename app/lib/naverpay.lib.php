@@ -129,8 +129,8 @@ class naverpay_register
         $this->keys = $keys;
 
         foreach($keys as $it_id) {
-            $sql = " select * from {$g5['g5_shop_item_table']} where it_id = '$it_id' and it_use = '1' and it_soldout = '0' and it_tel_inq = '0' ";
-            $it = sql_fetch($sql);
+            $it = sql_pdo_fetch(" select * from {$g5['g5_shop_item_table']} where it_id = :it_id and it_use = '1' and it_soldout = '0' and it_tel_inq = '0' ",
+                                [':it_id' => $it_id]);
             if(!$it['it_id'])
                 continue;
 
@@ -239,8 +239,8 @@ function get_naverpay_item_stock($it_id)
         return 0;
 
     // 옵션체크
-    $sql = " select count(io_no) as cnt, sum(io_stock_qty) as qty from {$g5['g5_shop_item_option_table']} where it_id = '$it_id' and io_type = '0' and io_use = '1' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(io_no) as cnt, sum(io_stock_qty) as qty from {$g5['g5_shop_item_option_table']} where it_id = :it_id and io_type = '0' and io_use = '1' ",
+                         [':it_id' => $it_id]);
 
     if($row['cnt'] > 0)
         return $row['qty'];
@@ -255,8 +255,8 @@ function get_naverpay_item_option($it_id, $subject)
     if(!$it_id || !$subject)
         return '';
 
-    $sql = " select * from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = '$it_id' and io_use = '1' order by io_no asc ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = :it_id and io_use = '1' order by io_no asc ",
+                            [':it_id' => $it_id]);
     if(!sql_num_rows($result))
         return '';
 

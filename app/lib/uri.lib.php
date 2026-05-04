@@ -231,15 +231,15 @@ function exist_seo_url($type, $seo_title, $write_table, $sql_id=0){
 	// 영카트 상품코드의 경우 - 하이픈이 들어가야 함
 
     if( $type === 'bbs' ){
-        $sql = "select wr_seo_title FROM {$write_table} WHERE wr_seo_title = '".sql_real_escape_string($seo_title)."' AND wr_id <> '$sql_id' limit 1";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch("select wr_seo_title FROM {$write_table} WHERE wr_seo_title = :seo_title AND wr_id <> :pk_id limit 1",
+                             [':seo_title' => $seo_title, ':pk_id' => $sql_id]);
 
         $exists_title = isset($row['wr_seo_title']) ? $row['wr_seo_title'] : '';
 
     } else if ( $type === 'content' ){
 
-        $sql = "select co_seo_title FROM {$write_table} WHERE co_seo_title = '".sql_real_escape_string($seo_title)."' AND co_id <> '$sql_id' limit 1";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch("select co_seo_title FROM {$write_table} WHERE co_seo_title = :seo_title AND co_id <> :pk_id limit 1",
+                             [':seo_title' => $seo_title, ':pk_id' => $sql_id]);
 
         $exists_title = isset($row['co_seo_title']) ? $row['co_seo_title'] : '';
 
@@ -268,8 +268,8 @@ function check_case_exist_title($data, $case=G5_BBS_DIR, $is_redirect=false) {
 
         if (exist_seo_url($case, $data['wr_seo_title'], $db_table, $data['wr_id'])) {
             $seo_title = $data['wr_seo_title'].'-'.$data['wr_id'];
-            $sql = " update `{$db_table}` set wr_seo_title = '".sql_real_escape_string($seo_title)."' where wr_id = '{$data['wr_id']}' ";
-            sql_query($sql, false);
+            sql_pdo_query(" update `{$db_table}` set wr_seo_title = :seo_title where wr_id = :wr_id ",
+                          [':seo_title' => $seo_title, ':wr_id' => $data['wr_id']], false);
 
             get_write($db_table, $data['wr_id'], false);
             $redirect_url = get_pretty_url($board['bo_table'], $data['wr_id']);
@@ -279,9 +279,9 @@ function check_case_exist_title($data, $case=G5_BBS_DIR, $is_redirect=false) {
 
         if (exist_seo_url($case, $data['co_seo_title'], $db_table, $data['co_id'])) {
             $seo_title = $data['co_seo_title'].'-'.substr(get_random_token_string(4), 4);
-            $sql = " update `{$db_table}` set co_seo_title = '".sql_real_escape_string($seo_title)."' where co_id = '{$data['co_id']}' ";
-            sql_query($sql, false);
-            
+            sql_pdo_query(" update `{$db_table}` set co_seo_title = :seo_title where co_id = :co_id ",
+                          [':seo_title' => $seo_title, ':co_id' => $data['co_id']], false);
+
             get_content_db($data['co_id'], false);
             g5_delete_cache_by_prefix('content-' . $data['co_id'] . '-');
             $redirect_url = get_pretty_url($case, $data['co_id']);
@@ -291,8 +291,8 @@ function check_case_exist_title($data, $case=G5_BBS_DIR, $is_redirect=false) {
 
         if (shop_exist_check_seo_title($data['it_seo_title'], $case, $db_table, $data['it_id'])) {
             $seo_title = $data['it_seo_title'].'-'.substr(get_random_token_string(4), 4);
-            $sql = " update `{$db_table}` set it_seo_title = '".sql_real_escape_string($seo_title)."' where it_id = '{$data['it_id']}' ";
-            sql_query($sql, false);
+            sql_pdo_query(" update `{$db_table}` set it_seo_title = :seo_title where it_id = :it_id ",
+                          [':seo_title' => $seo_title, ':it_id' => $data['it_id']], false);
 
             get_shop_item($data['it_id'], false);
             $redirect_url = get_pretty_url($case, $data['it_id']);
@@ -334,8 +334,8 @@ function seo_title_update($db_table, $pk_id, $type='bbs'){
         if( ! (isset($write['wr_seo_title']) && $write['wr_seo_title']) && (isset($write['wr_subject']) && $write['wr_subject']) ){
             $wr_seo_title = exist_seo_title_recursive('bbs', generate_seo_title($write['wr_subject']), $db_table, $pk_id);
 
-            $sql = " update `{$db_table}` set wr_seo_title = '{$wr_seo_title}' where wr_id = '{$pk_id}' ";
-            sql_query($sql);
+            sql_pdo_query(" update `{$db_table}` set wr_seo_title = :seo_title where wr_id = :wr_id ",
+                          [':seo_title' => $wr_seo_title, ':wr_id' => $pk_id]);
         }
     } else if ( $type === 'content' ){
 
@@ -343,8 +343,8 @@ function seo_title_update($db_table, $pk_id, $type='bbs'){
         if( ! (isset($co['co_seo_title']) && $co['co_seo_title']) && (isset($co['co_subject']) && $co['co_subject']) ){
             $co_seo_title = exist_seo_title_recursive('content', generate_seo_title($co['co_subject']), $db_table, $pk_id);
 
-            $sql = " update `{$db_table}` set co_seo_title = '{$co_seo_title}' where co_id = '{$pk_id}' ";
-            sql_query($sql);
+            sql_pdo_query(" update `{$db_table}` set co_seo_title = :seo_title where co_id = :co_id ",
+                          [':seo_title' => $co_seo_title, ':co_id' => $pk_id]);
         }
     }
 }

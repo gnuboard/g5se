@@ -181,14 +181,13 @@ function add_shop_admin_dbupgrade($is_check){
     global $g5;
 
     // 내용 관리 짧은 주소
-    $sql = " SHOW COLUMNS FROM `{$g5['g5_shop_item_table']}` LIKE 'it_seo_title' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" SHOW COLUMNS FROM `{$g5['g5_shop_item_table']}` LIKE 'it_seo_title' ");
 
     if( !$row ){
-        sql_query("ALTER TABLE `{$g5['g5_shop_item_table']}`
+        sql_pdo_query("ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `it_seo_title` varchar(200) NOT NULL DEFAULT '' AFTER `it_name`,
                     ADD INDEX `it_seo_title` (`it_seo_title`);
-        ", false);
+        ", [], false);
 
         $is_check = true;
     }
@@ -198,9 +197,9 @@ function add_shop_admin_dbupgrade($is_check){
 }
 
 function shop_exist_check_seo_title($seo_title, $type, $shop_item_table, $it_id){
-    
-    $sql = "select it_seo_title FROM {$shop_item_table} WHERE it_seo_title = '".sql_real_escape_string($seo_title)."' AND it_id <> '$it_id' limit 1";
-    $row = sql_fetch($sql, false);
+
+    $row = sql_pdo_fetch("select it_seo_title FROM {$shop_item_table} WHERE it_seo_title = :seo_title AND it_id <> :it_id limit 1",
+                         [':seo_title' => $seo_title, ':it_id' => $it_id], false);
 
     if( isset($row['it_seo_title']) && $row['it_seo_title'] ){
         return 'is_exists';
@@ -219,8 +218,8 @@ function shop_seo_title_update($it_id, $is_edit=false){
         $it_seo_title = exist_seo_title_recursive('shop', generate_seo_title($item['it_name']), $g5['g5_shop_item_table'], $item['it_id']);
 
         if( isset($item['it_seo_title']) && $it_seo_title !== $item['it_seo_title'] ){
-            $sql = " update `{$g5['g5_shop_item_table']}` set it_seo_title = '{$it_seo_title}' where it_id = '{$item['it_id']}' ";
-            sql_query($sql);
+            sql_pdo_query(" update `{$g5['g5_shop_item_table']}` set it_seo_title = :seo_title where it_id = :it_id ",
+                          [':seo_title' => $it_seo_title, ':it_id' => $item['it_id']]);
         }
     }
 }
