@@ -10,6 +10,12 @@
  * 다크모드는 [data-theme="dark"] 셀렉터로 분기 (사용자 사이트와 동일한 키 'm-theme').
  */
 
+/* UnoCSS runtime 가 DOM 스캔 후에 CSS 를 생성하므로, 페이지 첫 paint 와 runtime 이
+ * 처리되는 사이에 .hidden 같은 핵심 utility 가 빠진 채 보일 수 있음 (모달 깜빡임).
+ * 이런 FOUC-방지용 기본 utility 만 정적 CSS 로 미리 깔아둔다. */
+.hidden { display: none !important; }
+[hidden] { display: none !important; }
+
 :root {
     /* admin primary — cool blue */
     --admin-primary-50:  #f0f7ff;
