@@ -384,6 +384,14 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 .backdrop-blur { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .h-full { height: 100%; }
 .h-14 { height: 3.5rem; }
+/* aspect ratio + object-fit + position relative — admin/theme 카드의 screenshot 이
+ * runtime utility 도착 전 intrinsic 사이즈 (600x460 등) 로 잠깐 커보였다 작아지는 FOUC 차단 */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.aspect-video { aspect-ratio: 16 / 9; }
+.aspect-square { aspect-ratio: 1 / 1; }
+.object-cover { object-fit: cover; }
+.object-contain { object-fit: contain; }
 
 /* hover (베이킹) */
 .hover\:bg-slate-50:hover { background-color: var(--slate-50); }
