@@ -61,6 +61,25 @@ $content = preg_replace_callback(
     $content
 );
 
+// 2.5) 레거시 페이지가 인라인 <style> 안에서 body/html/a 등 전역 셀렉터를 사용하면
+//     admin shell 의 폰트/컬러를 글로벌로 덮어써서 'phpinfo 페이지에 들어가면
+//     글자 크기/간격이 바뀌는' 점프가 발생. 전역 셀렉터를 wrapper 스코프로 재작성.
+$content = preg_replace_callback(
+    '#<style\b[^>]*>(.*?)</style>#si',
+    static function ($m) {
+        $css = $m[1];
+        // 'html, body { ... }', 'body { ... }', 'a { ... }', 'a:hover { ... }' 같은
+        // 단독 전역 셀렉터를 .legacy-admin-content 안으로 스코프.
+        $scoped = preg_replace_callback(
+            '#(^|\})\s*(html\s*,\s*body|body|html|a(?::[a-z-]+)?|table|pre|tr|td|th|h\d)\s*\{#i',
+            static fn ($mm) => $mm[1].' .legacy-admin-content '.$mm[2].' {',
+            $css
+        );
+        return '<style>'.$scoped.'</style>';
+    },
+    $content
+);
+
 // 3) form 의 self-action 보완 — action 이 없는 form 의 경우 클린 URL 주입
 if (!empty($legacy_form_replace) && is_array($legacy_form_replace)) {
     foreach ($legacy_form_replace as $needle => $action) {
