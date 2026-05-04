@@ -76,7 +76,7 @@ admin_layout_start($page_title, $legacy_menu_key ?? '');
         <h2 class="text-xl font-bold tracking-tight"><?php echo htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?></h2>
         <span class="text-xs text-slate-400">레거시 페이지</span>
     </header>
-    <div class="legacy-admin-content space-y-4">
+    <div class="legacy-admin-content space-y-4 <?php echo !empty($legacy_force_light) ? 'force-light' : '' ?>">
         <?php echo $content ?>
     </div>
 </main>

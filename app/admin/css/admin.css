@@ -61,6 +61,21 @@
 .dark .dark\:hover\:bg-admin-primary-900:hover { background-color: var(--admin-primary-900); }
 .dark .dark\:hover\:text-admin-primary-300:hover { color: var(--admin-primary-300); }
 
+/* phpinfo() 등 인라인 스타일이 흰 배경을 가정하는 페이지 — 다크모드에서도 본문만 라이트 톤 강제.
+ * .legacy-admin-content.force-light 로 wrapper 가 표시되며, 카드처럼 패딩/라운드도 부여. */
+.legacy-admin-content.force-light {
+    background: #ffffff;
+    color: #1e293b;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+}
+.legacy-admin-content.force-light * {
+    color: #1e293b;
+}
+.legacy-admin-content.force-light a { color: #1d4ed8; }
+.legacy-admin-content.force-light a:visited { color: #6d28d9; }
+
 /* 사이드바 / 헤더 / 메인 column 의 핵심 레이아웃 — UnoCSS runtime 의 generation 순서나
  * 누락 가능성과 무관하게 항상 보이도록 ID 셀렉터로 강하게 고정.
  * (UnoCSS 가 .lg:flex 보다 .hidden 을 늦게 inject 하면 사이드바가 사라지는 현상 방지) */
