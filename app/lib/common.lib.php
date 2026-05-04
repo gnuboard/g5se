@@ -873,8 +873,8 @@ function get_write($write_table, $wr_id, $is_cache=false)
     $write = $g5_object->get('bbs', $wr_id, $wr_bo_table);
 
     if( !$write || $is_cache == false ){
-        $sql = " select * from {$write_table} where wr_id = '{$wr_id}' ";
-        $write = sql_fetch($sql);
+        $write = sql_pdo_fetch(" select * from {$write_table} where wr_id = :wr_id ",
+                               [':wr_id' => $wr_id]);
 
         $g5_object->set('bbs', $wr_id, $write, $wr_bo_table);
     }
@@ -886,8 +886,7 @@ function get_write($write_table, $wr_id, $is_cache=false)
 function get_next_num($table)
 {
     // 가장 작은 번호를 얻어
-    $sql = " select min(wr_num) as min_wr_num from $table ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select min(wr_num) as min_wr_num from $table ");
     // 가장 작은 번호에 1을 빼서 넘겨줌
     return isset($row['min_wr_num']) ? (int)($row['min_wr_num'] - 1) : -1;
 }
@@ -912,9 +911,10 @@ function get_group($gr_id, $is_cache=false)
         return $cache[$key];
     }
 
-    $sql = " select * from {$g5['group_table']} where gr_id = '$gr_id' ";
-
-    $group = run_replace('get_group', sql_fetch($sql), $gr_id, $is_cache);
+    $group = run_replace('get_group',
+        sql_pdo_fetch(" select * from {$g5['group_table']} where gr_id = :gr_id ",
+                      [':gr_id' => $gr_id]),
+        $gr_id, $is_cache);
     $cache[$key] = array_merge(array('gr_device'=>'', 'gr_subject'=>''), (array) $group);
 
     return $cache[$key];
@@ -947,9 +947,11 @@ function get_member($mb_id, $fields = '*', $is_cache = false)
         return $cache[$mb_id][$key];
     }
 
-    $sql = " SELECT {$fields} from {$g5['member_table']} where mb_id = '{$mb_id}' ";
-
-    $cache[$mb_id][$key] = run_replace('get_member', sql_fetch($sql), $mb_id, $fields, $is_cache);
+    // $fields 는 호출자 SQL fragment — 안전하게 호출되어야 함
+    $cache[$mb_id][$key] = run_replace('get_member',
+        sql_pdo_fetch(" SELECT {$fields} from {$g5['member_table']} where mb_id = :mb_id ",
+                      [':mb_id' => $mb_id]),
+        $mb_id, $fields, $is_cache);
 
     return $cache[$mb_id][$key];
 }
@@ -1011,19 +1013,22 @@ function get_admin($admin='super', $fields='*')
 
     $is = false;
     if ($admin == 'board') {
-        $mb = sql_fetch("select {$fields} from {$g5['member_table']} where mb_id in ('{$board['bo_admin']}') limit 1 ");
+        $mb = sql_pdo_fetch("select {$fields} from {$g5['member_table']} where mb_id = :mb_id limit 1 ",
+                            [':mb_id' => $board['bo_admin']]);
         $is = true;
     }
 
     // if (($is && !$mb['mb_id']) || $admin == 'group') {
     if (($is && !isset($mb['mb_id'])) || $admin == 'group') {
-        $mb = sql_fetch("select {$fields} from {$g5['member_table']} where mb_id in ('{$group['gr_admin']}') limit 1 ");
+        $mb = sql_pdo_fetch("select {$fields} from {$g5['member_table']} where mb_id = :mb_id limit 1 ",
+                            [':mb_id' => $group['gr_admin']]);
         $is = true;
     }
 
     // if (($is && !$mb['mb_id']) || $admin == 'super') {
     if (($is && !isset($mb['mb_id'])) || $admin == 'super') {
-        $mb = sql_fetch("select {$fields} from {$g5['member_table']} where mb_id in ('{$config['cf_admin']}') limit 1 ");
+        $mb = sql_pdo_fetch("select {$fields} from {$g5['member_table']} where mb_id = :mb_id limit 1 ",
+                            [':mb_id' => $config['cf_admin']]);
     }
 
     return $mb;
@@ -1081,13 +1086,15 @@ function get_group_select($name, $selected='', $event='')
     global $g5, $is_admin, $member;
 
     $sql = " select gr_id, gr_subject from {$g5['group_table']} a ";
+    $params = [];
     if ($is_admin == "group") {
         $sql .= " left join {$g5['member_table']} b on (b.mb_id = a.gr_admin)
-                  where b.mb_id = '{$member['mb_id']}' ";
+                  where b.mb_id = :mb_id ";
+        $params[':mb_id'] = $member['mb_id'];
     }
     $sql .= " order by a.gr_id ";
 
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql, $params);
     $str = "<select id=\"$name\" name=\"$name\" $event>\n";
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         if ($i == 0) $str .= "<option value=\"\">선택</option>";
@@ -1139,7 +1146,8 @@ function insert_point($mb_id, $point, $content='', $rel_table='', $rel_id='', $r
 
     // 회원아이디가 없다면 업데이트 할 필요 없음
     if ($mb_id == '') { return 0; }
-    $mb = sql_fetch(" select mb_id from {$g5['member_table']} where mb_id = '$mb_id' ");
+    $mb = sql_pdo_fetch(" select mb_id from {$g5['member_table']} where mb_id = :mb_id ",
+                        [':mb_id' => $mb_id]);
     if (!$mb['mb_id']) { return 0; }
 
     // 회원포인트
@@ -1152,16 +1160,16 @@ function insert_point($mb_id, $point, $content='', $rel_table='', $rel_id='', $r
     if ($rel_table || $rel_id || $rel_action)
     {
         $point_lock_name = 'g5pt_' . md5($mb_id.'|'.$rel_table.'|'.$rel_id.'|'.$rel_action);
-        sql_fetch(" select get_lock('$point_lock_name', 5) as got_lock ");
+        sql_pdo_fetch(" select get_lock(:lock_name, 5) as got_lock ", [':lock_name' => $point_lock_name]);
 
-        $sql = " select count(*) as cnt from {$g5['point_table']}
-                  where mb_id = '$mb_id'
-                    and po_rel_table = '$rel_table'
-                    and po_rel_id = '$rel_id'
-                    and po_rel_action = '$rel_action' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['point_table']}
+                  where mb_id = :mb_id
+                    and po_rel_table = :rel_table
+                    and po_rel_id = :rel_id
+                    and po_rel_action = :rel_action ",
+                  [':mb_id' => $mb_id, ':rel_table' => $rel_table, ':rel_id' => $rel_id, ':rel_action' => $rel_action]);
         if ($row['cnt']) {
-            sql_query(" select release_lock('$point_lock_name') ");
+            sql_pdo_query(" select release_lock(:lock_name) ", [':lock_name' => $point_lock_name]);
             return -1;
         }
     }
@@ -1182,19 +1190,22 @@ function insert_point($mb_id, $point, $content='', $rel_table='', $rel_id='', $r
     }
     $po_mb_point = $mb_point + $point;
 
-    $sql = " insert into {$g5['point_table']}
-                set mb_id = '$mb_id',
-                    po_datetime = '".G5_TIME_YMDHIS."',
-                    po_content = '".addslashes($content)."',
-                    po_point = '$point',
-                    po_use_point = '0',
-                    po_mb_point = '$po_mb_point',
-                    po_expired = '$po_expired',
-                    po_expire_date = '$po_expire_date',
-                    po_rel_table = '$rel_table',
-                    po_rel_id = '$rel_id',
-                    po_rel_action = '$rel_action' ";
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['point_table']} set
+                        mb_id          = :mb_id,
+                        po_datetime    = :po_datetime,
+                        po_content     = :po_content,
+                        po_point       = :po_point,
+                        po_use_point   = '0',
+                        po_mb_point    = :po_mb_point,
+                        po_expired     = :po_expired,
+                        po_expire_date = :po_expire_date,
+                        po_rel_table   = :rel_table,
+                        po_rel_id      = :rel_id,
+                        po_rel_action  = :rel_action ",
+                  [':mb_id' => $mb_id, ':po_datetime' => G5_TIME_YMDHIS, ':po_content' => $content,
+                   ':po_point' => $point, ':po_mb_point' => $po_mb_point,
+                   ':po_expired' => $po_expired, ':po_expire_date' => $po_expire_date,
+                   ':rel_table' => $rel_table, ':rel_id' => $rel_id, ':rel_action' => $rel_action]);
 
     // 포인트를 사용한 경우 포인트 내역에 사용금액 기록
     if($point < 0) {
@@ -1202,12 +1213,12 @@ function insert_point($mb_id, $point, $content='', $rel_table='', $rel_id='', $r
     }
 
     // 포인트 UPDATE
-    $sql = " update {$g5['member_table']} set mb_point = '$po_mb_point' where mb_id = '$mb_id' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['member_table']} set mb_point = :mb_point where mb_id = :mb_id ",
+                  [':mb_point' => $po_mb_point, ':mb_id' => $mb_id]);
 
     // named lock 해제
     if ($point_lock_name) {
-        sql_query(" select release_lock('$point_lock_name') ");
+        sql_pdo_query(" select release_lock(:lock_name) ", [':lock_name' => $point_lock_name]);
     }
 
     return 1;
@@ -1235,16 +1246,16 @@ function insert_use_point($mb_id, $point, $po_id='')
     $max_iter = 1000; // 무한루프 안전장치 (정상 케이스는 차감 행 수만큼만 반복)
 
     while ($remaining > 0 && $max_iter-- > 0) {
-        // 사용 가능한 가장 오래된 행 1개 조회
-        $sql = " select po_id, po_point, po_use_point
+        // 사용 가능한 가장 오래된 행 1개 조회 — $sql_order 는 코드내 고정
+        $row = sql_pdo_fetch(" select po_id, po_point, po_use_point
                     from {$g5['point_table']}
-                    where mb_id = '$mb_id'
-                      and po_id <> '$po_id'
+                    where mb_id = :mb_id
+                      and po_id <> :po_id
                       and po_expired = '0'
                       and po_point > po_use_point
                     $sql_order
-                    limit 1 ";
-        $row = sql_fetch($sql);
+                    limit 1 ",
+                    [':mb_id' => $mb_id, ':po_id' => $po_id]);
         if (!$row || empty($row['po_id'])) {
             break; // 더 이상 사용 가능한 포인트 없음
         }
@@ -1253,13 +1264,12 @@ function insert_use_point($mb_id, $point, $po_id='')
 
         if ($available > $remaining) {
             // 이 행만으로 충분 (부분 차감)
-            // WHERE 절에서 "현재도 충분한 잔여가 있는가"를 원자적으로 재검증
-            $sql = " update {$g5['point_table']}
-                        set po_use_point = po_use_point + '$remaining'
-                        where po_id = '{$row['po_id']}'
+            sql_pdo_query(" update {$g5['point_table']}
+                        set po_use_point = po_use_point + :rem
+                        where po_id = :po_id
                           and po_expired = '0'
-                          and (po_point - po_use_point) > '$remaining' ";
-            sql_query($sql);
+                          and (po_point - po_use_point) > :rem ",
+                        [':rem' => $remaining, ':po_id' => $row['po_id']]);
 
             if (get_sql_affected_rows() > 0) {
                 $remaining = 0;
@@ -1268,15 +1278,14 @@ function insert_use_point($mb_id, $point, $po_id='')
             // 0건 = 다른 프로세스가 이 행을 먼저 차감 → 다시 SELECT로 재시도
         } else {
             // 이 행을 완전 소진 + expired 마킹
-            // WHERE 절에서 SELECT 시점의 po_use_point 값과 일치할 때만 UPDATE
             $consume = $available;
-            $sql = " update {$g5['point_table']}
-                        set po_use_point = po_use_point + '$consume',
+            sql_pdo_query(" update {$g5['point_table']}
+                        set po_use_point = po_use_point + :consume,
                             po_expired = '100'
-                        where po_id = '{$row['po_id']}'
-                          and po_use_point = '{$row['po_use_point']}'
-                          and po_expired = '0' ";
-            sql_query($sql);
+                        where po_id = :po_id
+                          and po_use_point = :prev_use_point
+                          and po_expired = '0' ",
+                        [':consume' => $consume, ':po_id' => $row['po_id'], ':prev_use_point' => $row['po_use_point']]);
 
             if (get_sql_affected_rows() > 0) {
                 $remaining -= $consume;
@@ -1302,15 +1311,15 @@ function delete_use_point($mb_id, $point)
     $max_iter = 1000;
 
     while ($remaining > 0 && $max_iter-- > 0) {
-        // 사용분이 있는 가장 최근 행 1개 조회
-        $sql = " select po_id, po_use_point, po_expired, po_expire_date
+        // 사용분이 있는 가장 최근 행 1개 조회 — $sql_order 는 코드내 고정
+        $row = sql_pdo_fetch(" select po_id, po_use_point, po_expired, po_expire_date
                     from {$g5['point_table']}
-                    where mb_id = '$mb_id'
+                    where mb_id = :mb_id
                       and po_expired <> '1'
                       and po_use_point > 0
                     $sql_order
-                    limit 1 ";
-        $row = sql_fetch($sql);
+                    limit 1 ",
+                    [':mb_id' => $mb_id]);
         if (!$row || empty($row['po_id'])) {
             break;
         }
@@ -1324,35 +1333,34 @@ function delete_use_point($mb_id, $point)
 
         if ($row_used > $remaining) {
             // 부분 환원
-            // WHERE에 현재 po_use_point가 차감 가능한 수준인지와 expired 상태를 함께 검증
-            $sql = " update {$g5['point_table']}
-                        set po_use_point = po_use_point - '$remaining',
-                            po_expired = '$po_expired_new'
-                        where po_id = '{$row['po_id']}'
-                          and po_use_point >= '$remaining'
-                          and po_expired = '{$row['po_expired']}' ";
-            sql_query($sql);
+            sql_pdo_query(" update {$g5['point_table']}
+                        set po_use_point = po_use_point - :rem,
+                            po_expired = :po_expired_new
+                        where po_id = :po_id
+                          and po_use_point >= :rem
+                          and po_expired = :prev_expired ",
+                        [':rem' => $remaining, ':po_expired_new' => $po_expired_new,
+                         ':po_id' => $row['po_id'], ':prev_expired' => $row['po_expired']]);
 
             if (get_sql_affected_rows() > 0) {
                 $remaining = 0;
                 break;
             }
-            // 0건 = 다른 프로세스가 이 행을 먼저 변경 → 재시도
         } else {
             // 사용분 전체 환원
             $consume = $row_used;
-            $sql = " update {$g5['point_table']}
+            sql_pdo_query(" update {$g5['point_table']}
                         set po_use_point = '0',
-                            po_expired = '$po_expired_new'
-                        where po_id = '{$row['po_id']}'
-                          and po_use_point = '{$row['po_use_point']}'
-                          and po_expired = '{$row['po_expired']}' ";
-            sql_query($sql);
+                            po_expired = :po_expired_new
+                        where po_id = :po_id
+                          and po_use_point = :prev_use_point
+                          and po_expired = :prev_expired ",
+                        [':po_expired_new' => $po_expired_new, ':po_id' => $row['po_id'],
+                         ':prev_use_point' => $row['po_use_point'], ':prev_expired' => $row['po_expired']]);
 
             if (get_sql_affected_rows() > 0) {
                 $remaining -= $consume;
             }
-            // 0건 = 다른 프로세스가 이 행을 먼저 변경 → 재시도
         }
     }
 }
@@ -1369,15 +1377,15 @@ function delete_expire_point($mb_id, $point)
 
     while ($remaining > 0 && $max_iter-- > 0) {
         // 소멸 처리된 가장 최근 행 1개 조회
-        $sql = " select po_id, po_use_point, po_expired, po_expire_date
+        $row = sql_pdo_fetch(" select po_id, po_use_point, po_expired, po_expire_date
                     from {$g5['point_table']}
-                    where mb_id = '$mb_id'
+                    where mb_id = :mb_id
                       and po_expired = '1'
                       and po_point >= 0
                       and po_use_point > 0
                     order by po_expire_date desc, po_id desc
-                    limit 1 ";
-        $row = sql_fetch($sql);
+                    limit 1 ",
+                    [':mb_id' => $mb_id]);
         if (!$row || empty($row['po_id'])) {
             break;
         }
@@ -1389,36 +1397,34 @@ function delete_expire_point($mb_id, $point)
 
         if ($row_used > $remaining) {
             // 부분 환원
-            $sql = " update {$g5['point_table']}
-                        set po_use_point = po_use_point - '$remaining',
+            sql_pdo_query(" update {$g5['point_table']}
+                        set po_use_point = po_use_point - :rem,
                             po_expired = '0',
-                            po_expire_date = '$po_expire_date'
-                        where po_id = '{$row['po_id']}'
+                            po_expire_date = :po_expire_date
+                        where po_id = :po_id
                           and po_expired = '1'
-                          and po_use_point >= '$remaining' ";
-            sql_query($sql);
+                          and po_use_point >= :rem ",
+                        [':rem' => $remaining, ':po_expire_date' => $po_expire_date, ':po_id' => $row['po_id']]);
 
             if (get_sql_affected_rows() > 0) {
                 $remaining = 0;
                 break;
             }
-            // 0건 = 다른 프로세스가 이 행을 먼저 변경 → 재시도
         } else {
             // 사용분 전체 환원
             $consume = $row_used;
-            $sql = " update {$g5['point_table']}
+            sql_pdo_query(" update {$g5['point_table']}
                         set po_use_point = '0',
                             po_expired = '0',
-                            po_expire_date = '$po_expire_date'
-                        where po_id = '{$row['po_id']}'
+                            po_expire_date = :po_expire_date
+                        where po_id = :po_id
                           and po_expired = '1'
-                          and po_use_point = '{$row['po_use_point']}' ";
-            sql_query($sql);
+                          and po_use_point = :prev_use_point ",
+                        [':po_expire_date' => $po_expire_date, ':po_id' => $row['po_id'], ':prev_use_point' => $row['po_use_point']]);
 
             if (get_sql_affected_rows() > 0) {
                 $remaining -= $consume;
             }
-            // 0건 = 다른 프로세스가 이 행을 먼저 변경 → 재시도
         }
     }
 }
@@ -1442,19 +1448,22 @@ function get_point_sum($mb_id)
             $po_expire_date = G5_TIME_YMD;
             $po_expired = 1;
 
-            $sql = " insert into {$g5['point_table']}
-                        set mb_id = '$mb_id',
-                            po_datetime = '".G5_TIME_YMDHIS."',
-                            po_content = '".addslashes($content)."',
-                            po_point = '$point',
-                            po_use_point = '0',
-                            po_mb_point = '$po_mb_point',
-                            po_expired = '$po_expired',
-                            po_expire_date = '$po_expire_date',
-                            po_rel_table = '$rel_table',
-                            po_rel_id = '$rel_id',
-                            po_rel_action = '$rel_action' ";
-            sql_query($sql);
+            sql_pdo_query(" insert into {$g5['point_table']} set
+                                mb_id          = :mb_id,
+                                po_datetime    = :po_datetime,
+                                po_content     = :po_content,
+                                po_point       = :po_point,
+                                po_use_point   = '0',
+                                po_mb_point    = :po_mb_point,
+                                po_expired     = :po_expired,
+                                po_expire_date = :po_expire_date,
+                                po_rel_table   = :rel_table,
+                                po_rel_id      = :rel_id,
+                                po_rel_action  = :rel_action ",
+                          [':mb_id' => $mb_id, ':po_datetime' => G5_TIME_YMDHIS, ':po_content' => $content,
+                           ':po_point' => $point, ':po_mb_point' => $po_mb_point,
+                           ':po_expired' => $po_expired, ':po_expire_date' => $po_expire_date,
+                           ':rel_table' => $rel_table, ':rel_id' => $rel_id, ':rel_action' => $rel_action]);
 
             // 포인트를 사용한 경우 포인트 내역에 사용금액 기록
             if($point < 0) {
@@ -1463,20 +1472,20 @@ function get_point_sum($mb_id)
         }
 
         // 유효기간이 있을 때 기간이 지난 포인트 expired 체크
-        $sql = " update {$g5['point_table']}
+        sql_pdo_query(" update {$g5['point_table']}
                     set po_expired = '1'
-                    where mb_id = '$mb_id'
+                    where mb_id = :mb_id
                       and po_expired <> '1'
                       and po_expire_date <> '9999-12-31'
-                      and po_expire_date < '".G5_TIME_YMD."' ";
-        sql_query($sql);
+                      and po_expire_date < :today ",
+                    [':mb_id' => $mb_id, ':today' => G5_TIME_YMD]);
     }
 
     // 포인트합
-    $sql = " select sum(po_point) as sum_po_point
+    $row = sql_pdo_fetch(" select sum(po_point) as sum_po_point
                 from {$g5['point_table']}
-                where mb_id = '$mb_id' ";
-    $row = sql_fetch($sql);
+                where mb_id = :mb_id ",
+                [':mb_id' => $mb_id]);
 
     return $row['sum_po_point'];
 }
@@ -1489,13 +1498,13 @@ function get_expire_point($mb_id)
     if($config['cf_point_term'] == 0)
         return 0;
 
-    $sql = " select sum(po_point - po_use_point) as sum_point
+    $row = sql_pdo_fetch(" select sum(po_point - po_use_point) as sum_point
                 from {$g5['point_table']}
-                where mb_id = '$mb_id'
+                where mb_id = :mb_id
                   and po_expired = '0'
                   and po_expire_date <> '9999-12-31'
-                  and po_expire_date < '".G5_TIME_YMD."' ";
-    $row = sql_fetch($sql);
+                  and po_expire_date < :today ",
+                [':mb_id' => $mb_id, ':today' => G5_TIME_YMD]);
 
     return $row['sum_point'];
 }
@@ -1509,12 +1518,12 @@ function delete_point($mb_id, $rel_table, $rel_id, $rel_action)
     if ($rel_table || $rel_id || $rel_action)
     {
         // 포인트 내역정보
-        $sql = " select * from {$g5['point_table']}
-                    where mb_id = '$mb_id'
-                      and po_rel_table = '$rel_table'
-                      and po_rel_id = '$rel_id'
-                      and po_rel_action = '$rel_action' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select * from {$g5['point_table']}
+                    where mb_id = :mb_id
+                      and po_rel_table = :rel_table
+                      and po_rel_id = :rel_id
+                      and po_rel_action = :rel_action ",
+                    [':mb_id' => $mb_id, ':rel_table' => $rel_table, ':rel_id' => $rel_id, ':rel_action' => $rel_action]);
 
         if (! (isset($row['po_id']) && $row['po_id'])) {
             return true;
@@ -1531,27 +1540,28 @@ function delete_point($mb_id, $rel_table, $rel_id, $rel_action)
             }
         }
 
-        $result = sql_query(" delete from {$g5['point_table']}
-                     where mb_id = '$mb_id'
-                       and po_rel_table = '$rel_table'
-                       and po_rel_id = '$rel_id'
-                       and po_rel_action = '$rel_action' ", false);
+        $result = sql_pdo_query(" delete from {$g5['point_table']}
+                     where mb_id = :mb_id
+                       and po_rel_table = :rel_table
+                       and po_rel_id = :rel_id
+                       and po_rel_action = :rel_action ",
+                     [':mb_id' => $mb_id, ':rel_table' => $rel_table, ':rel_id' => $rel_id, ':rel_action' => $rel_action], false);
 
         // po_mb_point에 반영
         if(isset($row['po_point'])) {
-            $sql = " update {$g5['point_table']}
-                        set po_mb_point = po_mb_point - '{$row['po_point']}'
-                        where mb_id = '$mb_id'
-                          and po_id > '{$row['po_id']}' ";
-            sql_query($sql);
+            sql_pdo_query(" update {$g5['point_table']}
+                        set po_mb_point = po_mb_point - :po_point
+                        where mb_id = :mb_id
+                          and po_id > :po_id ",
+                        [':po_point' => $row['po_point'], ':mb_id' => $mb_id, ':po_id' => $row['po_id']]);
         }
 
         // 포인트 내역의 합을 구하고
         $sum_point = get_point_sum($mb_id);
 
         // 포인트 UPDATE
-        $sql = " update {$g5['member_table']} set mb_point = '$sum_point' where mb_id = '$mb_id' ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" update {$g5['member_table']} set mb_point = :sum_point where mb_id = :mb_id ",
+                                [':sum_point' => $sum_point, ':mb_id' => $mb_id]);
     }
 
     return $result;
