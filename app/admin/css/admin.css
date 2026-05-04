@@ -15,8 +15,16 @@
  * 이런 FOUC-방지용 기본 utility 만 정적 CSS 로 미리 깔아둔다.
  * !important 는 쓰지 않는다 — UnoCSS 의 .lg:flex 같은 responsive 변형이 source 순서로
  * 자연스럽게 .hidden 을 덮어써야 하기 때문. */
+/* 핵심 display utility — UnoCSS 가 처리하기 전 paint 시점에 span 등이 기본 inline 으로
+ * 잠깐 보이는 현상 방지. 자주 쓰는 것들만 정적으로 미리. */
 .hidden { display: none; }
 [hidden] { display: none; }
+.block { display: block; }
+.inline { display: inline; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
 
 /* UnoCSS 가 처리하기 전 paint 시점에 잘못 표시되는 변형 utility 들을 정적으로 미리.
  * 특히 테마 토글의 두 아이콘 (block dark:hidden / hidden dark:block) 이 동시에 잠깐
