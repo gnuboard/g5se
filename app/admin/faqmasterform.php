@@ -15,8 +15,8 @@ auth_check_menu($auth, $sub_menu, 'w');
 $w     = isset($_GET['w']) ? (string)$_GET['w'] : '';
 $fm_id = isset($_GET['fm_id']) ? (int)$_GET['fm_id'] : 0;
 
-// 모바일 컬럼 lazy migration
-sql_query(" ALTER TABLE `{$g5['faq_master_table']}` ADD `fm_mobile_head_html` text NOT NULL AFTER `fm_tail_html`, ADD `fm_mobile_tail_html` text NOT NULL AFTER `fm_mobile_head_html` ", false);
+// 모바일 컬럼 lazy migration — DDL placeholder 불가, sql_pdo_query 로 통일
+sql_pdo_query(" ALTER TABLE `{$g5['faq_master_table']}` ADD `fm_mobile_head_html` text NOT NULL AFTER `fm_tail_html`, ADD `fm_mobile_tail_html` text NOT NULL AFTER `fm_mobile_head_html` ", [], false);
 
 $fm_default = ['fm_id'=>0, 'fm_subject'=>'', 'fm_order'=>0, 'fm_head_html'=>'', 'fm_tail_html'=>'', 'fm_mobile_head_html'=>'', 'fm_mobile_tail_html'=>''];
 

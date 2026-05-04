@@ -15,9 +15,9 @@ if (!isset($g5['faq_table']) || !isset($g5['faq_master_table'])) {
     die('<meta charset="utf-8">/data/dbconfig.php 파일에 <strong>$g5[\'faq_table\']</strong> 와 <strong>$g5[\'faq_master_table\']</strong> 를 추가해 주세요.');
 }
 
-// FAQ master 테이블 보장
-if (!sql_query(" DESCRIBE {$g5['faq_master_table']} ", false)) {
-    sql_query(
+// FAQ master 테이블 보장 — DDL 은 placeholder 못 받지만 sql_pdo_query 로 통일 (params 빈 배열)
+if (!sql_pdo_query(" DESCRIBE {$g5['faq_master_table']} ", [], false)) {
+    sql_pdo_query(
         " CREATE TABLE IF NOT EXISTS `{$g5['faq_master_table']}` (
             `fm_id` int(11) NOT NULL AUTO_INCREMENT,
             `fm_subject` varchar(255) NOT NULL DEFAULT '',
@@ -25,12 +25,13 @@ if (!sql_query(" DESCRIBE {$g5['faq_master_table']} ", false)) {
             `fm_tail_html` text NOT NULL,
             `fm_order` int(11) NOT NULL DEFAULT '0',
             PRIMARY KEY (`fm_id`)
-          ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", true);
-    sql_query(" insert into `{$g5['faq_master_table']}` set fm_id = '1', fm_subject = '자주하시는 질문' ", false);
+          ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", [], true);
+    sql_pdo_query(" insert into `{$g5['faq_master_table']}` set fm_id = :fm_id, fm_subject = :fm_subject ",
+                  [':fm_id' => 1, ':fm_subject' => '자주하시는 질문'], false);
 }
 // FAQ 항목 테이블 보장
-if (!sql_query(" DESCRIBE {$g5['faq_table']} ", false)) {
-    sql_query(
+if (!sql_pdo_query(" DESCRIBE {$g5['faq_table']} ", [], false)) {
+    sql_pdo_query(
         " CREATE TABLE IF NOT EXISTS `{$g5['faq_table']}` (
             `fa_id` int(11) NOT NULL AUTO_INCREMENT,
             `fm_id` int(11) NOT NULL DEFAULT '0',
@@ -39,7 +40,7 @@ if (!sql_query(" DESCRIBE {$g5['faq_table']} ", false)) {
             `fa_order` int(11) NOT NULL DEFAULT '0',
             PRIMARY KEY (`fa_id`),
             KEY `fm_id` (`fm_id`)
-          ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", true);
+          ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", [], true);
 }
 
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;

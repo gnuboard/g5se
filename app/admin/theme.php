@@ -21,7 +21,8 @@ if ($is_admin !== 'super') {
 
 // cf_theme 컬럼 lazy migration
 if (!isset($config['cf_theme'])) {
-    sql_query(" ALTER TABLE `{$g5['config_table']}` ADD `cf_theme` varchar(255) NOT NULL DEFAULT '' AFTER `cf_title` ", true);
+    // DDL — placeholder 못 받음, sql_pdo_query 로 통일 (params 빈 배열)
+    sql_pdo_query(" ALTER TABLE `{$g5['config_table']}` ADD `cf_theme` varchar(255) NOT NULL DEFAULT '' AFTER `cf_title` ", [], true);
 }
 
 $theme = get_theme_dir();
