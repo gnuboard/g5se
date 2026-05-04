@@ -20,12 +20,14 @@ include_once('./qahead.php');
 $skin_file = $qa_skin_path.'/view.skin.php';
 
 if(is_file($skin_file)) {
-    $sql = " select * from {$g5['qa_content_table']} where qa_id = '$qa_id' ";
+    $sql = " select * from {$g5['qa_content_table']} where qa_id = :qa_id ";
+    $params = [':qa_id' => $qa_id];
     if(!$is_admin) {
-        $sql .= " and mb_id = '{$member['mb_id']}' ";
+        $sql .= " and mb_id = :mb_id ";
+        $params[':mb_id'] = $member['mb_id'];
     }
 
-    $view = sql_fetch($sql);
+    $view = sql_pdo_fetch($sql, $params);
 
     if(!(isset($view['qa_id']) && $view['qa_id']))
         alert('게시글이 존재하지 않습니다.\\n삭제되었거나 자신의 글이 아닌 경우입니다.');
@@ -47,16 +49,15 @@ if(is_file($skin_file)) {
         $view['content'] = search_font($stx, $view['content']);
 
     // 이전글, 다음글
-    $sql = " select qa_id, qa_subject
-                from {$g5['qa_content_table']}
-                where qa_type = '0' ";
+    $sql_nav_base = " select qa_id, qa_subject from {$g5['qa_content_table']} where qa_type = '0' ";
+    $nav_params = [':qa_num' => $view['qa_num']];
     if(!$is_admin) {
-        $sql .= " and mb_id = '{$member['mb_id']}' ";
+        $sql_nav_base .= " and mb_id = :mb_id ";
+        $nav_params[':mb_id'] = $member['mb_id'];
     }
 
     // 이전글
-    $prev_search = " and qa_num < '{$view['qa_num']}' order by qa_num desc limit 1 ";
-    $prev = sql_fetch($sql.$prev_search);
+    $prev = sql_pdo_fetch($sql_nav_base." and qa_num < :qa_num order by qa_num desc limit 1 ", $nav_params);
 
     $prev_href = '';
     if (isset($prev['qa_id']) && $prev['qa_id']) {
@@ -65,8 +66,7 @@ if(is_file($skin_file)) {
     }
 
     // 다음글
-    $next_search = " and qa_num > '{$view['qa_num']}' order by qa_num asc limit 1 ";
-    $next = sql_fetch($sql.$next_search);
+    $next = sql_pdo_fetch($sql_nav_base." and qa_num > :qa_num order by qa_num asc limit 1 ", $nav_params);
 
     $next_href = '';
     if (isset($next['qa_id']) && $next['qa_id']) {
@@ -76,15 +76,15 @@ if(is_file($skin_file)) {
 
 
     // 관련질문
-    $rows = 10;
-    $sql = " select *
+    $rows_i = 10;
+    $result = sql_pdo_query(" select *
                 from {$g5['qa_content_table']}
-                where qa_id <> '$qa_id'
-                  and qa_related = '{$view['qa_related']}'
+                where qa_id <> :qa_id
+                  and qa_related = :qa_related
                   and qa_type = '0'
                 order by qa_num, qa_type
-                limit 0, $rows ";
-    $result = sql_query($sql);
+                limit 0, {$rows_i} ",
+                [':qa_id' => $qa_id, ':qa_related' => $view['qa_related']]);
 
     $rel_list = array();
     $rel_count = 0;
@@ -125,11 +125,11 @@ if(is_file($skin_file)) {
     $answer_update_href = '';
     $answer_delete_href = '';
     if(!$view['qa_type'] && $view['qa_status']) {
-        $sql = " select *
+        $answer = sql_pdo_fetch(" select *
                     from {$g5['qa_content_table']}
                     where qa_type = '1'
-                      and qa_parent = '{$view['qa_id']}' ";
-        $answer = sql_fetch($sql);
+                      and qa_parent = :qa_parent ",
+                    [':qa_parent' => $view['qa_id']]);
 
         if($is_admin) {
             $answer_update_href = G5_BBS_URL.'/qawrite.php?w=u&amp;qa_id='.$answer['qa_id'].$qstr;

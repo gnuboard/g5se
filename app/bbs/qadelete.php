@@ -28,10 +28,10 @@ if(!$count)
 for($i=0; $i<$count; $i++) {
     $qa_id = (int) $tmp_array[$i];
 
-    $sql = " select qa_id, mb_id, qa_type, qa_status, qa_parent, qa_content, qa_file1, qa_file2
+    $row = sql_pdo_fetch(" select qa_id, mb_id, qa_type, qa_status, qa_parent, qa_content, qa_file1, qa_file2
                 from {$g5['qa_content_table']}
-                where qa_id = '$qa_id' ";
-    $row = sql_fetch($sql);
+                where qa_id = :qa_id ",
+                [':qa_id' => $qa_id]);
 
     if(!$row['qa_id'])
         continue;
@@ -58,7 +58,8 @@ for($i=0; $i<$count; $i++) {
 
     // 답변이 있는 질문글이라면 답변글 삭제
     if (!$row['qa_type'] && $row['qa_status']) {
-        $answer = sql_fetch(" SELECT qa_id, qa_content, qa_file1, qa_file2 from {$g5['qa_content_table']} where qa_type = 1 AND qa_parent = {$qa_id} ");
+        $answer = sql_pdo_fetch(" SELECT qa_id, qa_content, qa_file1, qa_file2 from {$g5['qa_content_table']} where qa_type = 1 AND qa_parent = :qa_parent ",
+                                [':qa_parent' => $qa_id]);
         // 첨부파일 삭제
         for ($k = 1; $k <= 2; $k++) {
             @unlink(G5_DATA_PATH . '/qa/' . clean_relative_paths($answer['qa_file' . $k]));
@@ -72,17 +73,20 @@ for($i=0; $i<$count; $i++) {
         delete_editor_thumbnail($answer['qa_content']);
 
         // 답변글 삭제
-        sql_query(" DELETE from {$g5['qa_content_table']} where qa_type = 1 and qa_parent = {$qa_id} ");
+        sql_pdo_query(" DELETE from {$g5['qa_content_table']} where qa_type = 1 and qa_parent = :qa_parent ",
+                      [':qa_parent' => $qa_id]);
         $deleted[] = (int) $answer['qa_id'];
     }
 
     // 답변글 삭제시 질문글의 상태변경
     if($row['qa_type']) {
-        sql_query(" update {$g5['qa_content_table']} set qa_status = '0' where qa_id = '{$row['qa_parent']}' ");
+        sql_pdo_query(" update {$g5['qa_content_table']} set qa_status = '0' where qa_id = :qa_id ",
+                      [':qa_id' => $row['qa_parent']]);
     }
 
     // 글삭제
-    sql_query(" delete from {$g5['qa_content_table']} where qa_id = '$qa_id' ");
+    sql_pdo_query(" delete from {$g5['qa_content_table']} where qa_id = :qa_id ",
+                  [':qa_id' => $qa_id]);
     $deleted[] = $qa_id;
 }
 
