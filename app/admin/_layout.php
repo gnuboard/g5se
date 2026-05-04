@@ -78,14 +78,13 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <title><?php echo get_text($g5_title) ?></title>
     <!-- 다크모드 FOUC 방지 — data-theme 와 .dark 클래스를 동시에 토글 (UnoCSS dark: 변형이 .dark 셀렉터 사용) -->
     <script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <!-- UnoCSS reset (Tailwind 호환) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 (.legacy-admin-content) -->
     <link rel="stylesheet" href="/admin/css/admin.css">
+    <!-- Pretendard 는 admin 에서 미사용 — 시스템 폰트로 즉시 paint (font-swap 으로 인한
+         '창이 새로 뜨는' 느낌 차단). Apple SD Gothic Neo / Malgun Gothic / Noto Sans 등
+         OS 가 제공하는 한글 폰트가 가장 자연스럽고 빠름. -->
     <!-- admin shell 레이아웃은 admin.css 에 모두 정적으로 베이킹되어 있어 FOUC 가드 불필요.
          (가드를 두면 body invisible→visible 전환이 "창이 다시 뜨는" 느낌을 줘서 제거함.)
          브라우저는 stylesheet 가 도착하면 자연스럽게 progressive paint 한다. -->
@@ -97,7 +96,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <style>
-        html, body { font-family: 'Pretendard Variable','Pretendard',-apple-system,system-ui,sans-serif; }
+        html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     </style>
 </head>
 <body class="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
