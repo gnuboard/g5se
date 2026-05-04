@@ -123,6 +123,43 @@ window.delete_cookie = window.delete_cookie || function (n) {
     document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 };
 
+// 섹션 anchor 네비게이션 — 클릭 / 스크롤 시 active 상태 표시
+(function () {
+    var anchors = document.querySelectorAll('.legacy-admin-content ul.anchor a[href^="#"]');
+    if (!anchors.length) return;
+    var byHash = {};
+    anchors.forEach(function (a) {
+        var hash = a.getAttribute('href');
+        if (hash && hash.length > 1) {
+            (byHash[hash] = byHash[hash] || []).push(a);
+        }
+    });
+    function setActive(hash) {
+        document.querySelectorAll('.legacy-admin-content ul.anchor a.active').forEach(function (a) { a.classList.remove('active'); });
+        if (hash && byHash[hash]) byHash[hash].forEach(function (a) { a.classList.add('active'); });
+    }
+    // 1) 초기 hash 또는 첫 섹션 active
+    var initialHash = location.hash && byHash[location.hash] ? location.hash : Object.keys(byHash)[0];
+    setActive(initialHash);
+
+    // 2) 클릭 시 active 갱신
+    anchors.forEach(function (a) {
+        a.addEventListener('click', function () { setActive(a.getAttribute('href')); });
+    });
+
+    // 3) 스크롤 시 viewport 안의 첫 section 을 active 로 (가벼운 scroll-spy)
+    var sections = Array.from(document.querySelectorAll('.legacy-admin-content section[id]'));
+    if (sections.length) {
+        var observer = new IntersectionObserver(function (entries) {
+            // 가장 위쪽에 보이는 섹션 선택
+            var visible = entries.filter(function (e) { return e.isIntersecting; })
+                                 .sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+            if (visible.length) setActive('#' + visible[0].target.id);
+        }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+        sections.forEach(function (s) { observer.observe(s); });
+    }
+})();
+
 // 사이드뷰 (.sv_member / .sv_guest 클릭 시 같은 .sv_wrap 안의 .sv 토글)
 document.addEventListener('click', function (e) {
     var trigger = e.target.closest('.legacy-admin-content .sv_member, .legacy-admin-content .sv_guest');
