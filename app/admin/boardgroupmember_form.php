@@ -25,18 +25,24 @@ if (!$mb || empty($mb['mb_id'])) {
 
 // 회원이 속한 접근 그룹 목록
 $sql = " select * from {$g5['group_member_table']} a, {$g5['group_table']} b
-            where a.mb_id = '".addslashes($mb['mb_id'])."' and a.gr_id = b.gr_id ";
+            where a.mb_id = :mb_id and a.gr_id = b.gr_id ";
+$params = [':mb_id' => $mb['mb_id']];
 if ($is_admin !== 'super') {
-    $sql .= " and b.gr_admin = '".addslashes($member['mb_id'])."' ";
+    $sql .= " and b.gr_admin = :gr_admin ";
+    $params[':gr_admin'] = $member['mb_id'];
 }
 $sql .= " order by a.gr_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql, $params);
 
 // 추가 가능 그룹 (gr_use_access=1)
 $add_sql = " select * from {$g5['group_table']} where gr_use_access = 1 ";
-if ($is_admin !== 'super') $add_sql .= " and gr_admin = '".addslashes($member['mb_id'])."' ";
+$add_params = [];
+if ($is_admin !== 'super') {
+    $add_sql .= " and gr_admin = :gr_admin ";
+    $add_params[':gr_admin'] = $member['mb_id'];
+}
 $add_sql .= " order by gr_id ";
-$add_result = sql_query($add_sql);
+$add_result = sql_pdo_query($add_sql, $add_params);
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 

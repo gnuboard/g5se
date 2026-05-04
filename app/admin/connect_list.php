@@ -22,17 +22,17 @@ $where = " where 1=1 ";
 if ($filter === 'member') $where .= " and a.mb_id <> '' ";
 if ($filter === 'guest')  $where .= " and a.mb_id = '' ";
 
-$total_all    = (int)sql_fetch(" select count(*) as cnt from {$g5['login_table']} ")['cnt'];
-$total_member = (int)sql_fetch(" select count(*) as cnt from {$g5['login_table']} where mb_id <> '' ")['cnt'];
+$total_all    = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['login_table']} ")['cnt'];
+$total_member = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['login_table']} where mb_id <> '' ")['cnt'];
 $total_guest  = $total_all - $total_member;
 
-$sql = " select a.lo_id, a.mb_id, a.lo_ip, a.lo_datetime, a.lo_location, a.lo_url,
+// $where 는 'and a.mb_id <> ""' 같은 정적 조건문 (사용자 입력 보간 없음) — 보간 안전
+$result = sql_pdo_query(" select a.lo_id, a.mb_id, a.lo_ip, a.lo_datetime, a.lo_location, a.lo_url,
                 b.mb_nick, b.mb_name, b.mb_level, b.mb_email
             from {$g5['login_table']} a
             left join {$g5['member_table']} b on (a.mb_id = b.mb_id)
             {$where}
-            order by a.lo_datetime desc ";
-$result = sql_query($sql);
+            order by a.lo_datetime desc ");
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 

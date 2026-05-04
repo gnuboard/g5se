@@ -10,12 +10,12 @@ require_once __DIR__.'/_layout.php';
 global $g5;
 $today = G5_TIME_YMD;
 
-$stat_member_total = (int) sql_fetch("SELECT COUNT(*) AS c FROM {$g5['member_table']} WHERE mb_leave_date = '' AND mb_intercept_date = ''")['c'];
-$stat_member_today = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['member_table']} WHERE LEFT(mb_datetime, 10) = ?", [$today])['c'];
-$stat_post_total   = (int) sql_fetch("SELECT COUNT(*) AS c FROM {$g5['board_new_table']}")['c'];
-$stat_post_today   = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['board_new_table']} WHERE LEFT(bn_datetime, 10) = ?", [$today])['c'];
-$stat_qa_unanswered = (int) sql_fetch("SELECT COUNT(*) AS c FROM {$g5['qa_content_table']} WHERE qa_type = 0 AND qa_status = 0")['c'];
-$stat_connect      = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['login_table']} WHERE mb_id <> ?", [$GLOBALS['config']['cf_admin']])['c'];
+$stat_member_total = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['member_table']} WHERE mb_leave_date = '' AND mb_intercept_date = ''")['c'];
+$stat_member_today = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['member_table']} WHERE LEFT(mb_datetime, 10) = :today", [':today' => $today])['c'];
+$stat_post_total   = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['board_new_table']}")['c'];
+$stat_post_today   = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['board_new_table']} WHERE LEFT(bn_datetime, 10) = :today", [':today' => $today])['c'];
+$stat_qa_unanswered = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['qa_content_table']} WHERE qa_type = 0 AND qa_status = 0")['c'];
+$stat_connect      = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['login_table']} WHERE mb_id <> :cf_admin", [':cf_admin' => $GLOBALS['config']['cf_admin']])['c'];
 
 // 7일 추이 차트용 — 가입 / 게시물
 $days = [];
@@ -23,20 +23,20 @@ for ($i = 6; $i >= 0; $i--) $days[] = date('Y-m-d', strtotime("-$i days"));
 
 $chart_join = []; $chart_post = [];
 foreach ($days as $d) {
-    $chart_join[] = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['member_table']} WHERE LEFT(mb_datetime, 10) = ?", [$d])['c'];
-    $chart_post[] = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['board_new_table']} WHERE LEFT(bn_datetime, 10) = ?", [$d])['c'];
+    $chart_join[] = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['member_table']} WHERE LEFT(mb_datetime, 10) = :d", [':d' => $d])['c'];
+    $chart_post[] = (int) sql_pdo_fetch("SELECT COUNT(*) AS c FROM {$g5['board_new_table']} WHERE LEFT(bn_datetime, 10) = :d", [':d' => $d])['c'];
 }
 
 // 최근 가입 회원 5명
 $recent_members = [];
-$res = sql_query("SELECT mb_id, mb_nick, mb_datetime FROM {$g5['member_table']} WHERE mb_leave_date = '' ORDER BY mb_datetime DESC LIMIT 5");
+$res = sql_pdo_query("SELECT mb_id, mb_nick, mb_datetime FROM {$g5['member_table']} WHERE mb_leave_date = '' ORDER BY mb_datetime DESC LIMIT 5");
 while ($row = sql_fetch_array($res)) $recent_members[] = $row;
 
 // 최근 게시물 5개
 $recent_posts = [];
-$res = sql_query("SELECT bo_table, wr_id, wr_parent, bn_datetime, mb_id FROM {$g5['board_new_table']} ORDER BY bn_datetime DESC LIMIT 5");
+$res = sql_pdo_query("SELECT bo_table, wr_id, wr_parent, bn_datetime, mb_id FROM {$g5['board_new_table']} ORDER BY bn_datetime DESC LIMIT 5");
 while ($row = sql_fetch_array($res)) {
-    $w = sql_pdo_fetch("SELECT wr_subject, wr_name FROM {$g5['write_prefix']}{$row['bo_table']} WHERE wr_id = ?", [(int)$row['wr_id']]);
+    $w = sql_pdo_fetch("SELECT wr_subject, wr_name FROM {$g5['write_prefix']}{$row['bo_table']} WHERE wr_id = :wr_id", [':wr_id' => (int)$row['wr_id']]);
     if ($w) {
         $row['wr_subject'] = $w['wr_subject'];
         $row['wr_name']    = $w['wr_name'];

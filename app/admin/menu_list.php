@@ -38,7 +38,7 @@ sql_query(
           PRIMARY KEY (`me_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ", true);
 
-$result = sql_query(" select * from {$g5['menu_table']} order by me_id ");
+$result = sql_pdo_query(" select * from {$g5['menu_table']} order by me_id ");
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 

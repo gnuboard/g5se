@@ -27,13 +27,14 @@ $sst  = isset($_GET['sst']) ? (string)$_GET['sst'] : '';
 $sod  = isset($_GET['sod']) ? (string)$_GET['sod'] : '';
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 
-$gr_id_q = addslashes($gr_id);
 $sql_common = " from {$g5['group_member_table']} a left outer join {$g5['member_table']} b on (a.mb_id = b.mb_id) ";
-$sql_search = " where gr_id = '{$gr_id_q}' ";
+$sql_search = " where gr_id = :gr_id ";
+$params     = [':gr_id' => $gr_id];
 if ($stx !== '') {
-    $stx_q = addslashes($stx);
     if (!in_array($sfl, ['a.mb_id'], true)) $sfl = 'a.mb_id';
-    $sql_search .= " and ({$sfl} like '%{$stx_q}%') ";
+    // {$sfl} 은 화이트리스트 매칭된 컬럼명 — 식별자라 placeholder 못 받음, 보간 안전
+    $sql_search .= " and ({$sfl} like :stx) ";
+    $params[':stx'] = '%'.$stx.'%';
 }
 
 $allowed = ['gm_datetime','b.mb_id','b.mb_name','b.mb_nick','b.mb_today_login','a.gm_datetime'];
@@ -41,11 +42,12 @@ if (!$sst || !in_array($sst, $allowed, true)) { $sst = 'gm_datetime'; $sod = 'de
 if ($sod && !in_array(strtolower($sod), ['asc','desc'], true)) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
-$total_count = (int)sql_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ")['cnt'];
+$total_count = (int)sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ", $params)['cnt'];
 $rows = (int)$config['cf_page_rows'];
 $total_page = max(1, (int)ceil($total_count / max(1, $rows)));
 $from = ($page - 1) * $rows;
-$result = sql_query(" select * {$sql_common} {$sql_search} {$sql_order} limit {$from}, {$rows} ");
+// LIMIT 의 from/rows 는 (int) 캐스트 정수라 보간 안전
+$result = sql_pdo_query(" select * {$sql_common} {$sql_search} {$sql_order} limit {$from}, {$rows} ", $params);
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 

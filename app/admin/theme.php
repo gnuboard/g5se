@@ -32,7 +32,7 @@ $theme = array_values(array_unique($theme));
 $total_count = count($theme);
 
 if ($config['cf_theme'] && !in_array($config['cf_theme'], $theme)) {
-    sql_query(" update {$g5['config_table']} set cf_theme = '' ");
+    sql_pdo_query(" update {$g5['config_table']} set cf_theme = '' ");
     $config['cf_theme'] = '';
 }
 
