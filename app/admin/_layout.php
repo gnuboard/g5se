@@ -44,7 +44,11 @@ function admin_require_login(): void
 
 function admin_layout_start(string $title, string $active_key = ''): void
 {
-    global $is_admin, $member, $config;
+    global $is_admin, $member, $config, $sub_menu;
+
+    // 활성 매칭은 gnuboard 의 \$sub_menu 코드 (예: '300100') 로 자동 — 페이지마다
+    // 수동으로 \$active_key 를 넘길 필요 없음. \$active_key 는 옛 호환용 폴백.
+    $active_code = $sub_menu ?? '';
 
     // 가드 한 번 더 — admin_require_login 을 호출 안 했더라도 안전하게.
     admin_require_login();
@@ -107,9 +111,15 @@ function admin_layout_start(string $title, string $active_key = ''): void
                 }));
                 if (!$items) continue;
 
-                // 활성 항목이 이 그룹에 있으면 기본 펼침
+                // 활성 항목이 이 그룹에 있으면 기본 펼침 — code 매칭 우선, key 매칭 폴백
                 $group_has_active = false;
-                foreach ($items as $it) { if ($it['key'] === $active_key) { $group_has_active = true; break; } }
+                foreach ($items as $it) {
+                    if (($active_code !== '' && isset($it['code']) && $it['code'] === $active_code)
+                        || ($active_key !== '' && $it['key'] === $active_key)) {
+                        $group_has_active = true;
+                        break;
+                    }
+                }
                 // 그룹 ID — admin.menu{N}.php 의 숫자 N 을 사용 (_menu.php 가 _id 로 노출).
                 // 파일명 숫자는 안정적/고유하므로 한글 그룹명 정규식 충돌 문제 없음.
                 $group_id = 'navgrp-'.($group['_id'] ?? $group_index);
@@ -121,7 +131,8 @@ function admin_layout_start(string $title, string $active_key = ''): void
                 </summary>
                 <ul class="mt-1">
                     <?php foreach ($items as $item) {
-                        $is_active = ($item['key'] === $active_key);
+                        $is_active = ($active_code !== '' && isset($item['code']) && $item['code'] === $active_code)
+                                  || ($active_key !== '' && $item['key'] === $active_key);
                     ?>
                     <li>
                         <a href="<?php echo $item['url'] ?>"

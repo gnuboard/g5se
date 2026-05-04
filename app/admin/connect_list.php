@@ -11,7 +11,7 @@ admin_require_login();
 require_once G5_PATH.'/adm/admin.lib.php';
 
 // 일반 admin 도 접근 가능 (level '' = 모두 / 'super' 만은 메뉴에서 super 제한)
-$sub_menu = '200900';   // 보통 g5_auth 에 등록 안 되어 있어도 super 면 통과
+$sub_menu = '200999';   // 모던 admin 추가 (gnuboard 원본 없음). super 만 통과
 if ($is_admin === 'super') {
     auth_check_menu($auth, $sub_menu, 'r');
 }

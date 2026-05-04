@@ -1,5 +1,6 @@
 <?php
 // admin 대시보드 — /admin
+$sub_menu = '000000';   // 사이드바 active 매칭용 (대시보드)
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 
