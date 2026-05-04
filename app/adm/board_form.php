@@ -5,8 +5,7 @@ require_once G5_EDITOR_LIB;
 
 auth_check_menu($auth, $sub_menu, 'w');
 
-$sql = " select count(*) as cnt from {$g5['group_table']} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_table']} ");
 if (!$row['cnt']) {
     alert('게시판그룹이 한개 이상 생성되어야 합니다.', './boardgroup_form.php');
 }
@@ -49,7 +48,7 @@ if (!isset($board['bo_use_cert'])) {
 if (!isset($board['bo_use_sns'])) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_sns` TINYINT NOT NULL DEFAULT '0' AFTER `bo_use_cert` ", false);
 
-    $result = sql_query(" select bo_table from `{$g5['board_table']}` ");
+    $result = sql_pdo_query(" select bo_table from `{$g5['board_table']}` ");
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         sql_query(
             " ALTER TABLE `{$g5['write_prefix']}{$row['bo_table']}`
@@ -59,8 +58,7 @@ if (!isset($board['bo_use_sns'])) {
     }
 }
 
-$sql = " SHOW COLUMNS FROM `{$g5['board_table']}` LIKE 'bo_use_cert' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" SHOW COLUMNS FROM `{$g5['board_table']}` LIKE 'bo_use_cert' ");
 if (strpos($row['Type'], 'hp-') === false) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` CHANGE `bo_use_cert` `bo_use_cert` ENUM('','cert','adult','hp-cert','hp-adult') NOT NULL DEFAULT '' ", false);
 }

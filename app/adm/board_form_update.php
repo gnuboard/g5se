@@ -189,161 +189,174 @@ for ($i = 1; $i <= 10; $i++) {
     $etcs['bo_' . $i] = ${'bo_' . $i} = isset($_POST['bo_' . $i]) ? $_POST['bo_' . $i] : '';
 }
 
-$sql_common = " gr_id               = '{$gr_id}',
-                bo_subject          = '{$bo_subject}',
-                bo_mobile_subject   = '{$bo_mobile_subject}',
-                bo_device           = '{$bo_device}',
-                bo_admin            = '{$bo_admin}',
-                bo_list_level       = '{$bo_list_level}',
-                bo_read_level       = '{$bo_read_level}',
-                bo_write_level      = '{$bo_write_level}',
-                bo_reply_level      = '{$bo_reply_level}',
-                bo_comment_level    = '{$bo_comment_level}',
-                bo_html_level       = '{$bo_html_level}',
-                bo_link_level       = '{$bo_link_level}',
-                bo_count_modify     = '{$bo_count_modify}',
-                bo_count_delete     = '{$bo_count_delete}',
-                bo_upload_level     = '{$bo_upload_level}',
-                bo_download_level   = '{$bo_download_level}',
-                bo_read_point       = '{$bo_read_point}',
-                bo_write_point      = '{$bo_write_point}',
-                bo_comment_point    = '{$bo_comment_point}',
-                bo_download_point   = '{$bo_download_point}',
-                bo_use_category     = '{$bo_use_category}',
-                bo_category_list    = '{$str_bo_category_list}',
-                bo_use_sideview     = '{$bo_use_sideview}',
-                bo_use_file_content = '{$bo_use_file_content}',
-                bo_use_secret       = '{$bo_use_secret}',
-                bo_use_dhtml_editor = '{$bo_use_dhtml_editor}',
-                bo_select_editor    = '{$bo_select_editor}',
-                bo_use_rss_view     = '{$bo_use_rss_view}',
-                bo_use_good         = '{$bo_use_good}',
-                bo_use_nogood       = '{$bo_use_nogood}',
-                bo_use_name         = '{$bo_use_name}',
-                bo_use_signature    = '{$bo_use_signature}',
-                bo_use_ip_view      = '{$bo_use_ip_view}',
-                bo_use_list_view    = '{$bo_use_list_view}',
-                bo_use_list_file    = '{$bo_use_list_file}',
-                bo_use_list_content = '{$bo_use_list_content}',
-                bo_use_email        = '{$bo_use_email}',
-                bo_use_cert         = '{$bo_use_cert}',
-                bo_use_sns          = '{$bo_use_sns}',
-                bo_use_captcha      = '{$bo_use_captcha}',
-                bo_table_width      = '{$bo_table_width}',
-                bo_subject_len      = '{$bo_subject_len}',
-                bo_mobile_subject_len      = '{$bo_mobile_subject_len}',
-                bo_page_rows        = '{$bo_page_rows}',
-                bo_mobile_page_rows = '{$bo_mobile_page_rows}',
-                bo_new              = '{$bo_new}',
-                bo_hot              = '{$bo_hot}',
-                bo_image_width      = '{$bo_image_width}',
-                bo_skin             = '{$bo_skin}',
-                bo_mobile_skin      = '{$bo_mobile_skin}',
-                ";
+// PDO named placeholder 빌드 — SET 절은 :col_name 형태, params 는 [':col_name' => $value] dict.
+// 컬럼명과 placeholder 이름이 1:1 매칭되어 순서/누락에 의한 혼동 0.
+$sql_set    = " gr_id = :gr_id, bo_subject = :bo_subject, bo_mobile_subject = :bo_mobile_subject,
+                bo_device = :bo_device, bo_admin = :bo_admin,
+                bo_list_level = :bo_list_level, bo_read_level = :bo_read_level, bo_write_level = :bo_write_level,
+                bo_reply_level = :bo_reply_level, bo_comment_level = :bo_comment_level,
+                bo_html_level = :bo_html_level, bo_link_level = :bo_link_level,
+                bo_count_modify = :bo_count_modify, bo_count_delete = :bo_count_delete,
+                bo_upload_level = :bo_upload_level, bo_download_level = :bo_download_level,
+                bo_read_point = :bo_read_point, bo_write_point = :bo_write_point,
+                bo_comment_point = :bo_comment_point, bo_download_point = :bo_download_point,
+                bo_use_category = :bo_use_category, bo_category_list = :bo_category_list,
+                bo_use_sideview = :bo_use_sideview, bo_use_file_content = :bo_use_file_content,
+                bo_use_secret = :bo_use_secret, bo_use_dhtml_editor = :bo_use_dhtml_editor,
+                bo_select_editor = :bo_select_editor, bo_use_rss_view = :bo_use_rss_view,
+                bo_use_good = :bo_use_good, bo_use_nogood = :bo_use_nogood,
+                bo_use_name = :bo_use_name, bo_use_signature = :bo_use_signature,
+                bo_use_ip_view = :bo_use_ip_view, bo_use_list_view = :bo_use_list_view,
+                bo_use_list_file = :bo_use_list_file, bo_use_list_content = :bo_use_list_content,
+                bo_use_email = :bo_use_email, bo_use_cert = :bo_use_cert,
+                bo_use_sns = :bo_use_sns, bo_use_captcha = :bo_use_captcha,
+                bo_table_width = :bo_table_width, bo_subject_len = :bo_subject_len,
+                bo_mobile_subject_len = :bo_mobile_subject_len,
+                bo_page_rows = :bo_page_rows, bo_mobile_page_rows = :bo_mobile_page_rows,
+                bo_new = :bo_new, bo_hot = :bo_hot, bo_image_width = :bo_image_width,
+                bo_skin = :bo_skin, bo_mobile_skin = :bo_mobile_skin ";
+$sql_params = [
+    ':gr_id'                => $gr_id,
+    ':bo_subject'           => $bo_subject,
+    ':bo_mobile_subject'    => $bo_mobile_subject,
+    ':bo_device'            => $bo_device,
+    ':bo_admin'             => $bo_admin,
+    ':bo_list_level'        => $bo_list_level,
+    ':bo_read_level'        => $bo_read_level,
+    ':bo_write_level'       => $bo_write_level,
+    ':bo_reply_level'       => $bo_reply_level,
+    ':bo_comment_level'     => $bo_comment_level,
+    ':bo_html_level'        => $bo_html_level,
+    ':bo_link_level'        => $bo_link_level,
+    ':bo_count_modify'      => $bo_count_modify,
+    ':bo_count_delete'      => $bo_count_delete,
+    ':bo_upload_level'      => $bo_upload_level,
+    ':bo_download_level'    => $bo_download_level,
+    ':bo_read_point'        => $bo_read_point,
+    ':bo_write_point'       => $bo_write_point,
+    ':bo_comment_point'     => $bo_comment_point,
+    ':bo_download_point'    => $bo_download_point,
+    ':bo_use_category'      => $bo_use_category,
+    ':bo_category_list'     => $str_bo_category_list,
+    ':bo_use_sideview'      => $bo_use_sideview,
+    ':bo_use_file_content'  => $bo_use_file_content,
+    ':bo_use_secret'        => $bo_use_secret,
+    ':bo_use_dhtml_editor'  => $bo_use_dhtml_editor,
+    ':bo_select_editor'     => $bo_select_editor,
+    ':bo_use_rss_view'      => $bo_use_rss_view,
+    ':bo_use_good'          => $bo_use_good,
+    ':bo_use_nogood'        => $bo_use_nogood,
+    ':bo_use_name'          => $bo_use_name,
+    ':bo_use_signature'     => $bo_use_signature,
+    ':bo_use_ip_view'       => $bo_use_ip_view,
+    ':bo_use_list_view'     => $bo_use_list_view,
+    ':bo_use_list_file'     => $bo_use_list_file,
+    ':bo_use_list_content'  => $bo_use_list_content,
+    ':bo_use_email'         => $bo_use_email,
+    ':bo_use_cert'          => $bo_use_cert,
+    ':bo_use_sns'           => $bo_use_sns,
+    ':bo_use_captcha'       => $bo_use_captcha,
+    ':bo_table_width'       => $bo_table_width,
+    ':bo_subject_len'       => $bo_subject_len,
+    ':bo_mobile_subject_len'=> $bo_mobile_subject_len,
+    ':bo_page_rows'         => $bo_page_rows,
+    ':bo_mobile_page_rows'  => $bo_mobile_page_rows,
+    ':bo_new'               => $bo_new,
+    ':bo_hot'               => $bo_hot,
+    ':bo_image_width'       => $bo_image_width,
+    ':bo_skin'              => $bo_skin,
+    ':bo_mobile_skin'       => $bo_mobile_skin,
+];
 
 // 최고 관리자인 경우에만 수정가능
 if ($is_admin === 'super') {
-    $sql_common .= " bo_include_head     = '" . $bo_include_head . "',
-                bo_include_tail     = '" . $bo_include_tail . "',
-                bo_content_head     = '{$bo_content_head}',
-                bo_content_tail     = '{$bo_content_tail}',
-                bo_mobile_content_head     = '{$bo_mobile_content_head}',
-                bo_mobile_content_tail     = '{$bo_mobile_content_tail}',
-                ";
+    $sql_set .= ", bo_include_head = :bo_include_head, bo_include_tail = :bo_include_tail,
+                   bo_content_head = :bo_content_head, bo_content_tail = :bo_content_tail,
+                   bo_mobile_content_head = :bo_mobile_content_head,
+                   bo_mobile_content_tail = :bo_mobile_content_tail";
+    $sql_params[':bo_include_head']        = $bo_include_head;
+    $sql_params[':bo_include_tail']        = $bo_include_tail;
+    $sql_params[':bo_content_head']        = $bo_content_head;
+    $sql_params[':bo_content_tail']        = $bo_content_tail;
+    $sql_params[':bo_mobile_content_head'] = $bo_mobile_content_head;
+    $sql_params[':bo_mobile_content_tail'] = $bo_mobile_content_tail;
 }
 
-$sql_common .= " bo_insert_content   = '{$bo_insert_content}',
-                bo_gallery_cols     = '{$bo_gallery_cols}',
-                bo_gallery_width    = '{$bo_gallery_width}',
-                bo_gallery_height   = '{$bo_gallery_height}',
-                bo_mobile_gallery_width = '{$bo_mobile_gallery_width}',
-                bo_mobile_gallery_height= '{$bo_mobile_gallery_height}',
-                bo_upload_count     = '{$bo_upload_count}',
-                bo_upload_size      = '{$bo_upload_size}',
-                bo_reply_order      = '{$bo_reply_order}',
-                bo_use_search       = '{$bo_use_search}',
-                bo_order            = '{$bo_order}',
-                bo_write_min        = '{$bo_write_min}',
-                bo_write_max        = '{$bo_write_max}',
-                bo_comment_min      = '{$bo_comment_min}',
-                bo_comment_max      = '{$bo_comment_max}',
-                bo_sort_field       = '{$bo_sort_field}',
-                bo_1_subj           = '{$bo_1_subj}',
-                bo_2_subj           = '{$bo_2_subj}',
-                bo_3_subj           = '{$bo_3_subj}',
-                bo_4_subj           = '{$bo_4_subj}',
-                bo_5_subj           = '{$bo_5_subj}',
-                bo_6_subj           = '{$bo_6_subj}',
-                bo_7_subj           = '{$bo_7_subj}',
-                bo_8_subj           = '{$bo_8_subj}',
-                bo_9_subj           = '{$bo_9_subj}',
-                bo_10_subj          = '{$bo_10_subj}',
-                bo_1                = '{$bo_1}',
-                bo_2                = '{$bo_2}',
-                bo_3                = '{$bo_3}',
-                bo_4                = '{$bo_4}',
-                bo_5                = '{$bo_5}',
-                bo_6                = '{$bo_6}',
-                bo_7                = '{$bo_7}',
-                bo_8                = '{$bo_8}',
-                bo_9                = '{$bo_9}',
-                bo_10               = '{$bo_10}' ";
+$sql_set .= ", bo_insert_content = :bo_insert_content, bo_gallery_cols = :bo_gallery_cols,
+              bo_gallery_width = :bo_gallery_width, bo_gallery_height = :bo_gallery_height,
+              bo_mobile_gallery_width = :bo_mobile_gallery_width,
+              bo_mobile_gallery_height = :bo_mobile_gallery_height,
+              bo_upload_count = :bo_upload_count, bo_upload_size = :bo_upload_size,
+              bo_reply_order = :bo_reply_order, bo_use_search = :bo_use_search,
+              bo_order = :bo_order, bo_write_min = :bo_write_min, bo_write_max = :bo_write_max,
+              bo_comment_min = :bo_comment_min, bo_comment_max = :bo_comment_max,
+              bo_sort_field = :bo_sort_field,
+              bo_1_subj = :bo_1_subj, bo_2_subj = :bo_2_subj, bo_3_subj = :bo_3_subj,
+              bo_4_subj = :bo_4_subj, bo_5_subj = :bo_5_subj, bo_6_subj = :bo_6_subj,
+              bo_7_subj = :bo_7_subj, bo_8_subj = :bo_8_subj, bo_9_subj = :bo_9_subj,
+              bo_10_subj = :bo_10_subj,
+              bo_1 = :bo_1, bo_2 = :bo_2, bo_3 = :bo_3, bo_4 = :bo_4, bo_5 = :bo_5,
+              bo_6 = :bo_6, bo_7 = :bo_7, bo_8 = :bo_8, bo_9 = :bo_9, bo_10 = :bo_10 ";
+$sql_params[':bo_insert_content']        = $bo_insert_content;
+$sql_params[':bo_gallery_cols']          = $bo_gallery_cols;
+$sql_params[':bo_gallery_width']         = $bo_gallery_width;
+$sql_params[':bo_gallery_height']        = $bo_gallery_height;
+$sql_params[':bo_mobile_gallery_width']  = $bo_mobile_gallery_width;
+$sql_params[':bo_mobile_gallery_height'] = $bo_mobile_gallery_height;
+$sql_params[':bo_upload_count']          = $bo_upload_count;
+$sql_params[':bo_upload_size']           = $bo_upload_size;
+$sql_params[':bo_reply_order']           = $bo_reply_order;
+$sql_params[':bo_use_search']            = $bo_use_search;
+$sql_params[':bo_order']                 = $bo_order;
+$sql_params[':bo_write_min']             = $bo_write_min;
+$sql_params[':bo_write_max']             = $bo_write_max;
+$sql_params[':bo_comment_min']           = $bo_comment_min;
+$sql_params[':bo_comment_max']           = $bo_comment_max;
+$sql_params[':bo_sort_field']            = $bo_sort_field;
+for ($n = 1; $n <= 10; $n++) {
+    $sql_params[":bo_{$n}_subj"] = ${'bo_' . $n . '_subj'};
+    $sql_params[":bo_{$n}"]      = ${'bo_' . $n};
+}
 
 if ($w == '') {
-    $row = sql_fetch(" select count(*) as cnt from {$g5['board_table']} where bo_table = '{$bo_table}' ");
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_table']} where bo_table = :bo_table ",
+                         [':bo_table' => $bo_table]);
     if ($row['cnt']) {
         alert($bo_table . ' 은(는) 이미 존재하는 TABLE 입니다.');
     }
 
-    $sql = " insert into {$g5['board_table']}
-                set bo_table = '{$bo_table}',
-                    bo_count_write = '0',
-                    bo_count_comment = '0',
-                    $sql_common ";
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['board_table']} set bo_table = :bo_table,
+                    bo_count_write = '0', bo_count_comment = '0', {$sql_set} ",
+                  array_merge([':bo_table' => $bo_table], $sql_params));
 
-    // 게시판 테이블 생성
+    // 게시판 테이블 생성 (DDL — placeholder 못 받음)
     $file = file('./sql_write.sql');
     $file = get_db_create_replace($file);
 
     $sql = implode("\n", $file);
-
     $create_table = $g5['write_prefix'] . $bo_table;
 
-    // sql_board.sql 파일의 테이블명을 변환
     $source = array('/__TABLE_NAME__/', '/;/');
     $target = array($create_table, '');
     $sql = preg_replace($source, $target, $sql);
     sql_query($sql, false);
 } elseif ($w == 'u') {
-    // 게시판의 글 수
-    $sql = " select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 0 ";
-    $row = sql_fetch($sql);
+    // 게시판의 글 수 — write_prefix + bo_table 은 화이트리스트 (admin 검증) 식별자라 보간 안전
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 0 ");
     $bo_count_write = $row['cnt'];
 
     // 게시판의 코멘트 수
-    $sql = " select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 1 ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 1 ");
     $bo_count_comment = $row['cnt'];
 
     // 글수 조정
-    /*
-        엔피씨님의 팁으로 교체합니다. 130308
-        http://sir.kr/g5_tiptech/27207
-    */
     if (isset($_POST['proc_count'])) {
-        // 원글을 얻습니다.
-        //$sql = " select wr_id from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 0 ";
-        $sql = " select a.wr_id, (count(b.wr_parent) - 1) as cnt from {$g5['write_prefix']}{$bo_table} a, {$g5['write_prefix']}{$bo_table} b where a.wr_id=b.wr_parent and a.wr_is_comment=0 group by a.wr_id ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select a.wr_id, (count(b.wr_parent) - 1) as cnt
+                                    from {$g5['write_prefix']}{$bo_table} a, {$g5['write_prefix']}{$bo_table} b
+                                   where a.wr_id=b.wr_parent and a.wr_is_comment=0 group by a.wr_id ");
         for ($i = 0; $row = sql_fetch_array($result); $i++) {
-            /*
-            // 코멘트수를 얻습니다.
-            $sql2 = " select count(*) as cnt from {$g5['write_prefix']}$bo_table where wr_parent = '{$row['wr_id']}' and wr_is_comment = 1 ";
-            $row2 = sql_fetch($sql2);
-            */
-
-            sql_query(" update {$g5['write_prefix']}{$bo_table} set wr_comment = '{$row['cnt']}' where wr_id = '{$row['wr_id']}' ");
+            sql_pdo_query(" update {$g5['write_prefix']}{$bo_table} set wr_comment = :cnt where wr_id = :wr_id ",
+                          [':cnt' => $row['cnt'], ':wr_id' => $row['wr_id']]);
         }
     }
 
@@ -354,7 +367,8 @@ if ($w == '') {
         $tmp_array = explode(",", $board['bo_notice']);
         for ($i = 0; $i < count($tmp_array); $i++) {
             $tmp_wr_id = trim($tmp_array[$i]);
-            $row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_id = '{$tmp_wr_id}' ");
+            $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_id = :wr_id ",
+                                 [':wr_id' => $tmp_wr_id]);
             if ($row['cnt']) {
                 $bo_notice .= $lf . $tmp_wr_id;
                 $lf = ",";
@@ -362,193 +376,204 @@ if ($w == '') {
         }
     }
 
-    $sql = " update {$g5['board_table']}
-                set bo_notice = '{$bo_notice}',
-                    bo_count_write = '{$bo_count_write}',
-                    bo_count_comment = '{$bo_count_comment}',
-                    {$sql_common}
-              where bo_table = '{$bo_table}' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['board_table']}
+                set bo_notice = :bo_notice, bo_count_write = :bo_count_write,
+                    bo_count_comment = :bo_count_comment, {$sql_set}
+              where bo_table = :_bo_table_where ",
+              array_merge([
+                  ':bo_notice'        => $bo_notice,
+                  ':bo_count_write'   => $bo_count_write,
+                  ':bo_count_comment' => $bo_count_comment,
+                  ':_bo_table_where'  => $bo_table,
+              ], $sql_params));
 }
 
 
 // 같은 그룹내 게시판 동일 옵션 적용
 $grp_fields = '';
-if (is_checked('chk_grp_device'))               $grp_fields .= " , bo_device = '{$bo_device}' ";
-if (is_checked('chk_grp_admin'))                $grp_fields .= " , bo_admin = '{$bo_admin}' ";
-if (is_checked('chk_grp_list_level'))           $grp_fields .= " , bo_list_level = '{$bo_list_level}' ";
-if (is_checked('chk_grp_read_level'))           $grp_fields .= " , bo_read_level = '{$bo_read_level}' ";
-if (is_checked('chk_grp_write_level'))          $grp_fields .= " , bo_write_level = '{$bo_write_level}' ";
-if (is_checked('chk_grp_reply_level'))          $grp_fields .= " , bo_reply_level = '{$bo_reply_level}' ";
-if (is_checked('chk_grp_comment_level'))        $grp_fields .= " , bo_comment_level = '{$bo_comment_level}' ";
-if (is_checked('chk_grp_link_level'))           $grp_fields .= " , bo_link_level = '{$bo_link_level}' ";
-if (is_checked('chk_grp_upload_level'))         $grp_fields .= " , bo_upload_level = '{$bo_upload_level}' ";
-if (is_checked('chk_grp_download_level'))       $grp_fields .= " , bo_download_level = '{$bo_download_level}' ";
-if (is_checked('chk_grp_html_level'))           $grp_fields .= " , bo_html_level = '{$bo_html_level}' ";
-if (is_checked('chk_grp_count_modify'))         $grp_fields .= " , bo_count_modify = '{$bo_count_modify}' ";
-if (is_checked('chk_grp_count_delete'))         $grp_fields .= " , bo_count_delete = '{$bo_count_delete}' ";
-if (is_checked('chk_grp_read_point'))           $grp_fields .= " , bo_read_point = '{$bo_read_point}' ";
-if (is_checked('chk_grp_write_point'))          $grp_fields .= " , bo_write_point = '{$bo_write_point}' ";
-if (is_checked('chk_grp_comment_point'))        $grp_fields .= " , bo_comment_point = '{$bo_comment_point}' ";
-if (is_checked('chk_grp_download_point'))       $grp_fields .= " , bo_download_point = '{$bo_download_point}' ";
+$grp_params = [];
+if (is_checked('chk_grp_device')) { $grp_fields .= " , bo_device = :grp_bo_device"; $grp_params[":grp_bo_device"] = $bo_device; }
+if (is_checked('chk_grp_admin')) { $grp_fields .= " , bo_admin = :grp_bo_admin"; $grp_params[":grp_bo_admin"] = $bo_admin; }
+if (is_checked('chk_grp_list_level')) { $grp_fields .= " , bo_list_level = :grp_bo_list_level"; $grp_params[":grp_bo_list_level"] = $bo_list_level; }
+if (is_checked('chk_grp_read_level')) { $grp_fields .= " , bo_read_level = :grp_bo_read_level"; $grp_params[":grp_bo_read_level"] = $bo_read_level; }
+if (is_checked('chk_grp_write_level')) { $grp_fields .= " , bo_write_level = :grp_bo_write_level"; $grp_params[":grp_bo_write_level"] = $bo_write_level; }
+if (is_checked('chk_grp_reply_level')) { $grp_fields .= " , bo_reply_level = :grp_bo_reply_level"; $grp_params[":grp_bo_reply_level"] = $bo_reply_level; }
+if (is_checked('chk_grp_comment_level')) { $grp_fields .= " , bo_comment_level = :grp_bo_comment_level"; $grp_params[":grp_bo_comment_level"] = $bo_comment_level; }
+if (is_checked('chk_grp_link_level')) { $grp_fields .= " , bo_link_level = :grp_bo_link_level"; $grp_params[":grp_bo_link_level"] = $bo_link_level; }
+if (is_checked('chk_grp_upload_level')) { $grp_fields .= " , bo_upload_level = :grp_bo_upload_level"; $grp_params[":grp_bo_upload_level"] = $bo_upload_level; }
+if (is_checked('chk_grp_download_level')) { $grp_fields .= " , bo_download_level = :grp_bo_download_level"; $grp_params[":grp_bo_download_level"] = $bo_download_level; }
+if (is_checked('chk_grp_html_level')) { $grp_fields .= " , bo_html_level = :grp_bo_html_level"; $grp_params[":grp_bo_html_level"] = $bo_html_level; }
+if (is_checked('chk_grp_count_modify')) { $grp_fields .= " , bo_count_modify = :grp_bo_count_modify"; $grp_params[":grp_bo_count_modify"] = $bo_count_modify; }
+if (is_checked('chk_grp_count_delete')) { $grp_fields .= " , bo_count_delete = :grp_bo_count_delete"; $grp_params[":grp_bo_count_delete"] = $bo_count_delete; }
+if (is_checked('chk_grp_read_point')) { $grp_fields .= " , bo_read_point = :grp_bo_read_point"; $grp_params[":grp_bo_read_point"] = $bo_read_point; }
+if (is_checked('chk_grp_write_point')) { $grp_fields .= " , bo_write_point = :grp_bo_write_point"; $grp_params[":grp_bo_write_point"] = $bo_write_point; }
+if (is_checked('chk_grp_comment_point')) { $grp_fields .= " , bo_comment_point = :grp_bo_comment_point"; $grp_params[":grp_bo_comment_point"] = $bo_comment_point; }
+if (is_checked('chk_grp_download_point')) { $grp_fields .= " , bo_download_point = :grp_bo_download_point"; $grp_params[":grp_bo_download_point"] = $bo_download_point; }
 if (is_checked('chk_grp_category_list')) {
-    $grp_fields .= " , bo_category_list = '{$str_bo_category_list}' ";
-    $grp_fields .= " , bo_use_category = '{$bo_use_category}' ";
+    $grp_fields .= " , bo_category_list = :grp_bo_category_list"; $grp_params[":grp_bo_category_list"] = $str_bo_category_list;
+    $grp_fields .= " , bo_use_category = :grp_bo_use_category"; $grp_params[":grp_bo_use_category"] = $bo_use_category;
 }
-if (is_checked('chk_grp_use_sideview'))         $grp_fields .= " , bo_use_sideview = '{$bo_use_sideview}' ";
-if (is_checked('chk_grp_use_file_content'))     $grp_fields .= " , bo_use_file_content = '{$bo_use_file_content}' ";
-if (is_checked('chk_grp_use_secret'))           $grp_fields .= " , bo_use_secret = '{$bo_use_secret}' ";
-if (is_checked('chk_grp_use_dhtml_editor'))     $grp_fields .= " , bo_use_dhtml_editor = '{$bo_use_dhtml_editor}' ";
-if (is_checked('chk_grp_select_editor'))        $grp_fields .= " , bo_select_editor = '{$bo_select_editor}' ";
-if (is_checked('chk_grp_use_rss_view'))         $grp_fields .= " , bo_use_rss_view = '{$bo_use_rss_view}' ";
-if (is_checked('chk_grp_use_good'))             $grp_fields .= " , bo_use_good = '{$bo_use_good}' ";
-if (is_checked('chk_grp_use_nogood'))           $grp_fields .= " , bo_use_nogood = '{$bo_use_nogood}' ";
-if (is_checked('chk_grp_use_name'))             $grp_fields .= " , bo_use_name = '{$bo_use_name}' ";
-if (is_checked('chk_grp_use_signature'))        $grp_fields .= " , bo_use_signature = '{$bo_use_signature}' ";
-if (is_checked('chk_grp_use_ip_view'))          $grp_fields .= " , bo_use_ip_view = '{$bo_use_ip_view}' ";
-if (is_checked('chk_grp_use_list_view'))        $grp_fields .= " , bo_use_list_view = '{$bo_use_list_view}' ";
-if (is_checked('chk_grp_use_list_file'))        $grp_fields .= " , bo_use_list_file = '{$bo_use_list_file}' ";
-if (is_checked('chk_grp_use_list_content'))     $grp_fields .= " , bo_use_list_content = '{$bo_use_list_content}' ";
-if (is_checked('chk_grp_use_email'))            $grp_fields .= " , bo_use_email = '{$bo_use_email}' ";
-if (is_checked('chk_grp_use_cert'))             $grp_fields .= " , bo_use_cert = '{$bo_use_cert}' ";
-if (is_checked('chk_grp_use_sns'))              $grp_fields .= " , bo_use_sns = '{$bo_use_sns}' ";
-if (is_checked('chk_grp_use_captcha'))          $grp_fields .= " , bo_use_captcha = '{$bo_use_captcha}' ";
-if (is_checked('chk_grp_skin'))                 $grp_fields .= " , bo_skin = '{$bo_skin}' ";
-if (is_checked('chk_grp_mobile_skin'))          $grp_fields .= " , bo_mobile_skin = '{$bo_mobile_skin}' ";
-if (is_checked('chk_grp_gallery_cols'))         $grp_fields .= " , bo_gallery_cols = '{$bo_gallery_cols}' ";
-if (is_checked('chk_grp_gallery_width'))        $grp_fields .= " , bo_gallery_width = '{$bo_gallery_width}' ";
-if (is_checked('chk_grp_gallery_height'))       $grp_fields .= " , bo_gallery_height = '{$bo_gallery_height}' ";
-if (is_checked('chk_grp_mobile_gallery_width')) $grp_fields .= " , bo_mobile_gallery_width = '{$bo_mobile_gallery_width}' ";
+if (is_checked('chk_grp_use_sideview')) { $grp_fields .= " , bo_use_sideview = :grp_bo_use_sideview"; $grp_params[":grp_bo_use_sideview"] = $bo_use_sideview; }
+if (is_checked('chk_grp_use_file_content')) { $grp_fields .= " , bo_use_file_content = :grp_bo_use_file_content"; $grp_params[":grp_bo_use_file_content"] = $bo_use_file_content; }
+if (is_checked('chk_grp_use_secret')) { $grp_fields .= " , bo_use_secret = :grp_bo_use_secret"; $grp_params[":grp_bo_use_secret"] = $bo_use_secret; }
+if (is_checked('chk_grp_use_dhtml_editor')) { $grp_fields .= " , bo_use_dhtml_editor = :grp_bo_use_dhtml_editor"; $grp_params[":grp_bo_use_dhtml_editor"] = $bo_use_dhtml_editor; }
+if (is_checked('chk_grp_select_editor')) { $grp_fields .= " , bo_select_editor = :grp_bo_select_editor"; $grp_params[":grp_bo_select_editor"] = $bo_select_editor; }
+if (is_checked('chk_grp_use_rss_view')) { $grp_fields .= " , bo_use_rss_view = :grp_bo_use_rss_view"; $grp_params[":grp_bo_use_rss_view"] = $bo_use_rss_view; }
+if (is_checked('chk_grp_use_good')) { $grp_fields .= " , bo_use_good = :grp_bo_use_good"; $grp_params[":grp_bo_use_good"] = $bo_use_good; }
+if (is_checked('chk_grp_use_nogood')) { $grp_fields .= " , bo_use_nogood = :grp_bo_use_nogood"; $grp_params[":grp_bo_use_nogood"] = $bo_use_nogood; }
+if (is_checked('chk_grp_use_name')) { $grp_fields .= " , bo_use_name = :grp_bo_use_name"; $grp_params[":grp_bo_use_name"] = $bo_use_name; }
+if (is_checked('chk_grp_use_signature')) { $grp_fields .= " , bo_use_signature = :grp_bo_use_signature"; $grp_params[":grp_bo_use_signature"] = $bo_use_signature; }
+if (is_checked('chk_grp_use_ip_view')) { $grp_fields .= " , bo_use_ip_view = :grp_bo_use_ip_view"; $grp_params[":grp_bo_use_ip_view"] = $bo_use_ip_view; }
+if (is_checked('chk_grp_use_list_view')) { $grp_fields .= " , bo_use_list_view = :grp_bo_use_list_view"; $grp_params[":grp_bo_use_list_view"] = $bo_use_list_view; }
+if (is_checked('chk_grp_use_list_file')) { $grp_fields .= " , bo_use_list_file = :grp_bo_use_list_file"; $grp_params[":grp_bo_use_list_file"] = $bo_use_list_file; }
+if (is_checked('chk_grp_use_list_content')) { $grp_fields .= " , bo_use_list_content = :grp_bo_use_list_content"; $grp_params[":grp_bo_use_list_content"] = $bo_use_list_content; }
+if (is_checked('chk_grp_use_email')) { $grp_fields .= " , bo_use_email = :grp_bo_use_email"; $grp_params[":grp_bo_use_email"] = $bo_use_email; }
+if (is_checked('chk_grp_use_cert')) { $grp_fields .= " , bo_use_cert = :grp_bo_use_cert"; $grp_params[":grp_bo_use_cert"] = $bo_use_cert; }
+if (is_checked('chk_grp_use_sns')) { $grp_fields .= " , bo_use_sns = :grp_bo_use_sns"; $grp_params[":grp_bo_use_sns"] = $bo_use_sns; }
+if (is_checked('chk_grp_use_captcha')) { $grp_fields .= " , bo_use_captcha = :grp_bo_use_captcha"; $grp_params[":grp_bo_use_captcha"] = $bo_use_captcha; }
+if (is_checked('chk_grp_skin')) { $grp_fields .= " , bo_skin = :grp_bo_skin"; $grp_params[":grp_bo_skin"] = $bo_skin; }
+if (is_checked('chk_grp_mobile_skin')) { $grp_fields .= " , bo_mobile_skin = :grp_bo_mobile_skin"; $grp_params[":grp_bo_mobile_skin"] = $bo_mobile_skin; }
+if (is_checked('chk_grp_gallery_cols')) { $grp_fields .= " , bo_gallery_cols = :grp_bo_gallery_cols"; $grp_params[":grp_bo_gallery_cols"] = $bo_gallery_cols; }
+if (is_checked('chk_grp_gallery_width')) { $grp_fields .= " , bo_gallery_width = :grp_bo_gallery_width"; $grp_params[":grp_bo_gallery_width"] = $bo_gallery_width; }
+if (is_checked('chk_grp_gallery_height')) { $grp_fields .= " , bo_gallery_height = :grp_bo_gallery_height"; $grp_params[":grp_bo_gallery_height"] = $bo_gallery_height; }
+if (is_checked('chk_grp_mobile_gallery_width')) { $grp_fields .= " , bo_mobile_gallery_width = :grp_bo_mobile_gallery_width"; $grp_params[":grp_bo_mobile_gallery_width"] = $bo_mobile_gallery_width; }
 if (is_checked('chk_grp_mobile_gallery_height'))$grp_fields .= " , bo_mobile_gallery_height = '{$bo_mobile_gallery_height}' ";
-if (is_checked('chk_grp_table_width'))          $grp_fields .= " , bo_table_width = '{$bo_table_width}' ";
-if (is_checked('chk_grp_page_rows'))            $grp_fields .= " , bo_page_rows = '{$bo_page_rows}' ";
-if (is_checked('chk_grp_mobile_page_rows'))     $grp_fields .= " , bo_mobile_page_rows = '{$bo_mobile_page_rows}' ";
-if (is_checked('chk_grp_subject_len'))          $grp_fields .= " , bo_subject_len = '{$bo_subject_len}' ";
-if (is_checked('chk_grp_mobile_subject_len'))   $grp_fields .= " , bo_mobile_subject_len = '{$bo_mobile_subject_len}' ";
-if (is_checked('chk_grp_new'))                  $grp_fields .= " , bo_new = '{$bo_new}' ";
-if (is_checked('chk_grp_hot'))                  $grp_fields .= " , bo_hot = '{$bo_hot}' ";
-if (is_checked('chk_grp_image_width'))          $grp_fields .= " , bo_image_width = '{$bo_image_width}' ";
-if (is_checked('chk_grp_reply_order'))          $grp_fields .= " , bo_reply_order = '{$bo_reply_order}' ";
-if (is_checked('chk_grp_sort_field'))           $grp_fields .= " , bo_sort_field = '{$bo_sort_field}' ";
-if (is_checked('chk_grp_write_min'))            $grp_fields .= " , bo_write_min = '{$bo_write_min}' ";
-if (is_checked('chk_grp_write_max'))            $grp_fields .= " , bo_write_max = '{$bo_write_max}' ";
-if (is_checked('chk_grp_comment_min'))          $grp_fields .= " , bo_comment_min = '{$bo_comment_min}' ";
-if (is_checked('chk_grp_comment_max'))          $grp_fields .= " , bo_comment_max = '{$bo_comment_max}' ";
-if (is_checked('chk_grp_upload_count'))         $grp_fields .= " , bo_upload_count = '{$bo_upload_count}' ";
-if (is_checked('chk_grp_upload_size'))          $grp_fields .= " , bo_upload_size = '{$bo_upload_size}' ";
+if (is_checked('chk_grp_table_width')) { $grp_fields .= " , bo_table_width = :grp_bo_table_width"; $grp_params[":grp_bo_table_width"] = $bo_table_width; }
+if (is_checked('chk_grp_page_rows')) { $grp_fields .= " , bo_page_rows = :grp_bo_page_rows"; $grp_params[":grp_bo_page_rows"] = $bo_page_rows; }
+if (is_checked('chk_grp_mobile_page_rows')) { $grp_fields .= " , bo_mobile_page_rows = :grp_bo_mobile_page_rows"; $grp_params[":grp_bo_mobile_page_rows"] = $bo_mobile_page_rows; }
+if (is_checked('chk_grp_subject_len')) { $grp_fields .= " , bo_subject_len = :grp_bo_subject_len"; $grp_params[":grp_bo_subject_len"] = $bo_subject_len; }
+if (is_checked('chk_grp_mobile_subject_len')) { $grp_fields .= " , bo_mobile_subject_len = :grp_bo_mobile_subject_len"; $grp_params[":grp_bo_mobile_subject_len"] = $bo_mobile_subject_len; }
+if (is_checked('chk_grp_new')) { $grp_fields .= " , bo_new = :grp_bo_new"; $grp_params[":grp_bo_new"] = $bo_new; }
+if (is_checked('chk_grp_hot')) { $grp_fields .= " , bo_hot = :grp_bo_hot"; $grp_params[":grp_bo_hot"] = $bo_hot; }
+if (is_checked('chk_grp_image_width')) { $grp_fields .= " , bo_image_width = :grp_bo_image_width"; $grp_params[":grp_bo_image_width"] = $bo_image_width; }
+if (is_checked('chk_grp_reply_order')) { $grp_fields .= " , bo_reply_order = :grp_bo_reply_order"; $grp_params[":grp_bo_reply_order"] = $bo_reply_order; }
+if (is_checked('chk_grp_sort_field')) { $grp_fields .= " , bo_sort_field = :grp_bo_sort_field"; $grp_params[":grp_bo_sort_field"] = $bo_sort_field; }
+if (is_checked('chk_grp_write_min')) { $grp_fields .= " , bo_write_min = :grp_bo_write_min"; $grp_params[":grp_bo_write_min"] = $bo_write_min; }
+if (is_checked('chk_grp_write_max')) { $grp_fields .= " , bo_write_max = :grp_bo_write_max"; $grp_params[":grp_bo_write_max"] = $bo_write_max; }
+if (is_checked('chk_grp_comment_min')) { $grp_fields .= " , bo_comment_min = :grp_bo_comment_min"; $grp_params[":grp_bo_comment_min"] = $bo_comment_min; }
+if (is_checked('chk_grp_comment_max')) { $grp_fields .= " , bo_comment_max = :grp_bo_comment_max"; $grp_params[":grp_bo_comment_max"] = $bo_comment_max; }
+if (is_checked('chk_grp_upload_count')) { $grp_fields .= " , bo_upload_count = :grp_bo_upload_count"; $grp_params[":grp_bo_upload_count"] = $bo_upload_count; }
+if (is_checked('chk_grp_upload_size')) { $grp_fields .= " , bo_upload_size = :grp_bo_upload_size"; $grp_params[":grp_bo_upload_size"] = $bo_upload_size; }
 
 //최고관리자만 수정가능
 if ($is_admin === 'super') {
-    if (is_checked('chk_grp_include_head'))         $grp_fields .= " , bo_include_head = '{$bo_include_head}' ";
-    if (is_checked('chk_grp_include_tail'))         $grp_fields .= " , bo_include_tail = '{$bo_include_tail}' ";
-    if (is_checked('chk_grp_content_head'))         $grp_fields .= " , bo_content_head = '{$bo_content_head}' ";
-    if (is_checked('chk_grp_content_tail'))         $grp_fields .= " , bo_content_tail = '{$bo_content_tail}' ";
-    if (is_checked('chk_grp_mobile_content_head'))         $grp_fields .= " , bo_mobile_content_head = '{$bo_mobile_content_head}' ";
-    if (is_checked('chk_grp_mobile_content_tail'))         $grp_fields .= " , bo_mobile_content_tail = '{$bo_mobile_content_tail}' ";
+    if (is_checked('chk_grp_include_head')) { $grp_fields .= " , bo_include_head = :grp_bo_include_head"; $grp_params[":grp_bo_include_head"] = $bo_include_head; }
+    if (is_checked('chk_grp_include_tail')) { $grp_fields .= " , bo_include_tail = :grp_bo_include_tail"; $grp_params[":grp_bo_include_tail"] = $bo_include_tail; }
+    if (is_checked('chk_grp_content_head')) { $grp_fields .= " , bo_content_head = :grp_bo_content_head"; $grp_params[":grp_bo_content_head"] = $bo_content_head; }
+    if (is_checked('chk_grp_content_tail')) { $grp_fields .= " , bo_content_tail = :grp_bo_content_tail"; $grp_params[":grp_bo_content_tail"] = $bo_content_tail; }
+    if (is_checked('chk_grp_mobile_content_head')) { $grp_fields .= " , bo_mobile_content_head = :grp_bo_mobile_content_head"; $grp_params[":grp_bo_mobile_content_head"] = $bo_mobile_content_head; }
+    if (is_checked('chk_grp_mobile_content_tail')) { $grp_fields .= " , bo_mobile_content_tail = :grp_bo_mobile_content_tail"; $grp_params[":grp_bo_mobile_content_tail"] = $bo_mobile_content_tail; }
 }
 
-if (is_checked('chk_grp_insert_content'))       $grp_fields .= " , bo_insert_content = '{$bo_insert_content}' ";
-if (is_checked('chk_grp_use_search'))           $grp_fields .= " , bo_use_search = '{$bo_use_search}' ";
-if (is_checked('chk_grp_order'))                $grp_fields .= " , bo_order = '{$bo_order}' ";
+if (is_checked('chk_grp_insert_content')) { $grp_fields .= " , bo_insert_content = :grp_bo_insert_content"; $grp_params[":grp_bo_insert_content"] = $bo_insert_content; }
+if (is_checked('chk_grp_use_search')) { $grp_fields .= " , bo_use_search = :grp_bo_use_search"; $grp_params[":grp_bo_use_search"] = $bo_use_search; }
+if (is_checked('chk_grp_order')) { $grp_fields .= " , bo_order = :grp_bo_order"; $grp_params[":grp_bo_order"] = $bo_order; }
 for ($i = 1; $i <= 10; $i++) {
     if (is_checked('chk_grp_' . $i)) {
-        $grp_fields .= " , bo_{$i}_subj = '" . $etcs['bo_' . $i . '_subj'] . "' ";
-        $grp_fields .= " , bo_{$i} = '" . $etcs['bo_' . $i] . "' ";
+        // bo_{i}_subj / bo_{i} 컬럼명의 i 는 정수 (1~10) 보간이라 안전
+        $grp_fields .= " , bo_{$i}_subj = :grp_bo_{$i}_subj";
+        $grp_params[":grp_bo_{$i}_subj"] = $etcs['bo_' . $i . '_subj'];
+        $grp_fields .= " , bo_{$i} = :grp_bo_{$i}";
+        $grp_params[":grp_bo_{$i}"] = $etcs['bo_' . $i];
     }
 }
 
 if ($grp_fields) {
-    sql_query(" update {$g5['board_table']} set bo_table = bo_table {$grp_fields} where gr_id = '$gr_id' ");
+    sql_pdo_query(" update {$g5['board_table']} set bo_table = bo_table {$grp_fields} where gr_id = :gr_id ",
+                  array_merge($grp_params, [':gr_id' => $gr_id]));
 }
 
 
 // 모든 게시판 동일 옵션 적용
 $all_fields = '';
-if (is_checked('chk_all_device'))               $all_fields .= " , bo_device = '{$bo_device}' ";
-if (is_checked('chk_all_admin'))                $all_fields .= " , bo_admin = '{$bo_admin}' ";
-if (is_checked('chk_all_list_level'))           $all_fields .= " , bo_list_level = '{$bo_list_level}' ";
-if (is_checked('chk_all_read_level'))           $all_fields .= " , bo_read_level = '{$bo_read_level}' ";
-if (is_checked('chk_all_write_level'))          $all_fields .= " , bo_write_level = '{$bo_write_level}' ";
-if (is_checked('chk_all_reply_level'))          $all_fields .= " , bo_reply_level = '{$bo_reply_level}' ";
-if (is_checked('chk_all_comment_level'))        $all_fields .= " , bo_comment_level = '{$bo_comment_level}' ";
-if (is_checked('chk_all_link_level'))           $all_fields .= " , bo_link_level = '{$bo_link_level}' ";
-if (is_checked('chk_all_upload_level'))         $all_fields .= " , bo_upload_level = '{$bo_upload_level}' ";
-if (is_checked('chk_all_download_level'))       $all_fields .= " , bo_download_level = '{$bo_download_level}' ";
-if (is_checked('chk_all_html_level'))           $all_fields .= " , bo_html_level = '{$bo_html_level}' ";
-if (is_checked('chk_all_count_modify'))         $all_fields .= " , bo_count_modify = '{$bo_count_modify}' ";
-if (is_checked('chk_all_count_delete'))         $all_fields .= " , bo_count_delete = '{$bo_count_delete}' ";
-if (is_checked('chk_all_read_point'))           $all_fields .= " , bo_read_point = '{$bo_read_point}' ";
-if (is_checked('chk_all_write_point'))          $all_fields .= " , bo_write_point = '{$bo_write_point}' ";
-if (is_checked('chk_all_comment_point'))        $all_fields .= " , bo_comment_point = '{$bo_comment_point}' ";
-if (is_checked('chk_all_download_point'))       $all_fields .= " , bo_download_point = '{$bo_download_point}' ";
+$all_params = [];
+if (is_checked('chk_all_device')) { $all_fields .= " , bo_device = :all_bo_device"; $all_params[":all_bo_device"] = $bo_device; }
+if (is_checked('chk_all_admin')) { $all_fields .= " , bo_admin = :all_bo_admin"; $all_params[":all_bo_admin"] = $bo_admin; }
+if (is_checked('chk_all_list_level')) { $all_fields .= " , bo_list_level = :all_bo_list_level"; $all_params[":all_bo_list_level"] = $bo_list_level; }
+if (is_checked('chk_all_read_level')) { $all_fields .= " , bo_read_level = :all_bo_read_level"; $all_params[":all_bo_read_level"] = $bo_read_level; }
+if (is_checked('chk_all_write_level')) { $all_fields .= " , bo_write_level = :all_bo_write_level"; $all_params[":all_bo_write_level"] = $bo_write_level; }
+if (is_checked('chk_all_reply_level')) { $all_fields .= " , bo_reply_level = :all_bo_reply_level"; $all_params[":all_bo_reply_level"] = $bo_reply_level; }
+if (is_checked('chk_all_comment_level')) { $all_fields .= " , bo_comment_level = :all_bo_comment_level"; $all_params[":all_bo_comment_level"] = $bo_comment_level; }
+if (is_checked('chk_all_link_level')) { $all_fields .= " , bo_link_level = :all_bo_link_level"; $all_params[":all_bo_link_level"] = $bo_link_level; }
+if (is_checked('chk_all_upload_level')) { $all_fields .= " , bo_upload_level = :all_bo_upload_level"; $all_params[":all_bo_upload_level"] = $bo_upload_level; }
+if (is_checked('chk_all_download_level')) { $all_fields .= " , bo_download_level = :all_bo_download_level"; $all_params[":all_bo_download_level"] = $bo_download_level; }
+if (is_checked('chk_all_html_level')) { $all_fields .= " , bo_html_level = :all_bo_html_level"; $all_params[":all_bo_html_level"] = $bo_html_level; }
+if (is_checked('chk_all_count_modify')) { $all_fields .= " , bo_count_modify = :all_bo_count_modify"; $all_params[":all_bo_count_modify"] = $bo_count_modify; }
+if (is_checked('chk_all_count_delete')) { $all_fields .= " , bo_count_delete = :all_bo_count_delete"; $all_params[":all_bo_count_delete"] = $bo_count_delete; }
+if (is_checked('chk_all_read_point')) { $all_fields .= " , bo_read_point = :all_bo_read_point"; $all_params[":all_bo_read_point"] = $bo_read_point; }
+if (is_checked('chk_all_write_point')) { $all_fields .= " , bo_write_point = :all_bo_write_point"; $all_params[":all_bo_write_point"] = $bo_write_point; }
+if (is_checked('chk_all_comment_point')) { $all_fields .= " , bo_comment_point = :all_bo_comment_point"; $all_params[":all_bo_comment_point"] = $bo_comment_point; }
+if (is_checked('chk_all_download_point')) { $all_fields .= " , bo_download_point = :all_bo_download_point"; $all_params[":all_bo_download_point"] = $bo_download_point; }
 if (is_checked('chk_all_category_list')) {
-    $all_fields .= " , bo_category_list = '{$str_bo_category_list}' ";
-    $all_fields .= " , bo_use_category = '{$bo_use_category}' ";
+    $all_fields .= " , bo_category_list = :all_bo_category_list"; $all_params[":all_bo_category_list"] = $str_bo_category_list;
+    $all_fields .= " , bo_use_category = :all_bo_use_category"; $all_params[":all_bo_use_category"] = $bo_use_category;
 }
-if (is_checked('chk_all_use_sideview'))         $all_fields .= " , bo_use_sideview = '{$bo_use_sideview}' ";
-if (is_checked('chk_all_use_file_content'))     $all_fields .= " , bo_use_file_content = '{$bo_use_file_content}' ";
-if (is_checked('chk_all_use_secret'))           $all_fields .= " , bo_use_secret = '{$bo_use_secret}' ";
-if (is_checked('chk_all_use_dhtml_editor'))     $all_fields .= " , bo_use_dhtml_editor = '{$bo_use_dhtml_editor}' ";
-if (is_checked('chk_all_select_editor'))        $all_fields .= " , bo_select_editor = '{$bo_select_editor}' ";
-if (is_checked('chk_all_use_rss_view'))         $all_fields .= " , bo_use_rss_view = '{$bo_use_rss_view}' ";
-if (is_checked('chk_all_use_good'))             $all_fields .= " , bo_use_good = '{$bo_use_good}' ";
-if (is_checked('chk_all_use_nogood'))           $all_fields .= " , bo_use_nogood = '{$bo_use_nogood}' ";
-if (is_checked('chk_all_use_name'))             $all_fields .= " , bo_use_name = '{$bo_use_name}' ";
-if (is_checked('chk_all_use_signature'))        $all_fields .= " , bo_use_signature = '{$bo_use_signature}' ";
-if (is_checked('chk_all_use_ip_view'))          $all_fields .= " , bo_use_ip_view = '{$bo_use_ip_view}' ";
-if (is_checked('chk_all_use_list_view'))        $all_fields .= " , bo_use_list_view = '{$bo_use_list_view}' ";
-if (is_checked('chk_all_use_list_file'))        $all_fields .= " , bo_use_list_file = '{$bo_use_list_file}' ";
-if (is_checked('chk_all_use_list_content'))     $all_fields .= " , bo_use_list_content = '{$bo_use_list_content}' ";
-if (is_checked('chk_all_use_email'))            $all_fields .= " , bo_use_email = '{$bo_use_email}' ";
-if (is_checked('chk_all_use_cert'))             $all_fields .= " , bo_use_cert = '{$bo_use_cert}' ";
-if (is_checked('chk_all_use_sns'))              $all_fields .= " , bo_use_sns = '{$bo_use_sns}' ";
-if (is_checked('chk_all_use_captcha'))          $all_fields .= " , bo_use_captcha = '{$bo_use_captcha}' ";
-if (is_checked('chk_all_skin'))                 $all_fields .= " , bo_skin = '{$bo_skin}' ";
-if (is_checked('chk_all_mobile_skin'))          $all_fields .= " , bo_mobile_skin = '{$bo_mobile_skin}' ";
-if (is_checked('chk_all_gallery_cols'))         $all_fields .= " , bo_gallery_cols = '{$bo_gallery_cols}' ";
-if (is_checked('chk_all_gallery_width'))        $all_fields .= " , bo_gallery_width = '{$bo_gallery_width}' ";
-if (is_checked('chk_all_gallery_height'))       $all_fields .= " , bo_gallery_height = '{$bo_gallery_height}' ";
-if (is_checked('chk_all_mobile_gallery_width')) $all_fields .= " , bo_mobile_gallery_width = '{$bo_mobile_gallery_width}' ";
-if (is_checked('chk_all_mobile_gallery_height')) $all_fields .= " , bo_mobile_gallery_height = '{$bo_mobile_gallery_height}' ";
-if (is_checked('chk_all_table_width'))          $all_fields .= " , bo_table_width = '{$bo_table_width}' ";
-if (is_checked('chk_all_page_rows'))            $all_fields .= " , bo_page_rows = '{$bo_page_rows}' ";
-if (is_checked('chk_all_mobile_page_rows'))     $all_fields .= " , bo_mobile_page_rows = '{$bo_mobile_page_rows}' ";
-if (is_checked('chk_all_subject_len'))          $all_fields .= " , bo_subject_len = '{$bo_subject_len}' ";
-if (is_checked('chk_all_mobile_subject_len'))   $all_fields .= " , bo_mobile_subject_len = '{$bo_mobile_subject_len}' ";
-if (is_checked('chk_all_new'))                  $all_fields .= " , bo_new = '{$bo_new}' ";
-if (is_checked('chk_all_hot'))                  $all_fields .= " , bo_hot = '{$bo_hot}' ";
-if (is_checked('chk_all_image_width'))          $all_fields .= " , bo_image_width = '{$bo_image_width}' ";
-if (is_checked('chk_all_reply_order'))          $all_fields .= " , bo_reply_order = '{$bo_reply_order}' ";
-if (is_checked('chk_all_sort_field'))           $all_fields .= " , bo_sort_field = '{$bo_sort_field}' ";
-if (is_checked('chk_all_write_min'))            $all_fields .= " , bo_write_min = '{$bo_write_min}' ";
-if (is_checked('chk_all_write_max'))            $all_fields .= " , bo_write_max = '{$bo_write_max}' ";
-if (is_checked('chk_all_comment_min'))          $all_fields .= " , bo_comment_min = '{$bo_comment_min}' ";
-if (is_checked('chk_all_comment_max'))          $all_fields .= " , bo_comment_max = '{$bo_comment_max}' ";
-if (is_checked('chk_all_upload_count'))         $all_fields .= " , bo_upload_count = '{$bo_upload_count}' ";
-if (is_checked('chk_all_upload_size'))          $all_fields .= " , bo_upload_size = '{$bo_upload_size}' ";
+if (is_checked('chk_all_use_sideview')) { $all_fields .= " , bo_use_sideview = :all_bo_use_sideview"; $all_params[":all_bo_use_sideview"] = $bo_use_sideview; }
+if (is_checked('chk_all_use_file_content')) { $all_fields .= " , bo_use_file_content = :all_bo_use_file_content"; $all_params[":all_bo_use_file_content"] = $bo_use_file_content; }
+if (is_checked('chk_all_use_secret')) { $all_fields .= " , bo_use_secret = :all_bo_use_secret"; $all_params[":all_bo_use_secret"] = $bo_use_secret; }
+if (is_checked('chk_all_use_dhtml_editor')) { $all_fields .= " , bo_use_dhtml_editor = :all_bo_use_dhtml_editor"; $all_params[":all_bo_use_dhtml_editor"] = $bo_use_dhtml_editor; }
+if (is_checked('chk_all_select_editor')) { $all_fields .= " , bo_select_editor = :all_bo_select_editor"; $all_params[":all_bo_select_editor"] = $bo_select_editor; }
+if (is_checked('chk_all_use_rss_view')) { $all_fields .= " , bo_use_rss_view = :all_bo_use_rss_view"; $all_params[":all_bo_use_rss_view"] = $bo_use_rss_view; }
+if (is_checked('chk_all_use_good')) { $all_fields .= " , bo_use_good = :all_bo_use_good"; $all_params[":all_bo_use_good"] = $bo_use_good; }
+if (is_checked('chk_all_use_nogood')) { $all_fields .= " , bo_use_nogood = :all_bo_use_nogood"; $all_params[":all_bo_use_nogood"] = $bo_use_nogood; }
+if (is_checked('chk_all_use_name')) { $all_fields .= " , bo_use_name = :all_bo_use_name"; $all_params[":all_bo_use_name"] = $bo_use_name; }
+if (is_checked('chk_all_use_signature')) { $all_fields .= " , bo_use_signature = :all_bo_use_signature"; $all_params[":all_bo_use_signature"] = $bo_use_signature; }
+if (is_checked('chk_all_use_ip_view')) { $all_fields .= " , bo_use_ip_view = :all_bo_use_ip_view"; $all_params[":all_bo_use_ip_view"] = $bo_use_ip_view; }
+if (is_checked('chk_all_use_list_view')) { $all_fields .= " , bo_use_list_view = :all_bo_use_list_view"; $all_params[":all_bo_use_list_view"] = $bo_use_list_view; }
+if (is_checked('chk_all_use_list_file')) { $all_fields .= " , bo_use_list_file = :all_bo_use_list_file"; $all_params[":all_bo_use_list_file"] = $bo_use_list_file; }
+if (is_checked('chk_all_use_list_content')) { $all_fields .= " , bo_use_list_content = :all_bo_use_list_content"; $all_params[":all_bo_use_list_content"] = $bo_use_list_content; }
+if (is_checked('chk_all_use_email')) { $all_fields .= " , bo_use_email = :all_bo_use_email"; $all_params[":all_bo_use_email"] = $bo_use_email; }
+if (is_checked('chk_all_use_cert')) { $all_fields .= " , bo_use_cert = :all_bo_use_cert"; $all_params[":all_bo_use_cert"] = $bo_use_cert; }
+if (is_checked('chk_all_use_sns')) { $all_fields .= " , bo_use_sns = :all_bo_use_sns"; $all_params[":all_bo_use_sns"] = $bo_use_sns; }
+if (is_checked('chk_all_use_captcha')) { $all_fields .= " , bo_use_captcha = :all_bo_use_captcha"; $all_params[":all_bo_use_captcha"] = $bo_use_captcha; }
+if (is_checked('chk_all_skin')) { $all_fields .= " , bo_skin = :all_bo_skin"; $all_params[":all_bo_skin"] = $bo_skin; }
+if (is_checked('chk_all_mobile_skin')) { $all_fields .= " , bo_mobile_skin = :all_bo_mobile_skin"; $all_params[":all_bo_mobile_skin"] = $bo_mobile_skin; }
+if (is_checked('chk_all_gallery_cols')) { $all_fields .= " , bo_gallery_cols = :all_bo_gallery_cols"; $all_params[":all_bo_gallery_cols"] = $bo_gallery_cols; }
+if (is_checked('chk_all_gallery_width')) { $all_fields .= " , bo_gallery_width = :all_bo_gallery_width"; $all_params[":all_bo_gallery_width"] = $bo_gallery_width; }
+if (is_checked('chk_all_gallery_height')) { $all_fields .= " , bo_gallery_height = :all_bo_gallery_height"; $all_params[":all_bo_gallery_height"] = $bo_gallery_height; }
+if (is_checked('chk_all_mobile_gallery_width')) { $all_fields .= " , bo_mobile_gallery_width = :all_bo_mobile_gallery_width"; $all_params[":all_bo_mobile_gallery_width"] = $bo_mobile_gallery_width; }
+if (is_checked('chk_all_mobile_gallery_height')) { $all_fields .= " , bo_mobile_gallery_height = :all_bo_mobile_gallery_height"; $all_params[":all_bo_mobile_gallery_height"] = $bo_mobile_gallery_height; }
+if (is_checked('chk_all_table_width')) { $all_fields .= " , bo_table_width = :all_bo_table_width"; $all_params[":all_bo_table_width"] = $bo_table_width; }
+if (is_checked('chk_all_page_rows')) { $all_fields .= " , bo_page_rows = :all_bo_page_rows"; $all_params[":all_bo_page_rows"] = $bo_page_rows; }
+if (is_checked('chk_all_mobile_page_rows')) { $all_fields .= " , bo_mobile_page_rows = :all_bo_mobile_page_rows"; $all_params[":all_bo_mobile_page_rows"] = $bo_mobile_page_rows; }
+if (is_checked('chk_all_subject_len')) { $all_fields .= " , bo_subject_len = :all_bo_subject_len"; $all_params[":all_bo_subject_len"] = $bo_subject_len; }
+if (is_checked('chk_all_mobile_subject_len')) { $all_fields .= " , bo_mobile_subject_len = :all_bo_mobile_subject_len"; $all_params[":all_bo_mobile_subject_len"] = $bo_mobile_subject_len; }
+if (is_checked('chk_all_new')) { $all_fields .= " , bo_new = :all_bo_new"; $all_params[":all_bo_new"] = $bo_new; }
+if (is_checked('chk_all_hot')) { $all_fields .= " , bo_hot = :all_bo_hot"; $all_params[":all_bo_hot"] = $bo_hot; }
+if (is_checked('chk_all_image_width')) { $all_fields .= " , bo_image_width = :all_bo_image_width"; $all_params[":all_bo_image_width"] = $bo_image_width; }
+if (is_checked('chk_all_reply_order')) { $all_fields .= " , bo_reply_order = :all_bo_reply_order"; $all_params[":all_bo_reply_order"] = $bo_reply_order; }
+if (is_checked('chk_all_sort_field')) { $all_fields .= " , bo_sort_field = :all_bo_sort_field"; $all_params[":all_bo_sort_field"] = $bo_sort_field; }
+if (is_checked('chk_all_write_min')) { $all_fields .= " , bo_write_min = :all_bo_write_min"; $all_params[":all_bo_write_min"] = $bo_write_min; }
+if (is_checked('chk_all_write_max')) { $all_fields .= " , bo_write_max = :all_bo_write_max"; $all_params[":all_bo_write_max"] = $bo_write_max; }
+if (is_checked('chk_all_comment_min')) { $all_fields .= " , bo_comment_min = :all_bo_comment_min"; $all_params[":all_bo_comment_min"] = $bo_comment_min; }
+if (is_checked('chk_all_comment_max')) { $all_fields .= " , bo_comment_max = :all_bo_comment_max"; $all_params[":all_bo_comment_max"] = $bo_comment_max; }
+if (is_checked('chk_all_upload_count')) { $all_fields .= " , bo_upload_count = :all_bo_upload_count"; $all_params[":all_bo_upload_count"] = $bo_upload_count; }
+if (is_checked('chk_all_upload_size')) { $all_fields .= " , bo_upload_size = :all_bo_upload_size"; $all_params[":all_bo_upload_size"] = $bo_upload_size; }
 
 //최고관리자만 수정가능
 if ($is_admin === 'super') {
-    if (is_checked('chk_all_include_head'))         $all_fields .= " , bo_include_head = '{$bo_include_head}' ";
-    if (is_checked('chk_all_include_tail'))         $all_fields .= " , bo_include_tail = '{$bo_include_tail}' ";
-    if (is_checked('chk_all_content_head'))         $all_fields .= " , bo_content_head = '{$bo_content_head}' ";
-    if (is_checked('chk_all_content_tail'))         $all_fields .= " , bo_content_tail = '{$bo_content_tail}' ";
-    if (is_checked('chk_all_mobile_content_head'))         $all_fields .= " , bo_mobile_content_head = '{$bo_mobile_content_head}' ";
-    if (is_checked('chk_all_mobile_content_tail'))         $all_fields .= " , bo_mobile_content_tail = '{$bo_mobile_content_tail}' ";
+    if (is_checked('chk_all_include_head')) { $all_fields .= " , bo_include_head = :all_bo_include_head"; $all_params[":all_bo_include_head"] = $bo_include_head; }
+    if (is_checked('chk_all_include_tail')) { $all_fields .= " , bo_include_tail = :all_bo_include_tail"; $all_params[":all_bo_include_tail"] = $bo_include_tail; }
+    if (is_checked('chk_all_content_head')) { $all_fields .= " , bo_content_head = :all_bo_content_head"; $all_params[":all_bo_content_head"] = $bo_content_head; }
+    if (is_checked('chk_all_content_tail')) { $all_fields .= " , bo_content_tail = :all_bo_content_tail"; $all_params[":all_bo_content_tail"] = $bo_content_tail; }
+    if (is_checked('chk_all_mobile_content_head')) { $all_fields .= " , bo_mobile_content_head = :all_bo_mobile_content_head"; $all_params[":all_bo_mobile_content_head"] = $bo_mobile_content_head; }
+    if (is_checked('chk_all_mobile_content_tail')) { $all_fields .= " , bo_mobile_content_tail = :all_bo_mobile_content_tail"; $all_params[":all_bo_mobile_content_tail"] = $bo_mobile_content_tail; }
 }
 
-if (is_checked('chk_all_insert_content'))       $all_fields .= " , bo_insert_content = '{$bo_insert_content}' ";
-if (is_checked('chk_all_use_search'))           $all_fields .= " , bo_use_search = '{$bo_use_search}' ";
-if (is_checked('chk_all_order'))                $all_fields .= " , bo_order = '{$bo_order}' ";
+if (is_checked('chk_all_insert_content')) { $all_fields .= " , bo_insert_content = :all_bo_insert_content"; $all_params[":all_bo_insert_content"] = $bo_insert_content; }
+if (is_checked('chk_all_use_search')) { $all_fields .= " , bo_use_search = :all_bo_use_search"; $all_params[":all_bo_use_search"] = $bo_use_search; }
+if (is_checked('chk_all_order')) { $all_fields .= " , bo_order = :all_bo_order"; $all_params[":all_bo_order"] = $bo_order; }
 for ($i = 1; $i <= 10; $i++) {
     if (is_checked('chk_all_' . $i)) {
-        $all_fields .= " , bo_{$i}_subj = '" . $etcs['bo_' . $i . '_subj'] . "' ";
-        $all_fields .= " , bo_{$i} = '" . $etcs['bo_' . $i] . "' ";
+        $all_fields .= " , bo_{$i}_subj = :all_bo_{$i}_subj";
+        $all_params[":all_bo_{$i}_subj"] = $etcs['bo_' . $i . '_subj'];
+        $all_fields .= " , bo_{$i} = :all_bo_{$i}";
+        $all_params[":all_bo_{$i}"] = $etcs['bo_' . $i];
     }
 }
 
 if ($all_fields) {
-    sql_query(" update {$g5['board_table']} set bo_table = bo_table {$all_fields} ");
+    sql_pdo_query(" update {$g5['board_table']} set bo_table = bo_table {$all_fields} ", $all_params);
 }
 
 delete_cache_latest($bo_table);

@@ -14,24 +14,25 @@ if (!isset($group['gr_device'])) {
 }
 
 $sql_common = " from {$g5['group_table']} ";
-
 $sql_search = " where (1) ";
+$params     = [];
+
 if ($is_admin != 'super') {
-    $sql_search .= " and (gr_admin = '{$member['mb_id']}') ";
+    $sql_search .= " and (gr_admin = ?) ";
+    $params[] = $member['mb_id'];
 }
 
 if ($stx) {
-    $sql_search .= " and ( ";
-    switch ($sfl) {
-        case "gr_id":
-        case "gr_admin":
-            $sql_search .= " ({$sfl} = '{$stx}') ";
-            break;
-        default:
-            $sql_search .= " ({$sfl} like '%{$stx}%') ";
-            break;
+    // $sfl 는 컬럼명 (placeholder 못 받음) — 화이트리스트로 제한
+    $allowed_sfl = ['gr_id', 'gr_admin', 'gr_subject'];
+    if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'gr_subject';
+    if ($sfl === 'gr_id' || $sfl === 'gr_admin') {
+        $sql_search .= " and ({$sfl} = ?) ";
+        $params[] = $stx;
+    } else {
+        $sql_search .= " and ({$sfl} like ?) ";
+        $params[] = '%'.$stx.'%';
     }
-    $sql_search .= " ) ";
 }
 
 $allowed_sst = array('gr_id', 'gr_subject', 'gr_admin', 'gr_order');
@@ -43,8 +44,7 @@ if ($sst) {
     $sql_order = " order by gr_id asc ";
 }
 
-$sql = " select count(*) as cnt {$sql_common} {$sql_search} {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} {$sql_order} ", $params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -54,8 +54,8 @@ if ($page < 1) {
 }
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+// LIMIT 의 from_record/rows 는 정수 — 보간 안전
+$result = sql_pdo_query(" select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ", $params);
 
 $listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">처음</a>';
 
@@ -115,12 +115,10 @@ $colspan = 10;
                 <?php
                 for ($i = 0; $row = sql_fetch_array($result); $i++) {
                     // 접근회원수
-                    $sql1 = " select count(*) as cnt from {$g5['group_member_table']} where gr_id = '{$row['gr_id']}' ";
-                    $row1 = sql_fetch($sql1);
+                    $row1 = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_member_table']} where gr_id = ? ", [$row['gr_id']]);
 
                     // 게시판수
-                    $sql2 = " select count(*) as cnt from {$g5['board_table']} where gr_id = '{$row['gr_id']}' ";
-                    $row2 = sql_fetch($sql2);
+                    $row2 = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_table']} where gr_id = ? ", [$row['gr_id']]);
 
                     $s_upd = '<a href="./boardgroup_form.php?' . $qstr . '&amp;w=u&amp;gr_id=' . $row['gr_id'] . '" class="btn_03 btn">수정</a>';
 
