@@ -14,7 +14,7 @@ add_event('goto_url', function ($url) {
         header('Location: /admin/qa_config'.($m[1] ?? ''), true, 302);
         exit;
     }
-}, 10);
+}, 10, 1);
 
 chdir(G5_ADMIN_PATH);
 require G5_ADMIN_PATH.'/qa_config_update.php';

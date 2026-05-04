@@ -16,7 +16,7 @@ add_event('goto_url', function ($url) {
     if (preg_match('#^\.?/?faqform\.php(\?.*)?$#', $u, $m)) {
         header('Location: /admin/faqform'.($m[1] ?? ''), true, 302); exit;
     }
-}, 10);
+}, 10, 1);
 
 chdir(G5_ADMIN_PATH);
 require G5_ADMIN_PATH.'/faqformupdate.php';

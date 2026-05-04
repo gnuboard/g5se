@@ -36,7 +36,7 @@ add_event('goto_url', function ($url) {
         header('Location: '.$target, true, 302);
         exit;
     }
-}, 10);
+}, 10, 1);
 
 // gnuboard 의 adm/member_form_update.php 는 `require_once "./_common.php"` 같은
 // 상대 require 와 `$_FILES` 처리, `$qstr` 등 adm 디렉토리 컨텍스트에 의존하므로
