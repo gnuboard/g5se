@@ -8,5 +8,5 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 
 $legacy_target   = 'member_list.php';
-$legacy_menu_key = 'members';
+$legacy_menu_key = 'mb_list';
 require __DIR__.'/_legacy_passthrough.php';

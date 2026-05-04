@@ -11,5 +11,5 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 
 $legacy_target   = 'board_form.php';
-$legacy_menu_key = 'boards';
+$legacy_menu_key = 'bbs_board';
 require __DIR__.'/_legacy_passthrough.php';

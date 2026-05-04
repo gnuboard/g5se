@@ -8,5 +8,5 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 
 $legacy_target   = 'boardgroup_form.php';
-$legacy_menu_key = 'groups';
+$legacy_menu_key = 'bbs_group';
 require __DIR__.'/_legacy_passthrough.php';

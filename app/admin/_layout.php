@@ -114,7 +114,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
                 // md5 해시 + 인덱스로 고유성 보장.
                 $group_id = 'navgrp-'.$group_index.'-'.substr(md5($group['group']), 0, 6);
             ?>
-            <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" <?php echo $group_has_active ? 'open' : '' ?>>
+            <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_has_active ? 'open' : '' ?>>
                 <summary class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
                     <svg class="w-3 h-3 transition-transform shrink-0 chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     <span><?php echo get_text($group['group']) ?></span>
@@ -209,12 +209,16 @@ function admin_layout_end(): void
     });
 
     // 사이드바 그룹 토글 — open/close 상태를 localStorage 에 그룹 ID 별로 저장.
-    // (활성 메뉴가 있는 그룹은 PHP 가 open 으로 렌더; 사용자가 명시적으로 닫으면 그 결정 우선)
+    // 단, 현재 활성 메뉴를 포함한 그룹(data-has-active=1)은 항상 open 유지 — 사용자가
+    // 그 그룹을 보고 있으니 강제로 펼쳐 둬야 한다.
     try {
         var navState = JSON.parse(localStorage.getItem('admin-nav-groups') || '{}');
         document.querySelectorAll('.nav-group').forEach(function (g) {
             var id = g.dataset.groupId;
-            if (Object.prototype.hasOwnProperty.call(navState, id)) {
+            var hasActive = g.dataset.hasActive === '1';
+            if (hasActive) {
+                g.open = true; // 활성 그룹은 무조건 펼침
+            } else if (Object.prototype.hasOwnProperty.call(navState, id)) {
                 g.open = !!navState[id];
             }
             g.addEventListener('toggle', function () {
