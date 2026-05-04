@@ -101,12 +101,14 @@ if($w == 'u' || $w == 'a' || $w == 'r') {
     if($w == 'a' && !$is_admin)
         alert('답변은 관리자만 등록할 수 있습니다.');
 
-    $sql = " select * from {$g5['qa_content_table']} where qa_id = '$qa_id' ";
+    $sql = " select * from {$g5['qa_content_table']} where qa_id = :qa_id ";
+    $params = [':qa_id' => $qa_id];
     if(!$is_admin) {
-        $sql .= " and mb_id = '{$member['mb_id']}' ";
+        $sql .= " and mb_id = :mb_id ";
+        $params[':mb_id'] = $member['mb_id'];
     }
 
-    $write = sql_fetch($sql);
+    $write = sql_pdo_fetch($sql, $params);
 
     if($w == 'u') {
         if(!$write['qa_id'])
@@ -239,7 +241,7 @@ for ($i=1; $i<=$upload_count; $i++) {
 
 if($w == '' || $w == 'a' || $w == 'r') {
     if($w == '' || $w == 'r') {
-        $row = sql_fetch(" select MIN(qa_num) as min_qa_num from {$g5['qa_content_table']} ");
+        $row = sql_pdo_fetch(" select MIN(qa_num) as min_qa_num from {$g5['qa_content_table']} ");
         $qa_num = $row['min_qa_num'] - 1;
     }
 
@@ -247,7 +249,7 @@ if($w == '' || $w == 'a' || $w == 'r') {
         $qa_num = $write['qa_num'];
         $qa_parent = $write['qa_id'];
         $qa_related = $write['qa_related'];
-        $qa_category = addslashes($write['qa_category']);
+        $qa_category = $write['qa_category'];
         $qa_type = 1;
         $qa_status = 1;
     }
@@ -257,34 +259,47 @@ if($w == '' || $w == 'a' || $w == 'r') {
     $insert_qa_file2 = isset($upload[2]['file']) ? $upload[2]['file'] : '';
     $insert_qa_source2 = isset($upload[2]['source']) ? $upload[2]['source'] : '';
 
-    $sql = " insert into {$g5['qa_content_table']}
-                set qa_num          = '$qa_num',
-                    mb_id           = '{$member['mb_id']}',
-                    qa_name         = '".addslashes($member['mb_nick'])."',
-                    qa_email        = '$qa_email',
-                    qa_hp           = '$qa_hp',
-                    qa_type         = '$qa_type',
-                    qa_parent       = '$qa_parent',
-                    qa_related      = '$qa_related',
-                    qa_category     = '$qa_category',
-                    qa_email_recv   = '$qa_email_recv',
-                    qa_sms_recv     = '$qa_sms_recv',
-                    qa_html         = '$qa_html',
-                    qa_subject      = '$qa_subject',
-                    qa_content      = '$qa_content',
-                    qa_status       = '$qa_status',
-                    qa_file1        = '{$insert_qa_file1}',
-                    qa_source1      = '{$insert_qa_source1}',
-                    qa_file2        = '{$insert_qa_file2}',
-                    qa_source2      = '{$insert_qa_source2}',
-                    qa_ip           = '{$_SERVER['REMOTE_ADDR']}',
-                    qa_datetime     = '".G5_TIME_YMDHIS."',
-                    qa_1            = '$qa_1',
-                    qa_2            = '$qa_2',
-                    qa_3            = '$qa_3',
-                    qa_4            = '$qa_4',
-                    qa_5            = '$qa_5' ";
-    sql_query($sql);
+    sql_pdo_query(" insert into {$g5['qa_content_table']} set
+                        qa_num        = :qa_num,
+                        mb_id         = :mb_id,
+                        qa_name       = :qa_name,
+                        qa_email      = :qa_email,
+                        qa_hp         = :qa_hp,
+                        qa_type       = :qa_type,
+                        qa_parent     = :qa_parent,
+                        qa_related    = :qa_related,
+                        qa_category   = :qa_category,
+                        qa_email_recv = :qa_email_recv,
+                        qa_sms_recv   = :qa_sms_recv,
+                        qa_html       = :qa_html,
+                        qa_subject    = :qa_subject,
+                        qa_content    = :qa_content,
+                        qa_status     = :qa_status,
+                        qa_file1      = :qa_file1,
+                        qa_source1    = :qa_source1,
+                        qa_file2      = :qa_file2,
+                        qa_source2    = :qa_source2,
+                        qa_ip         = :qa_ip,
+                        qa_datetime   = :qa_datetime,
+                        qa_1          = :qa_1,
+                        qa_2          = :qa_2,
+                        qa_3          = :qa_3,
+                        qa_4          = :qa_4,
+                        qa_5          = :qa_5 ",
+                  [':qa_num' => $qa_num, ':mb_id' => $member['mb_id'],
+                   ':qa_name' => $member['mb_nick'],
+                   ':qa_email' => $qa_email, ':qa_hp' => $qa_hp,
+                   ':qa_type' => $qa_type, ':qa_parent' => $qa_parent, ':qa_related' => $qa_related,
+                   ':qa_category' => $qa_category, ':qa_email_recv' => $qa_email_recv,
+                   ':qa_sms_recv' => $qa_sms_recv, ':qa_html' => $qa_html,
+                   ':qa_subject' => stripslashes($qa_subject), ':qa_content' => stripslashes($qa_content),
+                   ':qa_status' => $qa_status,
+                   ':qa_file1' => $insert_qa_file1, ':qa_source1' => $insert_qa_source1,
+                   ':qa_file2' => $insert_qa_file2, ':qa_source2' => $insert_qa_source2,
+                   ':qa_ip' => $_SERVER['REMOTE_ADDR'], ':qa_datetime' => G5_TIME_YMDHIS,
+                   ':qa_1' => stripslashes($qa_1), ':qa_2' => stripslashes($qa_2),
+                   ':qa_3' => stripslashes($qa_3), ':qa_4' => stripslashes($qa_4),
+                   ':qa_5' => stripslashes($qa_5)]);
 
     if($w == '' || $w == 'r') {
         $qa_id = sql_insert_id();
@@ -295,19 +310,17 @@ if($w == '' || $w == 'a' || $w == 'r') {
             $qa_related = $qa_id;
         }
 
-        $sql = " update {$g5['qa_content_table']}
-                    set qa_parent   = '$qa_id',
-                        qa_related  = '$qa_related'
-                    where qa_id = '$qa_id' ";
-        sql_query($sql);
+        sql_pdo_query(" update {$g5['qa_content_table']} set
+                            qa_parent  = :qa_parent,
+                            qa_related = :qa_related
+                        where qa_id = :qa_id ",
+                      [':qa_parent' => $qa_id, ':qa_related' => $qa_related, ':qa_id' => $qa_id]);
     }
 
     if($w == 'a') {
         $answer_id = (int) sql_insert_id();
-        $sql = " update {$g5['qa_content_table']}
-                    set qa_status = '1'
-                    where qa_id = '{$write['qa_parent']}' ";
-        sql_query($sql);
+        sql_pdo_query(" update {$g5['qa_content_table']} set qa_status = '1' where qa_id = :qa_id ",
+                      [':qa_id' => $write['qa_parent']]);
     }
 } else if($w == 'u') {
     if(!$upload[1]['file'] && !$upload[1]['del_check']) {
@@ -320,26 +333,37 @@ if($w == '' || $w == 'a' || $w == 'r') {
         $upload[2]['source'] = $write['qa_source2'];
     }
 
-    $sql = " update {$g5['qa_content_table']}
-                set qa_email    = '$qa_email',
-                    qa_hp       = '$qa_hp',
-                    qa_category = '$qa_category',
-                    qa_html     = '$qa_html',
-                    qa_subject  = '$qa_subject',
-                    qa_content  = '$qa_content',
-                    qa_file1    = '{$upload[1]['file']}',
-                    qa_source1  = '{$upload[1]['source']}',
-                    qa_file2    = '{$upload[2]['file']}',
-                    qa_source2  = '{$upload[2]['source']}',
-                    qa_1        = '$qa_1',
-                    qa_2        = '$qa_2',
-                    qa_3        = '$qa_3',
-                    qa_4        = '$qa_4',
-                    qa_5        = '$qa_5' ";
-    if($qa_sms_recv)
-        $sql .= ", qa_sms_recv = '$qa_sms_recv' ";
-    $sql .= " where qa_id = '$qa_id' ";
-    sql_query($sql);
+    $sql = " update {$g5['qa_content_table']} set
+                qa_email    = :qa_email,
+                qa_hp       = :qa_hp,
+                qa_category = :qa_category,
+                qa_html     = :qa_html,
+                qa_subject  = :qa_subject,
+                qa_content  = :qa_content,
+                qa_file1    = :qa_file1,
+                qa_source1  = :qa_source1,
+                qa_file2    = :qa_file2,
+                qa_source2  = :qa_source2,
+                qa_1        = :qa_1,
+                qa_2        = :qa_2,
+                qa_3        = :qa_3,
+                qa_4        = :qa_4,
+                qa_5        = :qa_5 ";
+    $params = [':qa_email' => $qa_email, ':qa_hp' => $qa_hp, ':qa_category' => stripslashes($qa_category),
+               ':qa_html' => $qa_html, ':qa_subject' => stripslashes($qa_subject),
+               ':qa_content' => stripslashes($qa_content),
+               ':qa_file1' => $upload[1]['file'], ':qa_source1' => $upload[1]['source'],
+               ':qa_file2' => $upload[2]['file'], ':qa_source2' => $upload[2]['source'],
+               ':qa_1' => stripslashes($qa_1), ':qa_2' => stripslashes($qa_2),
+               ':qa_3' => stripslashes($qa_3), ':qa_4' => stripslashes($qa_4),
+               ':qa_5' => stripslashes($qa_5)];
+    if($qa_sms_recv) {
+        $sql .= ", qa_sms_recv = :qa_sms_recv ";
+        $params[':qa_sms_recv'] = $qa_sms_recv;
+    }
+    $sql .= " where qa_id = :qa_id ";
+    $params[':qa_id'] = $qa_id;
+    sql_pdo_query($sql, $params);
 }
 
 /**
