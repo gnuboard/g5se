@@ -1,7 +1,6 @@
 <?php
 /*
- * /admin/content_form — gnuboard 의 adm/contentform.php 패스스루.
- * 기능은 원본 그대로, 디자인만 modern shell + 컴포넌트 레이어로 적용.
+ * /admin/contentform — gnuboard 의 adm/contentform.php 패스스루.
  */
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
