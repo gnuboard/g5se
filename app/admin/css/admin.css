@@ -742,6 +742,29 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     width: 12rem;
     border-bottom: 1px solid var(--slate-100);
 }
+/* 그룹적용/전체적용 td_grpset — 행의 최우측에 고정 폭으로 배치 */
+.legacy-admin-content .tbl_frm01 tbody td.td_grpset,
+.legacy-admin-content .tbl_head01 tbody td.td_grpset {
+    width: 14rem;
+    white-space: nowrap;
+    text-align: right;
+    color: var(--slate-500);
+    font-size: 0.8125rem;
+}
+[data-theme="dark"] .legacy-admin-content .tbl_frm01 tbody td.td_grpset,
+[data-theme="dark"] .legacy-admin-content .tbl_head01 tbody td.td_grpset {
+    color: var(--slate-400);
+}
+.legacy-admin-content .td_grpset label {
+    margin-right: 0.5rem;
+}
+.legacy-admin-content .td_grpset label:last-child {
+    margin-right: 0;
+}
+.legacy-admin-content .td_grpset input[type="checkbox"] {
+    margin-right: 0.25rem;
+    vertical-align: middle;
+}
 [data-theme="dark"] .legacy-admin-content .tbl_head01 tbody td,
 [data-theme="dark"] .legacy-admin-content .tbl_frm01 tbody td {
     border-bottom-color: var(--slate-800);
