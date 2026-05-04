@@ -42,8 +42,7 @@ if ($sca || $stx || $stx === '0') {     //검색이면
     $sql_search = get_sql_search($sca, $sfl, $stx, $sop);
 
     // 가장 작은 번호를 얻어서 변수에 저장 (하단의 페이징에서 사용)
-    $sql = " select MIN(wr_num) as min_wr_num from {$write_table} ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select MIN(wr_num) as min_wr_num from {$write_table} ");
     $min_spt = (int)$row['min_wr_num'];
 
     if (!$spt) $spt = $min_spt;
@@ -52,8 +51,8 @@ if ($sca || $stx || $stx === '0') {     //검색이면
 
     // 원글만 얻는다. (코멘트의 내용도 검색하기 위함)
     // 라엘님 제안 코드로 대체 http://sir.kr/g5_bug/2922
-    $sql = " SELECT COUNT(DISTINCT `wr_parent`) AS `cnt` FROM {$write_table} WHERE {$sql_search} ";
-    $row = sql_fetch($sql);
+    // NOTE: $sql_search 는 get_sql_search() 가 빌드 — addslashes 로 escape 된 값이 이미 인라인 (lib/ 이관 후 placeholder 화 예정)
+    $row = sql_pdo_fetch(" SELECT COUNT(DISTINCT `wr_parent`) AS `cnt` FROM {$write_table} WHERE {$sql_search} ");
     $total_count = $row['cnt'];
     /*
     $sql = " select distinct wr_parent from {$write_table} where {$sql_search} ";
@@ -100,11 +99,10 @@ if (!$is_search_bbs) {
         }
     }
 
-    // N+1 쿼리 제거: 공지 전체를 단일 IN 쿼리로 일괄 조회
+    // N+1 쿼리 제거: 공지 전체를 단일 IN 쿼리로 일괄 조회 — IDs 이미 (int) 캐스팅
     $notice_rows_by_id = array();
     if (!empty($notice_ids_int)) {
-        $sql = " select * from {$write_table} where wr_id in (" . implode(',', $notice_ids_int) . ") ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select * from {$write_table} where wr_id in (" . implode(',', $notice_ids_int) . ") ");
         while ($nrow = sql_fetch_array($result)) {
             $notice_rows_by_id[$nrow['wr_id']] = $nrow;
         }
@@ -198,10 +196,13 @@ if ($sst) {
 // 페이지의 공지개수가 목록수 보다 작을 때만 실행
 $rows_to_process = array();
 if ($page_rows > 0) {
+    // LIMIT 정수 캐스팅 (PDO LIMIT 은 placeholder 미지원)
+    $from_record_i = (int) $from_record;
+    $page_rows_i   = (int) $page_rows;
+
     if ($is_search_bbs) {
-        // 1차: 검색 결과의 wr_parent ID 목록 조회
-        $sql = " select distinct wr_parent from {$write_table} where {$sql_search} {$sql_order} limit {$from_record}, $page_rows ";
-        $result = sql_query($sql);
+        // 1차: 검색 결과의 wr_parent ID 목록 조회 — $sql_search/$sql_order 는 server-side 빌더 산물
+        $result = sql_pdo_query(" select distinct wr_parent from {$write_table} where {$sql_search} {$sql_order} limit {$from_record_i}, {$page_rows_i} ");
 
         $parent_ids_in_order = array();
         while ($id_row = sql_fetch_array($result)) {
@@ -211,10 +212,9 @@ if ($page_rows > 0) {
             }
         }
 
-        // 2차: N+1 쿼리 제거 - 단일 IN 쿼리로 전체 행 일괄 조회
+        // 2차: N+1 쿼리 제거 - 단일 IN 쿼리로 전체 행 일괄 조회 (IDs 이미 (int) 캐스팅)
         if (!empty($parent_ids_in_order)) {
-            $batch_sql = " select * from {$write_table} where wr_id in (" . implode(',', $parent_ids_in_order) . ") ";
-            $batch_result = sql_query($batch_sql);
+            $batch_result = sql_pdo_query(" select * from {$write_table} where wr_id in (" . implode(',', $parent_ids_in_order) . ") ");
 
             $rows_by_id = array();
             while ($br = sql_fetch_array($batch_result)) {
@@ -229,12 +229,13 @@ if ($page_rows > 0) {
             }
         }
     } else {
+        // $notice_array 는 wr_id (DB fetched int) — 안전
         $sql = " select * from {$write_table} where wr_is_comment = 0 ";
         if(!empty($notice_array))
-            $sql .= " and wr_id not in (".implode(', ', $notice_array).") ";
-        $sql .= " {$sql_order} limit {$from_record}, $page_rows ";
+            $sql .= " and wr_id not in (".implode(', ', array_map('intval', $notice_array)).") ";
+        $sql .= " {$sql_order} limit {$from_record_i}, {$page_rows_i} ";
 
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql);
         while ($row = sql_fetch_array($result)) {
             $rows_to_process[] = $row;
         }
