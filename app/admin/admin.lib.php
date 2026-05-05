@@ -669,6 +669,21 @@ if (isset($menu) && $menu) {
     $menu = run_replace('admin_menu', $menu);
 }
 
+// $auth_menu: au_menu (code) → label 평면 맵.
+// 레거시 admin.head.php 의 print_menu2() 가 사이드바 렌더 부수효과로 채우던 것을
+// modern shell 은 호출하지 않으므로 여기서 직접 빌드 (auth_list 의 select 등이 사용).
+$auth_menu = array();
+if (isset($menu) && is_array($menu)) {
+    foreach ($menu as $group) {
+        if (!is_array($group)) continue;
+        for ($i = 1, $n = count($group); $i < $n; $i++) {
+            if (isset($group[$i][0], $group[$i][1])) {
+                $auth_menu[$group[$i][0]] = $group[$i][1];
+            }
+        }
+    }
+}
+
 $arr_query = array();
 if (isset($sst)) {
     $arr_query[] = 'sst=' . $sst;
