@@ -588,6 +588,19 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
     width: 100%; margin: 4px 0 0;
     font-size: var(--m-text-xs); color: var(--m-text-muted);
 }
+
+/* newwin (팝업레이어) — 다크모드 톤 보정 (default.css 의 .hd_pops {background:#fff} 가 하드코딩이라 가독성 깨짐) */
+.hd_pops {
+    background: var(--m-surface) !important;
+    color: var(--m-text);
+    border-color: var(--m-border) !important;
+}
+.hd_pops_con,
+.hd_pops_con * { color: var(--m-text); }
+[data-theme="dark"] .hd_pops_footer { background: #1c2230 !important; color: var(--m-text); }
+[data-theme="dark"] .hd_pops_footer button,
+[data-theme="dark"] .hd_pops_footer .hd_pops_reject,
+[data-theme="dark"] .hd_pops_footer .hd_pops_close { background: #2a3344 !important; color: var(--m-text-soft) !important; }
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
