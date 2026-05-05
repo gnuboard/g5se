@@ -38,6 +38,49 @@ $base_path = isset($get_path_url['path']) ? $get_path_url['path'] . '/' : '/';
 <link rel="stylesheet" href="<?php echo G5_JS_URL; ?>/remodal/remodal.css">
 <link rel="stylesheet" href="<?php echo G5_JS_URL; ?>/remodal/remodal-default-theme.css">
 <script src="<?php echo G5_JS_URL; ?>/remodal/remodal.js"></script>
+<style>
+/* short-url rewrite 모달 — modern admin shell 안에서 보기 좋게 정렬.
+   FontAwesome 없으므로 .connect-close <i.fa> 는 숨기고 '닫기' 텍스트를 ✕ 버튼 형태로 우상단 고정. */
+.is_rewrite.remodal {
+    max-width: 720px; padding: 32px 28px 28px; text-align: left;
+    border-radius: 10px;
+}
+.is_rewrite.remodal .connect-close {
+    position: absolute; top: 10px; right: 12px;
+    width: 32px; height: 32px; padding: 0;
+    border: 0; background: transparent; cursor: pointer;
+    font-size: 0; line-height: 1;
+}
+.is_rewrite.remodal .connect-close i.fa { display: none; }
+.is_rewrite.remodal .connect-close .txt {
+    display: inline-block; font-size: 22px; line-height: 1;
+    color: #64748b;
+}
+.is_rewrite.remodal .connect-close .txt::before { content: '✕'; }
+.is_rewrite.remodal .connect-close .txt { font-size: 0; }
+.is_rewrite.remodal .connect-close .txt::before { font-size: 22px; }
+.is_rewrite.remodal .connect-close:hover .txt { color: #0f172a; }
+
+.is_rewrite.remodal .copy_title {
+    margin: 0 0 14px; padding-right: 36px;
+    font-size: 15px; font-weight: 600; color: #0f172a; text-align: left;
+    line-height: 1.5;
+}
+.is_rewrite.remodal .copy_title .info-warning { color: #b45309; font-weight: 500; font-size: 13px; }
+.is_rewrite.remodal .copy_title .info-success { color: #047857; font-weight: 500; font-size: 13px; }
+.is_rewrite.remodal textarea {
+    display: block; width: 100%; box-sizing: border-box;
+    min-height: 280px; padding: 12px 14px;
+    border: 1px solid #cbd5e1; border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px; line-height: 1.55; color: #0f172a;
+    background: #f8fafc;
+    white-space: pre; overflow: auto;
+}
+
+/* 짧은주소 트리거 버튼 — modern shell 안에서 살짝 마진 */
+.legacy-admin-content .server_config_views { display: flex; gap: 8px; margin: 8px 0 12px; }
+</style>
 <section id="anc_cf_url">
     <h2 class="h2_frm">짧은 주소 설정</h2>
     <?php echo $pg_anchor ?>
