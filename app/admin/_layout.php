@@ -264,6 +264,9 @@ window.delete_cookie = window.delete_cookie || function (n) {
     }
     function tryAll() {
         document.querySelectorAll('iframe').forEach(function (f) {
+            // ckeditor4 iframe (id 가 *_contents) 은 자체 darkmode 핸들러가 있으니 건드리지 않음
+            if (f.id && f.id.indexOf('cke_') === 0) return;
+            if (f.parentElement && f.parentElement.id && f.parentElement.id.indexOf('cke_') === 0) return;
             injectCss(f);
             f.addEventListener('load', function () { injectCss(f); }, { once: false });
         });

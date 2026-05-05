@@ -3,6 +3,15 @@
  * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
  */
 
+// gnu5se: ckeditor4 자산 베이스 (laravel 의 /assets/editors/ckeditor4 가 아닌 plugin 경로 사용)
+window.G5_CKEDITOR4_URL = (typeof g5_editor_url !== 'undefined') ? g5_editor_url : '/plugin/editor/ckeditor4';
+
+// gnu5se: 페이지(parent) 의 다크모드 감지 — html.dark 또는 [data-theme=dark]
+window.G5_CKEDITOR4_IS_DARK = function () {
+    var de = document.documentElement;
+    return de.classList.contains('dark') || de.getAttribute('data-theme') === 'dark';
+};
+
 CKEDITOR.editorConfig = function( config ) {
     // 기본 언어 설정
     config.language = 'ko';
@@ -13,8 +22,13 @@ CKEDITOR.editorConfig = function( config ) {
     // 필수 플러그인 설정
     config.extraPlugins = 'emoji,uploadwidget,uploadimage';
 
+    // 다크모드: 툴바/크롬은 moono-dark 스킨, 본문 iframe 도 darkmode.css 추가 로드
+    if (window.G5_CKEDITOR4_IS_DARK && window.G5_CKEDITOR4_IS_DARK()) {
+        config.skin = 'moono-dark';
+    }
+
     // 이모지 설정
-    config.emoji_emojiListUrl = '/assets/editors/ckeditor4/plugins/emoji/sir_emoji.json';
+    config.emoji_emojiListUrl = window.G5_CKEDITOR4_URL + '/plugins/emoji/sir_emoji.json';
     config.emoji_minChars = 1;
 
     // 툴바 그룹 설정
@@ -34,8 +48,10 @@ CKEDITOR.editorConfig = function( config ) {
     config.forcePasteAsPlainText = false;
     config.pasteFromWordPromptCleanup = true;
 
-    // 콘텐츠 CSS
-    config.contentsCss = '/assets/editors/ckeditor4/contents.css';
+    // 콘텐츠 CSS — 다크모드면 darkmode.css 추가 (.cke_editable 톤 적용)
+    config.contentsCss = (window.G5_CKEDITOR4_IS_DARK && window.G5_CKEDITOR4_IS_DARK())
+        ? [ window.G5_CKEDITOR4_URL + '/contents.css', window.G5_CKEDITOR4_URL + '/darkmode.css' ]
+        : window.G5_CKEDITOR4_URL + '/contents.css';
 
     // 폰트 설정
     config.font_names = '굴림/Gulim;돋움/Dotum;바탕/Batang;궁서/Gungsuh;맑은 고딕/Malgun Gothic;' +
@@ -58,6 +74,14 @@ CKEDITOR.editorConfig = function( config ) {
     // 모든 콘텐츠 허용
     config.allowedContent = true;
 };
+
+// gnu5se: 클래스 자동 치환(.ckeditor)으로 만들어지는 인스턴스에도 다크모드 적용.
+// initializeCKEditor() 헬퍼를 거치지 않으므로 글로벌 instanceReady 핸들러 한번 더 바인딩.
+CKEDITOR.on('instanceReady', function (evt) {
+    if (typeof window.applyCKEditorDarkMode === 'function') {
+        try { window.applyCKEditorDarkMode(evt.editor); } catch (e) {}
+    }
+});
 
 /**
  * CKEditor 초기화 헬퍼 함수
@@ -244,20 +268,21 @@ window.applyCKEditorDarkMode = function(editorInstance) {
         }
     }
 
-    // 초기 적용
-    applyDarkMode(document.documentElement.classList.contains('dark'));
+    function isParentDark() {
+        var de = document.documentElement;
+        return de.classList.contains('dark') || de.getAttribute('data-theme') === 'dark';
+    }
 
-    // 다크 모드 토글 감지
-    var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                applyDarkMode(document.documentElement.classList.contains('dark'));
-            }
-        });
+    // 초기 적용
+    applyDarkMode(isParentDark());
+
+    // 다크 모드 토글 감지 — class / data-theme 둘 다 감시
+    var observer = new MutationObserver(function() {
+        applyDarkMode(isParentDark());
     });
 
     observer.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ['class']
+        attributeFilter: ['class', 'data-theme']
     });
 };
