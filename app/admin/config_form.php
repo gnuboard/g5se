@@ -667,7 +667,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                             <?php echo help(G5_EDITOR_URL . ' 밑의 DHTML 에디터 폴더를 선택합니다.') ?>
                             <select name="cf_editor" id="cf_editor">
                                 <?php
-                                // gnu5se: ckeditor4 = 추천 (미설정 시 자동 선택), cheditor5 는 맨 아래로
+                                // gnu5se: ckeditor4 = 기본 (미설정 시 자동 선택), cheditor5 는 맨 아래로
                                 $g5_default_editor = 'ckeditor4';
                                 $cf_editor_pick = $config['cf_editor'] !== '' ? $config['cf_editor'] : $g5_default_editor;
                                 $arr = get_skin_dir('', G5_EDITOR_PATH);
@@ -681,7 +681,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                                 $arr = array_merge($arr_main, $arr_tail);
                                 echo "<option value=\"\">사용안함</option>\n";
                                 foreach ($arr as $name) {
-                                    $label = $name . ($name === $g5_default_editor ? ' (추천)' : '');
+                                    $label = $name . ($name === $g5_default_editor ? ' (기본)' : '');
                                     echo "<option value=\"" . $name . "\"" . get_selected($cf_editor_pick, $name) . ">" . $label . "</option>\n";
                                 }
                                 ?>
