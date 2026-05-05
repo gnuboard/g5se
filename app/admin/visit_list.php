@@ -125,7 +125,7 @@ if (isset($domain))
     $qstr .= "&amp;domain=$domain";
 $qstr .= "&amp;page=";
 
-$pagelist = get_paging($config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr");
+$pagelist = get_paging($config['cf_write_pages'], $page, $total_page, G5_ADMIN_URL.'/visit_list?'.$qstr);
 echo $pagelist;
 
 ?>
