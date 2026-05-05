@@ -245,6 +245,33 @@ window.set_cookie = window.set_cookie || function (n, v, h, d) {
 window.delete_cookie = window.delete_cookie || function (n) {
     document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 };
+
+// SmartEditor2 / cheditor 의 iframe 안은 별도 문서 — 다크모드 admin shell 안에서
+// editor 본문이 검게 보이는 문제 해결을 위해 same-origin 이면 style 태그 직접 주입.
+(function () {
+    var EDITOR_CSS = 'html,body{background:#fff !important;color:#1e293b !important}'
+        + 'body{font-family:"Pretendard Variable","Pretendard",-apple-system,system-ui,sans-serif}'
+        + 'a{color:#0369a1}';
+    function injectCss(iframe) {
+        try {
+            var doc = iframe.contentDocument || iframe.contentWindow.document;
+            if (!doc || doc.__cssInjected) return;
+            var s = doc.createElement('style');
+            s.textContent = EDITOR_CSS;
+            (doc.head || doc.documentElement).appendChild(s);
+            doc.__cssInjected = true;
+        } catch (e) { /* cross-origin 등 — 무시 */ }
+    }
+    function tryAll() {
+        document.querySelectorAll('iframe').forEach(function (f) {
+            injectCss(f);
+            f.addEventListener('load', function () { injectCss(f); }, { once: false });
+        });
+    }
+    tryAll();
+    // SE2 가 늦게 iframe 을 만드므로 몇 차례 재시도
+    var n = 0; var t = setInterval(function () { tryAll(); if (++n > 10) clearInterval(t); }, 500);
+})();
 </script>
 
 <script>
