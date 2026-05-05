@@ -1,4 +1,7 @@
 <?php
+// ajax 응답이 깨지지 않게 PHP warning/notice 가 본문으로 새지 않도록 차단.
+ini_set('display_errors', '0');
+error_reporting(0);
 ini_set('memory_limit', '-1');
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
@@ -6,7 +9,7 @@ admin_require_login();
 require_once __DIR__.'/admin.lib.php';
 
 // clean the output buffer
-ob_end_clean();
+while (ob_get_level() > 0) { ob_end_clean(); }
 
 if (!(version_compare(phpversion(), '5.3.0', '>=') && defined('G5_BROWSCAP_USE') && G5_BROWSCAP_USE)) {
     die('사용할 수 없는 기능입니다.');
