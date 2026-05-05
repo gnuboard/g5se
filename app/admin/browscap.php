@@ -27,33 +27,57 @@ admin_layout_start($g5['title'], 'browscap');
 </header>
 <div class="legacy-admin-content space-y-4">
 
-<div id="processing">
-    <p>Browscap 정보를 업데이트하시려면 아래 업데이트 버튼을 클릭해 주세요.</p>
-    <button type="button" id="run_update">업데이트</button>
+<!-- Alpine.js state machine: idle → running → done | error.
+     status 에 따라 spinner / 체크 / 에러 텍스트 자동 토글. jQuery 의존 제거. -->
+<div id="processing"
+     x-data="{
+        status: 'idle',
+        error: '',
+        run() {
+            if (this.status === 'running') return;
+            this.status = 'running';
+            this.error = '';
+            fetch(<?php echo json_encode(G5_ADMIN_URL.'/browscap_update?_='.time()) ?>, { cache: 'no-store' })
+                .then(r => r.text())
+                .then(t => {
+                    const trimmed = (t || '').trim();
+                    if (trimmed) { this.status = 'error'; this.error = trimmed; return; }
+                    this.status = 'done';
+                })
+                .catch(e => { this.status = 'error'; this.error = e.message || '요청 실패'; });
+        }
+     }">
+
+    <template x-if="status === 'idle'">
+        <div>
+            <p>Browscap 정보를 업데이트하시려면 아래 업데이트 버튼을 클릭해 주세요.</p>
+            <button type="button" class="btn btn_01" @click="run()">업데이트</button>
+        </div>
+    </template>
+
+    <template x-if="status === 'running'">
+        <div>
+            <div class="update_processing"></div>
+            <p>Browscap 정보를 업데이트 중입니다…</p>
+        </div>
+    </template>
+
+    <template x-if="status === 'done'">
+        <div>
+            <div class="check_processing"></div>
+            <p><strong>Browscap 정보를 업데이트 했습니다.</strong></p>
+            <button type="button" class="btn btn_03" @click="status = 'idle'">다시 업데이트</button>
+        </div>
+    </template>
+
+    <template x-if="status === 'error'">
+        <div>
+            <p style="color:#b91c1c"><strong>업데이트 실패</strong></p>
+            <pre style="white-space:pre-wrap;color:#b91c1c" x-text="error"></pre>
+            <button type="button" class="btn btn_03" @click="run()">다시 시도</button>
+        </div>
+    </template>
 </div>
-
-<script>
-    $(function() {
-        $("#run_update").on("click", function() {
-            $("#processing").html('<div class="update_processing"></div><p>Browscap 정보를 업데이트 중입니다.</p>');
-
-            $.ajax({
-                url: <?php echo json_encode(G5_ADMIN_URL.'/browscap_update') ?>,
-                async: true,
-                cache: false,
-                dataType: "html",
-                success: function(data) {
-                    if (data != "") {
-                        alert(data);
-                        return false;
-                    }
-
-                    $("#processing").html("<div class='check_processing'></div><p>Browscap 정보를 업데이트 했습니다.</p>");
-                }
-            });
-        });
-    });
-</script>
 
 </div><!-- /.legacy-admin-content -->
 </main>
