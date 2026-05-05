@@ -1,10 +1,48 @@
 <?php
 /*
- * /admin/mail_test — gnuboard 의 adm/mail_test.php 패스스루.
+ * /admin/mail_test — 메일 내용 테스트 발송 (관리자 자신에게).
  */
+$sub_menu = "200300";
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
+require_once __DIR__.'/admin.lib.php';
 
-$legacy_target = 'mail_test.php';
-require __DIR__.'/_legacy_passthrough.php';
+if (!$config['cf_email_use']) {
+    alert('환경설정에서 \'메일발송 사용\'에 체크하셔야 메일을 발송할 수 있습니다.');
+}
+
+require_once G5_LIB_PATH . '/mailer.lib.php';
+
+auth_check_menu($auth, $sub_menu, 'w');
+
+if (function_exists('check_demo')) {
+    check_demo();
+}
+
+$g5['title'] = '회원메일 테스트';
+
+$name = get_text($member['mb_name']);
+$nick = $member['mb_nick'];
+$mb_id = $member['mb_id'];
+$email = $member['mb_email'];
+$ma_id = isset($_REQUEST['ma_id']) ? (int) $_REQUEST['ma_id'] : 0;
+
+$sql = "select ma_subject, ma_content from {$g5['mail_table']} where ma_id = '{$ma_id}' ";
+$ma = sql_fetch($sql);
+
+$subject = $ma['ma_subject'];
+
+$content = $ma['ma_content'];
+$content = preg_replace("/{이름}/", $name, (string)$content);
+$content = preg_replace("/{닉네임}/", $nick, (string)$content);
+$content = preg_replace("/{회원아이디}/", $mb_id, (string)$content);
+$content = preg_replace("/{이메일}/", $email, (string)$content);
+
+$mb_md5 = md5($member['mb_id'] . $member['mb_email'] . $member['mb_datetime']);
+
+$content = $content . '<p>더 이상 정보 수신을 원치 않으시면 [<a href="' . G5_BBS_URL . '/email_stop.php?mb_id=' . $mb_id . '&amp;mb_md5=' . $mb_md5 . '" target="_blank">수신거부</a>] 해 주십시오.</p>';
+
+mailer($config['cf_title'], $member['mb_email'], $member['mb_email'], $subject, $content, 1);
+
+alert($member['mb_nick'] . '(' . $member['mb_email'] . ')님께 테스트 메일을 발송하였습니다. 확인하여 주십시오.');
