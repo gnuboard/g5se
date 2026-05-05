@@ -40,6 +40,6 @@ add_event('goto_url', function ($url) {
 
 // gnuboard 의 adm/member_form_update.php 는 `require_once "./_common.php"` 같은
 // 상대 require 와 `$_FILES` 처리, `$qstr` 등 adm 디렉토리 컨텍스트에 의존하므로
-// cwd 를 G5_ADMIN_PATH 로 옮기고 그대로 호출한다.
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/member_form_update.php';
+// cwd 를 G5_PATH.'/adm' 로 옮기고 그대로 호출한다.
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/member_form_update.php';

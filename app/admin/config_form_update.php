@@ -9,7 +9,7 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();   // ← admin.lib.php top-level 의 alert 가드보다 먼저.
 
 if ($is_admin !== 'super') {
-    header('Location: /admin', true, 302);
+    header('Location: '.G5_ADMIN_URL, true, 302);
     exit;
 }
 
@@ -395,5 +395,5 @@ run_event('admin_config_form_update');
 
 update_rewrite_rules();
 
-header('Location: /admin/config_form', true, 302);
+header('Location: '.G5_ADMIN_URL.'/config_form', true, 302);
 exit;

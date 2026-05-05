@@ -19,24 +19,24 @@ if (!defined('_GNUBOARD_')) exit;
 // referer 패치는 admin_require_login() 안에서 이미 처리됨 (_layout.php).
 require_once G5_PATH.'/adm/admin.lib.php';
 
-// goto_url 의 ./foo.php 또는 ./bar.php?... 를 /admin/foo, /admin/bar?... 로 변환
+// goto_url 의 ./foo.php 또는 ./bar.php?... 를 G5_ADMIN_URL/foo, G5_ADMIN_URL/bar?... 로 변환
 add_event('goto_url', function ($url) {
     $u = str_replace('&amp;', '&', (string)$url);
     if (preg_match('#^\.?/?([a-z][a-z0-9_]*)\.php(\?.*)?$#i', $u, $m)) {
-        header('Location: /admin/'.$m[1].($m[2] ?? ''), true, 302);
+        header('Location: '.G5_ADMIN_URL.'/'.$m[1].($m[2] ?? ''), true, 302);
         exit;
     }
 }, 10, 1);
 
 if (!empty($legacy_is_post)) {
-    chdir(G5_ADMIN_PATH);
-    require G5_ADMIN_PATH.'/'.$legacy_target;
+    chdir(G5_PATH.'/adm');
+    require G5_PATH.'/adm'.'/'.$legacy_target;
     return;
 }
 
 ob_start();
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/'.$legacy_target;
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/'.$legacy_target;
 $html = ob_get_clean();
 
 $page_title = $g5['title'] ?? '관리자';
@@ -54,10 +54,10 @@ if (preg_match('#<div class="container_wr">(.*?)<footer\s+id="ft"#si', $html, $m
     $content = $html;
 }
 
-// 2) form action / 링크의 ./foo.php → /admin/foo 일괄 변환
+// 2) form action / 링크의 ./foo.php → G5_ADMIN_URL/foo 일괄 변환
 $content = preg_replace_callback(
     '#(href|action)="\./([a-z][a-z0-9_]*)\.php([^"]*)"#i',
-    static fn($m) => $m[1].'="/admin/'.$m[2].$m[3].'"',
+    static fn($m) => $m[1].'="'.G5_ADMIN_URL.'/'.$m[2].$m[3].'"',
     $content
 );
 
@@ -133,7 +133,7 @@ document.addEventListener('click', function (e) {
     if (window.opener && !window.opener.closed) return; // 진짜 팝업이면 그대로 close
     e.preventDefault();
     if (history.length > 1) history.back();
-    else location.href = '/admin';
+    else location.href = <?php echo json_encode(G5_ADMIN_URL) ?>;
 });
 
 window.delete_confirm = window.delete_confirm || function (a) {
