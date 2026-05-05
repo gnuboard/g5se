@@ -214,6 +214,29 @@ function admin_layout_end(): void
         if (t && !t.value) t.value = ADMIN_TOKEN;
     }, true);
 })();
+
+// gnuboard 의 admin.head 안 inline JS 가 정의하던 글로벌 헬퍼들 (전체선택/체크여부/
+// 삭제확인/쿠키 유틸). modern admin shell 은 admin.head 를 로드 안 하므로 여기서 정의.
+window.is_checked = window.is_checked || function (name) {
+    var els = document.getElementsByName(name);
+    for (var i = 0; i < els.length; i++) if (els[i].checked) return true;
+    return false;
+};
+window.check_all = window.check_all || function (f) {
+    var ck = f.chkall || f.querySelector('input[name="chkall"]');
+    if (!ck) return;
+    f.querySelectorAll('input[type="checkbox"][name="chk[]"]').forEach(function (i) { i.checked = ck.checked; });
+};
+window.delete_confirm = window.delete_confirm || function (a) {
+    return confirm('정말 삭제하시겠습니까?');
+};
+window.set_cookie = window.set_cookie || function (n, v, h, d) {
+    var e = new Date(); e.setTime(e.getTime() + (h * 1000));
+    document.cookie = n + '=' + escape(v) + '; expires=' + e.toUTCString() + '; path=/' + (d ? '; domain=' + d : '');
+};
+window.delete_cookie = window.delete_cookie || function (n) {
+    document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+};
 </script>
 
 <script>
