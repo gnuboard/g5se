@@ -88,23 +88,9 @@ CKEDITOR.on('instanceReady', function (evt) {
         try { window.applyCKEditorDarkMode(evt.editor); } catch (e) {}
     }
 
-    // gnu5se: notifications_area 를 에디터 outer wrapper(.cke) 안으로 이동.
-    // 기본은 body 에 붙어 viewport 기준으로 떠서 좁은 admin 컬럼에서 위치 깨짐.
-    // .cke_contents 안으로 옮기면 iframe 이 덮어 안 보임 → 한 단계 위 .cke 에.
-    // 매번 알림이 새로 만들어질 때마다도 적용되도록 notificationShow 도 hook.
-    try {
-        var moveArea = function () {
-            var area = document.getElementById('cke_notifications_area_' + evt.editor.name);
-            var container = evt.editor.container && evt.editor.container.$;
-            if (area && container && area.parentNode !== container) {
-                container.style.position = container.style.position || 'relative';
-                container.appendChild(area);
-            }
-        };
-        moveArea();
-        evt.editor.on('notificationShow', moveArea);
-        evt.editor.on('notificationUpdate', moveArea);
-    } catch (e) {}
+    // (notifications_area 를 .cke 안으로 옮기는 로직은 panel 위치 계산을 깨서
+    //  emoji / font 팝업이 페이지 하단에 뜨는 문제를 만들었음 — 제거.
+    //  알림 toast 위치는 CKEditor 기본 그대로 두고 admin.css 의 카드 스타일만 적용.)
 });
 
 /**
