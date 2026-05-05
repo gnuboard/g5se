@@ -89,6 +89,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <script src="<?php echo G5_ADMIN_URL ?>/js/uno.global.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+    <!-- Alpine.js — 작은 reactive (~15KB). x-data / x-show / x-on / x-text 으로 선언적 인터랙션.
+         defer 로 로드 → DOMContentLoaded 시 자동 init. 기존 jQuery 와 충돌 없이 공존. -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     </style>

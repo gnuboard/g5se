@@ -32,32 +32,49 @@ admin_layout_start($g5['title'], 'browscap_convert');
 </header>
 <div class="legacy-admin-content space-y-4">
 
-<div id="processing">
-    <p>접속로그 정보를 Browscap 정보로 변환하시려면 아래 업데이트 버튼을 클릭해 주세요.</p>
-    <button type="button" id="run_update">업데이트</button>
+<!-- Alpine.js: idle → running → done. done 상태의 result HTML 안에 #run_update
+     버튼이 들어 있어 (서버가 chunk 별로 새 버튼을 다시 렌더), 이벤트 위임으로
+     run() 재호출. -->
+<div id="processing"
+     x-data="{
+        status: 'idle',
+        result: '',
+        async run() {
+            if (this.status === 'running') return;
+            this.status = 'running';
+            const url = new URL(<?php echo json_encode(G5_ADMIN_URL.'/browscap_converter') ?>, location.href);
+            url.searchParams.set('rows', '<?php echo (int)$rows ?>');
+            url.searchParams.set('_', Date.now());
+            try {
+                const r = await fetch(url, { cache: 'no-store' });
+                this.result = await r.text();
+                this.status = 'done';
+            } catch (e) {
+                this.result = '<p style=\'color:#b91c1c\'><strong>변환 실패</strong> '+(e.message||'')+'</p>';
+                this.status = 'done';
+            }
+        }
+     }"
+     @click="if (event.target.closest('#run_update')) run()">
+
+    <template x-if="status === 'idle'">
+        <div>
+            <p>접속로그 정보를 Browscap 정보로 변환하시려면 아래 업데이트 버튼을 클릭해 주세요.</p>
+            <button type="button" class="btn btn_01" id="run_update">업데이트</button>
+        </div>
+    </template>
+
+    <template x-if="status === 'running'">
+        <div>
+            <div class="update_processing"></div>
+            <p>Browscap 정보로 변환 중입니다…</p>
+        </div>
+    </template>
+
+    <template x-if="status === 'done'">
+        <div x-html="result"></div>
+    </template>
 </div>
-
-<script>
-    $(function() {
-        $(document).on("click", "#run_update", function() {
-            $("#processing").html('<div class="update_processing"></div><p>Browscap 정보로 변환 중입니다.</p>');
-
-            $.ajax({
-                method: "GET",
-                url: <?php echo json_encode(G5_ADMIN_URL.'/browscap_converter') ?>,
-                data: {
-                    rows: "<?php echo strval($rows); ?>"
-                },
-                async: true,
-                cache: false,
-                dataType: "html",
-                success: function(data) {
-                    $("#processing").html(data);
-                }
-            });
-        });
-    });
-</script>
 
 </div><!-- /.legacy-admin-content -->
 </main>
