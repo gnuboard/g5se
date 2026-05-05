@@ -200,13 +200,21 @@ function admin_layout_end(): void
 <!-- 모바일 사이드바 backdrop (lg 이하에서 토글 시 표시) -->
 <div id="adm-sidebar-backdrop" class="hidden fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
 
-<script>
+<?php
 // admin form 의 hidden token 자동 주입.
-// gnuboard admin.js 는 ajax 로 /adm/ajax.token.php 를 호출하지만 modern admin
-// 에서는 referer 가 /admin 이라 admin_referer_check 통과 안 함.
-// 페이지 렌더 시점에 발급된 admin_token 을 그대로 직접 채워 submit.
+// 주의: get_admin_token() 은 호출할 때마다 새 random 토큰을 만들고 세션에 저장.
+//       form HTML 에서 이미 get_admin_token() 으로 토큰을 박아놨다면 세션에는 그
+//       토큰이 들어있음 — 여기서 다시 get_admin_token() 을 부르면 세션이
+//       덮어써져서 form 토큰과 mismatch → 'check_admin_token' 실패.
+//       따라서 세션 값을 그대로 읽어 쓰고, 없을 때만 발급.
+$_admin_form_token = function_exists('get_session') ? (string)get_session('ss_admin_token') : '';
+if ($_admin_form_token === '' && function_exists('get_admin_token')) {
+    $_admin_form_token = get_admin_token();
+}
+?>
+<script>
 (function () {
-    var ADMIN_TOKEN = <?php echo json_encode(function_exists('get_admin_token') ? get_admin_token() : '') ?>;
+    var ADMIN_TOKEN = <?php echo json_encode($_admin_form_token) ?>;
     document.addEventListener('submit', function (e) {
         var f = e.target;
         if (!f || f.tagName !== 'FORM') return;
