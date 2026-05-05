@@ -89,7 +89,7 @@ if ($act_button === "선택수정") {
         $tmp_bo_table = isset($_POST['board_table'][$k]) ? trim(clean_xss_tags($_POST['board_table'][$k], 1, 1)) : '';
 
         if (preg_match("/^[A-Za-z0-9_]+$/", $tmp_bo_table)) {
-            include './board_delete.inc.php';
+            include __DIR__.'/board_delete.inc.php';
         }
     }
 }

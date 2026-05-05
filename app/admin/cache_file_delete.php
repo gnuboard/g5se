@@ -13,7 +13,7 @@ if ($is_admin !== 'super') {
 }
 
 require_once __DIR__.'/admin.lib.php';
-@require_once G5_PATH.'/adm/safe_check.php';
+@require_once __DIR__.'/safe_check.php';
 if (function_exists('social_log_file_delete')) {
     social_log_file_delete();
 }
