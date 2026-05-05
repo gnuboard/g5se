@@ -13,7 +13,7 @@ if ($is_admin !== 'super') {
     exit;
 }
 
-require_once G5_PATH.'/adm/admin.lib.php';   // help(), get_member_id_select(), get_skin_select() 등 폼 헬퍼
+require_once __DIR__.'/admin.lib.php';   // help(), get_member_id_select(), get_skin_select() 등 폼 헬퍼 — /adm 분리
 
 // https://github.com/gnuboard/gnuboard5/issues/296 이슈처리
 $sql = " select * from {$g5['config_table']} limit 1";
@@ -1151,7 +1151,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
     </section>
 
     <?php
-    require_once '_rewrite_config_form.php';
+    require_once G5_ADMIN_PATH.'/_rewrite_config_form.php';
     ?>
 
     <section id="anc_cf_mail">

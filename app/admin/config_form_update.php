@@ -13,7 +13,7 @@ if ($is_admin !== 'super') {
     exit;
 }
 
-require_once G5_PATH.'/adm/admin.lib.php';   // check_demo, check_admin_token, get_member 등
+require_once __DIR__.'/admin.lib.php';   // check_demo, check_admin_token, get_member 등 — /adm 분리
 
 if (function_exists('check_demo')) {
     check_demo();
