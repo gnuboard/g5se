@@ -824,6 +824,24 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     color: var(--slate-400);
 }
 
+/* 폼 안내문 (gnuboard help() → <span class="frm_info">) — 항상 한 줄 차지 후 textarea 가 그 아래로 폭 가득 */
+.legacy-admin-content .frm_info {
+    display: block;
+    padding: 0 0 0.375rem;
+    color: var(--slate-500);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+[data-theme="dark"] .legacy-admin-content .frm_info {
+    color: var(--slate-400);
+}
+.legacy-admin-content .tbl_frm01 td > textarea:not([class*="rounded"]) {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 6rem;
+}
+
 /* 페이지 상단 컨트롤 */
 .legacy-admin-content .local_ov01,
 .legacy-admin-content .local_ov {
