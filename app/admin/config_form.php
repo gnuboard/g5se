@@ -1151,7 +1151,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
     </section>
 
     <?php
-    require_once G5_ADMIN_PATH.'/_rewrite_config_form.php';
+    require_once __DIR__.'/_rewrite_config_form.php';
     ?>
 
     <section id="anc_cf_mail">
