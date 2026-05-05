@@ -73,14 +73,16 @@
                         html += '<h4 style="margin:10px 0 5px;padding:5px;background:#f0f0f0;font-size:12px;">' + groupName + '</h4>';
                         html += '<div class="cke_emoji_list" style="display:flex;flex-wrap:wrap;gap:5px;">';
                         
+                        // gnu5se: emoji PNG base 통일 (config.js 의 G5_CKEDITOR4_URL 사용)
+                        var _emojiBase = (window.G5_CKEDITOR4_URL || '/plugin/editor/ckeditor4') + '/plugins/emoji/img';
                         groups[groupName].forEach(function(emoji) {
-                            var emojiHtml = '<img src="/assets/img/emoji/' + emoji.symbol + '" class="sir-emoji ' + emoji.group + '">';
+                            var emojiHtml = '<img src="' + _emojiBase + '/' + emoji.symbol + '" class="sir-emoji ' + emoji.group + '">';
                             html += '<a href="javascript:void(0)" ';
                             html += 'class="cke_emoji_item" ';
                             html += 'data-emoji=\'' + emojiHtml.replace(/'/g, "\\'") + '\' ';
                             html += 'style="display:inline-block;padding:5px;cursor:pointer;border:1px solid transparent;" ';
                             html += 'title="' + emoji.name + '">';
-                            html += '<img src="/assets/img/emoji/' + emoji.symbol + '" style="width:30px;height:30px;object-fit:contain;">';
+                            html += '<img src="' + _emojiBase + '/' + emoji.symbol + '" style="width:30px;height:30px;object-fit:contain;">';
                             html += '</a>';
                         });
                         

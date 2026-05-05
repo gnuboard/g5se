@@ -351,8 +351,11 @@
 						function( acc, item ) {
 							addEncodedName( item );
 
-                            let symbol = `<img src='/assets/img/emoji/${item.symbol}' class='sir-emoji ${item.group}'>`,
-                                symbolContent = `<img src='/assets/img/emoji/${item.symbol}'>`;
+                            // gnu5se: emoji PNG 들은 plugin 자체 폴더 (plugins/emoji/img) 에 위치.
+                            // window.G5_CKEDITOR4_URL (config.js 에서 정의) 으로 base 결정.
+                            let _emojiBase = (window.G5_CKEDITOR4_URL || '/plugin/editor/ckeditor4') + '/plugins/emoji/img';
+                            let symbol = `<img src='${_emojiBase}/${item.symbol}' class='sir-emoji ${item.group}'>`,
+                                symbolContent = `<img src='${_emojiBase}/${item.symbol}'>`;
 
 							return acc + emojiTpl.output( {
 									symbol: symbol,
