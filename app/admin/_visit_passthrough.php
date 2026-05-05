@@ -12,20 +12,20 @@ require_once G5_PATH.'/adm/admin.lib.php';
 add_event('goto_url', function ($url) {
     $u = str_replace('&amp;', '&', (string)$url);
     if (preg_match('#^\.?/?(visit_[a-z_]+)\.php(\?.*)?$#', $u, $m)) {
-        header('Location: /admin/'.$m[1].($m[2] ?? ''), true, 302);
+        header('Location: '.G5_ADMIN_URL.'/'.$m[1].($m[2] ?? ''), true, 302);
         exit;
     }
 }, 10, 1);
 
 if (!empty($visit_is_post)) {
-    chdir(G5_ADMIN_PATH);
-    require G5_ADMIN_PATH.'/'.$visit_target;
+    chdir(G5_PATH.'/adm');
+    require G5_PATH.'/adm'.'/'.$visit_target;
     return;
 }
 
 ob_start();
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/'.$visit_target;
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/'.$visit_target;
 $html = ob_get_clean();
 
 $page_title = $g5['title'] ?? '방문자 통계';
@@ -41,7 +41,7 @@ if (preg_match('#<div class="container_wr">(.*?)<footer\s+id="ft"#si', $html, $m
 // visit.sub.php 의 anchor 와 form action 을 클린 URL 로
 $content = preg_replace_callback(
     '#(href|action)="\./(visit_[a-z_]+)\.php([^"]*)"#i',
-    static fn($m) => $m[1].'="/admin/'.$m[2].$m[3].'"',
+    static fn($m) => $m[1].'="'.G5_ADMIN_URL.'/'.$m[2].$m[3].'"',
     $content
 );
 

@@ -24,22 +24,16 @@ function admin_require_login(): void
 {
     global $is_admin, $is_member;
     if (!$is_member) {
-        $back = urlencode($_SERVER['REQUEST_URI'] ?? '/admin');
-        header('Location: /login?url='.$back, true, 302);
+        $back = urlencode($_SERVER['REQUEST_URI'] ?? G5_ADMIN_URL);
+        header('Location: '.G5_URL.'/login?url='.$back, true, 302);
         exit;
     }
     if (!$is_admin) {
-        header('Location: /', true, 302);
+        header('Location: '.G5_URL.'/', true, 302);
         exit;
     }
-
-    // 레거시 admin.lib.php 의 admin_referer_check / admin_check_xss_params 가
-    // referer path 에 /adm/ 를 요구한다. 모던 URL 은 /admin/... 이라 매번 실패해서
-    // POST 시 'XSS 공격' alert 가 떴음 (특히 contentform 의 editor HTML 본문).
-    // admin.lib.php 가 require 되기 전에 referer 를 패치해 검증을 통과시킨다.
-    if (!empty($_SERVER['HTTP_REFERER'])) {
-        $_SERVER['HTTP_REFERER'] = preg_replace('#(/+)admin(/+)#', '$1adm$2', $_SERVER['HTTP_REFERER']);
-    }
+    // (이전에 referer 의 /admin/ → /adm/ 치환이 있었으나, G5_ADMIN_DIR='admin' 이후
+    //  admin_referer_check 가 직접 /admin/ 를 요구하므로 패치 불필요.)
 }
 
 function admin_layout_start(string $title, string $active_key = ''): void
@@ -81,7 +75,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 + Tailwind reset 흡수.
          (CDN reset 을 별도 link 로 두면 늦게 도착해서 body margin 8px 이 잠깐 적용됐다
          사라지는 reflow — '컨텐츠가 벽에 붙었다 떨어지는' 느낌 — 이 발생.) -->
-    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="stylesheet" href="<?php echo G5_ADMIN_URL ?>/css/admin.css">
     <!-- Pretendard 는 admin 에서 미사용 — 시스템 폰트로 즉시 paint (font-swap 으로 인한
          '창이 새로 뜨는' 느낌 차단). Apple SD Gothic Neo / Malgun Gothic / Noto Sans 등
          OS 가 제공하는 한글 폰트가 가장 자연스럽고 빠름. -->
@@ -92,7 +86,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- UnoCSS runtime — 베이킹 안 된 보조 utility 들을 런타임에 생성. layout 이 이미 정적이라
          실패해도 안전. admin-primary 팔레트 컬러도 정적 CSS 로 커버됨. -->
     <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
-    <script src="/admin/js/uno.global.js" defer></script>
+    <script src="<?php echo G5_ADMIN_URL ?>/js/uno.global.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
     <style>
@@ -108,7 +102,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
            class="flex-col fixed inset-y-0 left-0 w-60 z-40
                   bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <div class="h-14 flex items-center justify-between px-5 border-b border-slate-200 dark:border-slate-800">
-            <a href="/admin" class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
+            <a href="<?php echo G5_ADMIN_URL ?>" class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
                 <span class="inline-flex w-8 h-8 rounded-md bg-admin-primary-600 text-white items-center justify-center font-black">G</span>
                 <span><?php echo get_text($cf_title) ?></span>
             </a>

@@ -17,5 +17,5 @@ add_event('goto_url', function ($url) {
     }
 }, 10, 1);
 
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/board_list_update.php';
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/board_list_update.php';

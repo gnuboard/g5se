@@ -10,5 +10,5 @@ admin_require_login();
 
 require_once G5_PATH.'/adm/admin.lib.php';
 
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/board_copy_update.php';
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/board_copy_update.php';

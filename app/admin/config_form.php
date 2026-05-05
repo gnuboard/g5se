@@ -9,7 +9,7 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();   // ← admin.lib.php 가 require 되면 top-level 에서 alert('로그인 하십시오') 발사하므로 그 전에 가드.
 
 if ($is_admin !== 'super') {
-    header('Location: /admin', true, 302);
+    header('Location: '.G5_ADMIN_URL, true, 302);
     exit;
 }
 
@@ -500,7 +500,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 }
 ?>
 
-<form name="fconfigform" id="fconfigform" method="post" action="/admin/config_form_update" onsubmit="return fconfigform_submit(this);">
+<form name="fconfigform" id="fconfigform" method="post" action="<?php echo G5_ADMIN_URL; ?>/config_form_update" onsubmit="return fconfigform_submit(this);">
     <input type="hidden" name="token" value="<?php echo get_admin_token() ?>" id="token">
 
     <section id="anc_cf_basic">
@@ -530,9 +530,6 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <td colspan="3">
                             <?php echo help('관리자가 보내고 받는 용도로 사용하는 메일 주소를 입력합니다. (회원가입, 인증메일, 테스트, 회원메일발송 등에서 사용)') ?>
                             <input type="text" name="cf_admin_email" value="<?php echo get_sanitize_input($config['cf_admin_email']); ?>" id="cf_admin_email" required class="required email frm_input" size="40">
-                            <?php if (function_exists('domain_mail_host') && $config['cf_admin_email'] && stripos($config['cf_admin_email'], domain_mail_host()) === false) { ?>
-                            <?php echo help('외부메일설정이나 기타 설정을 하지 않았다면, 도메인과 다른 헤더로 여겨 스팸이나 차단될 가능성이 있습니다.<br>name'.domain_mail_host().' 과 같은 도메인 형식으로 설정할것을 권장합니다.') ?>
-                            <?php } ?>
                         </td>
                     </tr>
                     <tr>

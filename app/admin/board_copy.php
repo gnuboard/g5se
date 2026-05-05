@@ -14,8 +14,8 @@ require_once G5_PATH.'/adm/admin.lib.php';
 // gnuboard adm/board_copy.php 가 admin.head/admin.tail 로 자체 head/tail 을 그리지만
 // admin shell 없는 popup 으로 띄우려면 본문만 직접 추출. ob 로 캡처 후 본문만 출력.
 ob_start();
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/board_copy.php';
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/board_copy.php';
 $html = ob_get_clean();
 
 $content = '';

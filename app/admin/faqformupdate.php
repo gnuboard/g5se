@@ -18,5 +18,5 @@ add_event('goto_url', function ($url) {
     }
 }, 10, 1);
 
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/faqformupdate.php';
+chdir(G5_PATH.'/adm');
+require G5_PATH.'/adm'.'/faqformupdate.php';
