@@ -842,6 +842,43 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     min-height: 6rem;
 }
 
+/* config_form 소셜로그인 — 체크박스/라벨 한 줄, 그 아래 callback URL 설명을 들여쓰기 */
+.legacy-admin-content .social_config_explain .explain_box {
+    margin: 0 0 1rem;
+}
+.legacy-admin-content .social_config_explain .explain_box:last-child {
+    margin-bottom: 0;
+}
+.legacy-admin-content .social_config_explain .explain_box > input[type="checkbox"] {
+    vertical-align: middle;
+}
+.legacy-admin-content .social_config_explain .explain_box > label {
+    vertical-align: middle;
+    margin-left: 0.25rem;
+    font-weight: 500;
+}
+.legacy-admin-content .social_config_explain .explain_box > div {
+    padding: 0.25rem 0 0 1.75rem;
+    color: var(--slate-500);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+.legacy-admin-content .social_config_explain .explain_box > div h3 {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--slate-600);
+}
+.legacy-admin-content .social_config_explain .explain_box > div p {
+    margin: 0;
+    word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--slate-500);
+}
+[data-theme="dark"] .legacy-admin-content .social_config_explain .explain_box > div { color: var(--slate-400); }
+[data-theme="dark"] .legacy-admin-content .social_config_explain .explain_box > div h3 { color: var(--slate-300); }
+[data-theme="dark"] .legacy-admin-content .social_config_explain .explain_box > div p { color: var(--slate-400); }
+
 /* 페이지 상단 컨트롤 */
 .legacy-admin-content .local_ov01,
 .legacy-admin-content .local_ov {
