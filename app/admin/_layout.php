@@ -201,6 +201,22 @@ function admin_layout_end(): void
 <div id="adm-sidebar-backdrop" class="hidden fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
 
 <script>
+// admin form 의 hidden token 자동 주입.
+// gnuboard admin.js 는 ajax 로 /adm/ajax.token.php 를 호출하지만 modern admin
+// 에서는 referer 가 /admin 이라 admin_referer_check 통과 안 함.
+// 페이지 렌더 시점에 발급된 admin_token 을 그대로 직접 채워 submit.
+(function () {
+    var ADMIN_TOKEN = <?php echo json_encode(function_exists('get_admin_token') ? get_admin_token() : '') ?>;
+    document.addEventListener('submit', function (e) {
+        var f = e.target;
+        if (!f || f.tagName !== 'FORM') return;
+        var t = f.querySelector('input[name="token"]');
+        if (t && !t.value) t.value = ADMIN_TOKEN;
+    }, true);
+})();
+</script>
+
+<script>
 (function(){
     var sidebar = document.getElementById('adm-sidebar');
     var backdrop = document.getElementById('adm-sidebar-backdrop');
