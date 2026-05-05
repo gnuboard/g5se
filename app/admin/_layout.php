@@ -92,6 +92,12 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- Alpine.js — 작은 reactive (~15KB). x-data / x-show / x-on / x-text 으로 선언적 인터랙션.
          defer 로 로드 → DOMContentLoaded 시 자동 init. 기존 jQuery 와 충돌 없이 공존. -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- gnuboard 공용 헬퍼 (win_zip, set_cookie 등) + Kakao 우편번호 SDK.
+         원래 head.sub.php 의 add_javascript 큐로 들어가지만 modern admin shell 은
+         해당 큐를 flush 하지 않아 admin 에서 win_zip 호출 시 ReferenceError 가 발생. -->
+    <script>var g5_is_mobile = false, g5_url = "<?php echo G5_URL ?>", g5_bbs_url = "<?php echo G5_BBS_URL ?>";</script>
+    <script src="<?php echo G5_JS_URL ?>/common.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     </style>
