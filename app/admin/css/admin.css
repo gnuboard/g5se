@@ -1787,14 +1787,15 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 /* CKEditor4 알림(.cke_notification) — 에디터 영역 안에 카드 toast 형태로 표시.
  * 기본은 position:fixed / width:300px / 가운데 align 으로 좁은 admin 컨텐츠
  * 컬럼에서 좌측 바깥으로 새는 문제 + 카드 모양 안 나타나는 문제 동시 해결. */
-/* notifications_area 는 config.js 의 instanceReady 에서 .cke_contents 안으로
- * 이동시킴 → 그 안 가운데 위쪽에 absolute toast 로 표시. */
-.cke_contents { position: relative !important; }
+/* notifications_area 는 config.js 의 instanceReady 에서 에디터 outer wrapper
+ * (.cke) 안으로 이동시킴 → 그 안 가운데 (툴바 바로 아래) 에 absolute toast.
+ * .cke_contents 안에 두면 iframe 이 덮어버려 안 보이므로 한 단계 위에 둠. */
+.cke { position: relative !important; }
 .cke_notifications_area {
     pointer-events: none !important;
     position: absolute !important;
     left: 50% !important;
-    top: 12px !important;
+    top: 56px !important;            /* 툴바 평균 높이 — 살짝 아래 */
     right: auto !important;
     transform: translateX(-50%);
     max-width: calc(100% - 24px) !important;
