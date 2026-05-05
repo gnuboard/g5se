@@ -29,6 +29,11 @@ admin_layout_start($g5['title'], 'browscap');
 
 <!-- Alpine.js state machine: idle → running → done | error.
      status 에 따라 spinner / 체크 / 에러 텍스트 자동 토글. jQuery 의존 제거. -->
+<?php
+// x-data 속성값 안에 PHP 문자열(URL) 삽입 시, json_encode 의 큰따옴표가 속성 구분자
+// 와 충돌해 HTML 파싱이 깨짐 → htmlspecialchars(ENT_QUOTES) 로 entity escape.
+$_browscap_update_url = htmlspecialchars(G5_ADMIN_URL.'/browscap_update', ENT_QUOTES);
+?>
 <div id="processing"
      x-data="{
         status: 'idle',
@@ -37,7 +42,7 @@ admin_layout_start($g5['title'], 'browscap');
             if (this.status === 'running') return;
             this.status = 'running';
             this.error = '';
-            fetch(<?php echo json_encode(G5_ADMIN_URL.'/browscap_update?_='.time()) ?>, { cache: 'no-store' })
+            fetch('<?php echo $_browscap_update_url; ?>?_=' + Date.now(), { cache: 'no-store' })
                 .then(r => r.text())
                 .then(t => {
                     const trimmed = (t || '').trim();

@@ -35,6 +35,9 @@ admin_layout_start($g5['title'], 'browscap_convert');
 <!-- Alpine.js: idle → running → done. done 상태의 result HTML 안에 #run_update
      버튼이 들어 있어 (서버가 chunk 별로 새 버튼을 다시 렌더), 이벤트 위임으로
      run() 재호출. -->
+<?php
+$_browscap_conv_url = htmlspecialchars(G5_ADMIN_URL.'/browscap_converter', ENT_QUOTES);
+?>
 <div id="processing"
      x-data="{
         status: 'idle',
@@ -42,15 +45,15 @@ admin_layout_start($g5['title'], 'browscap_convert');
         async run() {
             if (this.status === 'running') return;
             this.status = 'running';
-            const url = new URL(<?php echo json_encode(G5_ADMIN_URL.'/browscap_converter') ?>, location.href);
-            url.searchParams.set('rows', '<?php echo (int)$rows ?>');
-            url.searchParams.set('_', Date.now());
+            const u = new URL('<?php echo $_browscap_conv_url; ?>', location.href);
+            u.searchParams.set('rows', '<?php echo (int)$rows ?>');
+            u.searchParams.set('_', Date.now());
             try {
-                const r = await fetch(url, { cache: 'no-store' });
+                const r = await fetch(u, { cache: 'no-store' });
                 this.result = await r.text();
                 this.status = 'done';
             } catch (e) {
-                this.result = '<p style=\'color:#b91c1c\'><strong>변환 실패</strong> '+(e.message||'')+'</p>';
+                this.result = '<p style=\'color:#b91c1c\'><strong>변환 실패</strong> ' + (e.message || '') + '</p>';
                 this.status = 'done';
             }
         }
