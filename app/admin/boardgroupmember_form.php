@@ -101,7 +101,7 @@ admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
                     <td class="px-3 py-2 text-center"><input type="checkbox" name="chk[]" value="<?php echo (int)$row['gm_id'] ?>" class="rounded border-slate-300"></td>
-                    <td class="px-3 py-2 whitespace-nowrap font-mono text-xs">
+                    <td class="px-3 py-2 whitespace-nowrap font-mono text-sm">
                         <a href="<?php echo G5_BBS_URL ?>/group.php?gr_id=<?php echo urlencode($row['gr_id']) ?>" target="_blank" class="text-admin-primary-700 dark:text-admin-primary-300 hover:underline"><?php echo $h($row['gr_id']) ?></a>
                     </td>
                     <td class="px-3 py-2"><?php echo $h($row['gr_subject']) ?></td>
