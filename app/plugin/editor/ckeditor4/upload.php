@@ -1,104 +1,91 @@
 <?php
-function print_error($type, $msg) {
-    if(strtolower($type) == "json") {
-        $res = array();
-        $res['uploaded'] = 0;
-        $res['error']['message'] = $msg;
-        echo json_encode($res);
+/*
+ * /plugin/editor/ckeditor4/upload.php — gnu5se 용 CKEditor 4 이미지 업로드.
+ * 원본 (Laravel 기반 EditorImage 의존) 을 gnuboard 표준 패턴으로 재작성.
+ *
+ * 응답 형식:
+ *  - GET responseType=json (또는 imageUploadUrl 의 drop-paste): JSON
+ *  - 그 외 (filebrowserUploadUrl): <script>window.parent.CKEDITOR.tools.callFunction(...)
+ */
+
+include_once(__DIR__ . '/../../../common.php');
+
+$responseType = isset($_GET['responseType']) ? strtolower($_GET['responseType']) : '';
+if ($responseType !== 'json' && isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+    && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    $responseType = 'json';
+}
+
+function ckeditor4_print_error($type, $msg) {
+    if ($type === 'json') {
+        echo json_encode(array('uploaded' => 0, 'error' => array('message' => $msg)));
     } else {
-        echo "<script> alert('{$msg}'); </script>";
+        echo "<script>alert(" . json_encode($msg) . ");</script>";
     }
     exit;
 }
 
-include_once("../../../common.php");
+// 로그인 가드 — 비회원 업로드 차단
+if (!isset($is_member) || !$is_member) {
+    ckeditor4_print_error($responseType, '로그인 후 이용해 주십시오.');
+}
 
-// 업로드 경로 세팅
+// 업로드 대상 파일
+if (empty($_FILES['upload']) || empty($_FILES['upload']['tmp_name'])) {
+    ckeditor4_print_error($responseType, '파일이 존재하지 않습니다.');
+}
+$upFile = $_FILES['upload'];
+
+// 확장자 검증
+$ext = strtolower(pathinfo($upFile['name'], PATHINFO_EXTENSION));
+if (!preg_match('/^(jpe?g|gif|png|webp)$/', $ext)) {
+    ckeditor4_print_error($responseType, 'jpg / gif / png / webp 파일만 가능합니다.');
+}
+if (isset($upFile['size']) && $upFile['size'] >= (15 * 1024 * 1024)) {
+    ckeditor4_print_error($responseType, '이미지 파일의 용량을 15M 미만으로 올려주세요.');
+}
+if ($ext === 'jpeg') $ext = 'jpg';
+
+// 저장 경로 — data/editor/YYMM
 $ym = date('ym', G5_SERVER_TIME);
-$is_temp = true;
-
-// QA인 경우에 sir_qa_table 파라미터가 사용됨
-$sir_qa_table = (isset($_REQUEST['sir_qa_table']) && $_REQUEST['sir_qa_table']) ? clean_xss_tags($_REQUEST['sir_qa_table']) : '';
-
-if ($is_temp && ((isset($board['bo_table']) && $bo_table) || $sir_qa_table === SIR_QA_TABLE)) {
-    $data_dir = G5_DATA_PATH.'/tmp';
-    $data_url = G5_DATA_URL.'/tmp';
-} else {
-    $data_dir = G5_DATA_PATH.'/editor/'.$ym;
-    $data_url = G5_DATA_URL.'/editor/'.$ym;
-    @mkdir($data_dir, G5_DIR_PERMISSION);
+$data_dir = G5_DATA_PATH . '/editor/' . $ym;
+$data_url = G5_DATA_URL  . '/editor/' . $ym;
+if (!is_dir($data_dir)) {
+    @mkdir($data_dir, G5_DIR_PERMISSION, true);
     @chmod($data_dir, G5_DIR_PERMISSION);
 }
 
-// 업로드 DIALOG 에서 전송된 값
-$funcNum = $_GET['CKEditorFuncNum'] ;
+// 파일명: ip_microtime.ext
+$file_name = sprintf('%u', ip2long($_SERVER['REMOTE_ADDR'])) . '_' . get_microtime() . '.' . $ext;
+$save_dir  = $data_dir . '/' . $file_name;
 
-if(function_exists('run_event')) run_event('ckeditor_photo_upload', $data_dir, $data_url);
-
-// 업로드 대상 파일
-$upFile = $_FILES['upload'];
-if(empty($upFile['tmp_name'])) {
-    $msg = "파일이 존재하지 않습니다.";
-    print_error($responseType, $msg);
+// 보안 hook (선택)
+if (function_exists('run_event')) {
+    run_event('ckeditor_photo_upload', $data_dir, $data_url);
 }
 
-$fileInfo = pathinfo($upFile['name']);
-$filename  = $fileInfo['filename'];
-$extension = $fileInfo['extension'];
-$extension = strtolower($extension);
+if (!move_uploaded_file($upFile['tmp_name'], $save_dir)) {
+    ckeditor4_print_error($responseType, '업로드 실패');
+}
+@chmod($save_dir, defined('G5_FILE_PERMISSION') ? G5_FILE_PERMISSION : 0644);
 
-if (!preg_match("/(jpe?g|gif|png|webp)$/i", $extension)) {
-    $msg = "jpg / gif / png / webp 파일만 가능합니다.";
-    print_error($responseType, $msg);
+// 이미지 검증 (변조 차단)
+$imgsize = @getimagesize($save_dir);
+if (!$imgsize) {
+    @unlink($save_dir);
+    ckeditor4_print_error($responseType, '올바른 이미지가 아닙니다.');
 }
 
-// 에디터로 올리는 용량이 15M 이상이면
-if (isset($upFile["size"]) && $upFile["size"] >= (15 * 1024 * 1024)){
-    print_error($responseType, "이미지 파일의 용량을 15M 미만으로 올려주세요.");
+$file_url = $data_url . '/' . $file_name;
+$funcNum  = isset($_GET['CKEditorFuncNum']) ? (int)$_GET['CKEditorFuncNum'] : 0;
+
+if ($responseType === 'json') {
+    echo json_encode(array(
+        'uploaded' => 1,
+        'fileName' => $file_name,
+        'url'      => $file_url,
+    ));
+} else {
+    echo "<script>window.parent.CKEDITOR.tools.callFunction({$funcNum}, " . json_encode($file_url) . ", '');</script>";
 }
-
-// jpeg 확장자 jpg로 통일되도록
-if($extension == 'jpeg') $extension = 'jpg';
-
-// 윈도우에서 한글파일명으로 업로드 되지 않는 오류 해결
-$file_name = sprintf('%u', ip2long($_SERVER['REMOTE_ADDR'])).'_'.get_microtime().".".$extension;
-$save_dir = sprintf('%s/%s', $data_dir, $file_name);
-
-$real_bo_table = isset($board['bo_table']) ? $board['bo_table'] : '';
-
-if (! $real_bo_table && $sir_qa_table === SIR_QA_TABLE) {
-    $real_bo_table = SIR_QA_TABLE;
-}
-
-if (move_uploaded_file($upFile["tmp_name"], $save_dir)) {
-    $ei = new EditorImage();
-    $ins = $ei->insert_data($upFile, $save_dir, $_GET['editor_form_name'], $_GET['editor_id'], $_GET['editor_uri'], $real_bo_table);
-    
-    // 썸네일 생성
-    $img_width = $is_mobile ? 320 : 730;
-    $tmp_thumb = $ei->img_thumbnail($save_dir, $img_width);
-    $img_thumb = $tmp_thumb['src'];
-    $save_url = sprintf('%s/%s', $data_url, $img_thumb);
-
-    // 성공 결과 출력
-    if(strtolower($responseType) == "json") {
-        $res = array();
-        $res['fileName'] = $file_name;
-        $res['url'] = $save_url;
-        $res['uploaded'] = 1;
-        $res['inserted'] = $ins;
-
-        if($file_name != $img_thumb) {  // 이름이 다르면 지정사이즈를 초과하여 썸네일화된것으로 간주, 출력 사이즈 지정
-            $res['width'] = "100%";
-            $res['height'] = "auto";
-        }
-        echo json_encode($res);
-    } else {
-        echo "<script>window.parent.CKEDITOR.tools.callFunction({$funcNum}, '{$save_url}', '');</script>";
-    }
-    exit;
-}
-
-$msg = "업로드 실패";
-print_error($responseType, $msg);
-?>
+exit;

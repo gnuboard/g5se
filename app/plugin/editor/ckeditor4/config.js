@@ -53,6 +53,12 @@ CKEDITOR.editorConfig = function( config ) {
         ? [ window.G5_CKEDITOR4_URL + '/contents.css', window.G5_CKEDITOR4_URL + '/darkmode.css' ]
         : window.G5_CKEDITOR4_URL + '/contents.css';
 
+    // gnu5se: 이미지 / 파일 업로드 — plugin 안의 upload.php 사용 (gnuboard 표준 경로).
+    // class 자동치환(.ckeditor) 으로 만들어진 인스턴스 전체에 적용.
+    config.filebrowserUploadUrl  = window.G5_CKEDITOR4_URL + '/upload.php';
+    config.filebrowserImageUploadUrl = window.G5_CKEDITOR4_URL + '/upload.php?type=image';
+    config.imageUploadUrl        = window.G5_CKEDITOR4_URL + '/upload.php?responseType=json';
+
     // 폰트 설정
     config.font_names = '굴림/Gulim;돋움/Dotum;바탕/Batang;궁서/Gungsuh;맑은 고딕/Malgun Gothic;' +
                        'Arial/Arial;Comic Sans MS/Comic Sans MS;Courier New/Courier New;' +
