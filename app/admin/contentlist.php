@@ -67,7 +67,7 @@ $result = sql_query($sql);
 ?>
 
 <div class="local_ov01 local_ov">
-    <?php if ($page > 1) { ?><a href="<?php echo $_SERVER['SCRIPT_NAME']; ?>">처음으로</a><?php } ?>
+    <?php if ($page > 1) { ?><a href="<?php echo G5_ADMIN_URL ?>/contentlist">처음으로</a><?php } ?>
     <span class="btn_ov01"><span class="ov_txt">전체 내용</span><span class="ov_num"> <?php echo $total_count; ?>건</span></span>
 </div>
 
@@ -108,7 +108,7 @@ $result = sql_query($sql);
     </table>
 </div>
 
-<?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr&amp;page="); ?>
+<?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, G5_ADMIN_URL.'/contentlist?'.$qstr.'&amp;page='); ?>
 
 <?php
 ?>

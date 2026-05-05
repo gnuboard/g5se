@@ -67,7 +67,7 @@ $sql = " select *
             limit {$from_record}, {$rows} ";
 $result = sql_query($sql);
 
-$listall = '<a href="' . $_SERVER['SCRIPT_NAME'] . '" class="ov_listall">전체목록</a>';
+$listall = '<a href="'.G5_ADMIN_URL.'/popular_list" class="ov_listall">전체목록</a>';
 
 $g5['title'] = '인기검색어관리';
 admin_layout_start($g5['title'], 'popular');
@@ -138,7 +138,7 @@ $colspan = 4;
                             <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo $word ?></label>
                             <input type="checkbox" name="chk[]" value="<?php echo $row['pp_id'] ?>" id="chk_<?php echo $i ?>">
                         </td>
-                        <td class="td_left"><a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?sfl=pp_word&amp;stx=<?php echo $word ?>"><?php echo $word ?></a></td>
+                        <td class="td_left"><a href="<?php echo G5_ADMIN_URL ?>/popular_list?sfl=pp_word&amp;stx=<?php echo $word ?>"><?php echo $word ?></a></td>
                         <td><?php echo $row['pp_date'] ?></td>
                         <td><?php echo $row['pp_ip'] ?></td>
                     </tr>
@@ -162,7 +162,7 @@ $colspan = 4;
 
 </form>
 
-<?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr&amp;page="); ?>
+<?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, G5_ADMIN_URL.'/popular_list?'.$qstr.'&amp;page='); ?>
 
 <script>
     $(function() {
