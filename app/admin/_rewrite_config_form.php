@@ -80,6 +80,25 @@ $base_path = isset($get_path_url['path']) ? $get_path_url['path'] . '/' : '/';
 
 /* 짧은주소 트리거 버튼 — modern shell 안에서 살짝 마진 */
 .legacy-admin-content .server_config_views { display: flex; gap: 8px; margin: 8px 0 12px; }
+
+/* 다크모드 */
+[data-theme="dark"] .is_rewrite.remodal {
+    background: #0f172a;
+    color: #e2e8f0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+[data-theme="dark"] .is_rewrite.remodal .copy_title { color: #f1f5f9; }
+[data-theme="dark"] .is_rewrite.remodal .copy_title .info-warning { color: #fbbf24; }
+[data-theme="dark"] .is_rewrite.remodal .copy_title .info-success { color: #34d399; }
+[data-theme="dark"] .is_rewrite.remodal .connect-close .txt { color: #94a3b8; }
+[data-theme="dark"] .is_rewrite.remodal .connect-close:hover .txt { color: #f1f5f9; }
+[data-theme="dark"] .is_rewrite.remodal textarea {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+/* remodal overlay 톤도 더 어둡게 */
+[data-theme="dark"] .remodal-overlay { background: rgba(0, 0, 0, 0.75); }
 </style>
 <section id="anc_cf_url">
     <h2 class="h2_frm">짧은 주소 설정</h2>
