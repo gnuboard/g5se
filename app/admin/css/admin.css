@@ -1784,42 +1784,65 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
  * (faqform 등 editor_html 직접 호출하는 곳) 에서도 동일하게 적용된다. */
 .cke_sc { margin: 0 0 5px !important; text-align: right !important; }
 
-/* CKEditor4 알림(.cke_notification) — 기본 width:300px / position:fixed 라
- * 좁은 admin 컨텐츠 컬럼 안에서 에디터 좌측 바깥으로 흘러나가는 깨짐 방지.
- * 에디터 영역 안에서만 보이고 가독성 있는 어두운 톤으로 통일. */
+/* CKEditor4 알림(.cke_notification) — 에디터 영역 안에 카드 toast 형태로 표시.
+ * 기본은 position:fixed / width:300px / 가운데 align 으로 좁은 admin 컨텐츠
+ * 컬럼에서 좌측 바깥으로 새는 문제 + 카드 모양 안 나타나는 문제 동시 해결. */
 .cke_notifications_area {
-    pointer-events: none;
-    max-width: 100%;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 60px !important;            /* 툴바 아래로 띄움 */
+    right: auto !important;
+    transform: translateX(-50%);
+    max-width: calc(100% - 24px) !important;
+    z-index: 10000 !important;
 }
 .cke_notification {
-    pointer-events: auto;
+    pointer-events: auto !important;
+    display: inline-block !important;
     position: relative !important;
-    margin: 8px auto !important;
-    max-width: 90% !important;
+    margin: 0 auto 8px !important;
     width: auto !important;
-    padding: 10px 36px 10px 14px !important;
-    border-radius: 6px !important;
+    max-width: 480px !important;
+    padding: 12px 40px 12px 16px !important;
+    border-radius: 8px !important;
     background: #1e293b !important; color: #f1f5f9 !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
     text-align: left !important;
-    word-break: keep-all; line-height: 1.5;
-    font-size: 13px;
+    word-break: keep-all !important; line-height: 1.5 !important;
+    font-size: 13px !important;
+    opacity: 1 !important;
 }
-.cke_notification_success { background: #047857 !important; }
-.cke_notification_warning { background: #b45309 !important; }
-.cke_notification_info    { background: #1d4ed8 !important; }
+.cke_notification_success { background: #047857 !important; color: #ecfdf5 !important; }
+.cke_notification_warning { background: #b45309 !important; color: #fef3c7 !important; }
+.cke_notification_info    { background: #1d4ed8 !important; color: #dbeafe !important; }
+.cke_notification_message {
+    color: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
 .cke_notification_close {
-    position: absolute !important; top: 6px !important; right: 8px !important;
-    width: 22px !important; height: 22px !important;
+    position: absolute !important; top: 8px !important; right: 8px !important;
+    width: 24px !important; height: 24px !important;
+    padding: 0 !important;
     background: transparent !important; border: 0 !important;
-    color: #f1f5f9 !important; font-size: 16px !important; line-height: 1 !important;
+    color: inherit !important; font-size: 0 !important; line-height: 1 !important;
     cursor: pointer; opacity: 0.85;
+    text-indent: 0 !important;
 }
 .cke_notification_close:hover { opacity: 1; }
-.cke_notification_close > span { display: none !important; }
-.cke_notification_close::before { content: '\00d7'; font-size: 20px; }
+.cke_notification_close > span,
+.cke_notification_close img { display: none !important; }
+.cke_notification_close::before {
+    content: '\00d7';
+    display: block;
+    font-size: 22px !important;
+    line-height: 24px;
+    color: inherit;
+}
 .cke_notification_progress {
-    background: rgba(255,255,255,0.35) !important;
+    background: rgba(255,255,255,0.4) !important;
     height: 3px !important;
 }
 .btn_cke_sc {
