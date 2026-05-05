@@ -1,11 +1,19 @@
 <?php
+/*
+ * /admin/member_form_update — 회원정보 저장/수정 POST 핸들러.
+ */
 $sub_menu = "200100";
-require_once "./_common.php";
+require_once __DIR__.'/_common.php';
+require_once __DIR__.'/_layout.php';
+admin_require_login();
+require_once __DIR__.'/admin.lib.php';
 require_once G5_LIB_PATH . "/register.lib.php";
 require_once G5_LIB_PATH . '/thumbnail.lib.php';
 
 if ($w == 'u') {
-    check_demo();
+    if (function_exists('check_demo')) {
+        check_demo();
+    }
 }
 
 auth_check_menu($auth, $sub_menu, 'w');
@@ -389,4 +397,5 @@ if (function_exists('get_admin_captcha_by')) {
 
 run_event('admin_member_form_update', $w, $mb_id);
 
-goto_url('./member_form.php?' . $qstr . '&amp;w=u&amp;mb_id=' . $mb_id, false);
+header('Location: '.G5_ADMIN_URL.'/member_form?' . $qstr . '&w=u&mb_id=' . $mb_id, true, 302);
+exit;
