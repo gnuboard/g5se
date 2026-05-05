@@ -1,155 +1,96 @@
 <?php
 /*
- * /admin/board_copy — 게시판 복사 (popup 창).
- *
- * board_list 의 '복사' 링크에서 새 창으로 열림 — admin shell (사이드바/헤더) 없이
- * 깨끗한 폼만 노출. gnuboard adm/board_copy.php 의 .new_win 구조를 그대로 사용.
+ * /admin/board_copy — 게시판 복사 popup 폼.
  */
+$sub_menu = "300100";
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
+require_once __DIR__.'/admin.lib.php';
+auth_check_menu($auth, $sub_menu, 'w');
 
-require_once G5_PATH.'/adm/admin.lib.php';
+$g5['title'] = '게시판 복사';
+require_once G5_PATH . '/head.sub.php';
 
-// gnuboard adm/board_copy.php 가 admin.head/admin.tail 로 자체 head/tail 을 그리지만
-// admin shell 없는 popup 으로 띄우려면 본문만 직접 추출. ob 로 캡처 후 본문만 출력.
-ob_start();
-chdir(G5_PATH.'/adm');
-require G5_PATH.'/adm'.'/board_copy.php';
-$html = ob_get_clean();
-
-$content = '';
-if (preg_match('#<div class="container_wr">(.*?)<footer\s+id="ft"#si', $html, $m)) {
-    $content = preg_replace('#(\s*</div>){2,4}\s*$#', '', $m[1]);
-} else {
-    $content = $html;
+if (empty($bo_table)) {
+    alert_close("정상적인 방법으로 이용해주세요.");
 }
-
-// form action 의 ./xxx.php → /admin/xxx 로 변환 (clean URL)
-$content = preg_replace_callback(
-    '#(href|action)="\./([a-z][a-z0-9_]*)\.php([^"]*)"#i',
-    static fn($m) => $m[1].'="/admin/'.$m[2].$m[3].'"',
-    $content
-);
-
-// gnuboard 의 admin.js 로더 + g5_admin_csrf_token_key 변수 정의 제거.
-// admin.js 는 form submit 시 /adm/ajax.token.php 로 AJAX 호출해 token 을 갱신하지만,
-// 우리 환경에선 그 endpoint 가 없어 빈 토큰으로 덮어쓰는 부작용 → check_admin_token 실패.
-// 우리 inline JS 가 페이지 로드 시점의 get_admin_token() 결과를 form 에 채워주므로 admin.js 불필요.
-$content = preg_replace('#<script[^>]*>\s*var\s+g5_admin_csrf_token_key\s*=.*?</script>#si', '', $content);
-$content = preg_replace('#<script[^>]*src="[^"]*admin\.js[^"]*"[^>]*></script>#i', '', $content);
-
-$page_title = $g5['title'] ?? '게시판 복사';
-$h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 ?>
-<!doctype html>
-<html lang="ko" class="h-full">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title><?php echo $h($page_title) ?> · 관리자</title>
-    <script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
-    <link rel="stylesheet" href="/admin/css/admin.css">
-    <style>
-        html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
-        html, body { background-color: var(--slate-50); }
-        body { color: var(--slate-900); padding: 1.5rem; margin: 0; min-height: 100vh; }
-        html.dark, html.dark body, html[data-theme="dark"], html[data-theme="dark"] body {
-            background-color: var(--slate-950) !important;
-            color: var(--slate-100);
-        }
-        .popup-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-        .popup-head h1 { font-size: 1.125rem; font-weight: 700; }
-
-        /* 다크모드 폴백 — popup 안의 .new_win / .legacy-admin-content / form 영역에서
-           라이트 톤이 새지 않도록 모든 컨테이너에 다크 bg 강제. */
-        html.dark .legacy-admin-content,
-        html.dark .legacy-admin-content .new_win,
-        html.dark .legacy-admin-content form,
-        html.dark .legacy-admin-content .new_win_con {
-            background-color: transparent !important;
-            color: var(--slate-100);
-        }
-        html.dark .legacy-admin-content .frm_input,
-        html.dark .legacy-admin-content input[type="text"]:not([class*="rounded"]),
-        html.dark .legacy-admin-content input[type="password"]:not([class*="rounded"]),
-        html.dark .legacy-admin-content input[type="number"]:not([class*="rounded"]),
-        html.dark .legacy-admin-content input[type="email"]:not([class*="rounded"]),
-        html.dark .legacy-admin-content textarea:not([class*="rounded"]),
-        html.dark .legacy-admin-content select:not([class*="rounded"]) {
-            border-color: var(--slate-700) !important;
-            background-color: var(--slate-800) !important;
-            color: var(--slate-100) !important;
-        }
-        html.dark .legacy-admin-content .tbl_frm01,
-        html.dark .legacy-admin-content .tbl_frm01.tbl_wrap {
-            border-color: var(--slate-800) !important;
-            background-color: var(--slate-900) !important;
-        }
-        html.dark .legacy-admin-content .tbl_frm01 tbody th {
-            background-color: #15202b !important;
-            color: var(--slate-300) !important;
-            border-bottom-color: var(--slate-800) !important;
-        }
-        html.dark .legacy-admin-content .tbl_frm01 tbody td {
-            background-color: var(--slate-900) !important;
-            border-bottom-color: var(--slate-800) !important;
-            color: var(--slate-300) !important;
-        }
-        html.dark .legacy-admin-content .win_btn {
-            background-color: transparent !important;
-            border-top-color: var(--slate-800) !important;
-        }
-        html.dark .legacy-admin-content .btn,
-        html.dark .legacy-admin-content input[type="submit"],
-        html.dark .legacy-admin-content input[type="button"],
-        html.dark .legacy-admin-content button:not([class*="rounded"]) {
-            border-color: var(--slate-700) !important;
-            background-color: var(--slate-800) !important;
-            color: var(--slate-300) !important;
-        }
-        /* Primary 버튼 (.btn_submit / .btn_01) 은 admin-primary 톤 강제 */
-        html.dark .legacy-admin-content .btn_submit,
-        html.dark .legacy-admin-content .btn_01,
-        html.dark .legacy-admin-content input[type="submit"].btn_submit,
-        html.dark .legacy-admin-content input[type="submit"].btn_01 {
-            background-color: var(--admin-primary-600) !important;
-            border-color: var(--admin-primary-600) !important;
-            color: #fff !important;
-        }
-        html.dark .legacy-admin-content .btn_submit:hover,
-        html.dark .legacy-admin-content .btn_01:hover {
-            background-color: var(--admin-primary-700) !important;
-        }
-    </style>
-</head>
-<body>
-    <div class="popup-head">
-        <h1><?php echo $h($page_title) ?></h1>
-    </div>
-    <div class="legacy-admin-content">
-        <?php echo $content ?>
-    </div>
 <script>
-// .btn_close 클릭 시 진짜 popup 이면 window.close, 아니면 history.back()
-document.addEventListener('click', function (e) {
-    var b = e.target.closest('.btn_close');
-    if (!b) return;
-    if (window.opener && !window.opener.closed) return;  // 진짜 팝업 (그대로 close)
-    e.preventDefault();
-    if (history.length > 1) history.back();
-    else location.href = '/admin/board_list';
-});
-// 폼 submit 시 hidden token 자동 채움
-(function () {
-    var ADMIN_TOKEN = <?php echo json_encode(get_admin_token()) ?>;
-    document.addEventListener('submit', function (e) {
-        var f = e.target;
-        if (!f || f.tagName !== 'FORM') return;
-        var t = f.querySelector('input[name="token"]');
-        if (t && !t.value) t.value = ADMIN_TOKEN;
-    }, true);
-})();
+    var g5_admin_csrf_token_key = "<?php echo (function_exists('admin_csrf_token_key')) ? admin_csrf_token_key() : ''; ?>";
 </script>
-</body>
-</html>
+<script src="<?php echo G5_ADMIN_URL ?>/admin.js?ver=<?php echo G5_JS_VER; ?>"></script>
+
+<div class="new_win">
+    <h1><?php echo $g5['title']; ?></h1>
+
+    <form name="fboardcopy" id="fboardcopy" action="<?php echo G5_ADMIN_URL; ?>/board_copy_update" onsubmit="return fboardcopy_check(this);" method="post">
+        <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>" id="bo_table">
+        <input type="hidden" name="token" value="">
+        <div class=" new_win_con">
+            <div class="tbl_frm01 tbl_wrap">
+                <table>
+                    <caption><?php echo $g5['title']; ?></caption>
+                    <tbody>
+                        <tr>
+                            <th scope="col">원본 테이블명</th>
+                            <td><?php echo $bo_table ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="col"><label for="target_table">복사 테이블명<strong class="sound_only">필수</strong></label></th>
+                            <td><input type="text" name="target_table" id="target_table" required class="required alnum_ frm_input" maxlength="20">영문자, 숫자, _ 만 가능 (공백없이)</td>
+                        </tr>
+                        <tr>
+                            <th scope="col"><label for="target_subject">게시판 제목<strong class="sound_only">필수</strong></label></th>
+                            <td><input type="text" name="target_subject" value="[복사본] <?php echo get_sanitize_input($board['bo_subject']); ?>" id="target_subject" required class="required frm_input" maxlength="120"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">복사 유형</th>
+                            <td>
+                                <input type="radio" name="copy_case" value="schema_only" id="copy_case" checked>
+                                <label for="copy_case">구조만</label>
+                                <input type="radio" name="copy_case" value="schema_data_both" id="copy_case2">
+                                <label for="copy_case2">구조와 데이터</label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="win_btn ">
+            <input type="submit" class="btn_submit btn" value="복사">
+            <input type="button" class="btn_close btn" value="창닫기" onclick="window.close();">
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+    function fboardcopy_check(f) {
+        <?php
+
+        if (!$w) {
+            $js_array = get_bo_table_banned_word();
+            echo "var banned_array = " . json_encode($js_array) . ";\n";
+        }
+        ?>
+
+        // 게시판명이 금지된 단어로 되어 있으면
+        if ((typeof banned_array != 'undefined') && jQuery.inArray(f.target_table.value, banned_array) !== -1) {
+            alert("입력한 게시판 TABLE명을 사용할수 없습니다. 다른 이름으로 입력해 주세요.");
+            return false;
+        }
+
+        if (f.bo_table.value == f.target_table.value) {
+            alert("원본 테이블명과 복사할 테이블명이 달라야 합니다.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+
+<?php
+require_once G5_PATH . '/tail.sub.php';
