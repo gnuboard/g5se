@@ -1783,6 +1783,45 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
  * .legacy-admin-content 스코프 없이 admin 전역 — modern 재작성 페이지
  * (faqform 등 editor_html 직접 호출하는 곳) 에서도 동일하게 적용된다. */
 .cke_sc { margin: 0 0 5px !important; text-align: right !important; }
+
+/* CKEditor4 알림(.cke_notification) — 기본 width:300px / position:fixed 라
+ * 좁은 admin 컨텐츠 컬럼 안에서 에디터 좌측 바깥으로 흘러나가는 깨짐 방지.
+ * 에디터 영역 안에서만 보이고 가독성 있는 어두운 톤으로 통일. */
+.cke_notifications_area {
+    pointer-events: none;
+    max-width: 100%;
+}
+.cke_notification {
+    pointer-events: auto;
+    position: relative !important;
+    margin: 8px auto !important;
+    max-width: 90% !important;
+    width: auto !important;
+    padding: 10px 36px 10px 14px !important;
+    border-radius: 6px !important;
+    background: #1e293b !important; color: #f1f5f9 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    text-align: left !important;
+    word-break: keep-all; line-height: 1.5;
+    font-size: 13px;
+}
+.cke_notification_success { background: #047857 !important; }
+.cke_notification_warning { background: #b45309 !important; }
+.cke_notification_info    { background: #1d4ed8 !important; }
+.cke_notification_close {
+    position: absolute !important; top: 6px !important; right: 8px !important;
+    width: 22px !important; height: 22px !important;
+    background: transparent !important; border: 0 !important;
+    color: #f1f5f9 !important; font-size: 16px !important; line-height: 1 !important;
+    cursor: pointer; opacity: 0.85;
+}
+.cke_notification_close:hover { opacity: 1; }
+.cke_notification_close > span { display: none !important; }
+.cke_notification_close::before { content: '\00d7'; font-size: 20px; }
+.cke_notification_progress {
+    background: rgba(255,255,255,0.35) !important;
+    height: 3px !important;
+}
 .btn_cke_sc {
     display: inline-block !important; padding: 0 10px !important; height: 23px !important;
     border: 1px solid #ccc !important; background: #fafafa !important; color: #000 !important;
