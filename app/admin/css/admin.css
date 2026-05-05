@@ -1778,6 +1778,37 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     color: #fff;
 }
 
+/* /admin/browscap, /admin/browscap_convert 등의 진행/완료 인디케이터.
+ * legacy /adm/css/admin.css 의 .update_processing(spinner.gif) /
+ * .check_processing(check.png) 가 modern admin 에선 안 보였던 것을 CSS-only 로 재현. */
+.update_processing,
+.check_processing {
+    display: block;
+    margin: 24px auto 12px;
+    width: 56px; height: 56px;
+}
+.update_processing {
+    border: 5px solid var(--slate-200);
+    border-top-color: var(--admin-primary-500, #3464f5);
+    border-radius: 50%;
+    animation: g5_admin_spin 0.9s linear infinite;
+}
+@keyframes g5_admin_spin { to { transform: rotate(360deg); } }
+.check_processing {
+    border-radius: 50%;
+    background: #047857;
+    position: relative;
+}
+.check_processing::after {
+    content: '';
+    position: absolute; left: 18px; top: 12px;
+    width: 14px; height: 26px;
+    border-right: 4px solid #fff;
+    border-bottom: 4px solid #fff;
+    transform: rotate(45deg);
+}
+[data-theme="dark"] .update_processing { border-color: var(--slate-700); border-top-color: var(--admin-primary-500, #5d8eff); }
+
 /* SmartEditor2 단축키 일람 — BBS 글쓰기 theme/basic/css/default.css 와 동일.
  * cke_sc / btn_cke_sc / cke_sc_def 클래스는 editor 마크업에만 존재하므로
  * .legacy-admin-content 스코프 없이 admin 전역 — modern 재작성 페이지
