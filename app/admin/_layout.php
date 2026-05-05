@@ -246,8 +246,8 @@ window.delete_cookie = window.delete_cookie || function (n) {
     document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 };
 
-// SmartEditor2 / cheditor 의 iframe 안은 별도 문서 — 다크모드 admin shell 안에서
-// editor 본문이 검게 보이는 문제 해결을 위해 same-origin 이면 style 태그 직접 주입.
+// SmartEditor2 / cheditor 의 iframe 본문은 별도 문서 — same-origin 이면 style 직접 주입.
+// 다크모드 admin shell 에서도 에디터는 항상 라이트 톤 (흰 배경 + 어두운 글자) 으로 강제.
 (function () {
     var EDITOR_CSS = 'html,body{background:#fff !important;color:#1e293b !important}'
         + 'body{font-family:"Pretendard Variable","Pretendard",-apple-system,system-ui,sans-serif}'
