@@ -87,6 +87,21 @@ CKEDITOR.on('instanceReady', function (evt) {
     if (typeof window.applyCKEditorDarkMode === 'function') {
         try { window.applyCKEditorDarkMode(evt.editor); } catch (e) {}
     }
+
+    // gnu5se: notifications_area 를 에디터 본문(.cke_contents) 안으로 이동.
+    // 기본은 body 끝에 붙어 viewport 기준으로 떠서 좁은 admin 컬럼에서 위치
+    // 깨짐. 본문 안 absolute 로 두면 toast 가 에디터 안에 깔끔하게 뜬다.
+    try {
+        var area = document.getElementById('cke_notifications_area_' + evt.editor.name);
+        var contents = evt.editor.ui.space('contents');
+        if (area && contents) {
+            var contentsEl = contents.$;
+            if (contentsEl && area.parentNode !== contentsEl) {
+                contentsEl.style.position = contentsEl.style.position || 'relative';
+                contentsEl.appendChild(area);
+            }
+        }
+    } catch (e) {}
 });
 
 /**
