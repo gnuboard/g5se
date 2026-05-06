@@ -107,6 +107,26 @@ ob_start(function ($html) {
         $html
     );
 
+    // 5) shop 상품 상세: /shop/item.php?it_id=X[&...] → /shop/item/X[?...]
+    //    it_id 외 query 는 보존, &amp; 인코딩 유지
+    $html = preg_replace_callback(
+        '#/shop/item\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['it_id']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $params['it_id'])) {
+                return $m[0];
+            }
+            $url = '/shop/item/'.$params['it_id'];
+            unset($params['it_id']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
     return $html;
 });
 
