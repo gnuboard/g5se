@@ -31,12 +31,18 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
    - .smt_30        : 사이드바용 thumb+텍스트 가로 리스트 (main.50) - 제외
    - .sct_ul        : 추천상품 (main.20) 은 <div class=smt_20><ul class=sct_ul> 처럼
                       한 단계 더 감싸므로 별도 selector 로 같은 grid 적용 */
+/* 컬럼 전략:
+   - cell 의 *최소* 폭은 설정된 --m-img-width (이미지 크기 보장)
+   - 컨테이너에 cell 들이 들어가는 만큼 자동 컬럼 (auto-fit)
+   - max-width 로 list_mod 컬럼 캡 적용 (4컬럼 설정인데 화면이 너무 넓어서
+     5컬럼 잡히는 일을 방지) */
 .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
 .m-shop-grid > .smt_20 > ul.sct_ul {
     display: grid !important;
-    grid-template-columns: repeat(var(--m-list-cols, 4), minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--m-img-width, 200px), 100%), 1fr));
+    max-width: calc(var(--m-list-cols, 4) * var(--m-img-width, 200px) + (var(--m-list-cols, 4) - 1) * 16px);
     gap: 16px;
-    margin: 0;
+    margin: 0 auto !important;
     padding: 0;
     list-style: none;
 }
@@ -52,12 +58,6 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     width: 100%;
     height: auto;
     display: block;
-}
-@media (max-width: 880px) {
-    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
-    .m-shop-grid > .smt_20 > ul.sct_ul {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
 }
 /* 옛날 UX 정리:
    - .sctrl: main.20 의 ▶◾ (수직 롤링 효과재생/정지) — list_row>=2 + stacked-ul 일 때만
