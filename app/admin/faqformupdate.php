@@ -1,22 +1,55 @@
 <?php
-/*
- * /admin/faqformupdate — gnuboard 의 faqformupdate.php 를 chdir+require.
- */
-require_once __DIR__.'/_common.php';
-require_once __DIR__.'/_layout.php';
-admin_require_login();
+$sub_menu = '300700';
+include_once('./_common.php');
 
-require_once G5_PATH.'/adm/admin.lib.php';
+if ($w == "u" || $w == "d")
+    check_demo();
 
-add_event('goto_url', function ($url) {
-    $u = str_replace('&amp;', '&', (string)$url);
-    if (preg_match('#^\.?/?faqlist\.php(\?.*)?$#', $u, $m)) {
-        header('Location: /admin/faqlist'.($m[1] ?? ''), true, 302); exit;
-    }
-    if (preg_match('#^\.?/?faqform\.php(\?.*)?$#', $u, $m)) {
-        header('Location: /admin/faqform'.($m[1] ?? ''), true, 302); exit;
-    }
-}, 10, 1);
+if ($w == 'd')
+    auth_check_menu($auth, $sub_menu, "d");
+else
+    auth_check_menu($auth, $sub_menu, "w");
 
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/faqformupdate.php';
+check_admin_token();
+
+$fm_id = isset($_REQUEST['fm_id']) ? (int) $_REQUEST['fm_id'] : 0;
+$fa_id = isset($_REQUEST['fa_id']) ? (int) $_REQUEST['fa_id'] : 0;
+$fa_subject = isset($_POST['fa_subject']) ? $_POST['fa_subject'] : '';
+$fa_content = isset($_POST['fa_content']) ? $_POST['fa_content'] : '';
+$fa_order = isset($_POST['fa_order']) ? (int) $_POST['fa_order'] : 0;
+
+$sql_common = " fa_subject = '$fa_subject',
+                fa_content = '$fa_content',
+                fa_order = '$fa_order' ";
+
+if ($w == "")
+{
+    $sql = " insert {$g5['faq_table']}
+                set fm_id ='$fm_id',
+                    $sql_common ";
+    sql_query($sql);
+
+    $fa_id = sql_insert_id();
+    run_event('admin_faq_item_created', $fa_id, $fm_id);
+}
+else if ($w == "u")
+{
+    $sql = " update {$g5['faq_table']}
+                set $sql_common
+              where fa_id = '$fa_id' ";
+    sql_query($sql);
+    run_event('admin_faq_item_updated', $fa_id, $fm_id);
+
+}
+else if ($w == "d")
+{
+	$sql = " delete from {$g5['faq_table']} where fa_id = '$fa_id' ";
+    sql_query($sql);
+    run_event('admin_faq_item_deleted', $fa_id, $fm_id);
+}
+
+if ($w == 'd') {
+    header('Location: '.G5_ADMIN_URL."/faqlist?fm_id=$fm_id", true, 302); exit;
+} else {
+    header('Location: '.G5_ADMIN_URL."/faqform?w=u&fm_id=$fm_id&fa_id=$fa_id", true, 302); exit;
+}

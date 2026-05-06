@@ -1,10 +1,48 @@
 <?php
 /*
- * /admin/auth_list_delete — gnuboard 의 adm/auth_list_delete.php 패스스루.
+ * /admin/auth_list_delete — 관리권한 일괄삭제 POST 핸들러.
  */
+$sub_menu = "100200";
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
 
-$legacy_target = 'auth_list_delete.php';
-require __DIR__.'/_legacy_passthrough.php';
+if ($is_admin !== 'super') {
+    header('Location: '.G5_ADMIN_URL, true, 302);
+    exit;
+}
+
+require_once __DIR__.'/admin.lib.php';
+
+if (function_exists('check_demo')) {
+    check_demo();
+}
+
+check_admin_token();
+
+$count = (isset($_POST['chk']) && is_array($_POST['chk'])) ? count($_POST['chk']) : 0;
+$post_act_button = isset($_POST['act_button']) ? clean_xss_tags($_POST['act_button'], 1, 1) : '';
+
+if (!$count) {
+    alert($_POST['act_button'] . " 하실 항목을 하나 이상 체크하세요.");
+}
+
+if ((isset($_POST['mb_id']) && !is_array($_POST['mb_id'])) || (isset($_POST['au_menu']) && !is_array($_POST['au_menu']))) {
+    alert("잘못된 요청입니다.");
+}
+
+for ($i = 0; $i < $count; $i++) {
+    // 실제 번호를 넘김
+    $k = isset($_POST['chk'][$i]) ? (int) $_POST['chk'][$i] : 0;
+
+    $mb_id = isset($_POST['mb_id'][$k]) ? preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['mb_id'][$k]) : '';
+    $au_menu = isset($_POST['au_menu'][$k]) ? preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['au_menu'][$k]) : '';
+
+    $sql = " delete from {$g5['auth_table']} where mb_id = '" . $mb_id . "' and au_menu = '" . $au_menu . "' ";
+    sql_query($sql);
+
+    run_event('adm_auth_delete_member', $mb_id, $au_menu);
+}
+
+header('Location: '.G5_ADMIN_URL.'/auth_list?' . $qstr, true, 302);
+exit;

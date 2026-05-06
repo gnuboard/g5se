@@ -1,23 +1,70 @@
 <?php
-/*
- * /admin/boardgroupmember_update — gnuboard 의 boardgroupmember_update.php 를 chdir+require.
- * w='ld' → list 에서의 일괄삭제, w='d' → form 에서의 일괄삭제, w='' → form 의 그룹 추가.
- */
+$sub_menu = "300200";
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
+require_once __DIR__.'/admin.lib.php';
 
-require_once G5_PATH.'/adm/admin.lib.php';
+sql_query(" ALTER TABLE {$g5['group_member_table']} CHANGE `gm_id` `gm_id` INT( 11 ) DEFAULT '0' NOT NULL AUTO_INCREMENT ", false);
 
-add_event('goto_url', function ($url) {
-    $u = str_replace('&amp;', '&', (string)$url);
-    if (preg_match('#^\.?/?boardgroupmember_list\.php(\?.*)?$#', $u, $m)) {
-        header('Location: /admin/boardgroupmember_list'.($m[1] ?? ''), true, 302); exit;
+if ($w == '') {
+    auth_check_menu($auth, $sub_menu, 'w');
+
+    $mb = get_member($mb_id);
+    if (empty($mb['mb_id'])) {
+        alert('존재하지 않는 회원입니다.');
     }
-    if (preg_match('#^\.?/?boardgroupmember_form\.php(\?.*)?$#', $u, $m)) {
-        header('Location: /admin/boardgroupmember_form'.($m[1] ?? ''), true, 302); exit;
-    }
-}, 10, 1);
 
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/boardgroupmember_update.php';
+    $gr = get_group($gr_id);
+    if (empty($gr['gr_id'])) {
+        alert('존재하지 않는 그룹입니다.');
+    }
+
+    $sql = " select count(*) as cnt
+                from {$g5['group_member_table']}
+                where gr_id = '{$gr_id}'
+                and mb_id = '{$mb_id}' ";
+    $row = sql_fetch($sql);
+    if ($row['cnt']) {
+        alert('이미 등록되어 있는 자료입니다.');
+    } else {
+        check_admin_token();
+
+        $sql = " insert into {$g5['group_member_table']}
+                    set gr_id = '{$_POST['gr_id']}',
+                         mb_id = '{$_POST['mb_id']}',
+                         gm_datetime = '" . G5_TIME_YMDHIS . "' ";
+        sql_query($sql);
+    }
+} elseif ($w == 'd' || $w == 'ld') {
+    auth_check_menu($auth, $sub_menu, 'd');
+
+    $count = count($_POST['chk']);
+    if (!$count) {
+        alert('삭제할 목록을 하나이상 선택해 주세요.');
+    }
+
+    check_admin_token();
+
+    for ($i = 0; $i < $count; $i++) {
+        $gm_id = (int) $_POST['chk'][$i];
+        $sql = " select * from {$g5['group_member_table']} where gm_id = '$gm_id' ";
+        $gm = sql_fetch($sql);
+        if (!$gm['gm_id']) {
+            if ($count == 1) {
+                alert('존재하지 않는 자료입니다.');
+            } else {
+                continue;
+            }
+        }
+
+        $sql = " delete from {$g5['group_member_table']} where gm_id = '$gm_id' ";
+        sql_query($sql);
+    }
+}
+
+if ($w == 'ld') {
+    goto_url('./boardgroupmember_list.php?gr_id=' . $gr_id);
+} else {
+    goto_url('./boardgroupmember_form.php?mb_id=' . $mb_id);
+}
