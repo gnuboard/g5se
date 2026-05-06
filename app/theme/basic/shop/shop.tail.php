@@ -103,7 +103,7 @@ $is_index = defined('_INDEX_') && _INDEX_;
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <span class="m-shop-quick-label">위시</span>
         </a>
-        <button type="button" class="m-shop-quick-btn js-shop-quick-today" title="오늘 본 상품">
+        <button type="button" class="m-shop-quick-btn js-shop-quick-today" title="최근 본 상품" aria-expanded="false" aria-controls="m-shop-today-panel">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span class="m-shop-quick-label">최근본</span>
         </button>
@@ -113,11 +113,11 @@ $is_index = defined('_INDEX_') && _INDEX_;
         </button>
     </aside>
 
-    <!-- 오늘 본 상품 패널 (quick-today 클릭 시 펼침) -->
+    <!-- 최근 본 상품 패널 (quick-today 클릭 시 펼침) -->
     <?php $_today_items = function_exists('get_view_today_items') ? get_view_today_items(true) : []; ?>
-    <div class="m-shop-today-panel" hidden>
+    <div id="m-shop-today-panel" class="m-shop-today-panel" hidden>
         <div class="m-shop-today-panel-head">
-            <strong>오늘 본 상품 <span style="color: var(--m-text-faint); font-weight: 500; font-size: var(--m-text-xs);">(<?php echo count($_today_items); ?>)</span></strong>
+            <strong>최근 본 상품 <span style="color: var(--m-text-faint); font-weight: 500; font-size: var(--m-text-xs);">(<?php echo count($_today_items); ?>)</span></strong>
             <button type="button" class="m-shop-today-close" aria-label="닫기">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -173,6 +173,7 @@ $is_index = defined('_INDEX_') && _INDEX_;
 }
 .m-shop-quick-btn:focus { outline: none; }
 .m-shop-quick-btn:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 2px; }
+.m-shop-quick-btn[aria-expanded="true"] { background: var(--m-primary); color: #fff; border-color: var(--m-primary); }
 .m-shop-quick-label { font-size: 10px; font-weight: 500; letter-spacing: -0.02em; }
 .m-shop-quick-top { background: var(--m-text); color: var(--m-bg); border-color: var(--m-text); }
 .m-shop-quick-top:hover { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
@@ -245,24 +246,42 @@ $is_index = defined('_INDEX_') && _INDEX_;
 <script>
 (function(){
     var todayBtn   = document.querySelector('.js-shop-quick-today');
-    var todayPanel = document.querySelector('.m-shop-today-panel');
+    var todayPanel = document.getElementById('m-shop-today-panel');
     var topBtn     = document.querySelector('.m-shop-quick-top');
+
+    function setOpen(open){
+        if (open) {
+            todayPanel.removeAttribute('hidden');
+            todayBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            todayPanel.setAttribute('hidden', '');
+            todayBtn.setAttribute('aria-expanded', 'false');
+        }
+    }
+    function isOpen(){ return !todayPanel.hasAttribute('hidden'); }
+
     if (todayBtn && todayPanel) {
-        todayBtn.addEventListener('click', function(){
-            todayPanel.toggleAttribute('hidden');
+        todayBtn.addEventListener('click', function(e){
+            e.stopPropagation();
+            setOpen(!isOpen());
         });
         todayPanel.addEventListener('click', function(e){
-            if (e.target.closest('.m-shop-today-close')) todayPanel.setAttribute('hidden', '');
+            if (e.target.closest('.m-shop-today-close')) setOpen(false);
         });
         document.addEventListener('click', function(e){
-            if (!todayBtn.contains(e.target) && !todayPanel.contains(e.target)) {
-                todayPanel.setAttribute('hidden', '');
+            if (isOpen() && !todayPanel.contains(e.target) && !todayBtn.contains(e.target)) {
+                setOpen(false);
             }
+        });
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape' && isOpen()) setOpen(false);
         });
     }
     if (topBtn) {
         topBtn.addEventListener('click', function(){
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 클릭 후 :focus 잔존 잔존 방지
+            topBtn.blur();
         });
     }
 })();
