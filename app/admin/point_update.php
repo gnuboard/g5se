@@ -1,20 +1,29 @@
 <?php
-/*
- * /admin/point_update — gnuboard 의 point_update.php 를 chdir+require.
- */
+$sub_menu = "200200";
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
+require_once __DIR__.'/admin.lib.php';
 
-require_once G5_PATH.'/adm/admin.lib.php';
+auth_check_menu($auth, $sub_menu, 'w');
 
-add_event('goto_url', function ($url) {
-    $u = str_replace('&amp;', '&', (string)$url);
-    if (preg_match('#^\.?/?point_list\.php(\?.*)?$#', $u, $m)) {
-        header('Location: /admin/point_list'.($m[1] ?? ''), true, 302);
-        exit;
-    }
-}, 10, 1);
+check_admin_token();
 
-chdir(G5_ADMIN_PATH);
-require G5_ADMIN_PATH.'/point_update.php';
+$mb_id = isset($_POST['mb_id']) ? strip_tags(clean_xss_attributes($_POST['mb_id'])) : '';
+$po_point = isset($_POST['po_point']) ? (int)strip_tags(clean_xss_attributes($_POST['po_point'])) : 0;
+$po_content = isset($_POST['po_content']) ? strip_tags(clean_xss_attributes($_POST['po_content'])) : '';
+$expire = isset($_POST['po_expire_term']) ? preg_replace('/[^0-9]/', '', $_POST['po_expire_term']) : '';
+
+$mb = get_member($mb_id);
+
+if (!$mb['mb_id']) {
+    alert('존재하는 회원아이디가 아닙니다.', G5_ADMIN_URL.'/point_list?' . $qstr);
+}
+
+if (($po_point < 0) && ($po_point * (-1) > $mb['mb_point'])) {
+    alert('포인트를 깎는 경우 현재 포인트보다 작으면 안됩니다.', G5_ADMIN_URL.'/point_list?' . $qstr);
+}
+
+insert_point($mb_id, $po_point, $po_content, '@passive', $mb_id, $member['mb_id'] . '-' . uniqid(''), $expire);
+
+goto_url('./point_list.php?' . $qstr);

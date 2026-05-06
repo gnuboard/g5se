@@ -824,6 +824,61 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     color: var(--slate-400);
 }
 
+/* 폼 안내문 (gnuboard help() → <span class="frm_info">) — 항상 한 줄 차지 후 textarea 가 그 아래로 폭 가득 */
+.legacy-admin-content .frm_info {
+    display: block;
+    padding: 0 0 0.375rem;
+    color: var(--slate-500);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+[data-theme="dark"] .legacy-admin-content .frm_info {
+    color: var(--slate-400);
+}
+.legacy-admin-content .tbl_frm01 td > textarea:not([class*="rounded"]) {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 6rem;
+}
+
+/* config_form 소셜로그인 — 체크박스/라벨 한 줄, 그 아래 callback URL 설명을 들여쓰기 */
+.legacy-admin-content .social_config_explain .explain_box {
+    margin: 0 0 1rem;
+}
+.legacy-admin-content .social_config_explain .explain_box:last-child {
+    margin-bottom: 0;
+}
+.legacy-admin-content .social_config_explain .explain_box > input[type="checkbox"] {
+    vertical-align: middle;
+}
+.legacy-admin-content .social_config_explain .explain_box > label {
+    vertical-align: middle;
+    margin-left: 0.25rem;
+    font-weight: 500;
+}
+.legacy-admin-content .social_config_explain .explain_box > div {
+    padding: 0.25rem 0 0 1.75rem;
+    color: var(--slate-500);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+.legacy-admin-content .social_config_explain .explain_box > div h3 {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--slate-600);
+}
+.legacy-admin-content .social_config_explain .explain_box > div p {
+    margin: 0;
+    word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--slate-500);
+}
+[data-theme="dark"] .legacy-admin-content .social_config_explain .explain_box > div { color: var(--slate-400); }
+[data-theme="dark"] .legacy-admin-content .social_config_explain .explain_box > div h3 { color: var(--slate-300); }
+[data-theme="dark"] .legacy-admin-content .social_config_explain .explain_box > div p { color: var(--slate-400); }
+
 /* 페이지 상단 컨트롤 */
 .legacy-admin-content .local_ov01,
 .legacy-admin-content .local_ov {
@@ -1475,6 +1530,86 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     color: var(--slate-400);
 }
 .legacy-admin-content .is-hidden { display: none !important; }
+
+/* PopupManager 가 사용하는 공용 레이어 팝업 (legacy /adm/css/admin.css 에서 이식).
+ * #popupOverlay 는 admin shell 의 사이드바/header 위에 떠야 하므로 .legacy-admin-content
+ * 스코프 없이 전역. */
+.is-hidden { display: none !important; }
+.popup-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex; justify-content: center; align-items: center;
+}
+.popup-content {
+    background: #fff; color: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    width: min(800px, calc(100% - 32px));
+    max-height: calc(100vh - 64px);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+}
+[data-theme="dark"] .popup-content { background: #131825; color: #f1f5f9; }
+.popup-header, .popup-footer { padding: 16px 20px; display: flex; align-items: center; }
+.popup-header { justify-content: space-between; border-bottom: 1px solid #e5e7eb; }
+[data-theme="dark"] .popup-header { border-bottom-color: #2a3344; }
+.popup-footer { gap: 12px; border-top: 1px solid #e5e7eb; justify-content: flex-end; }
+.popup-footer:empty { display: none; }
+[data-theme="dark"] .popup-footer { border-top-color: #2a3344; }
+.popup-title { font-size: 16px; font-weight: 600; }
+.popup-body {
+    padding: 20px; overflow-y: auto; flex: 1;
+    color: #334155;
+}
+[data-theme="dark"] .popup-body { color: #cbd5e1; }
+.popup-close-btn {
+    background: none; border: 0; cursor: pointer;
+    width: 32px; height: 32px; padding: 0;
+    color: #94a3b8; font-size: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.popup-close-btn::before { content: '\00d7'; font-size: 22px; line-height: 1; }
+.popup-close-btn:hover { color: #1e293b; }
+[data-theme="dark"] .popup-close-btn:hover { color: #f1f5f9; }
+.popup-close-btn .fa, .popup-close-btn .sound_only { display: none; }
+.popup-footer button, .popup-footer .btn {
+    background: var(--admin-primary-600, #3464f5); color: #fff;
+    border: 0; padding: 8px 16px; border-radius: 6px;
+    font-weight: 600; cursor: pointer;
+}
+.popup-footer button:hover, .popup-footer .btn:hover {
+    background: var(--admin-primary-700, #2649d5);
+}
+
+/* 회원 엑셀 다운로드 진행 팝업 (legacy 에서 이식) */
+.excel-download-progress p { color: #374151; }
+[data-theme="dark"] .excel-download-progress p { color: #cbd5e1; }
+.excel-download-progress .progress-desc { padding: 24px 0 16px; text-align: center; }
+.excel-download-progress .progress-summary { margin-bottom: 6px; font-size: 16px; font-weight: 500; color: #111827; }
+[data-theme="dark"] .excel-download-progress .progress-summary { color: #f1f5f9; }
+.excel-download-progress .progress-message { font-size: 20px; font-weight: 600; color: #3b82f6; }
+.excel-download-progress .progress-error { color: #dc2626; }
+.progress-spinner { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 16px 0; }
+.spinner { width: 48px; height: 48px; border: 5px solid #3b82f6; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-message { text-align: center; font-size: 13px; color: #64748b; line-height: 1.6; }
+[data-theme="dark"] .loading-message { color: #94a3b8; }
+.excel-download-progress .progress-download-box { margin-top: 16px; background: #f9fafb; padding: 16px; border-radius: 8px; }
+[data-theme="dark"] .excel-download-progress .progress-download-box { background: #1c2230; }
+.excel-download-progress .progress-download-box a {
+    display: block; text-align: center; margin-top: 8px;
+    font-weight: 600; font-size: 14px;
+    padding: 10px 20px; background: #fff;
+    border: 1px solid #cbd5e1; border-radius: 6px;
+    color: #1e293b; text-decoration: none;
+}
+[data-theme="dark"] .excel-download-progress .progress-download-box a {
+    background: #0f172a; color: #f1f5f9; border-color: #334155;
+}
+.excel-download-progress .progress-download-box a:first-child { margin-top: 0; }
+.excel-download-progress .progress-download-box a:hover { border-color: #3b82f6; }
 .legacy-admin-content .cf_cert_hide,
 .legacy-admin-content .cf_tr_hide,
 .legacy-admin-content tr.cf_tr_hide {
@@ -1723,11 +1858,201 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     color: #fff;
 }
 
+/* /admin/browscap, /admin/browscap_convert 등의 진행/완료 인디케이터.
+ * legacy /adm/css/admin.css 의 .update_processing(spinner.gif) /
+ * .check_processing(check.png) 가 modern admin 에선 안 보였던 것을 CSS-only 로 재현. */
+.update_processing,
+.check_processing {
+    display: block;
+    margin: 24px auto 12px;
+    width: 56px; height: 56px;
+}
+.update_processing {
+    border: 5px solid var(--slate-200);
+    border-top-color: var(--admin-primary-500, #3464f5);
+    border-radius: 50%;
+    animation: g5_admin_spin 0.9s linear infinite;
+}
+@keyframes g5_admin_spin { to { transform: rotate(360deg); } }
+.check_processing {
+    border-radius: 50%;
+    background: #047857;
+    position: relative;
+}
+.check_processing::after {
+    content: '';
+    position: absolute; left: 18px; top: 12px;
+    width: 14px; height: 26px;
+    border-right: 4px solid #fff;
+    border-bottom: 4px solid #fff;
+    transform: rotate(45deg);
+}
+[data-theme="dark"] .update_processing { border-color: var(--slate-700); border-top-color: var(--admin-primary-500, #5d8eff); }
+
 /* SmartEditor2 단축키 일람 — BBS 글쓰기 theme/basic/css/default.css 와 동일.
  * cke_sc / btn_cke_sc / cke_sc_def 클래스는 editor 마크업에만 존재하므로
  * .legacy-admin-content 스코프 없이 admin 전역 — modern 재작성 페이지
  * (faqform 등 editor_html 직접 호출하는 곳) 에서도 동일하게 적용된다. */
 .cke_sc { margin: 0 0 5px !important; text-align: right !important; }
+
+/* CKEditor4 알림(.cke_notification) — 에디터 영역 안에 카드 toast 형태로 표시.
+ * 기본은 position:fixed / width:300px / 가운데 align 으로 좁은 admin 컨텐츠
+ * 컬럼에서 좌측 바깥으로 새는 문제 + 카드 모양 안 나타나는 문제 동시 해결. */
+/* jQuery UI datepicker — admin shell 톤에 맞춤 (default base CSS 위에 override).
+   다크모드에서는 어두운 패널 + 밝은 글자. */
+.ui-datepicker {
+    width: 17em !important;
+    padding: 0 !important;
+    border: 1px solid var(--slate-200) !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    color: #1e293b !important;
+    z-index: 10000 !important;
+}
+.ui-datepicker .ui-datepicker-header {
+    background: #f8fafc !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--slate-200) !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 8px 6px !important;
+    color: #1e293b !important;
+    font-weight: 600;
+}
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+    top: 8px !important; width: 22px !important; height: 22px !important;
+    cursor: pointer; border-radius: 4px;
+}
+.ui-datepicker .ui-datepicker-prev:hover,
+.ui-datepicker .ui-datepicker-next:hover {
+    background: #e2e8f0 !important; border: 0 !important;
+}
+.ui-datepicker .ui-datepicker-title { line-height: 22px; }
+.ui-datepicker .ui-datepicker-title select {
+    height: 24px; padding: 0 4px; margin: 0 2px;
+    border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #1e293b;
+    font-size: 12px;
+}
+.ui-datepicker table {
+    width: 100%; margin: 0; border-collapse: collapse;
+    font-size: 12px;
+}
+.ui-datepicker th { padding: 6px 0 !important; color: #64748b !important; font-weight: 500; }
+.ui-datepicker td { padding: 1px !important; }
+.ui-datepicker td a, .ui-datepicker td span {
+    display: block; padding: 6px 0 !important; text-align: center !important;
+    border: 0 !important; background: transparent !important;
+    color: #334155 !important; border-radius: 4px;
+    text-decoration: none;
+}
+.ui-datepicker td a:hover { background: #e2e8f0 !important; }
+.ui-datepicker td .ui-state-active,
+.ui-datepicker td a.ui-state-active {
+    background: var(--admin-primary-600, #3464f5) !important;
+    color: #fff !important;
+}
+.ui-datepicker td .ui-state-highlight,
+.ui-datepicker td a.ui-state-highlight {
+    background: var(--admin-primary-50, #f0f7ff) !important;
+    color: var(--admin-primary-700, #1f3aac) !important;
+    font-weight: 600;
+}
+.ui-datepicker .ui-datepicker-buttonpane {
+    border-top: 1px solid var(--slate-200) !important;
+    padding: 6px !important;
+    background: #f8fafc !important;
+}
+.ui-datepicker .ui-datepicker-buttonpane button {
+    margin: 0 4px; padding: 6px 12px;
+    border: 1px solid #cbd5e1; background: #fff; color: #1e293b;
+    border-radius: 4px; font-size: 12px; cursor: pointer;
+}
+.ui-datepicker .ui-datepicker-buttonpane button:hover { background: #e2e8f0; }
+
+/* 다크 */
+[data-theme="dark"] .ui-datepicker {
+    background: #131825 !important; color: #e2e8f0 !important;
+    border-color: #2a3344 !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5) !important;
+}
+[data-theme="dark"] .ui-datepicker .ui-datepicker-header {
+    background: #1c2230 !important; color: #f1f5f9 !important;
+    border-bottom-color: #2a3344 !important;
+}
+[data-theme="dark"] .ui-datepicker .ui-datepicker-title select {
+    background: #0f172a; color: #e2e8f0; border-color: #334155;
+}
+[data-theme="dark"] .ui-datepicker .ui-datepicker-prev:hover,
+[data-theme="dark"] .ui-datepicker .ui-datepicker-next:hover { background: #2a3344 !important; }
+[data-theme="dark"] .ui-datepicker th { color: #94a3b8 !important; }
+[data-theme="dark"] .ui-datepicker td a, [data-theme="dark"] .ui-datepicker td span {
+    color: #cbd5e1 !important;
+}
+[data-theme="dark"] .ui-datepicker td a:hover { background: #2a3344 !important; }
+[data-theme="dark"] .ui-datepicker .ui-datepicker-buttonpane { background: #1c2230 !important; border-top-color: #2a3344 !important; }
+[data-theme="dark"] .ui-datepicker .ui-datepicker-buttonpane button {
+    background: #0f172a; color: #e2e8f0; border-color: #334155;
+}
+[data-theme="dark"] .ui-datepicker .ui-datepicker-buttonpane button:hover { background: #1e293b; }
+
+/* notifications_area — CKEditor 기본 위치(body 끝 fixed) 그대로 사용.
+ * (.cke 에 position:relative 를 박으면 emoji/font 팝업 위치 계산이 깨져 페이지 하단에
+ * 뜨는 부작용 발생 — 위치 조정 안 하고 카드 스타일만 적용.) */
+.cke_notifications_area {
+    pointer-events: none !important;
+    text-align: center;
+}
+.cke_notification {
+    pointer-events: auto !important;
+    display: inline-block !important;
+    position: relative !important;
+    margin: 0 auto 8px !important;
+    width: auto !important;
+    max-width: 480px !important;
+    padding: 12px 40px 12px 16px !important;
+    border-radius: 8px !important;
+    background: #1e293b !important; color: #f1f5f9 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+    text-align: left !important;
+    word-break: keep-all !important; line-height: 1.5 !important;
+    font-size: 13px !important;
+    opacity: 1 !important;
+}
+.cke_notification_success { background: #047857 !important; color: #ecfdf5 !important; }
+.cke_notification_warning { background: #b45309 !important; color: #fef3c7 !important; }
+.cke_notification_info    { background: #1d4ed8 !important; color: #dbeafe !important; }
+.cke_notification_message {
+    color: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+.cke_notification_close {
+    position: absolute !important; top: 8px !important; right: 8px !important;
+    width: 24px !important; height: 24px !important;
+    padding: 0 !important;
+    background: transparent !important; border: 0 !important;
+    color: inherit !important; font-size: 0 !important; line-height: 1 !important;
+    cursor: pointer; opacity: 0.85;
+    text-indent: 0 !important;
+}
+.cke_notification_close:hover { opacity: 1; }
+.cke_notification_close > span,
+.cke_notification_close img { display: none !important; }
+.cke_notification_close::before {
+    content: '\00d7';
+    display: block;
+    font-size: 22px !important;
+    line-height: 24px;
+    color: inherit;
+}
+.cke_notification_progress {
+    background: rgba(255,255,255,0.4) !important;
+    height: 3px !important;
+}
 .btn_cke_sc {
     display: inline-block !important; padding: 0 10px !important; height: 23px !important;
     border: 1px solid #ccc !important; background: #fafafa !important; color: #000 !important;

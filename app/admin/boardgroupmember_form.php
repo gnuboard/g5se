@@ -46,6 +46,11 @@ $add_result = sql_pdo_query($add_sql, $add_params);
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 
+// 같은 페이지에 form 이 2개 — get_admin_token() 는 호출 때마다 세션에 새 토큰을
+// 저장하므로 그냥 두 번 부르면 첫 form 의 토큰이 무효. 한 번 발급해 양쪽 form
+// 에서 같은 값을 주입.
+$_admin_token = get_admin_token();
+
 admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
 ?>
 
@@ -68,7 +73,7 @@ admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
         <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">그룹 추가</h3>
         <form action="/admin/boardgroupmember_update" method="post" class="flex flex-wrap items-center gap-2" id="fboardgroupmember_form">
             <input type="hidden" name="mb_id" value="<?php echo $h($mb['mb_id']) ?>">
-            <input type="hidden" name="token" value="<?php echo get_admin_token() ?>">
+            <input type="hidden" name="token" value="<?php echo $_admin_token ?>">
             <select name="gr_id" required class="h-10 pl-3 pr-8 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm flex-1 min-w-64">
                 <option value="">접근가능 그룹을 선택하세요</option>
                 <?php while ($row = sql_fetch_array($add_result)): ?>
@@ -83,7 +88,7 @@ admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
           class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
         <input type="hidden" name="w"     value="d">
         <input type="hidden" name="mb_id" value="<?php echo $h($mb['mb_id']) ?>">
-        <input type="hidden" name="token" value="<?php echo get_admin_token() ?>">
+        <input type="hidden" name="token" value="<?php echo $_admin_token ?>">
 
         <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
@@ -102,7 +107,7 @@ admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
                     <td class="px-3 py-2 text-center"><input type="checkbox" name="chk[]" value="<?php echo (int)$row['gm_id'] ?>" class="rounded border-slate-300"></td>
-                    <td class="px-3 py-2 whitespace-nowrap font-mono text-xs">
+                    <td class="px-3 py-2 whitespace-nowrap font-mono text-sm">
                         <a href="<?php echo G5_BBS_URL ?>/group.php?gr_id=<?php echo urlencode($row['gr_id']) ?>" target="_blank" class="text-admin-primary-700 dark:text-admin-primary-300 hover:underline"><?php echo $h($row['gr_id']) ?></a>
                     </td>
                     <td class="px-3 py-2"><?php echo $h($row['gr_subject']) ?></td>

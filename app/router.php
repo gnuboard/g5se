@@ -102,7 +102,11 @@ class Router
         //       internal 파일이 web 으로 노출되지 않도록 차단
         //   - 서브디렉토리 가능 (segment/segment) — 단 모든 segment 가 같은 룰
         '#^/admin/?$#'                                                                       => 'admin/index.php',
-        '#^/admin/(?P<page>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'admin/{page}.php',
+        // ajax.* 엔드포인트 (점 허용) — /admin/ajax.token, /admin/ajax.use_captcha 등
+        // 캡처 이름 _adminpage: 'page' 를 쓰면 페이지네이션 ?page=N 와 충돌해서
+        // $_GET['page'] 가 페이지명으로 덮어써짐 → list 페이지 페이징 깨짐.
+        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i' => 'admin/{_adminpage}.php',
+        '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'admin/{_adminpage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
@@ -259,9 +263,10 @@ class Router
                     if (ctype_digit($key)) $key = (int)$key;
                     return isset($m[$key]) ? $m[$key] : '';
                 }, $target);
-                // 명명 그룹은 $_GET 에 주입
+                // 명명 그룹은 $_GET 에 주입 (단, '_' 로 시작하는 이름은 routing-only 이므로 skip
+                //  — 예: admin pattern 의 (?P<_adminpage>...) 는 실제 query 의 ?page=N 와 충돌 회피용)
                 foreach ($m as $k => $v) {
-                    if (!is_int($k)) {
+                    if (!is_int($k) && $k[0] !== '_') {
                         $_GET[$k] = $v;
                         $_REQUEST[$k] = $v;
                     }

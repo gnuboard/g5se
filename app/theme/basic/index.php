@@ -24,6 +24,12 @@ include_once(G5_PATH.'/head.sub.php');
 
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
+    <?php
+    // 팝업레이어 — admin/newwinform 에서 등록한 newwin 을 메인에서 노출 (legacy head.php 에서
+    // _INDEX_ 가드로 include 하던 것을 modern shell 에 직접 이식).
+    include G5_BBS_PATH.'/newwin.inc.php';
+    ?>
+
     <main class="m-container m-with-sidebar" style="padding: 32px 20px 48px;">
         <!-- 좌측: 메인 콘텐츠 -->
         <div class="m-main-col">

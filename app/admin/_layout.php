@@ -24,22 +24,16 @@ function admin_require_login(): void
 {
     global $is_admin, $is_member;
     if (!$is_member) {
-        $back = urlencode($_SERVER['REQUEST_URI'] ?? '/admin');
-        header('Location: /login?url='.$back, true, 302);
+        $back = urlencode($_SERVER['REQUEST_URI'] ?? G5_ADMIN_URL);
+        header('Location: '.G5_URL.'/login?url='.$back, true, 302);
         exit;
     }
     if (!$is_admin) {
-        header('Location: /', true, 302);
+        header('Location: '.G5_URL.'/', true, 302);
         exit;
     }
-
-    // 레거시 admin.lib.php 의 admin_referer_check / admin_check_xss_params 가
-    // referer path 에 /adm/ 를 요구한다. 모던 URL 은 /admin/... 이라 매번 실패해서
-    // POST 시 'XSS 공격' alert 가 떴음 (특히 contentform 의 editor HTML 본문).
-    // admin.lib.php 가 require 되기 전에 referer 를 패치해 검증을 통과시킨다.
-    if (!empty($_SERVER['HTTP_REFERER'])) {
-        $_SERVER['HTTP_REFERER'] = preg_replace('#(/+)admin(/+)#', '$1adm$2', $_SERVER['HTTP_REFERER']);
-    }
+    // (이전에 referer 의 /admin/ → /adm/ 치환이 있었으나, G5_ADMIN_DIR='admin' 이후
+    //  admin_referer_check 가 직접 /admin/ 를 요구하므로 패치 불필요.)
 }
 
 function admin_layout_start(string $title, string $active_key = ''): void
@@ -81,7 +75,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- admin 전용 정적 CSS — 변수 + 레거시 컴포넌트 레이어 + Tailwind reset 흡수.
          (CDN reset 을 별도 link 로 두면 늦게 도착해서 body margin 8px 이 잠깐 적용됐다
          사라지는 reflow — '컨텐츠가 벽에 붙었다 떨어지는' 느낌 — 이 발생.) -->
-    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="stylesheet" href="<?php echo G5_ADMIN_URL ?>/css/admin.css">
     <!-- Pretendard 는 admin 에서 미사용 — 시스템 폰트로 즉시 paint (font-swap 으로 인한
          '창이 새로 뜨는' 느낌 차단). Apple SD Gothic Neo / Malgun Gothic / Noto Sans 등
          OS 가 제공하는 한글 폰트가 가장 자연스럽고 빠름. -->
@@ -92,9 +86,42 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- UnoCSS runtime — 베이킹 안 된 보조 utility 들을 런타임에 생성. layout 이 이미 정적이라
          실패해도 안전. admin-primary 팔레트 컬러도 정적 CSS 로 커버됨. -->
     <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
-    <script src="/admin/js/uno.global.js" defer></script>
+    <script src="<?php echo G5_ADMIN_URL ?>/js/uno.global.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+    <!-- Alpine.js — 작은 reactive (~15KB). x-data / x-show / x-on / x-text 으로 선언적 인터랙션.
+         defer 로 로드 → DOMContentLoaded 시 자동 init. 기존 jQuery 와 충돌 없이 공존. -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- gnuboard 공용 헬퍼 (win_zip, set_cookie 등) + Kakao 우편번호 SDK.
+         원래 head.sub.php 의 add_javascript 큐로 들어가지만 modern admin shell 은
+         해당 큐를 flush 하지 않아 admin 에서 win_zip 호출 시 ReferenceError 가 발생. -->
+    <script>var g5_is_mobile = false, g5_url = "<?php echo G5_URL ?>", g5_bbs_url = "<?php echo G5_BBS_URL ?>";</script>
+    <script src="<?php echo G5_JS_URL ?>/common.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- admin 전용 JS — PopupManager, CommonUI 등 (legacy admin.tail.php 가 로드하던 것).
+         .htaccess 규칙상 /admin/js/* 만 정적 매핑이라 /admin/admin.js 가 아닌 /admin/js/admin.js. -->
+    <script src="<?php echo G5_ADMIN_URL ?>/js/admin.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>" defer></script>
+    <!-- jQuery UI datepicker — admin 의 popular_rank / visit_search / visit.sub 등에서 사용.
+         원본은 plugin/jquery-ui/datepicker.php 가 add_stylesheet/javascript 큐로 등록하지만
+         modern admin shell 은 큐 flush 안 함. 한 번만 직접 로드. -->
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="<?php echo G5_PLUGIN_URL ?>/jquery-ui/style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script>
+    jQuery(function($){
+        $.datepicker.regional["ko"] = {
+            closeText:"닫기", prevText:"이전달", nextText:"다음달", currentText:"오늘",
+            monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+            monthNamesShort:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+            dayNames:["일요일","월요일","화요일","수요일","목요일","금요일","토요일"],
+            dayNamesShort:["일","월","화","수","목","금","토"],
+            dayNamesMin:["일","월","화","수","목","금","토"],
+            weekHeader:"주", dateFormat:"yy-mm-dd", firstDay:0, isRTL:false,
+            showMonthAfterYear:true, yearSuffix:"년"
+        };
+        $.datepicker.setDefaults($.datepicker.regional["ko"]);
+    });
+    </script>
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     </style>
@@ -108,16 +135,18 @@ function admin_layout_start(string $title, string $active_key = ''): void
            class="flex-col fixed inset-y-0 left-0 w-60 z-40
                   bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <div class="h-14 flex items-center justify-between px-5 border-b border-slate-200 dark:border-slate-800">
-            <a href="/admin" class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
+            <a href="<?php echo G5_ADMIN_URL ?>" class="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
                 <span class="inline-flex w-8 h-8 rounded-md bg-admin-primary-600 text-white items-center justify-center font-black">G</span>
                 <span><?php echo get_text($cf_title) ?></span>
             </a>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-3 px-3 text-sm">
-            <?php foreach ($_admin_nav as $group_index => $group) {
+            <?php foreach ($_admin_nav as $group_index => $navGroup) {
+                // 주의: 변수명 \$group 을 쓰면 gnuboard 의 전역 \$group (현재 게시판 그룹 row)
+                // 을 foreach 가 마지막 값으로 덮어써서 boardgroup_form 등이 빈 칸으로 보임. \$navGroup 사용.
                 // super 만 볼 수 있는 항목 필터
-                $items = array_values(array_filter($group['items'], function ($it) use ($is_admin) {
+                $items = array_values(array_filter($navGroup['items'], function ($it) use ($is_admin) {
                     return ($it['level'] === '') || ($it['level'] === $is_admin) || $is_admin === 'super';
                 }));
                 if (!$items) continue;
@@ -132,7 +161,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
                     }
                 }
                 // 그룹 ID — admin.menu{N}.php 의 숫자 N 을 사용 (_menu.php 가 _id 로 노출).
-                $group_id = 'navgrp-'.($group['_id'] ?? $group_index);
+                $group_id = 'navgrp-'.($navGroup['_id'] ?? $group_index);
 
                 // open 상태: 활성 그룹은 항상 open. 그 외엔 쿠키 우선, 없으면 닫힘.
                 if ($group_has_active) {
@@ -145,7 +174,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
             ?>
             <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_open ? 'open' : '' ?>>
                 <summary class="nav-summary cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
-                    <span><?php echo get_text($group['group']) ?></span>
+                    <span><?php echo get_text($navGroup['group']) ?></span>
                 </summary>
                 <ul class="mt-1">
                     <?php foreach ($items as $item) {
@@ -205,6 +234,100 @@ function admin_layout_end(): void
 
 <!-- 모바일 사이드바 backdrop (lg 이하에서 토글 시 표시) -->
 <div id="adm-sidebar-backdrop" class="hidden fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
+
+<!-- admin 공용 레이어 팝업 컨테이너 — admin.js 의 PopupManager.render() 가 이 마크업 사용
+     (legacy admin.tail.php 가 출력하던 것을 modern shell 안으로 이식) -->
+<div id="adminPopupContainer">
+    <div id="popupOverlay" class="popup-overlay is-hidden" onclick="PopupManager.close('popupOverlay')">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <div class="popup-header">
+                <strong id="popupTitle" class="popup-title"></strong>
+                <button type="button" class="popup-close-btn" onclick="PopupManager.close('popupOverlay')">
+                    <i class="fa fa-close"></i><span class="sound_only">팝업 닫기</span>
+                </button>
+            </div>
+            <div class="popup-body" id="popupBody"></div>
+            <div class="popup-footer" id="popupFooter"></div>
+        </div>
+    </div>
+</div>
+
+<?php
+// admin form 의 hidden token 자동 주입.
+// 주의: get_admin_token() 은 호출할 때마다 새 random 토큰을 만들고 세션에 저장.
+//       form HTML 에서 이미 get_admin_token() 으로 토큰을 박아놨다면 세션에는 그
+//       토큰이 들어있음 — 여기서 다시 get_admin_token() 을 부르면 세션이
+//       덮어써져서 form 토큰과 mismatch → 'check_admin_token' 실패.
+//       따라서 세션 값을 그대로 읽어 쓰고, 없을 때만 발급.
+$_admin_form_token = function_exists('get_session') ? (string)get_session('ss_admin_token') : '';
+if ($_admin_form_token === '' && function_exists('get_admin_token')) {
+    $_admin_form_token = get_admin_token();
+}
+?>
+<script>
+(function () {
+    var ADMIN_TOKEN = <?php echo json_encode($_admin_form_token) ?>;
+    document.addEventListener('submit', function (e) {
+        var f = e.target;
+        if (!f || f.tagName !== 'FORM') return;
+        var t = f.querySelector('input[name="token"]');
+        if (t && !t.value) t.value = ADMIN_TOKEN;
+    }, true);
+})();
+
+// gnuboard 의 admin.head 안 inline JS 가 정의하던 글로벌 헬퍼들 (전체선택/체크여부/
+// 삭제확인/쿠키 유틸). modern admin shell 은 admin.head 를 로드 안 하므로 여기서 정의.
+window.is_checked = window.is_checked || function (name) {
+    var els = document.getElementsByName(name);
+    for (var i = 0; i < els.length; i++) if (els[i].checked) return true;
+    return false;
+};
+window.check_all = window.check_all || function (f) {
+    var ck = f.chkall || f.querySelector('input[name="chkall"]');
+    if (!ck) return;
+    f.querySelectorAll('input[type="checkbox"][name="chk[]"]').forEach(function (i) { i.checked = ck.checked; });
+};
+window.delete_confirm = window.delete_confirm || function (a) {
+    return confirm('정말 삭제하시겠습니까?');
+};
+window.set_cookie = window.set_cookie || function (n, v, h, d) {
+    var e = new Date(); e.setTime(e.getTime() + (h * 1000));
+    document.cookie = n + '=' + escape(v) + '; expires=' + e.toUTCString() + '; path=/' + (d ? '; domain=' + d : '');
+};
+window.delete_cookie = window.delete_cookie || function (n) {
+    document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+};
+
+// SmartEditor2 / cheditor 의 iframe 본문은 별도 문서 — same-origin 이면 style 직접 주입.
+// 다크모드 admin shell 에서도 에디터는 항상 라이트 톤 (흰 배경 + 어두운 글자) 으로 강제.
+(function () {
+    var EDITOR_CSS = 'html,body{background:#fff !important;color:#1e293b !important}'
+        + 'body{font-family:"Pretendard Variable","Pretendard",-apple-system,system-ui,sans-serif}'
+        + 'a{color:#0369a1}';
+    function injectCss(iframe) {
+        try {
+            var doc = iframe.contentDocument || iframe.contentWindow.document;
+            if (!doc || doc.__cssInjected) return;
+            var s = doc.createElement('style');
+            s.textContent = EDITOR_CSS;
+            (doc.head || doc.documentElement).appendChild(s);
+            doc.__cssInjected = true;
+        } catch (e) { /* cross-origin 등 — 무시 */ }
+    }
+    function tryAll() {
+        document.querySelectorAll('iframe').forEach(function (f) {
+            // ckeditor4 iframe (id 가 *_contents) 은 자체 darkmode 핸들러가 있으니 건드리지 않음
+            if (f.id && f.id.indexOf('cke_') === 0) return;
+            if (f.parentElement && f.parentElement.id && f.parentElement.id.indexOf('cke_') === 0) return;
+            injectCss(f);
+            f.addEventListener('load', function () { injectCss(f); }, { once: false });
+        });
+    }
+    tryAll();
+    // SE2 가 늦게 iframe 을 만드므로 몇 차례 재시도
+    var n = 0; var t = setInterval(function () { tryAll(); if (++n > 10) clearInterval(t); }, 500);
+})();
+</script>
 
 <script>
 (function(){
