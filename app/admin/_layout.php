@@ -121,9 +121,11 @@ function admin_layout_start(string $title, string $active_key = ''): void
         </div>
 
         <nav class="flex-1 overflow-y-auto py-3 px-3 text-sm">
-            <?php foreach ($_admin_nav as $group_index => $group) {
+            <?php foreach ($_admin_nav as $group_index => $navGroup) {
+                // 주의: 변수명 \$group 을 쓰면 gnuboard 의 전역 \$group (현재 게시판 그룹 row)
+                // 을 foreach 가 마지막 값으로 덮어써서 boardgroup_form 등이 빈 칸으로 보임. \$navGroup 사용.
                 // super 만 볼 수 있는 항목 필터
-                $items = array_values(array_filter($group['items'], function ($it) use ($is_admin) {
+                $items = array_values(array_filter($navGroup['items'], function ($it) use ($is_admin) {
                     return ($it['level'] === '') || ($it['level'] === $is_admin) || $is_admin === 'super';
                 }));
                 if (!$items) continue;
@@ -138,7 +140,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
                     }
                 }
                 // 그룹 ID — admin.menu{N}.php 의 숫자 N 을 사용 (_menu.php 가 _id 로 노출).
-                $group_id = 'navgrp-'.($group['_id'] ?? $group_index);
+                $group_id = 'navgrp-'.($navGroup['_id'] ?? $group_index);
 
                 // open 상태: 활성 그룹은 항상 open. 그 외엔 쿠키 우선, 없으면 닫힘.
                 if ($group_has_active) {
@@ -151,7 +153,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
             ?>
             <details class="mb-2 nav-group" data-group-id="<?php echo $group_id ?>" data-has-active="<?php echo $group_has_active ? '1' : '0' ?>" <?php echo $group_open ? 'open' : '' ?>>
                 <summary class="nav-summary cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 select-none list-none">
-                    <span><?php echo get_text($group['group']) ?></span>
+                    <span><?php echo get_text($navGroup['group']) ?></span>
                 </summary>
                 <ul class="mt-1">
                     <?php foreach ($items as $item) {
