@@ -9,8 +9,7 @@ if ($ca_id)
     {
         $code = substr($ca_id,0,$i*2);
 
-        $sql = " select ca_name from {$g5['g5_shop_category_table']} where ca_id = '$code' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = :ca_id ", [':ca_id' => $code]);
 
         $sct_here = '';
         if ($ca_id == $code) // 현재 분류와 일치하면

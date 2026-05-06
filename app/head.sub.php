@@ -22,12 +22,11 @@ else {
 $g5['title'] = strip_tags($g5['title']);
 $g5_head_title = strip_tags($g5_head_title);
 
-// 현재 접속자
-// 게시판 제목에 ' 포함되면 오류 발생
-$g5['lo_location'] = addslashes($g5['title']);
+// 현재 접속자 — lib/common.lib 의 PDO insert/update 가 직접 escape
+$g5['lo_location'] = $g5['title'];
 if (!$g5['lo_location'])
-    $g5['lo_location'] = addslashes(clean_xss_tags($_SERVER['REQUEST_URI']));
-$g5['lo_url'] = addslashes(clean_xss_tags($_SERVER['REQUEST_URI']));
+    $g5['lo_location'] = clean_xss_tags($_SERVER['REQUEST_URI']);
+$g5['lo_url'] = clean_xss_tags($_SERVER['REQUEST_URI']);
 if (strpos($g5['lo_url'], '/'.G5_ADMIN_DIR.'/') !== false || $is_admin == 'super') $g5['lo_url'] = '';
 
 /*

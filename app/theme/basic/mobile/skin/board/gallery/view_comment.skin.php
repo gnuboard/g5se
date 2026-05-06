@@ -73,8 +73,8 @@ var char_max = parseInt(<?php echo $comment_max ?>); // 최대
 
                 <?php if($list[$i]['is_reply'] || $list[$i]['is_edit'] || $list[$i]['is_del']) {
                     if($w == 'cu') {
-                        $sql = " select wr_id, wr_content, mb_id from $write_table where wr_id = '$c_id' and wr_is_comment = '1' ";
-                        $cmt = sql_fetch($sql);
+                        $cmt = sql_pdo_fetch(" select wr_id, wr_content, mb_id from $write_table where wr_id = :wr_id and wr_is_comment = '1' ",
+                                            [':wr_id' => $c_id]);
                         if (isset($cmt)) {
                             if (!($is_admin || ($member['mb_id'] == $cmt['mb_id'] && $cmt['mb_id']))) {
                                 $cmt['wr_content'] = '';
