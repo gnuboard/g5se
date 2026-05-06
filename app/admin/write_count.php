@@ -68,16 +68,19 @@ if ($period == '오늘') {
     $to = $yesterday;
 }
 
+$params = [':from' => $from, ':to' => $to];
 $sql_bo_table = '';
-if ($bo_table)
-    $sql_bo_table = "and bo_table = '".addslashes($bo_table)."'";
+if ($bo_table) {
+    $sql_bo_table = "and bo_table = :bo_table";
+    $params[':bo_table'] = $bo_table;
+}
 
 $labels = $wcounts = $ccounts = array();
 
 switch ($day) {
     case '시간' :
-        $sql = " select substr(bn_datetime,6,8) as hours, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by hours order by bn_datetime ";
-        $result = sql_query($sql);
+        $sql = " select substr(bn_datetime,6,8) as hours, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between :from and :to {$sql_bo_table} group by hours order by bn_datetime ";
+        $result = sql_pdo_query($sql, $params);
         while ($row = sql_fetch_array($result)) {
             $labels[]  = substr($row['hours'], 0, 8);
             $wcounts[] = (int)$row['wcount'];
@@ -85,8 +88,8 @@ switch ($day) {
         }
         break;
     case '일' :
-        $sql  = " select substr(bn_datetime,1,10) as days, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by days order by bn_datetime ";
-        $result = sql_query($sql);
+        $sql  = " select substr(bn_datetime,1,10) as days, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between :from and :to {$sql_bo_table} group by days order by bn_datetime ";
+        $result = sql_pdo_query($sql, $params);
         while ($row = sql_fetch_array($result)) {
             $labels[]  = substr($row['days'], 5, 5);
             $wcounts[] = (int)$row['wcount'];
@@ -94,8 +97,8 @@ switch ($day) {
         }
         break;
     case '주' :
-        $sql  = " select concat(substr(bn_datetime,1,4), '-', weekofyear(bn_datetime)) as weeks, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by weeks order by bn_datetime ";
-        $result = sql_query($sql);
+        $sql  = " select concat(substr(bn_datetime,1,4), '-', weekofyear(bn_datetime)) as weeks, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between :from and :to {$sql_bo_table} group by weeks order by bn_datetime ";
+        $result = sql_pdo_query($sql, $params);
         while ($row = sql_fetch_array($result)) {
             list($lyear, $lweek) = explode('-', $row['weeks']);
             $labels[]  = date('y-m-d', strtotime($lyear.'W'.str_pad($lweek, 2, '0', STR_PAD_LEFT)));
@@ -104,8 +107,8 @@ switch ($day) {
         }
         break;
     case '월' :
-        $sql  = " select substr(bn_datetime,1,7) as months, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by months order by bn_datetime ";
-        $result = sql_query($sql);
+        $sql  = " select substr(bn_datetime,1,7) as months, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between :from and :to {$sql_bo_table} group by months order by bn_datetime ";
+        $result = sql_pdo_query($sql, $params);
         while ($row = sql_fetch_array($result)) {
             $labels[]  = substr($row['months'], 2, 5);
             $wcounts[] = (int)$row['wcount'];
@@ -113,8 +116,8 @@ switch ($day) {
         }
         break;
     case '년' :
-        $sql  = " select substr(bn_datetime,1,4) as years, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by years order by bn_datetime ";
-        $result = sql_query($sql);
+        $sql  = " select substr(bn_datetime,1,4) as years, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between :from and :to {$sql_bo_table} group by years order by bn_datetime ";
+        $result = sql_pdo_query($sql, $params);
         while ($row = sql_fetch_array($result)) {
             $labels[]  = substr($row['years'], 0, 4);
             $wcounts[] = (int)$row['wcount'];

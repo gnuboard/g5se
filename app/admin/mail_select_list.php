@@ -15,56 +15,61 @@ $ma_last_option = "";
 
 $sql_common = " from {$g5['member_table']} ";
 $sql_where = " where (1) ";
+$where_params = [];
 
 $mb_id1         = isset($_POST['mb_id1'])       ? (int) $_POST['mb_id1'] : 1;
-$mb_id1_from    = isset($_POST['mb_id1_from'])  ? addslashes(clean_xss_tags(stripslashes($_POST['mb_id1_from']), 1, 1, 30)) : '';
-$mb_id1_to      = isset($_POST['mb_id1_to'])    ? addslashes(clean_xss_tags(stripslashes($_POST['mb_id1_to']), 1, 1, 30)) : '';
-$mb_email       = isset($_POST['mb_email'])     ? addslashes(clean_xss_tags(stripslashes($_POST['mb_email']), 1, 1, 100)) : '';
-$mb_mailling    = isset($_POST['mb_mailling'])  ? addslashes(clean_xss_tags(stripslashes($_POST['mb_mailling']), 1, 1, 100)) : '';
+$mb_id1_from    = isset($_POST['mb_id1_from'])  ? clean_xss_tags(stripslashes($_POST['mb_id1_from']), 1, 1, 30) : '';
+$mb_id1_to      = isset($_POST['mb_id1_to'])    ? clean_xss_tags(stripslashes($_POST['mb_id1_to']), 1, 1, 30) : '';
+$mb_email       = isset($_POST['mb_email'])     ? clean_xss_tags(stripslashes($_POST['mb_email']), 1, 1, 100) : '';
+$mb_mailling    = isset($_POST['mb_mailling'])  ? clean_xss_tags(stripslashes($_POST['mb_mailling']), 1, 1, 100) : '';
 $mb_level_from  = isset($_POST['mb_level_from'])? (int) $_POST['mb_level_from'] : 1;
 $mb_level_to    = isset($_POST['mb_level_to'])  ? (int) $_POST['mb_level_to'] : 10;
 
 // 회원ID ..에서 ..까지
 if ($mb_id1 != 1) {
-    $sql_where .= " and mb_id between '{$mb_id1_from}' and '{$mb_id1_to}' ";
+    $sql_where .= " and mb_id between :mb_id1_from and :mb_id1_to ";
+    $where_params[':mb_id1_from'] = $mb_id1_from;
+    $where_params[':mb_id1_to']   = $mb_id1_to;
 }
 
 // E-mail에 특정 단어 포함
 if ($mb_email != "") {
-    $sql_where .= " and mb_email like '%{$mb_email}%' ";
+    $sql_where .= " and mb_email like :mb_email ";
+    $where_params[':mb_email'] = '%'.$mb_email.'%';
 }
 
 // 메일링
 if ($mb_mailling != "") {
-    $sql_where .= " and mb_mailling = '{$mb_mailling}' ";
+    $sql_where .= " and mb_mailling = :mb_mailling ";
+    $where_params[':mb_mailling'] = $mb_mailling;
 }
 
 // 권한
-$sql_where .= " and mb_level between '{$mb_level_from}' and '{$mb_level_to}' ";
+$sql_where .= " and mb_level between :mb_level_from and :mb_level_to ";
+$where_params[':mb_level_from'] = $mb_level_from;
+$where_params[':mb_level_to']   = $mb_level_to;
 
 // 게시판그룹회원
 if ($gr_id) {
-    $group_member = "";
-    $comma = "";
-    $sql2 = " select mb_id from {$g5['group_member_table']} where gr_id = '{$gr_id}' order by mb_id ";
-    $result2 = sql_query($sql2);
-    for ($k = 0; $row2 = sql_fetch_array($result2); $k++) {
-        $group_member .= "{$comma}'{$row2['mb_id']}'";
-        $comma = ",";
+    $stmt2 = sql_pdo_query(" select mb_id from {$g5['group_member_table']} where gr_id = :gr_id order by mb_id ", [':gr_id' => $gr_id]);
+    $group_placeholders = [];
+    while ($row2 = sql_fetch_array($stmt2)) {
+        $key = ':gm_'.count($group_placeholders);
+        $group_placeholders[] = $key;
+        $where_params[$key] = $row2['mb_id'];
     }
 
-    if (!$group_member) {
+    if (empty($group_placeholders)) {
         alert('선택하신 게시판 그룹회원이 한명도 없습니다.');
     }
 
-    $sql_where .= " and mb_id in ($group_member) ";
+    $sql_where .= " and mb_id in (".implode(',', $group_placeholders).") ";
 }
 
 // 탈퇴, 차단된 회원은 제외
 $sql_where .= " and mb_leave_date = '' and mb_intercept_date = '' ";
 
-$sql = " select COUNT(*) as cnt {$sql_common} {$sql_where} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select COUNT(*) as cnt {$sql_common} {$sql_where} ", $where_params);
 $cnt = $row['cnt'];
 if ($cnt == 0) {
     alert('선택하신 내용으로는 해당되는 회원자료가 없습니다.');
@@ -80,7 +85,8 @@ $ma_last_option .= "||mb_level_from={$mb_level_from}";
 $ma_last_option .= "||mb_level_to={$mb_level_to}";
 $ma_last_option .= "||gr_id={$gr_id}";
 
-sql_query(" update {$g5['mail_table']} set ma_last_option = '{$ma_last_option}' where ma_id = '{$ma_id}' ");
+sql_pdo_query(" update {$g5['mail_table']} set ma_last_option = :ma_last_option where ma_id = :ma_id ",
+              [':ma_last_option' => $ma_last_option, ':ma_id' => $ma_id]);
 
 $g5['title'] = "메일발송 대상 회원";
 admin_layout_start($g5['title'], 'mail');

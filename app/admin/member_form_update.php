@@ -27,8 +27,8 @@ $mb_certify     = isset($_POST['mb_certify']) ? preg_replace('/[^0-9a-z_]/i', ''
 $mb_zip         = isset($_POST['mb_zip']) ? preg_replace('/[^0-9a-z_]/i', '', $_POST['mb_zip']) : '';
 
 // 광고성 정보 수신
-$mb_marketing_agree         = isset($_POST['mb_marketing_agree']) ? addslashes(clean_xss_tags(stripslashes($_POST['mb_marketing_agree']), 1, 1)) : '0';
-$mb_thirdparty_agree         = isset($_POST['mb_thirdparty_agree']) ? addslashes(clean_xss_tags(stripslashes($_POST['mb_thirdparty_agree']), 1, 1)) : '0';
+$mb_marketing_agree  = isset($_POST['mb_marketing_agree'])  ? clean_xss_tags(stripslashes($_POST['mb_marketing_agree']),  1, 1) : '0';
+$mb_thirdparty_agree = isset($_POST['mb_thirdparty_agree']) ? clean_xss_tags(stripslashes($_POST['mb_thirdparty_agree']), 1, 1) : '0';
 
 // gnu5se: 회원관리에서는 캡챠 검증을 사용하지 않음 (관리자 흐름에 불필요한 마찰).
 // (원본은 mb_password 가 있을 때 chk_captcha 호출.)
@@ -86,48 +86,72 @@ for ($i = 1; $i <= 10; $i++) {
 
 foreach ($check_keys as $key) {
     if( in_array($key, array('mb_signature', 'mb_profile')) ){
-        $posts[$key] = isset($_POST[$key]) ? addslashes(clean_xss_tags(stripslashes($_POST[$key]), 1, 1, 0, 0)) : '';
+        $posts[$key] = isset($_POST[$key]) ? clean_xss_tags(stripslashes($_POST[$key]), 1, 1, 0, 0) : '';
     } else {
-        $posts[$key] = isset($_POST[$key]) ? addslashes(clean_xss_tags(stripslashes($_POST[$key]), 1, 1)) : '';
+        $posts[$key] = isset($_POST[$key]) ? clean_xss_tags(stripslashes($_POST[$key]), 1, 1) : '';
     }
 }
 
-$sql_common = "  mb_name = '{$posts['mb_name']}',
-                 mb_nick = '{$mb_nick}',
-                 mb_email = '{$mb_email}',
-                 mb_homepage = '{$posts['mb_homepage']}',
-                 mb_tel = '{$posts['mb_tel']}',
-                 mb_hp = '{$mb_hp}',
-                 mb_certify = '{$mb_certify}',
-                 mb_adult = '{$mb_adult}',
-                 mb_zip1 = '$mb_zip1',
-                 mb_zip2 = '$mb_zip2',
-                 mb_addr1 = '{$posts['mb_addr1']}',
-                 mb_addr2 = '{$posts['mb_addr2']}',
-                 mb_addr3 = '{$posts['mb_addr3']}',
-                 mb_addr_jibeon = '{$posts['mb_addr_jibeon']}',
-                 mb_signature = '{$posts['mb_signature']}',
-                 mb_leave_date = '{$posts['mb_leave_date']}',
-                 mb_intercept_date='{$posts['mb_intercept_date']}',
-                 mb_memo = '{$mb_memo}',
-                 mb_mailling = '{$posts['mb_mailling']}',
-                 mb_sms = '{$posts['mb_sms']}',
-                 mb_open = '{$posts['mb_open']}',
-                 mb_open_date = '".G5_TIME_YMDHIS."',
-                 mb_profile = '{$posts['mb_profile']}',
-                 mb_level = '{$posts['mb_level']}',
-                 mb_marketing_agree = '{$mb_marketing_agree}',
-                 mb_thirdparty_agree = '{$mb_thirdparty_agree}',
-                 mb_1 = '{$posts['mb_1']}',
-                 mb_2 = '{$posts['mb_2']}',
-                 mb_3 = '{$posts['mb_3']}',
-                 mb_4 = '{$posts['mb_4']}',
-                 mb_5 = '{$posts['mb_5']}',
-                 mb_6 = '{$posts['mb_6']}',
-                 mb_7 = '{$posts['mb_7']}',
-                 mb_8 = '{$posts['mb_8']}',
-                 mb_9 = '{$posts['mb_9']}',
-                 mb_10 = '{$posts['mb_10']}' ";
+$sql_common = "  mb_name = :mb_name,
+                 mb_nick = :mb_nick,
+                 mb_email = :mb_email,
+                 mb_homepage = :mb_homepage,
+                 mb_tel = :mb_tel,
+                 mb_hp = :mb_hp,
+                 mb_certify = :mb_certify,
+                 mb_adult = :mb_adult,
+                 mb_zip1 = :mb_zip1,
+                 mb_zip2 = :mb_zip2,
+                 mb_addr1 = :mb_addr1,
+                 mb_addr2 = :mb_addr2,
+                 mb_addr3 = :mb_addr3,
+                 mb_addr_jibeon = :mb_addr_jibeon,
+                 mb_signature = :mb_signature,
+                 mb_leave_date = :mb_leave_date,
+                 mb_intercept_date = :mb_intercept_date,
+                 mb_memo = :mb_memo,
+                 mb_mailling = :mb_mailling,
+                 mb_sms = :mb_sms,
+                 mb_open = :mb_open,
+                 mb_open_date = :mb_open_date,
+                 mb_profile = :mb_profile,
+                 mb_level = :mb_level,
+                 mb_marketing_agree = :mb_marketing_agree,
+                 mb_thirdparty_agree = :mb_thirdparty_agree,
+                 mb_1 = :mb_1, mb_2 = :mb_2, mb_3 = :mb_3, mb_4 = :mb_4, mb_5 = :mb_5,
+                 mb_6 = :mb_6, mb_7 = :mb_7, mb_8 = :mb_8, mb_9 = :mb_9, mb_10 = :mb_10 ";
+
+$common_params = [
+    ':mb_name'             => $posts['mb_name'],
+    ':mb_nick'             => $mb_nick,
+    ':mb_email'            => $mb_email,
+    ':mb_homepage'         => $posts['mb_homepage'],
+    ':mb_tel'              => $posts['mb_tel'],
+    ':mb_hp'               => $mb_hp,
+    ':mb_certify'          => $mb_certify,
+    ':mb_adult'            => $mb_adult,
+    ':mb_zip1'             => $mb_zip1,
+    ':mb_zip2'             => $mb_zip2,
+    ':mb_addr1'            => $posts['mb_addr1'],
+    ':mb_addr2'            => $posts['mb_addr2'],
+    ':mb_addr3'            => $posts['mb_addr3'],
+    ':mb_addr_jibeon'      => $posts['mb_addr_jibeon'],
+    ':mb_signature'        => $posts['mb_signature'],
+    ':mb_leave_date'       => $posts['mb_leave_date'],
+    ':mb_intercept_date'   => $posts['mb_intercept_date'],
+    ':mb_memo'             => isset($mb_memo) ? $mb_memo : '',
+    ':mb_mailling'         => $posts['mb_mailling'],
+    ':mb_sms'              => $posts['mb_sms'],
+    ':mb_open'             => $posts['mb_open'],
+    ':mb_open_date'        => G5_TIME_YMDHIS,
+    ':mb_profile'          => $posts['mb_profile'],
+    ':mb_level'            => $posts['mb_level'],
+    ':mb_marketing_agree'  => $mb_marketing_agree,
+    ':mb_thirdparty_agree' => $mb_thirdparty_agree,
+];
+for ($i = 1; $i <= 10; $i++) {
+    $common_params[':mb_'.$i] = $posts['mb_'.$i];
+}
 
 if ($w == '') {
     $mb = get_member($mb_id);
@@ -136,50 +160,72 @@ if ($w == '') {
     }
 
     // 닉네임중복체크
-    $sql = " select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_nick = '{$mb_nick}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_nick = :mb_nick ",
+                        [':mb_nick' => $mb_nick]);
     if (isset($row['mb_id']) && $row['mb_id']) {
         alert('이미 존재하는 닉네임입니다.\\nＩＤ : ' . $row['mb_id'] . '\\n이름 : ' . $row['mb_name'] . '\\n닉네임 : ' . $row['mb_nick'] . '\\n메일 : ' . $row['mb_email']);
     }
 
     // 이메일중복체크
-    $sql = " select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_email = '{$mb_email}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_email = :mb_email ",
+                        [':mb_email' => $mb_email]);
     if (isset($row['mb_id']) && $row['mb_id']) {
         alert('이미 존재하는 이메일입니다.\\nＩＤ : ' . $row['mb_id'] . '\\n이름 : ' . $row['mb_name'] . '\\n닉네임 : ' . $row['mb_nick'] . '\\n메일 : ' . $row['mb_email']);
     }
 
+    $extra_sql = '';
+    $extra_params = [];
     $agree_items = [];
     // 마케팅 목적의 개인정보 수집 및 이용
     if ($mb_marketing_agree == 1) {
-        $sql_common .=  " , mb_marketing_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_marketing_date = :mb_marketing_date ";
+        $extra_params[':mb_marketing_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "마케팅 목적의 개인정보 수집 및 이용(동의)";
     }
 
     // 광고성 이메일 수신
     if ($mb_mailling == 1) {
-        $sql_common .=  " , mb_mailling_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_mailling_date = :mb_mailling_date ";
+        $extra_params[':mb_mailling_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "광고성 이메일 수신(동의)";
     }
 
     // 광고성 SMS/카카오톡 수신
     if ($mb_sms == 1) {
-        $sql_common .=  " , mb_sms_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_sms_date = :mb_sms_date ";
+        $extra_params[':mb_sms_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "광고성 SMS/카카오톡 수신(동의)";
     }
 
-    // 개인정보 제3자 제공 
+    // 개인정보 제3자 제공
     if ($mb_thirdparty_agree == 1) {
-        $sql_common .=  " , mb_thirdparty_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_thirdparty_date = :mb_thirdparty_date ";
+        $extra_params[':mb_thirdparty_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "개인정보 제3자 제공(동의)";
     }
 
     // 동의 로그 추가
     if (!empty($agree_items)) {
         $agree_log = "[".G5_TIME_YMDHIS.", 관리자 회원추가] " . implode(' | ', $agree_items) . "\n";
-        $sql_common .= " , mb_agree_log = CONCAT('{$agree_log}', IFNULL(mb_agree_log, ''))";
+        $extra_sql .= " , mb_agree_log = CONCAT(:mb_agree_log, IFNULL(mb_agree_log, '')) ";
+        $extra_params[':mb_agree_log'] = $agree_log;
     }
-    sql_query(" insert into {$g5['member_table']} set mb_id = '{$mb_id}', mb_password = '" . get_encrypt_string($mb_password) . "', mb_datetime = '" . G5_TIME_YMDHIS . "', mb_ip = '{$_SERVER['REMOTE_ADDR']}', mb_email_certify = '" . G5_TIME_YMDHIS . "', {$sql_common} ");
+
+    $insert_params = array_merge($common_params, $extra_params, [
+        ':mb_id'            => $mb_id,
+        ':mb_password'      => get_encrypt_string($mb_password),
+        ':mb_datetime'      => G5_TIME_YMDHIS,
+        ':mb_ip'            => $_SERVER['REMOTE_ADDR'],
+        ':mb_email_certify' => G5_TIME_YMDHIS,
+    ]);
+    sql_pdo_query(" insert into {$g5['member_table']}
+                       set mb_id = :mb_id,
+                           mb_password = :mb_password,
+                           mb_datetime = :mb_datetime,
+                           mb_ip = :mb_ip,
+                           mb_email_certify = :mb_email_certify,
+                           {$sql_common} {$extra_sql} ",
+                  $insert_params);
 } elseif ($w == 'u') {
     $mb = get_member($mb_id);
     if (!(isset($mb['mb_id']) && $mb['mb_id'])) {
@@ -205,81 +251,72 @@ if ($w == '') {
     }
 
     // 닉네임중복체크
-    $sql = " select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_nick = '{$mb_nick}' and mb_id <> '$mb_id' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_nick = :mb_nick and mb_id <> :mb_id ",
+                        [':mb_nick' => $mb_nick, ':mb_id' => $mb_id]);
     if (isset($row['mb_id']) && $row['mb_id']) {
         alert('이미 존재하는 닉네임입니다.\\nＩＤ : ' . $row['mb_id'] . '\\n이름 : ' . $row['mb_name'] . '\\n닉네임 : ' . $row['mb_nick'] . '\\n메일 : ' . $row['mb_email']);
     }
 
     // 이메일중복체크
-    $sql = " select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_email = '{$mb_email}' and mb_id <> '$mb_id' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select mb_id, mb_name, mb_nick, mb_email from {$g5['member_table']} where mb_email = :mb_email and mb_id <> :mb_id ",
+                        [':mb_email' => $mb_email, ':mb_id' => $mb_id]);
     if (isset($row['mb_id']) && $row['mb_id']) {
         alert('이미 존재하는 이메일입니다.\\nＩＤ : ' . $row['mb_id'] . '\\n이름 : ' . $row['mb_name'] . '\\n닉네임 : ' . $row['mb_nick'] . '\\n메일 : ' . $row['mb_email']);
     }
 
+    $extra_sql = '';
+    $extra_params = [];
     if ($mb_password) {
-        $sql_password = " , mb_password = '" . get_encrypt_string($mb_password) . "' ";
-    } else {
-        $sql_password = "";
+        $extra_sql .= " , mb_password = :mb_password ";
+        $extra_params[':mb_password'] = get_encrypt_string($mb_password);
     }
 
     if (isset($passive_certify) && $passive_certify) {
-        $sql_certify = " , mb_email_certify = '" . G5_TIME_YMDHIS . "' ";
-    } else {
-        $sql_certify = "";
+        $extra_sql .= " , mb_email_certify = :mb_email_certify ";
+        $extra_params[':mb_email_certify'] = G5_TIME_YMDHIS;
     }
 
     // 현재 데이터 조회
-    $row = sql_fetch("select * from {$g5['member_table']} where mb_id = '{$mb_id}' ");
+    $row = sql_pdo_fetch(" select * from {$g5['member_table']} where mb_id = :mb_id ", [':mb_id' => $mb_id]);
     $agree_items = [];
-        
+
     // 마케팅 목적의 개인정보 수집 및 이용
-    $sql_marketing_date = "";
     if ($row['mb_marketing_agree'] !== $mb_marketing_agree) {
-        $sql_marketing_date .= " , mb_marketing_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_marketing_date = :mb_marketing_date ";
+        $extra_params[':mb_marketing_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "마케팅 목적의 개인정보 수집 및 이용(" . ($mb_marketing_agree == 1 ? "동의" : "철회") . ")";
     }
 
     // 광고성 이메일 수신
-    $sql_mailling_date = "";
     if ($row['mb_mailling'] !== $mb_mailling) {
-        $sql_mailling_date .= " , mb_mailling_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_mailling_date = :mb_mailling_date ";
+        $extra_params[':mb_mailling_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "광고성 이메일 수신(" . ($mb_mailling == 1 ? "동의" : "철회") . ")";
     }
-    
+
     // 광고성 SMS/카카오톡 수신
-    $sql_sms_date = "";
     if ($row['mb_sms'] !== $mb_sms) {
-        $sql_sms_date .= " , mb_sms_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_sms_date = :mb_sms_date ";
+        $extra_params[':mb_sms_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "광고성 SMS/카카오톡 수신(" . ($mb_sms == 1 ? "동의" : "철회") . ")";
     }
-    
+
     // 개인정보 제3자 제공
-    $sql_thirdparty_date = "";
     if ($row['mb_thirdparty_agree'] !== $mb_thirdparty_agree) {
-        $sql_thirdparty_date .= " , mb_thirdparty_date = '".G5_TIME_YMDHIS."' ";
+        $extra_sql .= " , mb_thirdparty_date = :mb_thirdparty_date ";
+        $extra_params[':mb_thirdparty_date'] = G5_TIME_YMDHIS;
         $agree_items[] = "개인정보 제3자 제공(" . ($mb_thirdparty_agree == 1 ? "동의" : "철회") . ")";
     }
-    
+
     // 동의 로그 추가
-    $sql_agree_log = "";
     if (!empty($agree_items)) {
         $agree_log = "[".G5_TIME_YMDHIS.", 관리자 회원수정] " . implode(' | ', $agree_items) . "\n";
-        $sql_agree_log .= " , mb_agree_log = CONCAT('{$agree_log}', IFNULL(mb_agree_log, ''))";
+        $extra_sql .= " , mb_agree_log = CONCAT(:mb_agree_log, IFNULL(mb_agree_log, '')) ";
+        $extra_params[':mb_agree_log'] = $agree_log;
     }
-    
-    $sql = " update {$g5['member_table']}
-                set {$sql_common}
-                     {$sql_password}
-                     {$sql_certify}
-                     {$sql_mailling_date}
-                     {$sql_sms_date}
-                     {$sql_marketing_date}
-                     {$sql_thirdparty_date}
-                     {$sql_agree_log}
-                where mb_id = '{$mb_id}' ";
-    sql_query($sql);
+
+    $update_params = array_merge($common_params, $extra_params, [':mb_id' => $mb_id]);
+    sql_pdo_query(" update {$g5['member_table']} set {$sql_common} {$extra_sql} where mb_id = :mb_id ", $update_params);
 } else {
     alert('제대로 된 값이 넘어오지 않았습니다.');
 }
