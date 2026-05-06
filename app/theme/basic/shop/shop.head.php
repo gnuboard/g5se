@@ -83,9 +83,16 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .smt_30 .sct_cost {
     color: var(--m-text) !important;
 }
+/* 카테고리 박스: 외곽은 .m-card 가 그리므로 안쪽 #gnb 의 좌/우/하단 border 제거
+   (원본 style.css 가 border-top:0 만 빼서 위만 비어 보이는 어색한 상태였음).
+   light/dark 양쪽 다 적용. */
+#gnb {
+    border: 0 !important;
+    margin-bottom: 0 !important;
+    background: transparent !important;
+}
 [data-theme="dark"] #gnb {
-    background: var(--m-surface) !important;
-    border-color: var(--m-border) !important;
+    background: transparent !important;
 }
 [data-theme="dark"] .gnb_1da {
     color: var(--m-text) !important;
