@@ -128,5 +128,12 @@ if (!is_file($_route_full)) {
 // gnuboard 의 './_common.php' 같은 상대 include 가 동작하도록 CWD 를 맞춘다.
 chdir(dirname($_route_full));
 
+// gnuboard legacy 코드가 self-URL (페이지네이션, 폼 action 등) 을 만들 때
+// $_SERVER['SCRIPT_NAME'] 을 사용. front controller 에선 항상 '/index.php'
+// 라서 listtype.php?type=4 페이지네이션 클릭이 /index.php?... 로 빠지는
+// 문제 발생 → resolved target 으로 덮어써서 마치 직접 실행된 것처럼 보이게.
+$_SERVER['SCRIPT_NAME'] = '/'.$_route_target;
+$_SERVER['PHP_SELF']    = '/'.$_route_target;
+
 // 글로벌 스코프 require (반드시!)
 require $_route_full;
