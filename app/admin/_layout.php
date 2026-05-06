@@ -98,6 +98,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <script>var g5_is_mobile = false, g5_url = "<?php echo G5_URL ?>", g5_bbs_url = "<?php echo G5_BBS_URL ?>";</script>
     <script src="<?php echo G5_JS_URL ?>/common.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- admin 전용 JS — PopupManager, CommonUI 등 (legacy admin.tail.php 가 로드하던 것).
+         .htaccess 규칙상 /admin/js/* 만 정적 매핑이라 /admin/admin.js 가 아닌 /admin/js/admin.js. -->
+    <script src="<?php echo G5_ADMIN_URL ?>/js/admin.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>" defer></script>
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     </style>
@@ -208,6 +211,23 @@ function admin_layout_end(): void
 
 <!-- 모바일 사이드바 backdrop (lg 이하에서 토글 시 표시) -->
 <div id="adm-sidebar-backdrop" class="hidden fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
+
+<!-- admin 공용 레이어 팝업 컨테이너 — admin.js 의 PopupManager.render() 가 이 마크업 사용
+     (legacy admin.tail.php 가 출력하던 것을 modern shell 안으로 이식) -->
+<div id="adminPopupContainer">
+    <div id="popupOverlay" class="popup-overlay is-hidden" onclick="PopupManager.close('popupOverlay')">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <div class="popup-header">
+                <strong id="popupTitle" class="popup-title"></strong>
+                <button type="button" class="popup-close-btn" onclick="PopupManager.close('popupOverlay')">
+                    <i class="fa fa-close"></i><span class="sound_only">팝업 닫기</span>
+                </button>
+            </div>
+            <div class="popup-body" id="popupBody"></div>
+            <div class="popup-footer" id="popupFooter"></div>
+        </div>
+    </div>
+</div>
 
 <?php
 // admin form 의 hidden token 자동 주입.
