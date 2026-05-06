@@ -23,16 +23,20 @@ $toss->setPaymentData([
 // 장바구니 ID 설정 (바로구매 여부 확인)
 $ss_cart_id = get_session('ss_direct') ? get_session('ss_cart_direct') : get_session('ss_cart_id');
 
-// 임시데이터에 결제 데이터 저장
+// 임시데이터에 결제 데이터 저장 — addQuery 를 placeholder 로 빌드
 $addQuery = "";
+$addParams = [];
 if (isset($orderId)) {
-    $addQuery .= " AND od_id = '$orderId'";
+    $addQuery .= " AND od_id = :addq_od_id ";
+    $addParams[':addq_od_id'] = $orderId;
 }
 if (isset($ss_cart_id)) {
-    $addQuery .= " AND cart_id = '$ss_cart_id'";
+    $addQuery .= " AND cart_id = :addq_cart_id ";
+    $addParams[':addq_cart_id'] = $ss_cart_id;
 }
 if (isset($member['mb_id'])) {
-    $addQuery .= " AND mb_id = '{$member['mb_id']}'";
+    $addQuery .= " AND mb_id = :addq_mb_id ";
+    $addParams[':addq_mb_id'] = $member['mb_id'];
 }
 
 if (empty($orderId) && empty($ss_cart_id)) {
@@ -41,13 +45,7 @@ if (empty($orderId) && empty($ss_cart_id)) {
 }
 
 // 기존 dt_data 가져오기
-$sql = "
-    SELECT * FROM {$g5['g5_shop_order_data_table']}
-    WHERE 1=1
-        {$addQuery}
-    LIMIT 1
-";
-$res = sql_fetch($sql);
+$res = sql_pdo_fetch(" SELECT * FROM {$g5['g5_shop_order_data_table']} WHERE 1=1 {$addQuery} LIMIT 1 ", $addParams);
 $dt_data = [];
 if (isset($res['dt_data'])) {
     $dt_data = unserialize(base64_decode($res['dt_data']));
@@ -59,13 +57,8 @@ if (isset($paymentKey)) {
     $dt_data_new = base64_encode(serialize($dt_data));
 
     // 업데이트
-    $sql = "
-        UPDATE {$g5['g5_shop_order_data_table']} SET
-            dt_data = '".$dt_data_new."'
-            WHERE od_id = '$orderId'
-            {$addQuery}
-    ";
-    sql_query($sql);
+    sql_pdo_query(" UPDATE {$g5['g5_shop_order_data_table']} SET dt_data = :dt_data WHERE od_id = :od_id {$addQuery} ",
+                  array_merge([':dt_data' => $dt_data_new, ':od_id' => $orderId], $addParams));
 }
 
 if(isset($payReqMap['pp_id']) && $payReqMap['pp_id']) {

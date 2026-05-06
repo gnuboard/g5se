@@ -5,7 +5,7 @@ $pattern = '#[/\'\"%=*\#\(\)\|\+\&\!\$~\{\}\[\]`;:\?\^\,]#';
 
 $it_id  = isset($_POST['it_id']) ? preg_replace($pattern, '', $_POST['it_id']) : '';
 //$opt_id = isset($_POST['opt_id']) ? preg_replace($pattern, '', $_POST['opt_id']) : '';
-$opt_id = isset($_POST['opt_id']) ? addslashes(sql_real_escape_string(preg_replace(G5_OPTION_ID_FILTER, '', $_POST['opt_id']))) : '';
+$opt_id = isset($_POST['opt_id']) ? preg_replace(G5_OPTION_ID_FILTER, '', $_POST['opt_id']) : '';
 $idx    = isset($_POST['idx']) ? preg_replace('#[^0-9]#', '', $_POST['idx']) : 0;
 $sel_count = isset($_POST['sel_count']) ? preg_replace('#[^0-9]#', '', $_POST['sel_count']) : 0;
 $op_title = isset($_POST['op_title']) ? strip_tags($_POST['op_title']) : '';
@@ -21,13 +21,11 @@ if( !$it ){
 수정자 : IT FOR ONE
 수정 내용 : and io_id like '$opt_id%' => and io_id like '$opt_id".chr(30)."'
 */
-$sql = " select * from {$g5['g5_shop_item_option_table']}
-                where io_type = '0'
-                  and it_id = '$it_id'
-                  and io_use = '1'
-                  and io_id like '$opt_id".chr(30)."%'
-                order by io_no asc ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']}
+                            where io_type = '0' and it_id = :it_id and io_use = '1'
+                              and io_id like :opt_id_like
+                            order by io_no asc ",
+                       [':it_id' => $it_id, ':opt_id_like' => $opt_id.chr(30).'%']);
 
 $option_title = '선택';
 

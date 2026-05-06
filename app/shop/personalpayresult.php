@@ -8,8 +8,7 @@ if (G5_IS_MOBILE) {
     return;
 }
 
-$sql = "select * from {$g5['g5_shop_personalpay_table']} where pp_id = '$pp_id' ";
-$pp = sql_fetch($sql);
+$pp = sql_pdo_fetch(" select * from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id ", [':pp_id' => $pp_id]);
 $pp_uid = function_exists('get_shop_uid') ? get_shop_uid('personalpay', $pp['pp_id'], $pp['pp_time'], $_SERVER['REMOTE_ADDR']) : md5($pp['pp_id'].$pp['pp_time'].$_SERVER['REMOTE_ADDR']);
 if (! (isset($pp['pp_id']) && $pp['pp_id']) || ($pp_uid != get_session('ss_personalpay_uid'))) {
     alert("조회하실 개인결제 내역이 없습니다.", G5_SHOP_URL);
@@ -199,8 +198,8 @@ if($pp['pp_pg'] == 'lg') {
 
                     // 주문내역이 있으면 현금영수증 발급하지 않음
                     if($pp['od_id']) {
-                        $sql = " select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = '{$pp['od_id']}' ";
-                        $row = sql_fetch($sql);
+                        $row = sql_pdo_fetch(" select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = :od_id ",
+                                            [':od_id' => $pp['od_id']]);
 
                         if($row['cnt'] > 0)
                             $is_cash_receipt = false;

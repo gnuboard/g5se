@@ -7,15 +7,14 @@ if(!$is_member)
 $ad_id = isset($_REQUEST['ad_id']) ? (int) $_REQUEST['ad_id'] : 0;
 
 if($w == 'd') {
-    $sql = " delete from {$g5['g5_shop_order_address_table']} where mb_id = '{$member['mb_id']}' and ad_id = '$ad_id' ";
-    sql_query($sql);
+    sql_pdo_query(" delete from {$g5['g5_shop_order_address_table']} where mb_id = :mb_id and ad_id = :ad_id ",
+                  [':mb_id' => $member['mb_id'], ':ad_id' => $ad_id]);
     goto_url($_SERVER['SCRIPT_NAME']);
 }
 
-$sql_common = " from {$g5['g5_shop_order_address_table']} where mb_id = '{$member['mb_id']}' ";
+$sql_common = " from {$g5['g5_shop_order_address_table']} where mb_id = :mb_id ";
 
-$sql = " select count(ad_id) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(ad_id) as cnt " . $sql_common, [':mb_id' => $member['mb_id']]);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -23,12 +22,8 @@ $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " select *
-            $sql_common
-            order by ad_default desc, ad_id desc
-            limit $from_record, $rows";
-
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * $sql_common order by ad_default desc, ad_id desc limit ".(int)$from_record.', '.(int)$rows.' ',
+                       [':mb_id' => $member['mb_id']]);
 
 if(!sql_num_rows($result))
     alert_close('배송지 목록 자료가 없습니다.');

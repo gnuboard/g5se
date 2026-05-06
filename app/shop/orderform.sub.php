@@ -52,25 +52,14 @@ if($is_kakaopay_use) {
         $goods_count = -1;
 
         // $s_cart_id 로 현재 장바구니 자료 쿼리
-        $sql = " select a.ct_id,
-                        a.it_id,
-                        a.it_name,
-                        a.ct_price,
-                        a.ct_point,
-                        a.ct_qty,
-                        a.ct_status,
-                        a.ct_send_cost,
-                        a.it_sc_type,
-                        b.ca_id,
-                        b.ca_id2,
-                        b.ca_id3,
-                        b.it_notax
-                   from {$g5['g5_shop_cart_table']} a left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id )
-                  where a.od_id = '$s_cart_id'
-                    and a.ct_select = '1' ";
-        $sql .= " group by a.it_id ";
-        $sql .= " order by a.ct_id ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select a.ct_id, a.it_id, a.it_name, a.ct_price, a.ct_point, a.ct_qty,
+                                          a.ct_status, a.ct_send_cost, a.it_sc_type,
+                                          b.ca_id, b.ca_id2, b.ca_id3, b.it_notax
+                                     from {$g5['g5_shop_cart_table']} a
+                                     left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id )
+                                    where a.od_id = :od_id and a.ct_select = '1'
+                                    group by a.it_id order by a.ct_id ",
+                               [':od_id' => $s_cart_id]);
 
         $good_info = '';
         $it_send_cost = 0;
@@ -87,13 +76,11 @@ if($is_kakaopay_use) {
         for ($i=0; $row=sql_fetch_array($result); $i++)
         {
             // 합계금액 계산
-            $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
-                            SUM(ct_point * ct_qty) as point,
-                            SUM(ct_qty) as qty
-                        from {$g5['g5_shop_cart_table']}
-                        where it_id = '{$row['it_id']}'
-                          and od_id = '$s_cart_id' ";
-            $sum = sql_fetch($sql);
+            $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
+                                          SUM(ct_point * ct_qty) as point, SUM(ct_qty) as qty
+                                     from {$g5['g5_shop_cart_table']}
+                                    where it_id = :it_id and od_id = :od_id ",
+                                [':it_id' => $row['it_id'], ':od_id' => $s_cart_id]);
 
             if (!$goods)
             {
@@ -149,18 +136,25 @@ if($is_kakaopay_use) {
             if($is_member) {
                 $cp_count = 0;
 
-                $sql = " select cp_id
-                            from {$g5['g5_shop_coupon_table']}
-                            where mb_id IN ( '{$member['mb_id']}', '전체회원' )
-                              and cp_start <= '".G5_TIME_YMD."'
-                              and cp_end >= '".G5_TIME_YMD."'
-                              and cp_minimum <= '$sell_price'
-                              and (
-                                    ( cp_method = '0' and cp_target = '{$row['it_id']}' )
-                                    OR
-                                    ( cp_method = '1' and ( cp_target IN ( '{$row['ca_id']}', '{$row['ca_id2']}', '{$row['ca_id3']}' ) ) )
-                                  ) ";
-                $res = sql_query($sql);
+                $res = sql_pdo_query(" select cp_id
+                                         from {$g5['g5_shop_coupon_table']}
+                                        where mb_id IN ( :mb_id, '전체회원' )
+                                          and cp_start <= :today and cp_end >= :today
+                                          and cp_minimum <= :sell_price
+                                          and (
+                                                ( cp_method = '0' and cp_target = :it_id )
+                                                OR
+                                                ( cp_method = '1' and cp_target IN ( :ca_id, :ca_id2, :ca_id3 ) )
+                                              ) ",
+                                    [
+                                        ':mb_id'      => $member['mb_id'],
+                                        ':today'      => G5_TIME_YMD,
+                                        ':sell_price' => $sell_price,
+                                        ':it_id'      => $row['it_id'],
+                                        ':ca_id'      => $row['ca_id'],
+                                        ':ca_id2'     => $row['ca_id2'],
+                                        ':ca_id3'     => $row['ca_id3'],
+                                    ]);
 
                 for($k=0; $cp=sql_fetch_array($res); $k++) {
                     if(is_used_coupon($member['mb_id'], $cp['cp_id']))
@@ -360,11 +354,8 @@ if($is_kakaopay_use) {
                     $addr_list .= '<label for="ad_sel_addr_same">주문자와 동일</label>'.PHP_EOL;
 
                     // 기본배송지
-                    $sql = " select *
-                                from {$g5['g5_shop_order_address_table']}
-                                where mb_id = '{$member['mb_id']}'
-                                  and ad_default = '1' ";
-                    $row = sql_fetch($sql);
+                    $row = sql_pdo_fetch(" select * from {$g5['g5_shop_order_address_table']} where mb_id = :mb_id and ad_default = '1' ",
+                                        [':mb_id' => $member['mb_id']]);
                     if(isset($row['ad_id']) && $row['ad_id']) {
                         $val1 = $row['ad_name'].$sep.$row['ad_tel'].$sep.$row['ad_hp'].$sep.$row['ad_zip1'].$sep.$row['ad_zip2'].$sep.$row['ad_addr1'].$sep.$row['ad_addr2'].$sep.$row['ad_addr3'].$sep.$row['ad_jibeon'].$sep.$row['ad_subject'];
                         $addr_list .= '<input type="radio" name="ad_sel_addr" value="'.get_text($val1).'" id="ad_sel_addr_def">'.PHP_EOL;
@@ -372,13 +363,10 @@ if($is_kakaopay_use) {
                     }
 
                     // 최근배송지
-                    $sql = " select *
-                                from {$g5['g5_shop_order_address_table']}
-                                where mb_id = '{$member['mb_id']}'
-                                  and ad_default = '0'
-                                order by ad_id desc
-                                limit 1 ";
-                    $result = sql_query($sql);
+                    $result = sql_pdo_query(" select * from {$g5['g5_shop_order_address_table']}
+                                               where mb_id = :mb_id and ad_default = '0'
+                                               order by ad_id desc limit 1 ",
+                                           [':mb_id' => $member['mb_id']]);
                     for($i=0; $row=sql_fetch_array($result); $i++) {
                         $val1 = $row['ad_name'].$sep.$row['ad_tel'].$sep.$row['ad_hp'].$sep.$row['ad_zip1'].$sep.$row['ad_zip2'].$sep.$row['ad_addr1'].$sep.$row['ad_addr2'].$sep.$row['ad_addr3'].$sep.$row['ad_jibeon'].$sep.$row['ad_subject'];
                         $val2 = '<label for="ad_sel_addr_'.($i+1).'">최근배송지('.($row['ad_subject'] ? get_text($row['ad_subject']) : get_text($row['ad_name'])).')</label>';
@@ -488,14 +476,12 @@ if($is_kakaopay_use) {
         $oc_cnt = $sc_cnt = 0;
         if($is_member) {
             // 주문쿠폰
-            $sql = " select cp_id
-                        from {$g5['g5_shop_coupon_table']}
-                        where mb_id IN ( '{$member['mb_id']}', '전체회원' )
-                          and cp_method = '2'
-                          and cp_start <= '".G5_TIME_YMD."'
-                          and cp_end >= '".G5_TIME_YMD."'
-                          and cp_minimum <= '$tot_sell_price' ";
-            $res = sql_query($sql);
+            $res = sql_pdo_query(" select cp_id from {$g5['g5_shop_coupon_table']}
+                                    where mb_id IN ( :mb_id, '전체회원' )
+                                      and cp_method = '2'
+                                      and cp_start <= :today and cp_end >= :today
+                                      and cp_minimum <= :tot ",
+                                [':mb_id' => $member['mb_id'], ':today' => G5_TIME_YMD, ':tot' => $tot_sell_price]);
 
             for($k=0; $cp=sql_fetch_array($res); $k++) {
                 if(is_used_coupon($member['mb_id'], $cp['cp_id']))
@@ -506,14 +492,12 @@ if($is_kakaopay_use) {
 
             if($send_cost > 0) {
                 // 배송비쿠폰
-                $sql = " select cp_id
-                            from {$g5['g5_shop_coupon_table']}
-                            where mb_id IN ( '{$member['mb_id']}', '전체회원' )
-                              and cp_method = '3'
-                              and cp_start <= '".G5_TIME_YMD."'
-                              and cp_end >= '".G5_TIME_YMD."'
-                              and cp_minimum <= '$tot_sell_price' ";
-                $res = sql_query($sql);
+                $res = sql_pdo_query(" select cp_id from {$g5['g5_shop_coupon_table']}
+                                        where mb_id IN ( :mb_id, '전체회원' )
+                                          and cp_method = '3'
+                                          and cp_start <= :today and cp_end >= :today
+                                          and cp_minimum <= :tot ",
+                                    [':mb_id' => $member['mb_id'], ':today' => G5_TIME_YMD, ':tot' => $tot_sell_price]);
 
                 for($k=0; $cp=sql_fetch_array($res); $k++) {
                     if(is_used_coupon($member['mb_id'], $cp['cp_id']))

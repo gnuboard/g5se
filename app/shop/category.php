@@ -7,9 +7,11 @@ function get_mshop_category($ca_id, $len)
 
     $sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']}
                 where ca_use = '1' ";
+    // gnu5se: get_mshop_category() 가 SQL 문자열을 반환해 외부 sql_query() 로 실행하므로
+    //   placeholder 적용 어려움. 값을 escape 처리해 안전화.
     if($ca_id)
-        $sql .= " and ca_id like '$ca_id%' ";
-    $sql .= " and length(ca_id) = '$len' order by ca_order, ca_id ";
+        $sql .= " and ca_id like '".sql_real_escape_string($ca_id)."%' ";
+    $sql .= " and length(ca_id) = '".(int)$len."' order by ca_order, ca_id ";
 
     return $sql;
 }
