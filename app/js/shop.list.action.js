@@ -142,6 +142,20 @@ jQuery(function ($) {
                 
                 $(".qk_con_wr .sbsk").html(inner_html);
                 $(".hd_login .shop_cart .count").text(cart_count);
+
+                // gnu5se: 모던 우측 quick 버튼의 .m-shop-quick-badge 도 동기화
+                var n = parseInt(cart_count, 10) || 0;
+                var $cartBtn = $(".m-shop-quick-btn[title='장바구니']");
+                var $badge = $cartBtn.find(".m-shop-quick-badge");
+                if (n > 0) {
+                    if (!$badge.length) {
+                        $cartBtn.append('<span class="m-shop-quick-badge"></span>');
+                        $badge = $cartBtn.find(".m-shop-quick-badge");
+                    }
+                    $badge.text(n > 99 ? '99+' : n);
+                } else {
+                    $badge.remove();
+                }
             },
             error : function(request, status, error){
                 alert("false ajax :"+request.responseText);
