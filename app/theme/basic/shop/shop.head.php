@@ -23,6 +23,35 @@ add_javascript('<script src="'.G5_JS_URL.'/owlcarousel/owl.carousel.min.js"></sc
 add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carousel.css">', 0);
 ?>
 
+<style>
+/* 레거시 shop skin (style.css) 의 흰 배경 / 검정 텍스트 hardcode 를 다크모드에서 토큰으로 덮어씀 */
+[data-theme="dark"] .smt_40 {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] .smt_30 li {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] .smt_30 .sct_txt a,
+[data-theme="dark"] .smt_30 .sct_cost {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .gnb_1da {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .gnb_1dli_on .gnb_1da {
+    background-color: var(--m-surface-2) !important;
+    color: var(--m-primary) !important;
+}
+[data-theme="dark"] .gnb_1dli_over .gnb_2dul,
+[data-theme="dark"] .gnb_1dli_over2 .gnb_2dul {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+</style>
+
+
 <div class="m-shell">
 
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
