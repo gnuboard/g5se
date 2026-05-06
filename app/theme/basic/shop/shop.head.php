@@ -26,9 +26,13 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 <style>
 /* item_list::run() 가 결과를 .m-shop-grid 로 감싸고 --m-list-cols 를 주입함.
    레거시 skin 의 fixed-width float 를 CSS Grid 로 강제 → 쇼핑몰설정의
-   "1줄당 이미지 수" 가 실제 컬럼수에 반영되도록 함. owl-carousel 은 제외. */
-/* .smt_30 은 사이드바용 (thumb 80px 좌측 + 텍스트 우측 리스트) → grid 미적용 */
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30) {
+   "1줄당 이미지 수" 가 실제 컬럼수에 반영되도록 함.
+   - .owl-carousel  : 히트상품 (main.10) - JS slider 라 제외
+   - .smt_30        : 사이드바용 thumb+텍스트 가로 리스트 (main.50) - 제외
+   - .sct_ul        : 추천상품 (main.20) 은 <div class=smt_20><ul class=sct_ul> 처럼
+                      한 단계 더 감싸므로 별도 selector 로 같은 grid 적용 */
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+.m-shop-grid > .smt_20 > ul.sct_ul {
     display: grid !important;
     grid-template-columns: repeat(var(--m-list-cols, 4), minmax(0, 1fr));
     gap: 16px;
@@ -36,19 +40,22 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     padding: 0;
     list-style: none;
 }
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30) > li.sct_li {
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li,
+.m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li {
     float: none !important;
     width: auto !important;
     margin: 0 !important;
     border-bottom: 0 !important;
 }
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30) > li.sct_li .sct_img img {
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li .sct_img img,
+.m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li .sct_img img {
     width: 100%;
     height: auto;
     display: block;
 }
 @media (max-width: 880px) {
-    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30) {
+    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+    .m-shop-grid > .smt_20 > ul.sct_ul {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
