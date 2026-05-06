@@ -5,11 +5,6 @@ require_once __DIR__.'/../_layout.php';
 admin_require_login();
 auth_check_menu($auth, $sub_menu, 'r');
 
-require_once __DIR__.'/../_layout.php';
-admin_require_login();
-auth_check_menu($auth, $sub_menu, 'r');
-auth_check_menu($auth, $sub_menu, "r");
-
 if (isset($sfl) && $sfl && !in_array($sfl, array('it_name','it_id','it_maker','it_brand','it_model','it_origin','it_sell_email'))) {
     $sfl = '';
 }
