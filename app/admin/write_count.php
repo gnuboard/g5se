@@ -1,6 +1,7 @@
 <?php
 /*
- * /admin/write_count — 글/댓글 현황 (jqplot 그래프).
+ * /admin/write_count — 글/댓글 현황 (Chart.js 그래프).
+ * gnu5se: 원본 jqplot → Chart.js 4.x (admin shell 에 이미 로드돼 있음).
  */
 $sub_menu = '300820';
 require_once __DIR__.'/_common.php';
@@ -16,31 +17,12 @@ auth_check_menu($auth, $sub_menu, 'r');
 
 $g5['title'] = '글,댓글 현황';
 admin_layout_start($g5['title'], 'write_count');
-?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
-<header class="flex items-center gap-3 mb-5">
-    <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
-</header>
-<!-- jqplot — modern shell 은 add_stylesheet/javascript queue 를 flush 안 하므로 직접 주입 -->
-<link rel="stylesheet" href="<?php echo G5_PLUGIN_URL ?>/jqplot/jquery.jqplot.css">
-<script src="<?php echo G5_PLUGIN_URL ?>/jqplot/jquery.jqplot.js"></script>
-<script src="<?php echo G5_PLUGIN_URL ?>/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
-<script src="<?php echo G5_PLUGIN_URL ?>/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
-<script src="<?php echo G5_PLUGIN_URL ?>/jqplot/plugins/jqplot.pointLabels.min.js"></script>
-<div class="legacy-admin-content space-y-4">
-<?php
+
 $graph = isset($_GET['graph']) ? clean_xss_tags($_GET['graph'], 1, 1) : '';
 $period = isset($_GET['period']) ? clean_xss_tags($_GET['period'], 1, 1) : '';
 
 if (!($graph == 'line' || $graph == 'bar'))
     $graph = 'line';
-
-if ($graph == 'bar') {
-    // 바 타입으로 사용하는 코드입니다.
-    add_javascript('<script src="'.G5_PLUGIN_URL.'/jqplot/jqplot.barRenderer.min.js"></script>', 1);
-    add_javascript('<script src="'.G5_PLUGIN_URL.'/jqplot/jqplot.categoryAxisRenderer.min.js"></script>', 1);
-    add_javascript('<script src="'.G5_PLUGIN_URL.'/jqplot/jqplot.pointLabels.min.js"></script>', 1);
-}
 
 $period_array = array(
     '오늘'=>array('시간', 0),
@@ -88,142 +70,209 @@ if ($period == '오늘') {
 
 $sql_bo_table = '';
 if ($bo_table)
-    $sql_bo_table = "and bo_table = '$bo_table'";
+    $sql_bo_table = "and bo_table = '".addslashes($bo_table)."'";
 
-$line1 = $line2 = array();
+$labels = $wcounts = $ccounts = array();
 
 switch ($day) {
     case '시간' :
         $sql = " select substr(bn_datetime,6,8) as hours, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by hours order by bn_datetime ";
         $result = sql_query($sql);
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
-            // 월-일 시간
-            $line1[] = "['".substr($row['hours'],0,8)."',".$row['wcount'].']';
-            $line2[] = "['".substr($row['hours'],0,8)."',".$row['ccount'].']';
+        while ($row = sql_fetch_array($result)) {
+            $labels[]  = substr($row['hours'], 0, 8);
+            $wcounts[] = (int)$row['wcount'];
+            $ccounts[] = (int)$row['ccount'];
         }
         break;
     case '일' :
         $sql  = " select substr(bn_datetime,1,10) as days, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by days order by bn_datetime ";
         $result = sql_query($sql);
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
-            // 월-일
-            $line1[] = "['".substr($row['days'],5,5)."',".$row['wcount'].']';
-            $line2[] = "['".substr($row['days'],5,5)."',".$row['ccount'].']';
+        while ($row = sql_fetch_array($result)) {
+            $labels[]  = substr($row['days'], 5, 5);
+            $wcounts[] = (int)$row['wcount'];
+            $ccounts[] = (int)$row['ccount'];
         }
         break;
     case '주' :
         $sql  = " select concat(substr(bn_datetime,1,4), '-', weekofyear(bn_datetime)) as weeks, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by weeks order by bn_datetime ";
         $result = sql_query($sql);
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
-            // 올해의 몇주로 보여주면 바로 확인이 안되므로 주를 날짜로 바꾼다.
-            // 년-월-일
+        while ($row = sql_fetch_array($result)) {
             list($lyear, $lweek) = explode('-', $row['weeks']);
-            $date = date('y-m-d', strtotime($lyear.'W'.str_pad($lweek, 2, '0', STR_PAD_LEFT)));
-            $line1[] = "['".$date."',".$row['wcount'].']';
-            $line2[] = "['".$date."',".$row['ccount'].']';
+            $labels[]  = date('y-m-d', strtotime($lyear.'W'.str_pad($lweek, 2, '0', STR_PAD_LEFT)));
+            $wcounts[] = (int)$row['wcount'];
+            $ccounts[] = (int)$row['ccount'];
         }
         break;
     case '월' :
         $sql  = " select substr(bn_datetime,1,7) as months, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by months order by bn_datetime ";
         $result = sql_query($sql);
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
-            // 년-월
-            $line1[] = "['".substr($row['months'],2,5)."',".$row['wcount'].']';
-            $line2[] = "['".substr($row['months'],2,5)."',".$row['ccount'].']';
+        while ($row = sql_fetch_array($result)) {
+            $labels[]  = substr($row['months'], 2, 5);
+            $wcounts[] = (int)$row['wcount'];
+            $ccounts[] = (int)$row['ccount'];
         }
         break;
     case '년' :
         $sql  = " select substr(bn_datetime,1,4) as years, sum(if(wr_id=wr_parent,1,0)) as wcount, sum(if(wr_id=wr_parent,0,1)) as ccount from {$g5['board_new_table']} where substr(bn_datetime,1,10) between '$from' and '$to' {$sql_bo_table} group by years order by bn_datetime ";
         $result = sql_query($sql);
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
-            // 년(4자리)
-            $line1[] = "['".substr($row['years'],0,4)."',".$row['wcount'].']';
-            $line2[] = "['".substr($row['years'],0,4)."',".$row['ccount'].']';
+        while ($row = sql_fetch_array($result)) {
+            $labels[]  = substr($row['years'], 0, 4);
+            $wcounts[] = (int)$row['wcount'];
+            $ccounts[] = (int)$row['ccount'];
         }
         break;
 }
 ?>
-<div id="wr_cont">
-    <form>
-    <select name="bo_table">
-    <option value="">전체게시판</option>
-    <?php
-    $sql = " select bo_table, bo_subject from {$g5['board_table']} order by bo_count_write desc ";
-    $result = sql_query($sql);
-    for($i=0; $row=sql_fetch_array($result); $i++) {
-        echo "<option value=\"{$row['bo_table']}\"";
-        if ($bo_table == $row['bo_table'])
-            echo ' selected="selected"';
-        echo ">{$row['bo_subject']}</option>\n";
-    }
-    ?>
-    </select>
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<header class="flex items-center gap-3 mb-5">
+    <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
+</header>
 
-    <select name="period">
-    <?php
-    foreach($period_array as $key=>$value) {
-        echo "<option value=\"{$key}\"";
-        if ($key == $period)
-            echo " selected=\"selected\"";
-        echo ">{$key}</option>\n";
-    }
-    ?>
-    </select>
+<div class="space-y-4">
+    <form method="get" class="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <select name="bo_table" class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-admin-primary-500 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+            <option value="">전체게시판</option>
+            <?php
+            $sql = " select bo_table, bo_subject from {$g5['board_table']} order by bo_count_write desc ";
+            $result = sql_query($sql);
+            while ($row = sql_fetch_array($result)) {
+                $sel = ($bo_table == $row['bo_table']) ? ' selected' : '';
+                echo '<option value="'.htmlspecialchars($row['bo_table']).'"'.$sel.'>'.htmlspecialchars($row['bo_subject']).'</option>'."\n";
+            }
+            ?>
+        </select>
 
-    <select name="graph">
-    <option value="line" <?php echo ($graph == 'line' ? 'selected="selected"' : ''); ?>>선그래프</option>
-    <option value="bar" <?php echo ($graph == 'bar' ? 'selected="selected"' : ''); ?>>막대그래프</option>
-    </select>
+        <select name="period" class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-admin-primary-500 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+            <?php
+            foreach ($period_array as $key => $value) {
+                $sel = ($key == $period) ? ' selected' : '';
+                echo '<option value="'.htmlspecialchars($key).'"'.$sel.'>'.htmlspecialchars($key).'</option>'."\n";
+            }
+            ?>
+        </select>
 
-    <input type="submit" class="btn_submit" value="확인">
+        <select name="graph" class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-admin-primary-500 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+            <option value="line" <?php echo ($graph == 'line' ? 'selected' : ''); ?>>선그래프</option>
+            <option value="bar"  <?php echo ($graph == 'bar'  ? 'selected' : ''); ?>>막대그래프</option>
+        </select>
+
+        <button type="submit" class="rounded-md bg-admin-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-admin-primary-700">확인</button>
     </form>
-    <ul id="grp_color">
-        <li><span></span>글 수</li>
-        <li class="color2"><span></span>댓글 수</li>
-    </ul>
-</div>
-<br>
-<div id="chart_wr">
-<?php
-if (empty($line1) || empty($line2)) {
-    echo "<h5>그래프를 만들 데이터가 없습니다.</h5>\n";
-} else {
-?>
-<div id="chart1" style="height:500px; width:100%;"></div>
-<script>
-$(document).ready(function(){
-    var line1 = [<?php echo implode(',', $line1); ?>];
-    var line2 = [<?php echo implode(',', $line2); ?>];
-    var plot1 = $.jqplot ('chart1', [line1, line2], {
-            seriesDefaults: {
-                <?php if ($graph == 'bar') { ?>
-                renderer:$.jqplot.BarRenderer,
-                <?php } ?>
-                pointLabels: { show: true }
-            },
-            axes:{
-                xaxis: {
-                    renderer: $.jqplot.CategoryAxisRenderer,
-                    label: '<?php echo $day; ?>',
-                    pad:0,
-                    max:23
-                },
-                yaxis: {
-                    label: '글수',
-                    min: 0
 
+    <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <?php if (empty($labels)) { ?>
+            <div class="flex h-72 items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                그래프를 만들 데이터가 없습니다.
+            </div>
+        <?php } else { ?>
+            <div style="position:relative; height:480px; width:100%;">
+                <canvas id="wc_chart"></canvas>
+            </div>
+        <?php } ?>
+    </div>
+</div>
+
+<?php if (!empty($labels)) { ?>
+<script>
+(function(){
+    function init(){
+        if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
+
+        var labels   = <?php echo json_encode($labels, JSON_UNESCAPED_UNICODE); ?>;
+        var wcounts  = <?php echo json_encode($wcounts); ?>;
+        var ccounts  = <?php echo json_encode($ccounts); ?>;
+        var graphType = <?php echo json_encode($graph); ?>;
+
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var textColor = isDark ? '#cbd5e1' : '#475569';
+        var gridColor = isDark ? 'rgba(148,163,184,0.15)' : 'rgba(100,116,139,0.15)';
+
+        var primary  = getComputedStyle(document.documentElement).getPropertyValue('--admin-primary-500').trim() || '#3464f5';
+        var primary600 = getComputedStyle(document.documentElement).getPropertyValue('--admin-primary-600').trim() || '#2952d6';
+        var accent   = '#f59e0b';
+        var accent600 = '#d97706';
+
+        function rgba(hex, a){
+            var h = hex.replace('#','');
+            if (h.length === 3) h = h.split('').map(function(c){return c+c;}).join('');
+            var r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+            return 'rgba('+r+','+g+','+b+','+a+')';
+        }
+
+        var common = {
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: graphType === 'line' ? 3 : 0,
+            pointHoverRadius: 5,
+            fill: graphType === 'line',
+            borderRadius: graphType === 'bar' ? 6 : 0,
+            maxBarThickness: 36
+        };
+
+        var datasets = [
+            Object.assign({
+                label: '글 수',
+                data: wcounts,
+                borderColor: primary,
+                backgroundColor: graphType === 'line' ? rgba(primary, 0.18) : primary,
+                hoverBackgroundColor: primary600,
+                pointBackgroundColor: primary
+            }, common),
+            Object.assign({
+                label: '댓글 수',
+                data: ccounts,
+                borderColor: accent,
+                backgroundColor: graphType === 'line' ? rgba(accent, 0.18) : accent,
+                hoverBackgroundColor: accent600,
+                pointBackgroundColor: accent
+            }, common)
+        ];
+
+        var ctx = document.getElementById('wc_chart').getContext('2d');
+        new Chart(ctx, {
+            type: graphType === 'bar' ? 'bar' : 'line',
+            data: { labels: labels, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: { color: textColor, usePointStyle: true, boxWidth: 8, padding: 16 }
+                    },
+                    tooltip: {
+                        backgroundColor: isDark ? '#1e293b' : '#0f172a',
+                        titleColor: '#f8fafc',
+                        bodyColor: '#e2e8f0',
+                        padding: 10,
+                        cornerRadius: 6,
+                        displayColors: true,
+                        boxPadding: 4
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: textColor, maxRotation: 0, autoSkip: true },
+                        grid: { color: gridColor, drawTicks: false },
+                        border: { color: gridColor }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: textColor, precision: 0 },
+                        grid: { color: gridColor, drawTicks: false },
+                        border: { display: false }
+                    }
                 }
             }
         });
-});
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
 </script>
-<?php
-}
-?>
-</div>
-<?php
-?>
-</div><!-- /.legacy-admin-content -->
+<?php } ?>
 </main>
 <?php admin_layout_end(); ?>
 <?php
