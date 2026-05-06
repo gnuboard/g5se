@@ -1,4 +1,11 @@
 <?php
+// SSE 응답이라 PHP warning/notice 가 본문에 섞이면 EventSource 가 즉시 끊김.
+// (display_errors=1 환경에서 _common 체인의 'Constant ... already defined' 등이
+//  Content-Type:text/event-stream 보다 먼저 출력 → 헤더 깨지고 클라이언트는 무한
+//  loading.) 진입부에서 차단.
+ini_set('display_errors', '0');
+error_reporting(0);
+
 $sub_menu = "200400";
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
@@ -7,10 +14,17 @@ require_once __DIR__.'/admin.lib.php';
 require_once __DIR__.'/member_list_exel.lib.php'; // 회원관리파일 공통 라이브러리 (상수, 검색 옵션 설정, SQL WHERE 등)
 include_once(G5_LIB_PATH.'/PHPExcel.php');
 
-check_demo();
+if (function_exists('check_demo')) {
+    check_demo();
+}
 auth_check_menu($auth, $sub_menu, 'w');
 
 ini_set('memory_limit', '-1');
+
+// SSE 헤더보다 앞서 어떤 출력도 가지 않도록 중첩 ob 모두 비움 (warning suppress 와 함께
+// 중복 안전망 — front controller 가 ob 를 열어둔 상태일 수 있음).
+while (ob_get_level() > 0) { ob_end_clean(); }
+
 session_write_close(); // 세션 종료 및 잠금 해제 (백그라운드 작업을 위해 필요)
 
 // 파라미터 수집 및 유효성 검사
