@@ -658,11 +658,13 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 | chrome | `theme/basic/shop/shop.tail.php` | ✗ |
 | chrome | `theme/basic/shop/category.php` | ✗ |
 | 진입 | `theme/basic/shop/index.php` | ✗ |
-| 카테고리 list | `skin/shop/basic/list.10~40.skin.php` | ✗ |
+| 카테고리 list | `skin/shop/basic/list.10.skin.php` | ● modern grid 카드 |
+| 카테고리 list | `skin/shop/basic/list.20/30/40.skin.php` | ✗ (변형 — 사이드텍스트/컴팩트/리스트뷰) |
 | 카테고리 list | `skin/shop/basic/list.sort.skin.php` | ✗ |
 | 카테고리 list | `skin/shop/basic/list.sub.skin.php` | ✗ |
 | 카테고리 list | `skin/shop/basic/listcategory*.skin.php` | ✗ |
-| 메인 typed | `skin/shop/basic/main.10~40.skin.php` | ✗ |
+| 메인 typed | `skin/shop/basic/main.10.skin.php` | ● modern carousel 카드 (owl-carousel JS 유지) |
+| 메인 typed | `skin/shop/basic/main.20/40/50.skin.php` | ✗ |
 | 상품 detail | `skin/shop/basic/item.form.skin.php` | ✗ |
 | 상품 detail | `skin/shop/basic/item.info.skin.php` | ✗ |
 | 상품문의 | `skin/shop/basic/itemqa{,form,list}.skin.php` | ✗ |
