@@ -18,8 +18,7 @@ admin_layout_start($g5['title'], 'shop');
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
 <div class="legacy-admin-content space-y-4">
-<?php /* 본문 시작 */ ?>
-
+<?php
 $pg_anchor = '<ul class="anchor sidx_anchor">
 <li><a href="#anc_sidx_ord">주문현황</a></li>
 <li><a href="#anc_sidx_rdy">입금완료미배송내역</a></li>
