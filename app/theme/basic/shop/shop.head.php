@@ -9,6 +9,9 @@ if(G5_IS_MOBILE) {
 }
 
 include_once(G5_THEME_PATH.'/head.sub.php');
+// modern 디자인 시스템 — UnoCSS runtime + Pretendard 폰트 + 토큰
+// (m-shell 오버레이로 legacy default_shop.css / shop skin/style.css 가 가려짐)
+require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 include_once(G5_LIB_PATH.'/outlogin.lib.php');
 include_once(G5_LIB_PATH.'/poll.lib.php');
 include_once(G5_LIB_PATH.'/visit.lib.php');
@@ -19,6 +22,8 @@ include_once(G5_LIB_PATH.'/latest.lib.php');
 add_javascript('<script src="'.G5_JS_URL.'/owlcarousel/owl.carousel.min.js"></script>', 10);
 add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carousel.css">', 0);
 ?>
+
+<div class="m-shell">
 
 <!-- 상단 (modern) 시작 { -->
 <header id="hd" class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-700 dark:bg-slate-900/90">
