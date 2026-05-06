@@ -285,8 +285,10 @@ $is_index = defined('_INDEX_') && _INDEX_;
     }
     if (topBtn) {
         topBtn.addEventListener('click', function(){
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            // 클릭 후 :focus 잔존 잔존 방지
+            // 실제 스크롤 컨테이너는 .m-shell (html/body 는 overflow:hidden)
+            var scroller = document.querySelector('.m-shell') || window;
+            scroller.scrollTo({ top: 0, behavior: 'smooth' });
+            // 클릭 후 :focus 잔존 방지
             topBtn.blur();
         });
     }
