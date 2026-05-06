@@ -175,7 +175,11 @@ $is_index = defined('_INDEX_') && _INDEX_;
 .m-shop-quick-btn:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 2px; }
 .m-shop-quick-btn[aria-expanded="true"] { background: var(--m-primary); color: #fff; border-color: var(--m-primary); }
 .m-shop-quick-label { font-size: 10px; font-weight: 500; letter-spacing: -0.02em; }
+/* 라이트: --m-text(짙은) 배경으로 강조 / 다크: --m-bg(더 짙은) 으로 다른 버튼보다 한톤 깊게 */
 .m-shop-quick-top { background: var(--m-text); color: var(--m-bg); border-color: var(--m-text); }
+[data-theme="dark"] .m-shop-quick-top {
+    background: var(--m-bg); color: var(--m-text); border-color: var(--m-border);
+}
 .m-shop-quick-top:hover { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
 .m-shop-quick-badge {
     position: absolute; top: -4px; right: -4px;
