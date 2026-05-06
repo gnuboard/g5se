@@ -114,15 +114,37 @@ $is_index = defined('_INDEX_') && _INDEX_;
     </aside>
 
     <!-- 오늘 본 상품 패널 (quick-today 클릭 시 펼침) -->
+    <?php $_today_items = function_exists('get_view_today_items') ? get_view_today_items(true) : []; ?>
     <div class="m-shop-today-panel" hidden>
         <div class="m-shop-today-panel-head">
-            <strong>오늘 본 상품</strong>
+            <strong>오늘 본 상품 <span style="color: var(--m-text-faint); font-weight: 500; font-size: var(--m-text-xs);">(<?php echo count($_today_items); ?>)</span></strong>
             <button type="button" class="m-shop-today-close" aria-label="닫기">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <div class="m-shop-today-panel-body">
-            <?php include(G5_SHOP_SKIN_PATH.'/boxtodayview.skin.php'); ?>
+            <?php if (!empty($_today_items)) { ?>
+                <ul class="m-shop-today-list">
+                    <?php foreach ($_today_items as $_tv) {
+                        if (empty($_tv['it_id'])) continue;
+                        $_tv_url = shop_item_url($_tv['it_id']);
+                        $_tv_img = get_it_image($_tv['it_id'], 56, 56, $_tv['it_id'], '', get_text($_tv['it_name']));
+                        $_tv_price = get_price($_tv);
+                    ?>
+                    <li class="m-shop-today-item">
+                        <a href="<?php echo $_tv_url; ?>" class="m-shop-today-link">
+                            <span class="m-shop-today-thumb"><?php echo $_tv_img; ?></span>
+                            <span class="m-shop-today-meta">
+                                <span class="m-shop-today-name"><?php echo cut_str(get_text($_tv['it_name']), 30, ''); ?></span>
+                                <span class="m-shop-today-price"><?php echo is_int($_tv_price) ? number_format($_tv_price).'원' : $_tv_price; ?></span>
+                            </span>
+                        </a>
+                    </li>
+                    <?php } ?>
+                </ul>
+            <?php } else { ?>
+                <p class="m-shop-today-empty">최근 본 상품이 없습니다.</p>
+            <?php } ?>
         </div>
     </div>
 
@@ -149,9 +171,11 @@ $is_index = defined('_INDEX_') && _INDEX_;
     background: var(--m-primary); color: #fff; border-color: var(--m-primary);
     transform: translateX(-2px);
 }
+.m-shop-quick-btn:focus { outline: none; }
+.m-shop-quick-btn:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 2px; }
 .m-shop-quick-label { font-size: 10px; font-weight: 500; letter-spacing: -0.02em; }
-.m-shop-quick-top { background: var(--m-text); color: #fff; border-color: var(--m-text); }
-.m-shop-quick-top:hover { background: var(--m-primary); }
+.m-shop-quick-top { background: var(--m-text); color: var(--m-bg); border-color: var(--m-text); }
+.m-shop-quick-top:hover { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
 .m-shop-quick-badge {
     position: absolute; top: -4px; right: -4px;
     min-width: 18px; height: 18px; padding: 0 4px;
@@ -181,7 +205,35 @@ $is_index = defined('_INDEX_') && _INDEX_;
     align-items: center; justify-content: center;
 }
 .m-shop-today-close:hover { color: var(--m-text); }
-.m-shop-today-panel-body { padding: 12px; overflow-y: auto; }
+.m-shop-today-panel-body { padding: 8px; overflow-y: auto; }
+
+/* 오늘 본 상품 list */
+.m-shop-today-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.m-shop-today-item { margin: 0; }
+.m-shop-today-link {
+    display: flex; gap: 10px; align-items: center;
+    padding: 6px; border-radius: var(--m-radius-sm);
+    text-decoration: none; color: inherit;
+    transition: background 0.15s;
+}
+.m-shop-today-link:hover { background: var(--m-surface-2); }
+.m-shop-today-thumb {
+    flex-shrink: 0; width: 56px; height: 56px;
+    border-radius: var(--m-radius-sm); overflow: hidden;
+    background: var(--m-surface-2);
+}
+.m-shop-today-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.m-shop-today-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.m-shop-today-name {
+    font-size: var(--m-text-sm); color: var(--m-text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.m-shop-today-price { font-size: var(--m-text-sm); font-weight: 600; color: var(--m-primary); }
+.m-shop-today-empty {
+    margin: 0; padding: 16px 12px;
+    text-align: center; font-size: var(--m-text-sm);
+    color: var(--m-text-muted);
+}
 
 @media (max-width: 880px) {
     .m-shop-quick { right: 8px; }
