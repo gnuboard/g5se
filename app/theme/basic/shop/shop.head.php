@@ -172,6 +172,28 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
 }
+
+/* item.php 레이아웃 폭 정리 — legacy 가 width:1200px + padding:45px + float 로 잡혀 있어
+   모던 컨테이너 안에서 폭이 어색함. grid 로 이미지/구매패널 깔끔하게 분배. */
+#sit_ov_wrap {
+    width: 100% !important;
+    padding: 0 !important;
+    border-top: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 32px;
+    align-items: start;
+}
+#sit_pvi,
+#sit_ov {
+    float: none !important;
+    width: auto !important;
+    min-height: 0 !important;
+}
+#sit_pvi_big img { width: 100% !important; height: auto !important; max-width: 500px; }
+@media (max-width: 880px) {
+    #sit_ov_wrap { grid-template-columns: 1fr; }
+}
 </style>
 
 
