@@ -76,41 +76,43 @@ if ( $LGD_HASHDATA2 == $LGD_HASHDATA ) { //해쉬값 검증이 성공이면
              * 상점 결과 처리가 정상이면 "OK"
              */
 
-            $sql = " select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = '$LGD_OID' and pp_tno = '$LGD_TID' ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch(" select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id and pp_tno = :pp_tno ",
+                                [':pp_id' => $LGD_OID, ':pp_tno' => $LGD_TID]);
 
             $result = false;
 
             if(isset($row['pp_id']) && $row['pp_id']) {
                 // 개인결제 UPDATE
-                $sql = " update {$g5['g5_shop_personalpay_table']}
-                            set pp_receipt_price = '$LGD_AMOUNT',
-                                pp_receipt_time  = '$LGD_PAYDATE',
-                                pp_casseqno      = '$LGD_CASSEQNO'
-                            where pp_id = '$LGD_OID'
-                              and pp_tno = '$LGD_TID' ";
-                $result = sql_query($sql, false);
+                $result = sql_pdo_query(" update {$g5['g5_shop_personalpay_table']}
+                                            set pp_receipt_price = :amt, pp_receipt_time = :paydate, pp_casseqno = :casseqno
+                                          where pp_id = :pp_id and pp_tno = :pp_tno ",
+                                       [':amt' => $LGD_AMOUNT, ':paydate' => $LGD_PAYDATE, ':casseqno' => $LGD_CASSEQNO, ':pp_id' => $LGD_OID, ':pp_tno' => $LGD_TID],
+                                       false);
 
                 if($row['od_id']) {
                     // 주문서 UPDATE
                     $receipt_time    = preg_replace("/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})/", "\\1-\\2-\\3 \\4:\\5:\\6", $LGD_PAYDATE);
-                    $sql = " update {$g5['g5_shop_order_table']}
-                                set od_receipt_price = od_receipt_price + '$LGD_AMOUNT',
-                                    od_receipt_time  = '$LGD_PAYDATE',
-                                    od_casseqno      = '$LGD_CASSEQNO',
-                                    od_shop_memo     = concat(od_shop_memo, \"\\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time."\")
-                              where od_id = '{$row['od_id']}' ";
-                    $result = sql_query($sql, FALSE);
+                    $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                                set od_receipt_price = od_receipt_price + :amt,
+                                                    od_receipt_time = :paydate,
+                                                    od_casseqno = :casseqno,
+                                                    od_shop_memo = concat(od_shop_memo, :memo)
+                                              where od_id = :od_id ",
+                                           [
+                                               ':amt'      => $LGD_AMOUNT,
+                                               ':paydate'  => $LGD_PAYDATE,
+                                               ':casseqno' => $LGD_CASSEQNO,
+                                               ':memo'     => "\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time,
+                                               ':od_id'    => $row['od_id'],
+                                           ], FALSE);
                 }
             } else {
                 // 주문서 UPDATE
-                $sql = " update {$g5['g5_shop_order_table']}
-                            set od_receipt_price = '$LGD_AMOUNT',
-                                od_receipt_time  = '$LGD_PAYDATE',
-                                od_casseqno      = '$LGD_CASSEQNO'
-                          where od_id = '$LGD_OID'
-                            and od_tno = '$LGD_TID' ";
-                $result = sql_query($sql, FALSE);
+                $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                            set od_receipt_price = :amt, od_receipt_time = :paydate, od_casseqno = :casseqno
+                                          where od_id = :od_id and od_tno = :od_tno ",
+                                       [':amt' => $LGD_AMOUNT, ':paydate' => $LGD_PAYDATE, ':casseqno' => $LGD_CASSEQNO, ':od_id' => $LGD_OID, ':od_tno' => $LGD_TID],
+                                       FALSE);
             }
 
             if($result) {
@@ -120,29 +122,23 @@ if ( $LGD_HASHDATA2 == $LGD_HASHDATA ) { //해쉬값 검증이 성공이면
                     $od_id = $LGD_OID;
 
                 // 주문정보 체크
-                $sql = " select count(od_id) as cnt
-                            from {$g5['g5_shop_order_table']}
-                            where od_id = '$od_id'
-                              and od_status = '주문' ";
-                $row = sql_fetch($sql);
+                $row = sql_pdo_fetch(" select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = :od_id and od_status = '주문' ",
+                                    [':od_id' => $od_id]);
 
                 if($row['cnt'] == 1) {
                     // 미수금 정보 업데이트
                     $info = get_order_info($od_id);
 
-                    $sql = " update {$g5['g5_shop_order_table']}
-                                set od_misu = '{$info['od_misu']}' ";
+                    $upd_sql = " update {$g5['g5_shop_order_table']} set od_misu = :od_misu ";
                     if($info['od_misu'] == 0)
-                        $sql .= " , od_status = '입금' ";
-                    $sql .= " where od_id = '$od_id' ";
-                    $result = sql_query($sql, FALSE);
+                        $upd_sql .= " , od_status = '입금' ";
+                    $upd_sql .= " where od_id = :od_id ";
+                    $result = sql_pdo_query($upd_sql, [':od_misu' => $info['od_misu'], ':od_id' => $od_id], FALSE);
 
                     // 장바구니 상태변경
                     if($info['od_misu'] == 0) {
-                        $sql = " update {$g5['g5_shop_cart_table']}
-                                    set ct_status = '입금'
-                                    where od_id = '$od_id' ";
-                        sql_query($sql, FALSE);
+                        sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_status = '입금' where od_id = :od_id ",
+                                      [':od_id' => $od_id], FALSE);
                     }
                 }
             }

@@ -60,39 +60,42 @@ if (in_array($_SERVER['REMOTE_ADDR'], $allowed_ips)) {   //PG에서 보냈는지
         $no_cshr_tid  = $no_cshr_tid;   //현금영수증 발급TID
 
         // 입금결과 처리
-        $sql = " select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = '$no_oid' and pp_app_no = '$no_vacct' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id and pp_app_no = :pp_app_no ",
+                            [':pp_id' => $no_oid, ':pp_app_no' => $no_vacct]);
 
         $result = false;
         $receipt_time = $dt_trans.$tm_trans;
 
         if($row['pp_id']) {
             // 개인결제 UPDATE
-            $sql = " update {$g5['g5_shop_personalpay_table']}
-                        set pp_receipt_price    = '$amt_input',
-                            pp_receipt_time     = '$receipt_time'
-                        where pp_id = '$no_oid'
-                          and pp_app_no = '$no_vacct' ";
-            $result = sql_query($sql, false);
+            $result = sql_pdo_query(" update {$g5['g5_shop_personalpay_table']}
+                                        set pp_receipt_price = :pp_receipt_price, pp_receipt_time = :pp_receipt_time
+                                      where pp_id = :pp_id and pp_app_no = :pp_app_no ",
+                                   [':pp_receipt_price' => $amt_input, ':pp_receipt_time' => $receipt_time, ':pp_id' => $no_oid, ':pp_app_no' => $no_vacct],
+                                   false);
 
             if($row['od_id']) {
                 // 주문서 UPDATE
                 $receipt_time    = preg_replace("/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})/", "\\1-\\2-\\3 \\4:\\5:\\6", $receipt_time);
-                $sql = " update {$g5['g5_shop_order_table']}
-                            set od_receipt_price = od_receipt_price + '$amt_input',
-                                od_receipt_time = '$receipt_time',
-                                od_shop_memo = concat(od_shop_memo, \"\\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time."\")
-                          where od_id = '{$row['od_id']}' ";
-                $result = sql_query($sql, FALSE);
+                $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                            set od_receipt_price = od_receipt_price + :amt,
+                                                od_receipt_time = :receipt_time,
+                                                od_shop_memo = concat(od_shop_memo, :memo)
+                                          where od_id = :od_id ",
+                                       [
+                                           ':amt'          => $amt_input,
+                                           ':receipt_time' => $receipt_time,
+                                           ':memo'         => "\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time,
+                                           ':od_id'        => $row['od_id'],
+                                       ], FALSE);
             }
         } else {
             // 주문서 UPDATE
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_receipt_price = '$amt_input',
-                            od_receipt_time = '$receipt_time'
-                      where od_id = '$no_oid'
-                        and od_app_no = '$no_vacct' ";
-            $result = sql_query($sql, FALSE);
+            $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                        set od_receipt_price = :amt, od_receipt_time = :receipt_time
+                                      where od_id = :od_id and od_app_no = :od_app_no ",
+                                   [':amt' => $amt_input, ':receipt_time' => $receipt_time, ':od_id' => $no_oid, ':od_app_no' => $no_vacct],
+                                   FALSE);
         }
 
         if($result) {
@@ -102,29 +105,23 @@ if (in_array($_SERVER['REMOTE_ADDR'], $allowed_ips)) {   //PG에서 보냈는지
                 $od_id = $no_oid;
 
             // 주문정보 체크
-            $sql = " select count(od_id) as cnt
-                        from {$g5['g5_shop_order_table']}
-                        where od_id = '$od_id'
-                          and od_status = '주문' ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch(" select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = :od_id and od_status = '주문' ",
+                                [':od_id' => $od_id]);
 
             if($row['cnt'] == 1) {
                 // 미수금 정보 업데이트
                 $info = get_order_info($od_id);
 
-                $sql = " update {$g5['g5_shop_order_table']}
-                            set od_misu = '{$info['od_misu']}' ";
+                $upd_sql = " update {$g5['g5_shop_order_table']} set od_misu = :od_misu ";
                 if($info['od_misu'] == 0)
-                    $sql .= " , od_status = '입금' ";
-                $sql .= " where od_id = '$od_id' ";
-                sql_query($sql, FALSE);
+                    $upd_sql .= " , od_status = '입금' ";
+                $upd_sql .= " where od_id = :od_id ";
+                sql_pdo_query($upd_sql, [':od_misu' => $info['od_misu'], ':od_id' => $od_id], FALSE);
 
                 // 장바구니 상태변경
                 if($info['od_misu'] == 0) {
-                    $sql = " update {$g5['g5_shop_cart_table']}
-                                set ct_status = '입금'
-                                where od_id = '$od_id' ";
-                    sql_query($sql, FALSE);
+                    sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_status = '입금' where od_id = :od_id ",
+                                  [':od_id' => $od_id], FALSE);
                 }
             }
         }

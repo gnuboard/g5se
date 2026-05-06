@@ -17,8 +17,8 @@ if(isset($_POST['pp_id']) && $_POST['pp_id']) {
     $od_id   = get_session('ss_personalpay_id');
     $cart_id = 0;
 
-    $sql = "select pp_use, pp_tno from {$g5['g5_shop_personalpay_table']} where pp_id = '$od_id' ";
-    $pp_row = sql_fetch($sql);
+    $pp_row = sql_pdo_fetch(" select pp_use, pp_tno from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id ",
+                           [':pp_id' => $od_id]);
 
     if( $pp_row['pp_tno'] ){
         die('해당 개인결제는 이미 결제되었습니다.');
@@ -47,24 +47,27 @@ if(isset($_POST['pp_id']) && $_POST['pp_id']) {
 $dt_data = base64_encode(serialize($_POST));
 
 // 동일한 주문번호가 있는지 체크
-$sql = " select count(*) as cnt from {$g5['g5_shop_order_data_table']} where od_id = '$od_id' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_order_data_table']} where od_id = :od_id ",
+                    [':od_id' => $od_id]);
 if($row['cnt'])
-    sql_query(" delete from {$g5['g5_shop_order_data_table']} where od_id = '$od_id' ");
+    sql_pdo_query(" delete from {$g5['g5_shop_order_data_table']} where od_id = :od_id ", [':od_id' => $od_id]);
 
 $default_pg = $default['de_pg_service'];
 
-if( $od_settle_case == '삼성페이' ){    //현재 삼성페이인 경우에는 pg를 inicis로 처리 
+if( $od_settle_case == '삼성페이' ){    //현재 삼성페이인 경우에는 pg를 inicis로 처리
     $default_pg = 'inicis';
 }
 
-$sql = " insert into {$g5['g5_shop_order_data_table']}
-            set od_id   = '$od_id',
-                cart_id = '$cart_id',
-                mb_id   = '{$member['mb_id']}',
-                dt_pg   = '$default_pg',
-                dt_data = '$dt_data',
-                dt_time = '".G5_TIME_YMDHIS."' ";
-sql_query($sql);
+sql_pdo_query(" insert into {$g5['g5_shop_order_data_table']}
+                    set od_id = :od_id, cart_id = :cart_id, mb_id = :mb_id,
+                        dt_pg = :dt_pg, dt_data = :dt_data, dt_time = :dt_time ",
+              [
+                  ':od_id'   => $od_id,
+                  ':cart_id' => $cart_id,
+                  ':mb_id'   => $member['mb_id'],
+                  ':dt_pg'   => $default_pg,
+                  ':dt_data' => $dt_data,
+                  ':dt_time' => G5_TIME_YMDHIS,
+              ]);
 
 die('');
