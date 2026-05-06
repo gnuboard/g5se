@@ -267,14 +267,11 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                         <div>
                         <input type="password" name="mb_password" id="mb_password" <?php echo $required_mb_password ?> class="frm_input <?php echo $required_mb_password ?>" size="15" maxlength="20">
                         </div>
-                        <div id="mb_password_captcha_wrap" style="display:none">
-                            <?php
-                            require_once G5_CAPTCHA_PATH . '/captcha.lib.php';
-                            $captcha_html = captcha_html();
-                            $captcha_js   = chk_captcha_js();
-                            echo $captcha_html;
-                            ?>
-                        </div>
+                        <?php
+                        // 회원관리에서는 캡챠 사용 안 함 (gnu5se 정책). 변수만 빈 값으로
+                        // 채워둬서 form 하단의 echo \$captcha_js 가 noop 되게 함.
+                        $captcha_js = '';
+                        ?>
                     </td>
                 </tr>
                 <tr>
