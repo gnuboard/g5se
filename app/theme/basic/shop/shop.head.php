@@ -172,42 +172,6 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
 }
-
-/* item.php 우측 구매 패널 (총금액/옵션리스트/+−버튼/장바구니버튼) */
-[data-theme="dark"] .sit_sel_option li,
-[data-theme="dark"] .sit_opt_list {
-    background: var(--m-surface) !important;
-    border-bottom-color: var(--m-border) !important;
-}
-[data-theme="dark"] .sit_sel_option .sit_opt_del,
-[data-theme="dark"] .sit_sel_option button {
-    background: var(--m-surface-2) !important;
-    color: var(--m-text-soft) !important;
-    border-color: var(--m-border) !important;
-}
-[data-theme="dark"] .sit_sel_option button:hover {
-    color: var(--m-text) !important;
-}
-[data-theme="dark"] .sit_sel_option .num_input {
-    background: var(--m-surface-2) !important;
-    color: var(--m-text) !important;
-    border-color: var(--m-border) !important;
-}
-[data-theme="dark"] .sit_btn_cart {
-    background: var(--m-surface-2) !important;
-    color: var(--m-text) !important;
-    border-color: var(--m-border) !important;
-}
-[data-theme="dark"] .sit_option label,
-[data-theme="dark"] .sit_sel_option .sit_opt_subj,
-[data-theme="dark"] .sit_sel_option .sit_opt_prc {
-    color: var(--m-text) !important;
-}
-[data-theme="dark"] .sit_option select {
-    background: var(--m-surface-2) !important;
-    color: var(--m-text) !important;
-    border-color: var(--m-border) !important;
-}
 </style>
 
 
