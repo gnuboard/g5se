@@ -186,7 +186,7 @@ $is_index = defined('_INDEX_') && _INDEX_;
     font-size: 10px; font-weight: 700; line-height: 1;
 }
 
-/* 오늘 본 상품 panel */
+/* 최근 본 상품 panel */
 .m-shop-today-panel {
     position: fixed; right: 80px; top: 50%; transform: translateY(-50%);
     z-index: 99; width: 280px;
@@ -195,6 +195,8 @@ $is_index = defined('_INDEX_') && _INDEX_;
     display: flex; flex-direction: column;
     max-height: 70vh;
 }
+/* [hidden] HTML attribute 가 display: flex 보다 specificity 가 낮아 무시되는 문제 */
+.m-shop-today-panel[hidden] { display: none; }
 .m-shop-today-panel-head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 14px; border-bottom: 1px solid var(--m-border);
