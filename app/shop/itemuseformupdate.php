@@ -24,7 +24,7 @@ $is_mobile_shop = isset($_REQUEST['is_mobile_shop']) ? (int) $_REQUEST['is_mobil
 check_itemuse_write($it_id, $member['mb_id']);
 
 if ($w == "" || $w == "u") {
-    $is_name     = addslashes(strip_tags($member['mb_name']));
+    $is_name     = strip_tags($member['mb_name']);
     $is_password = $member['mb_password'];
 
     if (!$is_subject) alert("제목을 입력하여 주십시오.");
@@ -38,30 +38,24 @@ else
 
 if ($w == "")
 {
-    /*
-    $sql = " select max(is_id) as max_is_id from {$g5['g5_shop_item_use_table']} ";
-    $row = sql_fetch($sql);
-    $max_is_id = $row['max_is_id'];
-
-    $sql = " select max(is_id) as max_is_id from {$g5['g5_shop_item_use_table']} where it_id = '$it_id' and mb_id = '{$member['mb_id']}' ";
-    $row = sql_fetch($sql);
-    if ($row['max_is_id'] && $row['max_is_id'] == $max_is_id)
-        alert("같은 상품에 대하여 계속해서 평가하실 수 없습니다.");
-    */
-
-    $sql = "insert {$g5['g5_shop_item_use_table']}
-               set it_id = '$it_id',
-                   mb_id = '{$member['mb_id']}',
-                   is_score = '$is_score',
-                   is_name = '$is_name',
-                   is_password = '$is_password',
-                   is_subject = '$is_subject',
-                   is_content = '$is_content',
-                   is_time = '".G5_TIME_YMDHIS."',
-                   is_ip = '{$_SERVER['REMOTE_ADDR']}' ";
+    $insert_sql = " insert {$g5['g5_shop_item_use_table']}
+                       set it_id = :it_id, mb_id = :mb_id, is_score = :is_score,
+                           is_name = :is_name, is_password = :is_password,
+                           is_subject = :is_subject, is_content = :is_content,
+                           is_time = :is_time, is_ip = :is_ip ";
     if (!$default['de_item_use_use'])
-        $sql .= ", is_confirm = '1' ";
-    sql_query($sql);
+        $insert_sql .= " , is_confirm = '1' ";
+    sql_pdo_query($insert_sql, [
+        ':it_id'       => $it_id,
+        ':mb_id'       => $member['mb_id'],
+        ':is_score'    => $is_score,
+        ':is_name'     => $is_name,
+        ':is_password' => $is_password,
+        ':is_subject'  => $is_subject,
+        ':is_content'  => $is_content,
+        ':is_time'     => G5_TIME_YMDHIS,
+        ':is_ip'       => $_SERVER['REMOTE_ADDR'],
+    ]);
     $is_id = sql_insert_id();
     run_event('shop_item_use_created', $is_id, $it_id);
 
@@ -73,18 +67,15 @@ if ($w == "")
 }
 else if ($w == "u")
 {
-    $sql = " select is_password from {$g5['g5_shop_item_use_table']} where is_id = '$is_id' ";
-
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select is_password from {$g5['g5_shop_item_use_table']} where is_id = :is_id ",
+                        [':is_id' => $is_id]);
     if ($row['is_password'] != $is_password)
         alert("비밀번호가 틀리므로 수정하실 수 없습니다.");
 
-    $sql = " update {$g5['g5_shop_item_use_table']}
-                set is_subject = '$is_subject',
-                    is_content = '$is_content',
-                    is_score = '$is_score'
-              where is_id = '$is_id' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['g5_shop_item_use_table']}
+                       set is_subject = :is_subject, is_content = :is_content, is_score = :is_score
+                     where is_id = :is_id ",
+                  [':is_subject' => $is_subject, ':is_content' => $is_content, ':is_score' => $is_score, ':is_id' => $is_id]);
     run_event('shop_item_use_updated', $is_id, $it_id);
 
     $alert_msg = "사용후기가 수정 되었습니다.";
@@ -93,15 +84,16 @@ else if ($w == "d")
 {
     if (!$is_admin)
     {
-        $sql = " select count(*) as cnt from {$g5['g5_shop_item_use_table']} where mb_id = '{$member['mb_id']}' and is_id = '$is_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_item_use_table']} where mb_id = :mb_id and is_id = :is_id ",
+                            [':mb_id' => $member['mb_id'], ':is_id' => $is_id]);
         if (!$row['cnt'])
             alert("자신의 사용후기만 삭제하실 수 있습니다.");
     }
 
     // 에디터로 첨부된 썸네일 이미지 삭제
-    $sql = " select is_content from {$g5['g5_shop_item_use_table']} where is_id = '$is_id' and md5(concat(is_id,is_time,is_ip)) = '{$hash}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select is_content from {$g5['g5_shop_item_use_table']}
+                            where is_id = :is_id and md5(concat(is_id,is_time,is_ip)) = :hash ",
+                        [':is_id' => $is_id, ':hash' => $hash]);
 
     $imgs = get_editor_image($row['is_content'], $get_editor_img_mode);
 
@@ -124,8 +116,9 @@ else if ($w == "d")
         }
     }
 
-    $sql = " delete from {$g5['g5_shop_item_use_table']} where is_id = '$is_id' and md5(concat(is_id,is_time,is_ip)) = '{$hash}' ";
-    sql_query($sql);
+    sql_pdo_query(" delete from {$g5['g5_shop_item_use_table']}
+                     where is_id = :is_id and md5(concat(is_id,is_time,is_ip)) = :hash ",
+                  [':is_id' => $is_id, ':hash' => $hash]);
     run_event('shop_item_use_deleted', $is_id, $it_id);
 
     $alert_msg = "사용후기를 삭제 하였습니다.";
