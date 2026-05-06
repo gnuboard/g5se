@@ -93,45 +93,59 @@ router 룰 / 301 / ob_start 모두 1단계와 동일 골격.
 - 출력 HTML 에 `/shop/list.php?ca_id=X` 가 남지 않음
 - 1단계 회귀 없음
 
-### 3단계 — `/shop/type/{best|recommend|new|popular|sale}`
+### 3단계 — `/shop/listtype/{type}`
 
-**대상 legacy URL:** `/shop/listtype.php?type={1..5}`
-**클린 URL:** `/shop/type/{alias}` (네임스페이스 분리)
+**대상 legacy URL:** `/shop/listtype.php?type=N`
+**클린 URL:** `/shop/listtype/N`
 
-`/shop/type/` prefix 를 두는 이유: top-level alias (`/shop/best`, `/shop/new` 등) 는 사용자/어드민이 만들 수 있는 일반 shop 페이지나 추후 다른 자원과 충돌할 수 있다. `type/` 하위로 네임스페이싱해 격리.
+타입 숫자를 그대로 path 로 노출. `listtype` 자체가 prefix 역할을 해 다른 shop 자원과의 충돌도 자연스럽게 회피된다. 무효 type (1~5 외) 은 [app/shop/listtype.php:18-19](../../../app/shop/listtype.php#L18-L19) 의 기존 `alert('상품유형이 아닙니다.')` 분기가 그대로 담당.
 
-| type | alias | URL | 의미 |
-|------|-------|-----|------|
-| 1 | best | `/shop/type/best` | 히트상품 |
-| 2 | recommend | `/shop/type/recommend` | 추천상품 |
-| 3 | new | `/shop/type/new` | 최신상품 |
-| 4 | popular | `/shop/type/popular` | 인기상품 |
-| 5 | sale | `/shop/type/sale` | 할인상품 |
-
-[app/shop/listtype.php:6-19](../../../app/shop/listtype.php#L6-L19) 에 type → 제목 매핑이 하드코드되어 있어 alias 와 안전하게 1:1 대응.
-
-**router 룰:** 단일 정규식 + lookup 테이블, 또는 5개 개별 룰. 단순함 우선으로 5개 개별 룰 추가:
+**router 룰:** 1개 룰로 충분 — type 캡처해서 query 로 inject:
 
 ```php
-'#^/shop/type/best/?$#'      => 'shop/listtype.php?type=1',
-'#^/shop/type/recommend/?$#' => 'shop/listtype.php?type=2',
-'#^/shop/type/new/?$#'       => 'shop/listtype.php?type=3',
-'#^/shop/type/popular/?$#'   => 'shop/listtype.php?type=4',
-'#^/shop/type/sale/?$#'      => 'shop/listtype.php?type=5',
+'#^/shop/listtype/(?P<type>\d+)/?$#' => 'shop/listtype.php',
 ```
 
-router 의 `?key=val` query inject 메커니즘([app/router.php:265-272](../../../app/router.php#L265-L272))이 이미 있어 그대로 사용.
+명명 캡처 `type` 이 자동으로 `$_GET['type']` 에 주입됨 ([app/router.php:283-288](../../../app/router.php#L283-L288)). 별도 query inject 룰 불필요.
 
-**Legacy 301:** `/shop/listtype.php?type=N` → `/shop/type/{alias}` 로 redirect. type 이 1~5 범위 밖이면 통과 (legacy 의 'alert' 분기 유지).
+**Legacy 301:** `/shop/listtype.php?type=N` → `/shop/listtype/N` 로 redirect. type 이 비었거나 숫자가 아니면 통과 (기존 동작 유지).
 
-**ob_start 후처리:** `/shop/listtype.php?type=N&...` → `/shop/type/{alias}[?...]` 치환. type 1~5 외에는 변환하지 않음.
+```php
+if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/listtype.php') {
+    parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+    if (!empty($params['type']) && preg_match('/^\d+$/', $params['type'])) {
+        $url = '/shop/listtype/'.$params['type'];
+        unset($params['type']);
+        if (!empty($params)) $url .= '?'.http_build_query($params);
+        header('Location: '.$url, true, 301); exit;
+    }
+}
+```
+
+**ob_start 후처리:** `/shop/listtype.php?type=N&...` → `/shop/listtype/N[?...]` 치환:
+
+```php
+$html = preg_replace_callback(
+    '#/shop/listtype\.php\?([^"\'\s<>]+)#',
+    function ($m) {
+        $qs = str_replace('&amp;', '&', $m[1]);
+        parse_str($qs, $params);
+        if (empty($params['type']) || !preg_match('/^\d+$/', $params['type'])) return $m[0];
+        $url = '/shop/listtype/'.$params['type'];
+        unset($params['type']);
+        if (!empty($params)) $url .= '?'.http_build_query($params, '', '&amp;');
+        return $url;
+    },
+    $html
+);
+```
 
 **검증:**
-- 5개 alias 각각 200 + 정상 렌더
-- `/shop/listtype.php?type=4` → 301 → `/shop/type/popular`
-- `/shop/listtype.php?type=4&page=2&sort=it_price` → 301 → `/shop/type/popular?page=2&sort=it_price`
-- type 6 같은 잘못된 값 → 변환 없이 통과 (기존 alert 동작 유지)
-- `/shop/type` (alias 없는 prefix) → 매칭 안 됨 → 기존 catch-all 로 떨어짐 (404 또는 listtype 디렉토리 검색 결과)
+- `/shop/listtype/1` ~ `/shop/listtype/5` 각각 200 + 정상 렌더 (히트/추천/최신/인기/할인)
+- `/shop/listtype.php?type=4` → 301 → `/shop/listtype/4`
+- `/shop/listtype.php?type=4&page=2&sort=it_price` → 301 → `/shop/listtype/4?page=2&sort=it_price`
+- `/shop/listtype/99` → listtype.php 진입 → 기존 alert 분기 동작 (정상)
+- 출력 HTML 에 `/shop/listtype.php?type=N` 패턴 남지 않음 (grep)
 - 1·2단계 회귀 없음
 
 ## 비목표 (Out of scope)
@@ -154,4 +168,4 @@ router 의 `?key=val` query inject 메커니즘([app/router.php:265-272](../../.
 
 1. `shop: add /shop/item/{it_id} clean URL + legacy 301 + ob_start rewrite`
 2. `shop: add /shop/category/{ca_id} clean URL + legacy 301 + ob_start rewrite`
-3. `shop: add /shop/type/{best|recommend|new|popular|sale} listtype aliases + legacy 301 + ob_start rewrite`
+3. `shop: add /shop/listtype/{type} clean URL + legacy 301 + ob_start rewrite`
