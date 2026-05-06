@@ -37,6 +37,10 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .smt_30 .sct_cost {
     color: var(--m-text) !important;
 }
+[data-theme="dark"] #gnb {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
 [data-theme="dark"] .gnb_1da {
     color: var(--m-text) !important;
 }
@@ -47,6 +51,27 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .gnb_1dli_over .gnb_2dul,
 [data-theme="dark"] .gnb_1dli_over2 .gnb_2dul {
     background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+
+/* 설문조사 (poll) — shop_basic skin */
+[data-theme="dark"] #poll {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #poll header h2,
+[data-theme="dark"] #poll .poll_con p {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #poll header .btn_result {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] .chk_box input[type="radio"] + label {
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] .chk_box input[type="radio"] + label span {
+    background: var(--m-surface-2) !important;
     border-color: var(--m-border) !important;
 }
 </style>
