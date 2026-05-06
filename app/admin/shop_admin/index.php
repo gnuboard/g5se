@@ -131,88 +131,87 @@ function get_max_value($arr)
         <?php echo $pg_anchor; ?>
 
         <?php
-        $arr_order = array();
-        $x_val = array();
+        // 7일 일자별 주문/취소 합계 → Chart.js bar 데이터
+        $chart_labels = [];
+        $chart_orders = [];
+        $chart_cancels = [];
         for($i=6; $i>=0; $i--) {
             $date = date('Y-m-d', strtotime('-'.$i.' days', G5_SERVER_TIME));
-
-            $x_val[] = $date;
-            $arr_order[] = get_order_date_sum($date);
-        }
-
-        $max_y = get_max_value($arr_order);
-        $max_y = ceil(($max_y) / 1000) * 1000;
-        $y_val = array();
-        $y_val[] = $max_y;
-
-        for($i=4; $i>=1; $i--) {
-            $y_val[] = $max_y * (($i * 2) / 10);
-        }
-
-        $max_height = 230;
-        $h_val = array();
-        $js_val = array();
-        $offset = 10; // 금액이 상대적으로 작아 높이가 0일 때 기본 높이로 사용
-        foreach($arr_order as $val) {
-            if($val['order'] > 0)
-                $h1 = intval(($max_height * $val['order']) / $max_y) + $offset;
-            else
-                $h1 = 0;
-
-            if($val['cancel'] > 0)
-                $h2 = intval(($max_height * $val['cancel']) / $max_y) + $offset;
-            else
-                $h2 = 0 ;
-
-            $h_val['order'][] = $h1;
-            $h_val['cancel'][] = $h2;
+            $sum = get_order_date_sum($date);
+            $chart_labels[]  = substr($date, 5, 5).' ('.get_yoil($date).')';
+            $chart_orders[]  = (int) $sum['order'];
+            $chart_cancels[] = (int) $sum['cancel'];
         }
         ?>
 
-        <div id="sidx_graph">
-            <ul id="sidx_graph_price">
-                <?php
-                foreach($y_val as $val) {
-                ?>
-                <li><span></span><?php echo number_format($val); ?></li>
-                <?php
-                }
-                ?>
-            </ul>
-            <ul id="sidx_graph_area">
-                <?php
-                for($i=0; $i<count($x_val); $i++) {
-                    $order_title = date("n월 j일", strtotime($x_val[$i])).' 주문: '.display_price($arr_order[$i]['order']);
-                    $cancel_title = date("n월 j일", strtotime($x_val[$i])).' 취소: '.display_price($arr_order[$i]['cancel']);
-                    $k = 10 - $i;
-                    $li_bg = 'bg'.($i%2);
-                ?>
-                <li class="<?php echo $li_bg; ?>" style="z-index:<?php echo $k; ?>">
-                    <div class="graph order" title="<?php echo $order_title; ?>">
-
-                    </div>
-                    <div class="graph cancel" title="<?php echo $cancel_title; ?>">
-
-                    </div>
-                </li>
-                <?php
-                }
-                ?>
-            </ul>
-            <ul id="sidx_graph_date">
-                <?php
-                foreach($x_val as $val) {
-                ?>
-                <li><span></span><?php echo substr($val, 5, 5).' ('.get_yoil($val).')'; ?></li>
-                <?php
-                }
-                ?>
-            </ul>
-            <div id="sidx_graph_legend">
-                <span id="legend_order"></span> 주문
-                <span id="legend_cancel"></span> 취소
+        <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <div style="position:relative; height:300px; width:100%;">
+                <canvas id="sidx_chart_order"></canvas>
             </div>
         </div>
+
+        <script>
+        (function(){
+            function init(){
+                if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var textColor = isDark ? '#cbd5e1' : '#475569';
+                var gridColor = isDark ? 'rgba(148,163,184,0.15)' : 'rgba(100,116,139,0.15)';
+                var primary  = getComputedStyle(document.documentElement).getPropertyValue('--admin-primary-500').trim() || '#3464f5';
+                var ctx = document.getElementById('sidx_chart_order').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: <?php echo json_encode($chart_labels, JSON_UNESCAPED_UNICODE); ?>,
+                        datasets: [
+                            {
+                                label: '주문',
+                                data: <?php echo json_encode($chart_orders); ?>,
+                                backgroundColor: primary,
+                                borderRadius: 6,
+                                maxBarThickness: 28
+                            },
+                            {
+                                label: '취소',
+                                data: <?php echo json_encode($chart_cancels); ?>,
+                                backgroundColor: '#ef4444',
+                                borderRadius: 6,
+                                maxBarThickness: 28
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'top', align: 'end', labels: { color: textColor, usePointStyle: true, boxWidth: 8, padding: 16 } },
+                            tooltip: {
+                                backgroundColor: isDark ? '#1e293b' : '#0f172a',
+                                titleColor: '#f8fafc', bodyColor: '#e2e8f0',
+                                padding: 10, cornerRadius: 6, displayColors: true, boxPadding: 4,
+                                callbacks: {
+                                    label: function(ctx){
+                                        return ctx.dataset.label + ': ' + Number(ctx.raw).toLocaleString() + '원';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { ticks: { color: textColor }, grid: { color: gridColor, drawTicks: false }, border: { color: gridColor } },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: textColor, callback: function(v){ return Number(v).toLocaleString(); } },
+                                grid: { color: gridColor, drawTicks: false }, border: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
+        </script>
     </section>
 
     <div id="sidx_stat">
@@ -379,64 +378,6 @@ function get_max_value($arr)
         </table>
     </div>
 </section>
-
-<script>
-jQuery(function($) {
-    graph_draw();
-
-    $("#sidx_graph_area div").hover(
-        function() {
-            if($(this).is(":animated"))
-                return false;
-
-            var title = $(this).attr("title");
-            if(title && $(this).data("title") == undefined)
-                $(this).data("title", title);
-            var left = parseInt($(this).css("left")) + 10;
-            var bottom = $(this).height() + 5;
-
-            $(this)
-                .attr("title", "")
-                .append("<div id=\"price_tooltip\"><div></div></div>");
-            $("#price_tooltip")
-                .find("div")
-                .html(title)
-                .end()
-//                .css({ left: left+"px", bottom: bottom+"px" })
-                .show(200);
-        },
-        function() {
-            if($(this).is(":animated"))
-                return false;
-
-            $(this).attr("title", $(this).data("title"));
-            $("#price_tooltip").remove();
-        }
-    );
-});
-
-function graph_draw()
-{
-    var g_h1 = new Array("<?php echo implode('", "', $h_val['order']); ?>");
-    var g_h2 = new Array("<?php echo implode('", "', $h_val['cancel']); ?>");
-    var duration = 600;
-
-    var $el = $("#sidx_graph_area li");
-    var h1, h2;
-    var $g1, $g2;
-
-    $el.each(function(index) {
-        h1 = g_h1[index];
-        h2 = g_h2[index];
-
-        $g1 = $(this).find(".order");
-        $g2 = $(this).find(".cancel");
-
-        $g1.animate({ height: h1+"px" }, duration);
-        $g2.animate({ height: h2+"px" }, duration);
-    });
-}
-</script>
 
 <?php } //endif ?>
 <?php if ($is_admin === 'super') { ?>
