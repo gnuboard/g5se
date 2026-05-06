@@ -15,33 +15,7 @@ $qstr = "fr_date=".$fr_date."&amp;to_date=".$to_date;
 $query_string = $qstr ? '?'.$qstr : '';
 ?>
 
-<!-- jQuery UI datepicker — modern shell 은 add_stylesheet queue flush 안 하므로 직접 주입 -->
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="<?php echo G5_PLUGIN_URL ?>/jquery-ui/style.css">
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-<script>
-jQuery(function($){
-    $.datepicker.regional["ko"] = {
-        closeText: "닫기",
-        prevText: "이전달",
-        nextText: "다음달",
-        currentText: "오늘",
-        monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
-        monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
-        dayNames: ["일요일","월요일","화요일","수요일","목요일","금요일","토요일"],
-        dayNamesShort: ["일","월","화","수","목","금","토"],
-        dayNamesMin: ["일","월","화","수","목","금","토"],
-        weekHeader: "주",
-        dateFormat: "yy-mm-dd",
-        firstDay: 0,
-        isRTL: false,
-        showMonthAfterYear: true,
-        yearSuffix: "년"
-    };
-    $.datepicker.setDefaults($.datepicker.regional["ko"]);
-});
-</script>
-
+<!-- jQuery UI datepicker 자산 / 한글 locale 은 _layout.php 에서 한 번만 로드. -->
 <form name="fvisit" id="fvisit" class="local_sch03 local_sch" method="get">
 <div class="sch_last">
     <strong>기간별검색</strong>
