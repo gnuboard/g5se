@@ -1836,7 +1836,10 @@ function hsc($str)
 // &nbsp; &amp; &middot; 등을 정상으로 출력
 function html_symbol($str)
 {
-    return $str ? preg_replace("/\&([a-z0-9]{1,20}|\#[0-9]{0,3});/i", "&#038;\\1;", $str) : "";
+    // gnu5se: 원본은 `$str ?` truthy 체크 — PHP 에서 "0" 이 falsy 라
+    // get_text("0") 가 "" 를 반환해 여분필드에 0 입력해도 화면에 안 보이는
+    // 버그가 있었음. (string)$str !== '' 로 정확한 빈문자 체크.
+    return ((string)$str !== '') ? preg_replace("/\&([a-z0-9]{1,20}|\#[0-9]{0,3});/i", "&#038;\\1;", (string)$str) : "";
 }
 
 
