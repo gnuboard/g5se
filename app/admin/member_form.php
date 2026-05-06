@@ -667,28 +667,8 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
         return true;
     }
 
-    jQuery(function($){
-        $("#captcha_key").prop('required', false).removeAttr("required").removeClass("required");
-
-        $("#mb_password").on("keyup", function(e) {
-            var $warp = $("#mb_password_captcha_wrap"),
-                tooptipid = "mp_captcha_tooltip",
-                $span_text = $("<span>", {id:tooptipid, style:"font-size:0.95em;letter-spacing:-0.1em"}).html("비밀번호를 수정할 경우 캡챠를 입력해야 합니다."),
-                $parent = $(this).parent(),
-                is_invisible_recaptcha = $("#captcha").hasClass("invisible_recaptcha");
-
-            if($(this).val()){
-                $warp.show();
-                if(! is_invisible_recaptcha) {
-                    $warp.css("margin-top","1em");
-                    if(! $("#"+tooptipid).length){ $parent.append($span_text) }
-                }
-            } else {
-                $warp.hide();
-                if($("#"+tooptipid).length && ! is_invisible_recaptcha){ $parent.find("#"+tooptipid).remove(); }
-            }
-        });
-    });
+    // gnu5se: 회원관리 캡챠 사용 안 함 → mb_password keyup 시 wrap/툴팁 띄우는
+    // 코드 전체 제거. (#captcha_key 도 마크업 자체가 없어 required 처리 불필요.)
 </script>
 <?php
 run_event('admin_member_form_after', $mb, $w);
