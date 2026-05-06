@@ -101,6 +101,27 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- admin 전용 JS — PopupManager, CommonUI 등 (legacy admin.tail.php 가 로드하던 것).
          .htaccess 규칙상 /admin/js/* 만 정적 매핑이라 /admin/admin.js 가 아닌 /admin/js/admin.js. -->
     <script src="<?php echo G5_ADMIN_URL ?>/js/admin.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>" defer></script>
+    <!-- jQuery UI datepicker — admin 의 popular_rank / visit_search / visit.sub 등에서 사용.
+         원본은 plugin/jquery-ui/datepicker.php 가 add_stylesheet/javascript 큐로 등록하지만
+         modern admin shell 은 큐 flush 안 함. 한 번만 직접 로드. -->
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="<?php echo G5_PLUGIN_URL ?>/jquery-ui/style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script>
+    jQuery(function($){
+        $.datepicker.regional["ko"] = {
+            closeText:"닫기", prevText:"이전달", nextText:"다음달", currentText:"오늘",
+            monthNames:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+            monthNamesShort:["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+            dayNames:["일요일","월요일","화요일","수요일","목요일","금요일","토요일"],
+            dayNamesShort:["일","월","화","수","목","금","토"],
+            dayNamesMin:["일","월","화","수","목","금","토"],
+            weekHeader:"주", dateFormat:"yy-mm-dd", firstDay:0, isRTL:false,
+            showMonthAfterYear:true, yearSuffix:"년"
+        };
+        $.datepicker.setDefaults($.datepicker.regional["ko"]);
+    });
+    </script>
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     </style>
