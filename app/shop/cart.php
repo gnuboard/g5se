@@ -13,8 +13,7 @@ set_cart_id($sw_direct);
 
 $s_cart_id = get_session('ss_cart_id');
 // 선택필드 초기화
-$sql = " update {$g5['g5_shop_cart_table']} set ct_select = '0' where od_id = '$s_cart_id' ";
-sql_query($sql);
+sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_select = '0' where od_id = :od_id ", [':od_id' => $s_cart_id]);
 
 $cart_action_url = G5_SHOP_URL.'/cartupdate.php';
 
@@ -71,36 +70,27 @@ include_once('./_head.php');
         $send_cost = 0;
 
         // $s_cart_id 로 현재 장바구니 자료 쿼리
-        $sql = " select a.ct_id,
-                        a.it_id,
-                        a.it_name,
-                        a.ct_price,
-                        a.ct_point,
-                        a.ct_qty,
-                        a.ct_status,
-                        a.ct_send_cost,
-                        a.it_sc_type,
-                        b.ca_id,
-                        b.ca_id2,
-                        b.ca_id3
-                   from {$g5['g5_shop_cart_table']} a left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id )
-                  where a.od_id = '$s_cart_id' ";
-        $sql .= " group by a.it_id ";
-        $sql .= " order by a.ct_id ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select a.ct_id, a.it_id, a.it_name, a.ct_price, a.ct_point, a.ct_qty,
+                                          a.ct_status, a.ct_send_cost, a.it_sc_type,
+                                          b.ca_id, b.ca_id2, b.ca_id3
+                                     from {$g5['g5_shop_cart_table']} a
+                                     left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id )
+                                    where a.od_id = :od_id
+                                    group by a.it_id
+                                    order by a.ct_id ",
+                                [':od_id' => $s_cart_id]);
 
         $it_send_cost = 0;
 
         for ($i=0; $row=sql_fetch_array($result); $i++)
         {
             // 합계금액 계산
-            $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
-                            SUM(ct_point * ct_qty) as point,
-                            SUM(ct_qty) as qty
-                        from {$g5['g5_shop_cart_table']}
-                        where it_id = '{$row['it_id']}'
-                          and od_id = '$s_cart_id' ";
-            $sum = sql_fetch($sql);
+            $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
+                                          SUM(ct_point * ct_qty) as point,
+                                          SUM(ct_qty) as qty
+                                     from {$g5['g5_shop_cart_table']}
+                                    where it_id = :it_id and od_id = :od_id ",
+                                [':it_id' => $row['it_id'], ':od_id' => $s_cart_id]);
 
             if ($i==0) { // 계속쇼핑
                 $continue_ca_id = $row['ca_id'];

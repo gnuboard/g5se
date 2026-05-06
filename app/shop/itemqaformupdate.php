@@ -18,12 +18,12 @@ $hash = isset($_REQUEST['hash']) ? trim($_REQUEST['hash']) : '';
 $get_editor_img_mode = $config['cf_editor'] ? false : true;
 
 $iq_secret = isset($_POST['iq_secret']) ? (int) $_POST['iq_secret'] : 0;
-$iq_email = isset($_POST['iq_email']) ? addslashes(clean_xss_tags(stripslashes($_POST['iq_email']), 1, 1)) : '';
-$iq_hp = isset($_POST['iq_hp']) ? addslashes(clean_xss_tags(stripslashes($_POST['iq_hp']), 1, 1)) : '';
+$iq_email = isset($_POST['iq_email']) ? clean_xss_tags(stripslashes($_POST['iq_email']), 1, 1) : '';
+$iq_hp = isset($_POST['iq_hp']) ? clean_xss_tags(stripslashes($_POST['iq_hp']), 1, 1) : '';
 $is_mobile_shop = isset($_REQUEST['is_mobile_shop']) ? (int) $_REQUEST['is_mobile_shop'] : 0;
 
 if ($w == "" || $w == "u") {
-    $iq_name     = addslashes(strip_tags($member['mb_name']));
+    $iq_name     = strip_tags($member['mb_name']);
     $iq_password = $member['mb_password'];
 
     if (!$iq_subject) alert("제목을 입력하여 주십시오.");
@@ -37,19 +37,24 @@ else
 
 if ($w == "")
 {
-    $sql = "insert {$g5['g5_shop_item_qa_table']}
-               set it_id = '$it_id',
-                   mb_id = '{$member['mb_id']}',
-                   iq_secret = '$iq_secret',
-                   iq_name  = '$iq_name',
-                   iq_email = '$iq_email',
-                   iq_hp = '$iq_hp',
-                   iq_password  = '$iq_password',
-                   iq_subject  = '$iq_subject',
-                   iq_question = '$iq_question',
-                   iq_time = '".G5_TIME_YMDHIS."',
-                   iq_ip = '".$_SERVER['REMOTE_ADDR']."' ";
-    sql_query($sql);
+    sql_pdo_query(" insert {$g5['g5_shop_item_qa_table']}
+                        set it_id = :it_id, mb_id = :mb_id, iq_secret = :iq_secret,
+                            iq_name = :iq_name, iq_email = :iq_email, iq_hp = :iq_hp,
+                            iq_password = :iq_password, iq_subject = :iq_subject, iq_question = :iq_question,
+                            iq_time = :iq_time, iq_ip = :iq_ip ",
+                  [
+                      ':it_id'       => $it_id,
+                      ':mb_id'       => $member['mb_id'],
+                      ':iq_secret'   => $iq_secret,
+                      ':iq_name'     => $iq_name,
+                      ':iq_email'    => $iq_email,
+                      ':iq_hp'       => $iq_hp,
+                      ':iq_password' => $iq_password,
+                      ':iq_subject'  => $iq_subject,
+                      ':iq_question' => $iq_question,
+                      ':iq_time'     => G5_TIME_YMDHIS,
+                      ':iq_ip'       => $_SERVER['REMOTE_ADDR'],
+                  ]);
     $iq_id = sql_insert_id();
     run_event('shop_item_qa_created', $iq_id, $it_id);
 
@@ -59,27 +64,31 @@ else if ($w == "u")
 {
     if (!$is_admin)
     {
-        $sql = " select count(*) as cnt from {$g5['g5_shop_item_qa_table']} where mb_id = '{$member['mb_id']}' and iq_id = '$iq_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_item_qa_table']} where mb_id = :mb_id and iq_id = :iq_id ",
+                            [':mb_id' => $member['mb_id'], ':iq_id' => $iq_id]);
         if (!$row['cnt'])
             alert("자신의 상품문의만 수정하실 수 있습니다.");
 
-        $sql = " select iq_answer from `{$g5['g5_shop_item_qa_table']}` where mb_id = '{$member['mb_id']}' and iq_id = '$iq_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select iq_answer from `{$g5['g5_shop_item_qa_table']}` where mb_id = :mb_id and iq_id = :iq_id ",
+                            [':mb_id' => $member['mb_id'], ':iq_id' => $iq_id]);
 
         if (isset($row['iq_answer']) && $row['iq_answer']) {
             alert("답변이 있는 상품문의는 수정하실 수 없습니다.");
         }
     }
 
-    $sql = " update {$g5['g5_shop_item_qa_table']}
-                set iq_secret = '$iq_secret',
-                    iq_email = '$iq_email',
-                    iq_hp = '$iq_hp',
-                    iq_subject = '$iq_subject',
-                    iq_question = '$iq_question'
-              where iq_id = '$iq_id' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['g5_shop_item_qa_table']}
+                       set iq_secret = :iq_secret, iq_email = :iq_email, iq_hp = :iq_hp,
+                           iq_subject = :iq_subject, iq_question = :iq_question
+                     where iq_id = :iq_id ",
+                  [
+                      ':iq_secret'   => $iq_secret,
+                      ':iq_email'    => $iq_email,
+                      ':iq_hp'       => $iq_hp,
+                      ':iq_subject'  => $iq_subject,
+                      ':iq_question' => $iq_question,
+                      ':iq_id'       => $iq_id,
+                  ]);
     run_event('shop_item_qa_updated', $iq_id, $it_id);
 
     $alert_msg = '상품문의가 수정 되었습니다.';
@@ -88,8 +97,8 @@ else if ($w == "d")
 {
     if (!$is_admin)
     {
-        $sql = " select iq_answer from {$g5['g5_shop_item_qa_table']} where mb_id = '{$member['mb_id']}' and iq_id = '$iq_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select iq_answer from {$g5['g5_shop_item_qa_table']} where mb_id = :mb_id and iq_id = :iq_id ",
+                            [':mb_id' => $member['mb_id'], ':iq_id' => $iq_id]);
         if (!$row)
             alert("자신의 상품문의만 삭제하실 수 있습니다.");
 
@@ -98,8 +107,9 @@ else if ($w == "d")
     }
 
     // 에디터로 첨부된 썸네일 이미지만 삭제
-    $sql = " select iq_question, iq_answer from {$g5['g5_shop_item_qa_table']} where iq_id = '$iq_id' and md5(concat(iq_id,iq_time,iq_ip)) = '{$hash}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select iq_question, iq_answer from {$g5['g5_shop_item_qa_table']}
+                            where iq_id = :iq_id and md5(concat(iq_id,iq_time,iq_ip)) = :hash ",
+                        [':iq_id' => $iq_id, ':hash' => $hash]);
 
     $imgs = get_editor_image($row['iq_question'], $get_editor_img_mode);
 
@@ -143,8 +153,9 @@ else if ($w == "d")
         }
     }
 
-    $sql = " delete from {$g5['g5_shop_item_qa_table']} where iq_id = '$iq_id' and md5(concat(iq_id,iq_time,iq_ip)) = '{$hash}' ";
-    sql_query($sql);
+    sql_pdo_query(" delete from {$g5['g5_shop_item_qa_table']}
+                     where iq_id = :iq_id and md5(concat(iq_id,iq_time,iq_ip)) = :hash ",
+                  [':iq_id' => $iq_id, ':hash' => $hash]);
     run_event('shop_item_qa_deleted', $iq_id, $it_id);
 
     $alert_msg = '상품문의가 삭제 되었습니다.';

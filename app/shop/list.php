@@ -27,8 +27,7 @@ if(defined('G5_THEME_SHOP_PATH')) {
     unset($theme_list_file);
 }
 
-$sql = " select * from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' and ca_use = '1'  ";
-$ca = sql_fetch($sql);
+$ca = sql_pdo_fetch(" select * from {$g5['g5_shop_category_table']} where ca_id = :ca_id and ca_use = '1' ", [':ca_id' => $ca_id]);
 if (! (isset($ca['ca_id']) && $ca['ca_id']))
     alert('등록된 분류가 없습니다.');
 

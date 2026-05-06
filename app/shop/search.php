@@ -88,7 +88,9 @@ if ($q) {
             $concat[] = "a.it_basic";
         $concat_fields = "concat(".implode(",' ',",$concat).")";
 
-        $detail_where[] = $concat_fields." like '%$word%' ";
+        // gnu5se: $word 는 LIKE 값. item_list::set_query 가 raw SQL 만 받으므로
+        //   placeholder 대신 sql_real_escape_string 으로 안전화.
+        $detail_where[] = $concat_fields." like '%".sql_real_escape_string($word)."%' ";
 
         // 인기검색어
         insert_popular($concat, $word);
@@ -98,10 +100,10 @@ if ($q) {
 }
 
 if ($qcaid)
-    $where[] = " a.ca_id like '$qcaid%' ";
+    $where[] = " a.ca_id like '".sql_real_escape_string($qcaid)."%' ";
 
 if ($qfrom && $qto)
-    $where[] = " a.it_price between '$qfrom' and '$qto' ";
+    $where[] = " a.it_price between '".(int)$qfrom."' and '".(int)$qto."' ";
 
 $sql_where = " where " . implode(" and ", $where);
 
