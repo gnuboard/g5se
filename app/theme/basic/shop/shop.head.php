@@ -59,6 +59,16 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+/* 옛날 UX 정리:
+   - .sctrl: main.20 의 ▶◾ (수직 롤링 효과재생/정지) — list_row>=2 + stacked-ul 일 때만
+     의미 있는데 grid 레이아웃에선 작동 안함
+   - .sct_sns / .sct_sns_wrap / .btn_share: 페이스북/트위터 공유 버튼 — UI 노이즈만 됨 */
+.m-shop-grid .sctrl,
+.m-shop-grid .sct_sns,
+.m-shop-grid .sct_sns_wrap,
+.m-shop-grid .btn_share {
+    display: none !important;
+}
 
 /* 레거시 shop skin (style.css) 의 흰 배경 / 검정 텍스트 hardcode 를 다크모드에서 토큰으로 덮어씀 */
 [data-theme="dark"] .smt_40 {
