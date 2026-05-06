@@ -766,9 +766,11 @@ function get_sql_search($search_ca_name, $search_field, $search_text, $search_op
 {
     global $g5;
 
+    // gnu5se: get_sql_search() 가 SQL 단편 string 을 반환해 호출자에 전달 →
+    //   placeholder/params 분리 불가능. 사용자 입력 값들은 sql_real_escape_string 으로 escape.
     $str = "";
     if ($search_ca_name)
-        $str = " ca_name = '$search_ca_name' ";
+        $str = " ca_name = '".sql_real_escape_string($search_ca_name)."' ";
 
     $search_text = strip_tags(($search_text));
     $search_text = trim(stripslashes($search_text));
@@ -821,19 +823,22 @@ function get_sql_search($search_ca_name, $search_field, $search_text, $search_op
             $field[$k] = preg_match("/^[\w\,\|]+$/", $field[$k]) ? strtolower($field[$k]) : "wr_subject";
 
             $str .= $op2;
+            // 사용자 입력 값 escape
+            $esc_word = sql_real_escape_string($s[$i]);
+            $esc_search = sql_real_escape_string($search_str);
             switch ($field[$k]) {
                 case "mb_id" :
                 case "wr_name" :
-                    $str .= " $field[$k] = '$s[$i]' ";
+                    $str .= " $field[$k] = '$esc_word' ";
                     break;
                 case "wr_hit" :
                 case "wr_good" :
                 case "wr_nogood" :
-                    $str .= " $field[$k] >= '$s[$i]' ";
+                    $str .= " $field[$k] >= '$esc_word' ";
                     break;
                 // 번호는 해당 검색어에 -1 을 곱함
                 case "wr_num" :
-                    $str .= "$field[$k] = ".((-1)*$s[$i]);
+                    $str .= "$field[$k] = ".((-1)*(int)$s[$i]);
                     break;
                 case "wr_ip" :
                 case "wr_password" :
@@ -842,9 +847,9 @@ function get_sql_search($search_ca_name, $search_field, $search_text, $search_op
                 // LIKE 보다 INSTR 속도가 빠름
                 default :
                     if (preg_match("/[a-zA-Z]/", $search_str))
-                        $str .= "INSTR(LOWER($field[$k]), LOWER('$search_str'))";
+                        $str .= "INSTR(LOWER($field[$k]), LOWER('$esc_search'))";
                     else
-                        $str .= "INSTR($field[$k], '$search_str')";
+                        $str .= "INSTR($field[$k], '$esc_search')";
                     break;
             }
             $op2 = " or ";
