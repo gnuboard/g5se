@@ -13,8 +13,7 @@ switch ($action) {
 
         // 선택필드 초기화
         if( $s_cart_id ){
-            $sql = " update {$g5['g5_shop_cart_table']} set ct_select = '0' where od_id = '$s_cart_id' ";
-            sql_query($sql);
+            sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_select = '0' where od_id = :od_id ", [':od_id' => $s_cart_id]);
         }
 
         include_once(G5_SHOP_SKIN_PATH.'/boxcart.skin.php'); // 장바구니
@@ -38,10 +37,8 @@ switch ($action) {
         $it_id = isset($_POST['it_id']) ? safe_replace_regex($_POST['it_id'], 'it_id') : '';
 
         // 장바구니 상품삭제
-        $sql = " delete from {$g5['g5_shop_cart_table']}
-                    where od_id = '".$s_cart_id."'
-                      and it_id = '{$it_id}' ";
-        sql_query($sql);
+        sql_pdo_query(" delete from {$g5['g5_shop_cart_table']} where od_id = :od_id and it_id = :it_id ",
+                      [':od_id' => $s_cart_id, ':it_id' => $it_id]);
 
         die(json_encode(array('error' => '')));
 
@@ -90,8 +87,8 @@ switch ($action) {
 
             // 옵션정보를 얻어서 배열에 저장
             $opt_list = array();
-            $sql = " select * from {$g5['g5_shop_item_option_table']} where it_id = '$it_id' order by io_no asc ";
-            $result = sql_query($sql);
+            $result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']} where it_id = :it_id order by io_no asc ",
+                                   [':it_id' => $it_id]);
             $lst_count = 0;
             for($k=0; $row=sql_fetch_array($result); $k++) {
                 $opt_list[$row['io_type']][$row['io_id']]['id'] = $row['io_id'];
@@ -115,7 +112,8 @@ switch ($action) {
 
             // 바로구매에 있던 장바구니 자료를 지운다.
             if($i == 0 && $sw_direct)
-                sql_query(" delete from {$g5['g5_shop_cart_table']} where od_id = '$tmp_cart_id' and ct_direct = 1 ", false);
+                sql_pdo_query(" delete from {$g5['g5_shop_cart_table']} where od_id = :od_id and ct_direct = 1 ",
+                              [':od_id' => $tmp_cart_id], false);
 
             // 최소, 최대 수량 체크
             if($it['it_buy_min_qty'] || $it['it_buy_max_qty']) {
@@ -135,48 +133,36 @@ switch ($action) {
 
                 // 기존에 장바구니에 담긴 상품이 있는 경우에 최대 구매수량 체크
                 if($it['it_buy_max_qty'] > 0) {
-                    $sql4 = " select sum(ct_qty) as ct_sum
-                                from {$g5['g5_shop_cart_table']}
-                                where od_id = '$tmp_cart_id'
-                                  and it_id = '$it_id'
-                                  and io_type = '0'
-                                  and ct_status = '쇼핑' ";
-                    $row4 = sql_fetch($sql4);
+                    $row4 = sql_pdo_fetch(" select sum(ct_qty) as ct_sum
+                                              from {$g5['g5_shop_cart_table']}
+                                             where od_id = :od_id and it_id = :it_id
+                                               and io_type = '0' and ct_status = '쇼핑' ",
+                                         [':od_id' => $tmp_cart_id, ':it_id' => $it_id]);
 
                     if(($sum_qty + $row4['ct_sum']) > $it['it_buy_max_qty'])
                         die(json_encode(array('error' => $it['it_name'].'의 선택옵션 개수 총합 '.number_format($it['it_buy_max_qty']).'개 이하로 주문해 주십시오.', './cart.php')));
                 }
             }
 
-            // 장바구니에 Insert
-            // 바로구매일 경우 장바구니가 체크된것으로 강제 설정
+            // 장바구니에 Insert — bulk VALUES → per-iteration single INSERT
             $ct_select = 0;
             $ct_select_time = '0000-00-00 00:00:00';
-
-            // 장바구니에 Insert
-            $comma = '';
-            $sql = " INSERT INTO {$g5['g5_shop_cart_table']}
-                            ( od_id, mb_id, it_id, it_name, it_sc_type, it_sc_method, it_sc_price, it_sc_minimum, it_sc_qty, ct_status, ct_price, ct_point, ct_point_use, ct_stock_use, ct_option, ct_qty, ct_notax, io_id, io_type, io_price, ct_time, ct_ip, ct_send_cost, ct_direct, ct_select, ct_select_time )
-                        VALUES ";
 
             for($k=0; $k<$opt_count; $k++) {
                 $io_id = isset($_POST['io_id'][$it_id][$k]) ? preg_replace(G5_OPTION_ID_FILTER, '', $_POST['io_id'][$it_id][$k]) : '';
                 $io_type = isset($_POST['io_type'][$it_id][$k]) ? preg_replace('#[^01]#', '', $_POST['io_type'][$it_id][$k]) : '';
                 $io_value = isset($_POST['io_value'][$it_id][$k]) ? $_POST['io_value'][$it_id][$k] : '';
 
-                // 선택옵션정보가 존재하는데 선택된 옵션이 없으면 건너뜀
                 if($lst_count && $io_id == '')
                     continue;
-                
+
                 $opt_list_type_id_use = isset($opt_list[$io_type][$io_id]['use']) ? $opt_list[$io_type][$io_id]['use'] : '';
-                // 구매할 수 없는 옵션은 건너뜀
                 if($io_id && ! $opt_list_type_id_use)
                     continue;
 
                 $io_price = isset($opt_list[$io_type][$io_id]['price']) ? $opt_list[$io_type][$io_id]['price'] : 0;
                 $ct_qty = isset($_POST['ct_qty'][$it_id][$k]) ? (int) $_POST['ct_qty'][$it_id][$k] : 0;
 
-                // 구매가격이 음수인지 체크
                 if($io_type) {
                     if((int)$io_price < 0)
                         die(json_encode(array('error' => '구매금액이 음수인 상품은 구매할 수 없습니다.')));
@@ -186,15 +172,11 @@ switch ($action) {
                 }
 
                 // 동일옵션의 상품이 있으면 수량 더함
-                $sql2 = " select ct_id, io_type, ct_qty
-                            from {$g5['g5_shop_cart_table']}
-                            where od_id = '$tmp_cart_id'
-                              and it_id = '$it_id'
-                              and io_id = '$io_id'
-                              and ct_status = '쇼핑' ";
-                $row2 = sql_fetch($sql2);
+                $row2 = sql_pdo_fetch(" select ct_id, io_type, ct_qty
+                                          from {$g5['g5_shop_cart_table']}
+                                         where od_id = :od_id and it_id = :it_id and io_id = :io_id and ct_status = '쇼핑' ",
+                                     [':od_id' => $tmp_cart_id, ':it_id' => $it_id, ':io_id' => $io_id]);
                 if(isset($row2['ct_id']) && $row2['ct_id']) {
-                    // 재고체크
                     $tmp_ct_qty = $row2['ct_qty'];
                     if(!$io_id)
                         $tmp_it_stock_qty = get_it_stock_qty($it_id);
@@ -206,10 +188,8 @@ switch ($action) {
                         die(json_encode(array('error' => $io_value." 의 재고수량이 부족합니다.\n\n현재 재고수량 : " . number_format($tmp_it_stock_qty) . " 개")));
                     }
 
-                    $sql3 = " update {$g5['g5_shop_cart_table']}
-                                set ct_qty = ct_qty + '$ct_qty'
-                                where ct_id = '{$row2['ct_id']}' ";
-                    sql_query($sql3);
+                    sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_qty = ct_qty + :ct_qty where ct_id = :ct_id ",
+                                  [':ct_qty' => $ct_qty, ':ct_id' => $row2['ct_id']]);
                     continue;
                 }
 
@@ -225,24 +205,48 @@ switch ($action) {
                     if($point < 0)
                         $point = 0;
                 }
-                
+
                 $ct_send_cost = 0;
 
-                // 배송비결제
                 if($it['it_sc_type'] == 1)
                     $ct_send_cost = 2; // 무료
                 else if($it['it_sc_type'] > 1 && $it['it_sc_method'] == 1)
                     $ct_send_cost = 1; // 착불
 
-                $io_value = sql_real_escape_string(strip_tags($io_value));
-
-                $sql .= $comma."( '$tmp_cart_id', '{$member['mb_id']}', '{$it['it_id']}', '".addslashes($it['it_name'])."', '{$it['it_sc_type']}', '{$it['it_sc_method']}', '{$it['it_sc_price']}', '{$it['it_sc_minimum']}', '{$it['it_sc_qty']}', '쇼핑', '{$it['it_price']}', '$point', '0', '0', '$io_value', '$ct_qty', '{$it['it_notax']}', '$io_id', '$io_type', '$io_price', '".G5_TIME_YMDHIS."', '".$_SERVER['REMOTE_ADDR']."', '$ct_send_cost', '$sw_direct', '$ct_select', '$ct_select_time' )";
-                $comma = ' , ';
+                sql_pdo_query(" INSERT INTO {$g5['g5_shop_cart_table']}
+                                    ( od_id, mb_id, it_id, it_name, it_sc_type, it_sc_method, it_sc_price, it_sc_minimum, it_sc_qty,
+                                      ct_status, ct_price, ct_point, ct_point_use, ct_stock_use, ct_option, ct_qty, ct_notax,
+                                      io_id, io_type, io_price, ct_time, ct_ip, ct_send_cost, ct_direct, ct_select, ct_select_time )
+                                VALUES (:od_id, :mb_id, :it_id, :it_name, :it_sc_type, :it_sc_method, :it_sc_price, :it_sc_minimum, :it_sc_qty,
+                                        '쇼핑', :it_price, :point, '0', '0', :io_value, :ct_qty, :it_notax,
+                                        :io_id, :io_type, :io_price, :ct_time, :ct_ip, :ct_send_cost, :ct_direct, :ct_select, :ct_select_time) ",
+                              [
+                                  ':od_id'          => $tmp_cart_id,
+                                  ':mb_id'          => $member['mb_id'],
+                                  ':it_id'          => $it['it_id'],
+                                  ':it_name'        => $it['it_name'],
+                                  ':it_sc_type'     => $it['it_sc_type'],
+                                  ':it_sc_method'   => $it['it_sc_method'],
+                                  ':it_sc_price'    => $it['it_sc_price'],
+                                  ':it_sc_minimum'  => $it['it_sc_minimum'],
+                                  ':it_sc_qty'      => $it['it_sc_qty'],
+                                  ':it_price'       => $it['it_price'],
+                                  ':point'          => $point,
+                                  ':io_value'       => strip_tags($io_value),
+                                  ':ct_qty'         => $ct_qty,
+                                  ':it_notax'       => $it['it_notax'],
+                                  ':io_id'          => $io_id,
+                                  ':io_type'        => $io_type,
+                                  ':io_price'       => $io_price,
+                                  ':ct_time'        => G5_TIME_YMDHIS,
+                                  ':ct_ip'          => $_SERVER['REMOTE_ADDR'],
+                                  ':ct_send_cost'   => $ct_send_cost,
+                                  ':ct_direct'      => $sw_direct,
+                                  ':ct_select'      => $ct_select,
+                                  ':ct_select_time' => $ct_select_time,
+                              ]);
                 $ct_count++;
             }
-
-            if($ct_count > 0)
-                sql_query($sql);
         }
 
         die(json_encode(array('error' => '')));
@@ -331,17 +335,18 @@ switch ($action) {
         if(!$row['it_id'])
             die('상품정보가 존재하지 않습니다.');
 
-        $sql = " select wi_id from {$g5['g5_shop_wish_table']}
-                  where mb_id = '{$member['mb_id']}' and it_id = '$it_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select wi_id from {$g5['g5_shop_wish_table']} where mb_id = :mb_id and it_id = :it_id ",
+                            [':mb_id' => $member['mb_id'], ':it_id' => $it_id]);
 
         if (! (isset($row['wi_id']) && $row['wi_id'])) {
-            $sql = " insert {$g5['g5_shop_wish_table']}
-                        set mb_id = '{$member['mb_id']}',
-                            it_id = '$it_id',
-                            wi_time = '".G5_TIME_YMDHIS."',
-                            wi_ip = '".$_SERVER['REMOTE_ADDR']."' ";
-            sql_query($sql);
+            sql_pdo_query(" insert {$g5['g5_shop_wish_table']}
+                                set mb_id = :mb_id, it_id = :it_id, wi_time = :wi_time, wi_ip = :wi_ip ",
+                          [
+                              ':mb_id'   => $member['mb_id'],
+                              ':it_id'   => $it_id,
+                              ':wi_time' => G5_TIME_YMDHIS,
+                              ':wi_ip'   => $_SERVER['REMOTE_ADDR'],
+                          ]);
 
             die('OK');
         } else {
