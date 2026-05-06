@@ -265,7 +265,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                     <th scope="row"><label for="mb_password">비밀번호<?php echo $sound_only ?></label></th>
                     <td>
                         <div>
-                        <input type="password" name="mb_password" id="mb_password" <?php echo $required_mb_password ?> class="frm_input <?php echo $required_mb_password ?>" size="15" maxlength="20">
+                        <input type="password" name="mb_password" id="mb_password" <?php echo $required_mb_password ?> class="frm_input <?php echo $required_mb_password ?>" size="15" maxlength="20" autocomplete="new-password">
                         </div>
                         <?php
                         // 회원관리에서는 캡챠 사용 안 함 (gnu5se 정책). 변수만 빈 값으로
