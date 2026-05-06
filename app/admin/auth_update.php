@@ -27,12 +27,6 @@ if (!(isset($mb['mb_id']) && $mb['mb_id'])) {
 
 check_admin_token();
 
-require_once G5_CAPTCHA_PATH . '/captcha.lib.php';
-
-if (!chk_captcha()) {
-    alert('자동등록방지 숫자가 틀렸습니다.');
-}
-
 $sql = " insert into {$g5['auth_table']}
             set mb_id   = '$mb_id',
                 au_menu = '$au_menu',

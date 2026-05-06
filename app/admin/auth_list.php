@@ -240,17 +240,6 @@ echo $pagelist;
                             <label for="d">d (삭제)</label>
                         </td>
                     </tr>
-                    <tr>
-                        <th scope="row">자동등록방지</th>
-                        <td>
-                            <?php
-                            require_once G5_CAPTCHA_PATH . '/captcha.lib.php';
-                            $captcha_html = captcha_html();
-                            $captcha_js   = chk_captcha_js();
-                            echo $captcha_html;
-                            ?>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -264,9 +253,6 @@ echo $pagelist;
 
 <script>
     function fauth_add_submit(f) {
-
-        <?php echo $captcha_js; // 캡챠 사용시 자바스크립트에서 입력된 캡챠를 검사함 ?>
-
         return true;
     }
 
