@@ -107,15 +107,20 @@ class Router
         // ajax.* 엔드포인트 (점 허용) — /admin/ajax.token, /admin/ajax.use_captcha 등
         // 캡처 이름 _adminpage: 'page' 를 쓰면 페이지네이션 ?page=N 와 충돌해서
         // $_GET['page'] 가 페이지명으로 덮어써짐 → list 페이지 페이징 깨짐.
-        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i' => 'admin/{_adminpage}.php',
+        // 주의: [a-z0-9_.]+ 가 greedy 라 trailing .php 까지 잡아먹음 (ajax.foo.php → 캡처에 .php 포함
+        //  → target {_x}.php → ajax.foo.php.php 이중확장자). .php 있는 것/없는 것 두 패턴으로 분리.
+        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+?)\.php/?$#i' => 'admin/{_adminpage}.php',
+        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+)/?$#i'       => 'admin/{_adminpage}.php',
         // 서브디렉토리 ajax.* 도 허용 — /admin/shop_admin/ajax.ca_id 등
-        '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*/ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i' => 'admin/{_adminpage}.php',
+        '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*/ajax\.[a-z0-9_.]+?)\.php/?$#i' => 'admin/{_adminpage}.php',
+        '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*/ajax\.[a-z0-9_.]+)/?$#i'       => 'admin/{_adminpage}.php',
         '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'admin/{_adminpage}.php',
 
         // shop — admin 동일 패턴. 정적 자산 (img/css/js) 은 .htaccess 가 먼저 매핑.
         // 서브디렉토리 (inicis/lg/nicepay/toss/kakaopay/naverpay/kcp) 도 segment-by-segment 룰로 통과.
         '#^/shop/?$#'                                                                  => 'shop/index.php',
-        '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i'                     => 'shop/{_shoppage}.php',
+        '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+?)\.php/?$#i'                         => 'shop/{_shoppage}.php',
+        '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+)/?$#i'                               => 'shop/{_shoppage}.php',
         '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
