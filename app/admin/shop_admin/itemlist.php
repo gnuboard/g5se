@@ -1,7 +1,10 @@
 <?php
 $sub_menu = '400300';
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
 
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'r');
 auth_check_menu($auth, $sub_menu, "r");
 
 if (isset($sfl) && $sfl && !in_array($sfl, array('it_name','it_id','it_maker','it_brand','it_model','it_origin','it_sell_email'))) {
@@ -9,7 +12,14 @@ if (isset($sfl) && $sfl && !in_array($sfl, array('it_name','it_id','it_maker','i
 }
 
 $g5['title'] = '상품관리';
-include_once (G5_ADMIN_PATH.'/admin.head.php');
+admin_layout_start($g5["title"], "shop");
+?>
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<header class="flex items-center gap-3 mb-5">
+    <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5["title"]) ?></h2>
+</header>
+<div class="legacy-admin-content space-y-4">
+<?php
 
 // 분류
 $ca_list  = '<option value="">선택</option>'.PHP_EOL;
@@ -306,4 +316,8 @@ function excelform(url)
 </script>
 
 <?php
-include_once (G5_ADMIN_PATH.'/admin.tail.php');
+?>
+</div><!-- /.legacy-admin-content -->
+</main>
+<?php admin_layout_end(); ?>
+<?php

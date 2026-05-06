@@ -1,5 +1,8 @@
 <?php
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'r');
 include_once(G5_LIB_PATH.'/iteminfo.lib.php');
 
 if(isset($it['it_id']) && $it['it_id']) {

@@ -1,6 +1,9 @@
 <?php
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
 
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'r');
 $ca_id = isset($_POST['ca_id']) ? trim($_POST['ca_id']) : '';
 if (preg_match("/[^0-9a-z]/i", $ca_id)) {
     die("{\"error\":\"분류코드는 영문자 숫자 만 입력 가능합니다.\"}");

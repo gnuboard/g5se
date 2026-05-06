@@ -1,7 +1,10 @@
 <?php
 $sub_menu = '400200';
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
 
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'w');
 auth_check_menu($auth, $sub_menu, "w");
 
 $ca_include_head = isset($_POST['ca_include_head']) ? trim($_POST['ca_include_head']) : '';
