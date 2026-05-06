@@ -654,8 +654,8 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
 | 영역 | 파일 | 상태 |
 |---|---|---|
-| chrome | `theme/basic/shop/shop.head.php` | ✗ |
-| chrome | `theme/basic/shop/shop.tail.php` | ✗ |
+| chrome | `theme/basic/shop/shop.head.php` | ● modern sticky 헤더 + TNB + 검색 + nav + side drawer |
+| chrome | `theme/basic/shop/shop.tail.php` | ● modern footer (회사정보 grid + 최신글/접속자 카드) |
 | chrome | `theme/basic/shop/category.php` | ✗ |
 | 진입 | `theme/basic/shop/index.php` | ✗ |
 | 카테고리 list | `skin/shop/basic/list.10.skin.php` | ● modern grid 카드 |
