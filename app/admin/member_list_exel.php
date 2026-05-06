@@ -299,7 +299,7 @@ function startExcelDownload(selectedFields = []) {
     const query = buildDownloadParams(selectedFields);
     showDownloadPopup();
 
-    eventSource = new EventSource(`member_list_exel_export.php?${query}`);
+    eventSource = new EventSource(`<?php echo G5_ADMIN_URL ?>/member_list_exel_export.php?${query}`);
     eventSource.onmessage = handleProgressUpdate();
     eventSource.onerror = handleDownloadError();
 }
