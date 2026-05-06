@@ -30,8 +30,8 @@ if (!($it['ca_use'] && $it['it_use'])) {
 include_once(G5_LIB_PATH.'/iteminfo.lib.php');
 
 // 분류 테이블에서 분류 상단, 하단 코드를 얻음
-$sql = " select ca_skin_dir, ca_include_head, ca_include_tail, ca_cert_use, ca_adult_use from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id']}' ";
-$ca = sql_fetch($sql);
+$ca = sql_pdo_fetch(" select ca_skin_dir, ca_include_head, ca_include_tail, ca_cert_use, ca_adult_use from {$g5['g5_shop_category_table']} where ca_id = :ca_id ",
+                   [':ca_id' => $it['ca_id']]);
 
 // 본인인증, 성인인증체크
 if(!$is_admin) {
@@ -62,7 +62,7 @@ if (!$saved) {
 
 // 조회수 증가
 if (get_cookie('ck_it_id') != $it_id) {
-    sql_query(" update {$g5['g5_shop_item_table']} set it_hit = it_hit + 1 where it_id = '$it_id' "); // 1증가
+    sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_hit = it_hit + 1 where it_id = :it_id ", [':it_id' => $it_id]); // 1증가
     set_cookie("ck_it_id", $it_id, 3600); // 1시간동안 저장
 }
 
@@ -146,8 +146,10 @@ else
 
 
 // 이전 상품보기
-$sql = " select it_id, it_name from {$g5['g5_shop_item_table']} where it_id > '$it_id' and SUBSTRING(ca_id,1,4) = '".substr($it['ca_id'],0,4)."' and it_use = '1' order by it_id asc limit 1 ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select it_id, it_name from {$g5['g5_shop_item_table']}
+                        where it_id > :it_id and SUBSTRING(ca_id,1,4) = :ca_prefix and it_use = '1'
+                        order by it_id asc limit 1 ",
+                    [':it_id' => $it_id, ':ca_prefix' => substr($it['ca_id'], 0, 4)]);
 if (isset($row['it_id']) && $row['it_id']) {
     $prev_title = '이전상품<span class="sound_only"> '.$row['it_name'].'</span>';
     $prev_href = '<a href="'.get_pretty_url('shop', $row['it_id']).'" id="siblings_prev">';
@@ -159,8 +161,10 @@ if (isset($row['it_id']) && $row['it_id']) {
 }
 
 // 다음 상품보기
-$sql = " select it_id, it_name from {$g5['g5_shop_item_table']} where it_id < '$it_id' and SUBSTRING(ca_id,1,4) = '".substr($it['ca_id'],0,4)."' and it_use = '1' order by it_id desc limit 1 ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select it_id, it_name from {$g5['g5_shop_item_table']}
+                        where it_id < :it_id and SUBSTRING(ca_id,1,4) = :ca_prefix and it_use = '1'
+                        order by it_id desc limit 1 ",
+                    [':it_id' => $it_id, ':ca_prefix' => substr($it['ca_id'], 0, 4)]);
 if (isset($row['it_id']) && $row['it_id']) {
     $next_title = '다음 상품<span class="sound_only"> '.$row['it_name'].'</span>';
     $next_href = '<a href="'.get_pretty_url('shop', $row['it_id']).'" id="siblings_next">';
@@ -175,19 +179,21 @@ if (isset($row['it_id']) && $row['it_id']) {
 $star_score = get_star_image($it['it_id']);
 
 // 관리자가 확인한 사용후기의 개수를 얻음
-$sql = " select count(*) as cnt from `{$g5['g5_shop_item_use_table']}` where it_id = '{$it_id}' and is_confirm = '1' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from `{$g5['g5_shop_item_use_table']}` where it_id = :it_id and is_confirm = '1' ",
+                    [':it_id' => $it_id]);
 $item_use_count = $row['cnt'];
 
 // 상품문의의 개수를 얻음
-$sql = " select count(*) as cnt from `{$g5['g5_shop_item_qa_table']}` where it_id = '{$it_id}' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt from `{$g5['g5_shop_item_qa_table']}` where it_id = :it_id ",
+                    [':it_id' => $it_id]);
 $item_qa_count = $row['cnt'];
 
 // 관련상품의 개수를 얻음
 if($default['de_rel_list_use']) {
-    $sql = " select count(*) as cnt from {$g5['g5_shop_item_relation_table']} a left join {$g5['g5_shop_item_table']} b on (a.it_id2=b.it_id) where a.it_id = '{$it['it_id']}' and  b.it_use='1' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_item_relation_table']} a
+                            left join {$g5['g5_shop_item_table']} b on (a.it_id2=b.it_id)
+                            where a.it_id = :it_id and b.it_use='1' ",
+                        [':it_id' => $it['it_id']]);
     $item_relation_count = $row['cnt'];
 }
 

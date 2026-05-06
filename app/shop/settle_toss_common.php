@@ -108,46 +108,45 @@ $result = false;
  * 입금 완료 처리
  */
 if($TOSS_STATUS == "DONE"){
-    
+
     // 입금결과 처리
-    $sql = " select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = '{$TOSS_ORDERID}' and pp_tno = '{$paymentKey}'";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id and pp_tno = :pp_tno ",
+                        [':pp_id' => $TOSS_ORDERID, ':pp_tno' => $paymentKey]);
 
     if($row['pp_id']) {
         // 개인결제 UPDATE
-        $add_update_sql = '';
-        
-        // 현금영수증 발급시 1 또는 2 이면
+        $pp_sql = " update {$g5['g5_shop_personalpay_table']}
+                       set pp_receipt_price = :amt, pp_receipt_time = :receipt_time, pp_deposit_name = :deposit_name ";
+        $pp_params = [':amt' => $totalAmount, ':receipt_time' => $receipt_time, ':deposit_name' => $depositorName, ':pp_id' => $TOSS_ORDERID];
+
         if ($RcptType) {
-            $add_update_sql = "
-            , pp_cash           = '1',
-            pp_cash_no        = '".$RcptAuthCode."',
-            pp_cash_info      = '".serialize(array('TID'=>$RcptTID, 'ApplNum'=>$RcptAuthCode, 'AuthDate'=>$approvedAt, 'receiptUrl'=>$RcptReceiptUrl))."'
-            ";
+            $pp_sql .= " , pp_cash = '1', pp_cash_no = :cash_no, pp_cash_info = :cash_info ";
+            $pp_params[':cash_no']   = $RcptAuthCode;
+            $pp_params[':cash_info'] = serialize(array('TID'=>$RcptTID, 'ApplNum'=>$RcptAuthCode, 'AuthDate'=>$approvedAt, 'receiptUrl'=>$RcptReceiptUrl));
         }
-        
-        $sql = " update {$g5['g5_shop_personalpay_table']}
-                    set pp_receipt_price    = '$totalAmount',
-                        pp_receipt_time     = '$receipt_time',
-                        pp_deposit_name = '$depositorName'
-                        $add_update_sql
-                    where pp_id = '$TOSS_ORDERID'";
-        $result = sql_query($sql, false);
+        $pp_sql .= " where pp_id = :pp_id ";
+        $result = sql_pdo_query($pp_sql, $pp_params, false);
 
         if($row['od_id']) {
             // 주문서 UPDATE
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_receipt_price = od_receipt_price + '$totalAmount',
-                            od_receipt_time = '$receipt_time',
-                            od_deposit_name = '$depositorName',
-                            od_shop_memo = concat(od_shop_memo, \"\\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time."\")
-                        where od_id = '{$row['od_id']}' ";
-            $result = sql_query($sql, FALSE);
+            $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                        set od_receipt_price = od_receipt_price + :amt,
+                                            od_receipt_time = :receipt_time,
+                                            od_deposit_name = :deposit_name,
+                                            od_shop_memo = concat(od_shop_memo, :memo)
+                                      where od_id = :od_id ",
+                                   [
+                                       ':amt'          => $totalAmount,
+                                       ':receipt_time' => $receipt_time,
+                                       ':deposit_name' => $depositorName,
+                                       ':memo'         => "\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time,
+                                       ':od_id'        => $row['od_id'],
+                                   ], FALSE);
         }
     } else {
         // 주문내역에 secret 검증 추가
-        $sql = " select od_id from {$g5['g5_shop_order_table']} where od_id = '$TOSS_ORDERID' and od_tno = '$paymentKey'";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select od_id from {$g5['g5_shop_order_table']} where od_id = :od_id and od_tno = :od_tno ",
+                            [':od_id' => $TOSS_ORDERID, ':od_tno' => $paymentKey]);
         if(!$row['od_id']) {
             write_toss_log("주문내역 조회 실패", $TOSS_ORDERID, $TOSS_STATUS);
             http_response_code(400);
@@ -155,13 +154,11 @@ if($TOSS_STATUS == "DONE"){
         }
 
         // 주문서 UPDATE
-        $sql = " update {$g5['g5_shop_order_table']}
-                    set od_receipt_price = '$totalAmount',
-                        od_receipt_time = '$receipt_time',
-                        od_deposit_name = '$depositorName'
-                    where od_id = '$TOSS_ORDERID'
-                    and od_tno = '$paymentKey'";
-        $result = sql_query($sql, FALSE);
+        $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                    set od_receipt_price = :amt, od_receipt_time = :receipt_time, od_deposit_name = :deposit_name
+                                  where od_id = :od_id and od_tno = :od_tno ",
+                               [':amt' => $totalAmount, ':receipt_time' => $receipt_time, ':deposit_name' => $depositorName,
+                                ':od_id' => $TOSS_ORDERID, ':od_tno' => $paymentKey], FALSE);
     }
 
     if($result) {
@@ -171,40 +168,30 @@ if($TOSS_STATUS == "DONE"){
             $od_id = $TOSS_ORDERID;
 
         // 주문정보 체크
-        $sql = " select count(od_id) as cnt
-                    from {$g5['g5_shop_order_table']}
-                    where od_id = '$od_id'
-                        and od_status = '주문' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = :od_id and od_status = '주문' ",
+                            [':od_id' => $od_id]);
 
         if($row['cnt'] == 1) {
             // 미수금 정보 업데이트
             $info = get_order_info($od_id);
-            
-            $add_update_sql = '';
 
-            // 현금영수증 발급시 1 또는 2 이면
+            $upd_sql = " update {$g5['g5_shop_order_table']} set od_misu = :od_misu ";
+            $upd_params = [':od_misu' => $info['od_misu'], ':od_id' => $od_id];
+
             if ($RcptType) {
-                $add_update_sql = "
-                , od_cash           = '1',
-                od_cash_no        = '".$RcptAuthCode."',
-                od_cash_info      = '".serialize(array('TID'=>$RcptTID, 'ApplNum'=>$RcptAuthCode, 'AuthDate'=>$approvedAt, 'receiptUrl'=>$RcptReceiptUrl))."'
-                ";
+                $upd_sql .= " , od_cash = '1', od_cash_no = :cash_no, od_cash_info = :cash_info ";
+                $upd_params[':cash_no']   = $RcptAuthCode;
+                $upd_params[':cash_info'] = serialize(array('TID'=>$RcptTID, 'ApplNum'=>$RcptAuthCode, 'AuthDate'=>$approvedAt, 'receiptUrl'=>$RcptReceiptUrl));
             }
-
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_misu = '{$info['od_misu']}' $add_update_sql ";
             if($info['od_misu'] == 0)
-                $sql .= " , od_status = '입금' ";
-            $sql .= " where od_id = '$od_id' ";
-            sql_query($sql, FALSE);
+                $upd_sql .= " , od_status = '입금' ";
+            $upd_sql .= " where od_id = :od_id ";
+            sql_pdo_query($upd_sql, $upd_params, FALSE);
 
             // 장바구니 상태변경
             if($info['od_misu'] == 0) {
-                $sql = " update {$g5['g5_shop_cart_table']}
-                            set ct_status = '입금'
-                            where od_id = '$od_id' ";
-                sql_query($sql, FALSE);
+                sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_status = '입금' where od_id = :od_id ",
+                              [':od_id' => $od_id], FALSE);
             }
         }
     }
@@ -216,51 +203,55 @@ if($TOSS_STATUS == "DONE"){
 elseif($TOSS_STATUS == "WAITING_FOR_DEPOSIT")
 {
     // 개인결제 정보 조회
-    $sql = " select pp_id, od_id, pp_name, pp_hp, pp_tel from {$g5['g5_shop_personalpay_table']} where pp_id = '{$TOSS_ORDERID}' and pp_tno = '{$paymentKey}'";
-    $row = sql_fetch($sql);
-    
-    if($row['pp_id']) {        
+    $row = sql_pdo_fetch(" select pp_id, od_id, pp_name, pp_hp, pp_tel from {$g5['g5_shop_personalpay_table']}
+                            where pp_id = :pp_id and pp_tno = :pp_tno ",
+                        [':pp_id' => $TOSS_ORDERID, ':pp_tno' => $paymentKey]);
+
+    if($row['pp_id']) {
         // 개인결제 정보 롤백
-        $sql = " update {$g5['g5_shop_personalpay_table']}
-                    set pp_receipt_price = 0,
-                        pp_receipt_time = '',
-                        pp_cash = 0,
-                        pp_cash_no = '',
-                        pp_cash_info = ''
-                    where pp_id = '{$TOSS_ORDERID}' and pp_tno = '{$paymentKey}'";
-        $result = sql_query($sql, FALSE);
-        
+        $result = sql_pdo_query(" update {$g5['g5_shop_personalpay_table']}
+                                    set pp_receipt_price = 0, pp_receipt_time = '',
+                                        pp_cash = 0, pp_cash_no = '', pp_cash_info = ''
+                                  where pp_id = :pp_id and pp_tno = :pp_tno ",
+                               [':pp_id' => $TOSS_ORDERID, ':pp_tno' => $paymentKey], FALSE);
+
         if($row['od_id']) {
             // 주문서에서 개인결제 금액 차감
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_receipt_price = od_receipt_price - '$totalAmount',
-                            od_shop_memo = concat(od_shop_memo, \"\\n개인결제 ".$row['pp_id']." 가상계좌 입금 오류로 취소 - ".date('Y-m-d H:i:s')."\")
-                        where od_id = '{$row['od_id']}' ";
-            $result = sql_query($sql, FALSE);
+            $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                        set od_receipt_price = od_receipt_price - :amt,
+                                            od_shop_memo = concat(od_shop_memo, :memo)
+                                      where od_id = :od_id ",
+                                   [
+                                       ':amt'   => $totalAmount,
+                                       ':memo'  => "\n개인결제 ".$row['pp_id']." 가상계좌 입금 오류로 취소 - ".date('Y-m-d H:i:s'),
+                                       ':od_id' => $row['od_id'],
+                                   ], FALSE);
         }
     } else {
         // 일반 주문 롤백 전에 데이터 존재 확인
-        $sql = " select od_id, od_name, od_hp, od_tel from {$g5['g5_shop_order_table']} where od_id = '{$TOSS_ORDERID}' and od_tno = '{$paymentKey}'";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select od_id, od_name, od_hp, od_tel from {$g5['g5_shop_order_table']}
+                                where od_id = :od_id and od_tno = :od_tno ",
+                            [':od_id' => $TOSS_ORDERID, ':od_tno' => $paymentKey]);
         if(empty($row['od_id'])) {
             write_toss_log("주문 데이터가 존재하지 않음", $TOSS_ORDERID, $TOSS_STATUS);
             http_response_code(400);
             exit;
         }
-        
+
         // 일반 주문 입금완료 - 주문 상태 롤백 (입금 → 주문)
-        $sql = " update {$g5['g5_shop_order_table']}
-                    set od_status = '주문',
-                        od_receipt_price = 0,
-                        od_receipt_time = '',
-                        od_shop_memo = concat(od_shop_memo, \"\\n가상계좌 입금 오류로 취소 - ".date('Y-m-d H:i:s')."\"),
-                        od_cash = 0,
-                        od_cash_no = '',
-                        od_cash_info = ''
-                    where od_id = '{$TOSS_ORDERID}' and od_tno = '{$paymentKey}' ";
-        $result = sql_query($sql, FALSE);
+        $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                    set od_status = '주문',
+                                        od_receipt_price = 0, od_receipt_time = '',
+                                        od_shop_memo = concat(od_shop_memo, :memo),
+                                        od_cash = 0, od_cash_no = '', od_cash_info = ''
+                                  where od_id = :od_id and od_tno = :od_tno ",
+                               [
+                                   ':memo'   => "\n가상계좌 입금 오류로 취소 - ".date('Y-m-d H:i:s'),
+                                   ':od_id'  => $TOSS_ORDERID,
+                                   ':od_tno' => $paymentKey,
+                               ], FALSE);
     }
-    
+
     // 공통 처리: 미수금 정보 재계산 및 상태 롤백
     if($result) {
         if (isset($row['od_id']) && $row['od_id'])
@@ -270,22 +261,17 @@ elseif($TOSS_STATUS == "WAITING_FOR_DEPOSIT")
 
         // 미수금 정보 재계산
         $info = get_order_info($od_id);
-        
+
         if($info) {
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_misu = '{$info['od_misu']}',
-                            od_status = '주문',
-                            od_cash = 0,
-                            od_cash_no = '',
-                            od_cash_info = ''
-                        where od_id = '{$od_id}' ";
-            sql_query($sql, FALSE);
-            
+            sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                              set od_misu = :od_misu, od_status = '주문',
+                                  od_cash = 0, od_cash_no = '', od_cash_info = ''
+                            where od_id = :od_id ",
+                          [':od_misu' => $info['od_misu'], ':od_id' => $od_id], FALSE);
+
             // 장바구니 상태 롤백 (입금 → 주문)
-            $sql = " update {$g5['g5_shop_cart_table']}
-                        set ct_status = '주문'
-                        where od_id = '{$od_id}' ";
-            sql_query($sql, FALSE);
+            sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_status = '주문' where od_id = :od_id ",
+                          [':od_id' => $od_id], FALSE);
         }
 
         // SMS 발송 - 재입금 안내
@@ -372,10 +358,11 @@ elseif($TOSS_STATUS == "WAITING_FOR_DEPOSIT")
  */
 elseif($TOSS_STATUS == "CANCELED")
 {
-    $sql = " update {$g5['g5_shop_order_table']}
-                set od_shop_memo = concat(od_shop_memo, \"\\n가상계좌 입금 전 취소 - ".date('Y-m-d H:i:s')."\")
-                where od_id = '{$TOSS_ORDERID}' ";
-    $result = sql_query($sql, FALSE);
+    $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                set od_shop_memo = concat(od_shop_memo, :memo)
+                              where od_id = :od_id ",
+                           [':memo' => "\n가상계좌 입금 전 취소 - ".date('Y-m-d H:i:s'), ':od_id' => $TOSS_ORDERID],
+                           FALSE);
 }
 
 //************************************************************************************

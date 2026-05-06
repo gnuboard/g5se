@@ -4,8 +4,8 @@ include_once('./_common.php');
 $pattern = '#[/\'\"%=*\#\(\)\|\+\&\!\$~\{\}\[\]`;:\?\^\,]#';
 $it_id  = isset($_POST['it_id']) ? preg_replace($pattern, '', $_POST['it_id']) : '';
 
-$sql = " select * from {$g5['g5_shop_item_table']} where it_id = '$it_id' and it_use = '1' ";
-$it = sql_fetch($sql);
+$it = sql_pdo_fetch(" select * from {$g5['g5_shop_item_table']} where it_id = :it_id and it_use = '1' ",
+                   [':it_id' => $it_id]);
 $it_point = get_item_point($it);
 
 if(!$it['it_id'])
@@ -13,12 +13,12 @@ if(!$it['it_id'])
 
 // 장바구니 자료
 $cart_id = get_session('ss_cart_id');
-$sql = " select * from {$g5['g5_shop_cart_table']} where od_id = '$cart_id' and it_id = '$it_id' order by io_type asc, ct_id asc ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * from {$g5['g5_shop_cart_table']} where od_id = :od_id and it_id = :it_id order by io_type asc, ct_id asc ",
+                       [':od_id' => $cart_id, ':it_id' => $it_id]);
 
 // 판매가격
-$sql2 = " select ct_price, it_name, ct_send_cost from {$g5['g5_shop_cart_table']} where od_id = '$cart_id' and it_id = '$it_id' order by ct_id asc limit 1 ";
-$row2 = sql_fetch($sql2);
+$row2 = sql_pdo_fetch(" select ct_price, it_name, ct_send_cost from {$g5['g5_shop_cart_table']} where od_id = :od_id and it_id = :it_id order by ct_id asc limit 1 ",
+                    [':od_id' => $cart_id, ':it_id' => $it_id]);
 
 if(!sql_num_rows($result))
     die('no-cart');

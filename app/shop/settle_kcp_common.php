@@ -144,38 +144,41 @@ if(!$default['de_card_test']) {
     /* = -------------------------------------------------------------------------- = */
     if ( $tx_cd == "TX00" )
     {
-        $sql = " select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = '$order_no' and pp_tno = '$tno' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select pp_id, od_id from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id and pp_tno = :pp_tno ",
+                            [':pp_id' => $order_no, ':pp_tno' => $tno]);
 
         $result = false;
 
         if($row['pp_id']) {
             // 개인결제 UPDATE
-            $sql = " update {$g5['g5_shop_personalpay_table']}
-                        set pp_receipt_price    = '$ipgm_mnyx',
-                            pp_receipt_time     = '$tx_tm'
-                        where pp_id = '$order_no'
-                          and pp_tno = '$tno' ";
-            sql_query($sql, false);
+            sql_pdo_query(" update {$g5['g5_shop_personalpay_table']}
+                              set pp_receipt_price = :pp_receipt_price, pp_receipt_time = :pp_receipt_time
+                            where pp_id = :pp_id and pp_tno = :pp_tno ",
+                          [':pp_receipt_price' => $ipgm_mnyx, ':pp_receipt_time' => $tx_tm, ':pp_id' => $order_no, ':pp_tno' => $tno],
+                          false);
 
             if($row['od_id']) {
                 // 주문서 UPDATE
                 $receipt_time    = preg_replace("/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})/", "\\1-\\2-\\3 \\4:\\5:\\6", $tx_tm);
-                $sql = " update {$g5['g5_shop_order_table']}
-                            set od_receipt_price = od_receipt_price + '$ipgm_mnyx',
-                                od_receipt_time = '$tx_tm',
-                                od_shop_memo = concat(od_shop_memo, \"\\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time."\")
-                          where od_id = '{$row['od_id']}' ";
-                $result = sql_query($sql, FALSE);
+                $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                            set od_receipt_price = od_receipt_price + :od_receipt_price,
+                                                od_receipt_time = :od_receipt_time,
+                                                od_shop_memo = concat(od_shop_memo, :memo)
+                                          where od_id = :od_id ",
+                                       [
+                                           ':od_receipt_price' => $ipgm_mnyx,
+                                           ':od_receipt_time'  => $tx_tm,
+                                           ':memo'             => "\n개인결제 ".$row['pp_id']." 로 결제완료 - ".$receipt_time,
+                                           ':od_id'            => $row['od_id'],
+                                       ], FALSE);
             }
         } else {
             // 주문서 UPDATE
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_receipt_price = '$ipgm_mnyx',
-                            od_receipt_time = '$tx_tm'
-                      where od_id = '$order_no'
-                        and od_tno = '$tno' ";
-            $result = sql_query($sql, FALSE);
+            $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                        set od_receipt_price = :od_receipt_price, od_receipt_time = :od_receipt_time
+                                      where od_id = :od_id and od_tno = :od_tno ",
+                                   [':od_receipt_price' => $ipgm_mnyx, ':od_receipt_time' => $tx_tm, ':od_id' => $order_no, ':od_tno' => $tno],
+                                   FALSE);
         }
     }
 
@@ -186,29 +189,23 @@ if(!$default['de_card_test']) {
             $od_id = $order_no;
 
         // 주문정보 체크
-        $sql = " select count(od_id) as cnt
-                    from {$g5['g5_shop_order_table']}
-                    where od_id = '$od_id'
-                      and od_status = '주문' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = :od_id and od_status = '주문' ",
+                            [':od_id' => $od_id]);
 
         if($row['cnt'] == 1) {
             // 미수금 정보 업데이트
             $info = get_order_info($od_id);
 
-            $sql = " update {$g5['g5_shop_order_table']}
-                        set od_misu = '{$info['od_misu']}' ";
+            $upd_sql = " update {$g5['g5_shop_order_table']} set od_misu = :od_misu ";
             if($info['od_misu'] == 0)
-                $sql .= " , od_status = '입금' ";
-            $sql .= " where od_id = '$od_id' ";
-            sql_query($sql, FALSE);
+                $upd_sql .= " , od_status = '입금' ";
+            $upd_sql .= " where od_id = :od_id ";
+            sql_pdo_query($upd_sql, [':od_misu' => $info['od_misu'], ':od_id' => $od_id], FALSE);
 
             // 장바구니 상태변경
             if($info['od_misu'] == 0) {
-                $sql = " update {$g5['g5_shop_cart_table']}
-                            set ct_status = '입금'
-                            where od_id = '$od_id' ";
-                sql_query($sql, FALSE);
+                sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_status = '입금' where od_id = :od_id ",
+                              [':od_id' => $od_id], FALSE);
             }
         }
     }

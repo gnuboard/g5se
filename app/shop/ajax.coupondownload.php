@@ -9,8 +9,7 @@ $cz_id = isset($_GET['cz_id']) ? preg_replace('#[^0-9]#', '', $_GET['cz_id']) : 
 if(!$cz_id)
     die(json_encode(array('error' => '올바른 방법으로 이용해 주십시오.')));
 
-$sql = " select * from {$g5['g5_shop_coupon_zone_table']} where cz_id = '$cz_id' ";
-$cp = sql_fetch($sql);
+$cp = sql_pdo_fetch(" select * from {$g5['g5_shop_coupon_zone_table']} where cz_id = :cz_id ", [':cz_id' => $cz_id]);
 
 if(!$cp['cz_id'])
     die(json_encode(array('error' => '쿠폰정보가 존재하지 않습니다.')));
@@ -31,8 +30,7 @@ $j = 0;
 do {
     $cp_id = get_coupon_id();
 
-    $sql3 = " select count(*) as cnt from {$g5['g5_shop_coupon_table']} where cp_id = '$cp_id' ";
-    $row3 = sql_fetch($sql3);
+    $row3 = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_coupon_table']} where cp_id = :cp_id ", [':cp_id' => $cp_id]);
 
     if(!$row3['cnt'])
         break;
@@ -43,26 +41,40 @@ do {
     $j++;
 } while(1);
 
-$cp = array_map('addslashes', $cp);
 $cp_start = G5_TIME_YMD;
 $period = $cp['cz_period'] - 1;
 if($period < 0)
     $period = 0;
 $cp_end = date('Y-m-d', strtotime("+{$period} days", G5_SERVER_TIME));
-$result = false;
 
-$sql = " INSERT INTO {$g5['g5_shop_coupon_table']}
-            ( cp_id, cp_subject, cp_method, cp_target, mb_id, cz_id, cp_start, cp_end, cp_type, cp_price, cp_trunc, cp_minimum, cp_maximum, cp_datetime )
-        VALUES
-            ( '$cp_id', '{$cp['cz_subject']}', '{$cp['cp_method']}', '{$cp['cp_target']}', '{$member['mb_id']}', '$cz_id', '$cp_start', '$cp_end', '{$cp['cp_type']}', '{$cp['cp_price']}', '{$cp['cp_trunc']}', '{$cp['cp_minimum']}', '{$cp['cp_maximum']}', '".G5_TIME_YMDHIS."' ) ";
-
-$result = sql_query($sql);
+$result = sql_pdo_query(" INSERT INTO {$g5['g5_shop_coupon_table']}
+                              ( cp_id, cp_subject, cp_method, cp_target, mb_id, cz_id, cp_start, cp_end,
+                                cp_type, cp_price, cp_trunc, cp_minimum, cp_maximum, cp_datetime )
+                          VALUES (:cp_id, :cp_subject, :cp_method, :cp_target, :mb_id, :cz_id, :cp_start, :cp_end,
+                                  :cp_type, :cp_price, :cp_trunc, :cp_minimum, :cp_maximum, :cp_datetime) ",
+                       [
+                           ':cp_id'       => $cp_id,
+                           ':cp_subject'  => $cp['cz_subject'],
+                           ':cp_method'   => $cp['cp_method'],
+                           ':cp_target'   => $cp['cp_target'],
+                           ':mb_id'       => $member['mb_id'],
+                           ':cz_id'       => $cz_id,
+                           ':cp_start'    => $cp_start,
+                           ':cp_end'      => $cp_end,
+                           ':cp_type'     => $cp['cp_type'],
+                           ':cp_price'    => $cp['cp_price'],
+                           ':cp_trunc'    => $cp['cp_trunc'],
+                           ':cp_minimum'  => $cp['cp_minimum'],
+                           ':cp_maximum'  => $cp['cp_maximum'],
+                           ':cp_datetime' => G5_TIME_YMDHIS,
+                       ]);
 
 // 포인트 쿠폰이면 포인트 차감
 if($result && $cp['cz_type'])
     insert_point($member['mb_id'], (-1) * $cp['cz_point'], "쿠폰 $cp_id 발급");
 
 // 다운로드 증가
-sql_query(" update {$g5['g5_shop_coupon_zone_table']} set cz_download = cz_download + 1 where cz_id = '$cz_id' ");
+sql_pdo_query(" update {$g5['g5_shop_coupon_zone_table']} set cz_download = cz_download + 1 where cz_id = :cz_id ",
+              [':cz_id' => $cz_id]);
 
 die(json_encode(array('error' => '')));

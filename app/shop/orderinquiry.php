@@ -13,17 +13,22 @@ $request_pwd = isset($_POST['od_pwd']) ? $_POST['od_pwd'] : '';
 $od_pwd = get_encrypt_string($request_pwd);
 $od_id = isset($_POST['od_id']) ? safe_replace_regex($_POST['od_id'], 'od_id') : '';
 
+$inquiry_params = [];
 // 회원인 경우
 if ($is_member)
 {
-    $sql_common = " from {$g5['g5_shop_order_table']} where mb_id = '{$member['mb_id']}' ";
+    $sql_common = " from {$g5['g5_shop_order_table']} where mb_id = :mb_id ";
+    $inquiry_params[':mb_id'] = $member['mb_id'];
 }
 else if ($od_id && $od_pwd) // 비회원인 경우 주문서번호와 비밀번호가 넘어왔다면
 {
     if( defined('G5_MYSQL_PASSWORD_LENGTH') && strlen($od_pwd) === G5_MYSQL_PASSWORD_LENGTH ) {
-        $sql_common = " from {$g5['g5_shop_order_table']} where od_id = '$od_id' and od_pwd = '$od_pwd' ";
+        $sql_common = " from {$g5['g5_shop_order_table']} where od_id = :od_id and od_pwd = :od_pwd ";
+        $inquiry_params[':od_id']  = $od_id;
+        $inquiry_params[':od_pwd'] = $od_pwd;
     } else {
-        $sql_common = " from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
+        $sql_common = " from {$g5['g5_shop_order_table']} where od_id = :od_id ";
+        $inquiry_params[':od_id'] = $od_id;
 
         $order_info = get_shop_order_data($od_id);
         if (!check_password($request_pwd, $order_info['od_pwd'])) {
@@ -40,8 +45,7 @@ else // 그렇지 않다면 로그인으로 가기
 }
 
 // 테이블의 전체 레코드수만 얻음
-$sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt " . $sql_common, $inquiry_params);
 $total_count = $row['cnt'];
 
 // 비회원 주문확인시 비회원의 모든 주문이 다 출력되는 오류 수정
@@ -64,8 +68,8 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 if (!$is_member)
 {
     if( defined('G5_MYSQL_PASSWORD_LENGTH') && strlen($od_pwd) === G5_MYSQL_PASSWORD_LENGTH ) {
-        $sql = " select od_id, od_time, od_ip from {$g5['g5_shop_order_table']} where od_id = '$od_id' and od_pwd = '$od_pwd' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch(" select od_id, od_time, od_ip from {$g5['g5_shop_order_table']} where od_id = :od_id and od_pwd = :od_pwd ",
+                            [':od_id' => $od_id, ':od_pwd' => $od_pwd]);
     } else if( $order_info ){
         if (check_password($request_pwd, $order_info['od_pwd'])) {
             $row = $order_info;
