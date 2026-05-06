@@ -510,7 +510,8 @@ function get_it_image($it_id, $width, $height=0, $anchor=false, $img_id='', $img
     }
 
     if($thumb) {
-        $file_url = str_replace(G5_PATH, G5_URL, $filepath.'/'.$thumb);
+        // gnu5se: data/ 가 app/ 밖에 있으므로 G5_DATA_PATH→G5_DATA_URL 로 치환해야 한다.
+        $file_url = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath.'/'.$thumb);
         $img = '<img src="'.$file_url.'" width="'.$width.'" height="'.$height.'" alt="'.$img_alt.'"';
     } else {
         $img = '<img src="'.G5_SHOP_URL.'/img/no_image.gif" width="'.$width.'"';
@@ -560,7 +561,7 @@ function get_it_thumbnail($img, $width, $height=0, $id='', $is_crop=false)
     $thumb = thumbnail($filename, $filepath, $filepath, $width, $height, false, $is_crop, 'center', false, $um_value='80/0.5/3');
 
     if($thumb) {
-        $file_url = str_replace(G5_PATH, G5_URL, $filepath.'/'.$thumb);
+        $file_url = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath.'/'.$thumb);
         $str = '<img src="'.$file_url.'" width="'.$width.'" height="'.$height.'"';
         if($id)
             $str .= ' id="'.$id.'"';
@@ -594,7 +595,7 @@ function get_it_imageurl($it_id)
     }
 
     if($filepath)
-        $str = str_replace(G5_PATH, G5_URL, $filepath);
+        $str = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath);
     else
         $str = G5_SHOP_URL.'/img/no_image.gif';
 
