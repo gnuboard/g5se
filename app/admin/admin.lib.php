@@ -674,11 +674,13 @@ if (isset($menu) && $menu) {
 // modern shell 은 호출하지 않으므로 여기서 직접 빌드 (auth_list 의 select 등이 사용).
 $auth_menu = array();
 if (isset($menu) && is_array($menu)) {
-    foreach ($menu as $group) {
-        if (!is_array($group)) continue;
-        for ($i = 1, $n = count($group); $i < $n; $i++) {
-            if (isset($group[$i][0], $group[$i][1])) {
-                $auth_menu[$group[$i][0]] = $group[$i][1];
+    // 변수명 $group 쓰면 gnuboard 의 전역 $group (현재 게시판 그룹 row) 이 foreach
+    // 마지막 값으로 덮어써짐 — boardgroup_form 등에서 빈 칸 보임. $menuGroup 으로.
+    foreach ($menu as $menuGroup) {
+        if (!is_array($menuGroup)) continue;
+        for ($i = 1, $n = count($menuGroup); $i < $n; $i++) {
+            if (isset($menuGroup[$i][0], $menuGroup[$i][1])) {
+                $auth_menu[$menuGroup[$i][0]] = $menuGroup[$i][1];
             }
         }
     }
