@@ -70,6 +70,9 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     display: none !important;
 }
 
+/* 관리자 빠른편집 톱니바퀴 (poll/visit skin 의 .btn_admin) — 사용자 화면 노이즈라 숨김 */
+.m-shell .btn_admin { display: none !important; }
+
 /* 레거시 shop skin (style.css) 의 흰 배경 / 검정 텍스트 hardcode 를 다크모드에서 토큰으로 덮어씀 */
 [data-theme="dark"] .smt_40 {
     background: var(--m-surface) !important;
