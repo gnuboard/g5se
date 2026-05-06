@@ -6,8 +6,8 @@ $pp_id = isset($_REQUEST['pp_id']) ? preg_replace('/[^0-9]/', '', $_REQUEST['pp_
 // 모바일 주문인지
 $is_mobile_pay = is_mobile();
 
-$sql = " select * from {$g5['g5_shop_personalpay_table']} where pp_id = '$pp_id' and pp_use = '1' and pp_price > 0 ";
-$pp = sql_fetch($sql);
+$pp = sql_pdo_fetch(" select * from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id and pp_use = '1' and pp_price > 0 ",
+                   [':pp_id' => $pp_id]);
 
 if(! (isset($pp['pp_id']) && $pp['pp_id']))
     alert('개인결제 정보가 존재하지 않습니다.', G5_SHOP_URL);

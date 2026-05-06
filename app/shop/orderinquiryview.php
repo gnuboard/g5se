@@ -18,10 +18,13 @@ if (!$is_member) {
 
 $tot_point = 0;
 
-$sql = "select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-if($is_member && !$is_admin)
-    $sql .= " and mb_id = '{$member['mb_id']}' ";
-$od = sql_fetch($sql);
+$od_sql = " select * from {$g5['g5_shop_order_table']} where od_id = :od_id ";
+$od_params = [':od_id' => $od_id];
+if($is_member && !$is_admin) {
+    $od_sql .= " and mb_id = :mb_id ";
+    $od_params[':mb_id'] = $member['mb_id'];
+}
+$od = sql_pdo_fetch($od_sql, $od_params);
 
 $uid = function_exists('get_shop_uid') ? get_shop_uid('order', $od['od_id'], $od['od_time'], $od['od_ip']) : md5($od['od_id'].$od['od_time'].$od['od_ip']);
 if (! (isset($od['od_id']) && $od['od_id']) || (!$is_member && $uid != get_session('ss_orderview_uid'))) {
@@ -74,12 +77,11 @@ if($od['od_pg'] == 'lg') {
         $st_count1 = $st_count2 = 0;
         $custom_cancel = false;
 
-        $sql = " select it_id, it_name, ct_send_cost, it_sc_type
-                    from {$g5['g5_shop_cart_table']}
-                    where od_id = '$od_id'
-                    group by it_id
-                    order by ct_id ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select it_id, it_name, ct_send_cost, it_sc_type
+                                    from {$g5['g5_shop_cart_table']}
+                                   where od_id = :od_id
+                                   group by it_id order by ct_id ",
+                               [':od_id' => $od_id]);
         ?>
         <div class="tbl_head03 tbl_wrap">
             <table>
@@ -103,21 +105,19 @@ if($od['od_pg'] == 'lg') {
             for($i=0; $row=sql_fetch_array($result); $i++) {
                 $image = get_it_image($row['it_id'], 70, 70);
 
-                $sql = " select ct_id, it_name, ct_option, ct_qty, ct_price, ct_point, ct_status, io_type, io_price
-                            from {$g5['g5_shop_cart_table']}
-                            where od_id = '$od_id'
-                              and it_id = '{$row['it_id']}'
-                            order by io_type asc, ct_id asc ";
-                $res = sql_query($sql);
+                $res = sql_pdo_query(" select ct_id, it_name, ct_option, ct_qty, ct_price, ct_point, ct_status, io_type, io_price
+                                         from {$g5['g5_shop_cart_table']}
+                                        where od_id = :od_id and it_id = :it_id
+                                        order by io_type asc, ct_id asc ",
+                                    [':od_id' => $od_id, ':it_id' => $row['it_id']]);
                 $rowspan = sql_num_rows($res) + 1;
 
                 // 합계금액 계산
-                $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
-                                SUM(ct_qty) as qty
-                            from {$g5['g5_shop_cart_table']}
-                            where it_id = '{$row['it_id']}'
-                              and od_id = '$od_id' ";
-                $sum = sql_fetch($sql);
+                $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
+                                              SUM(ct_qty) as qty
+                                         from {$g5['g5_shop_cart_table']}
+                                        where it_id = :it_id and od_id = :od_id ",
+                                    [':it_id' => $row['it_id'], ':od_id' => $od_id]);
 
                 // 배송비
                 switch($row['ct_send_cost'])

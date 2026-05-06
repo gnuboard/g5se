@@ -24,8 +24,7 @@ if (empty($paymentKey) || empty($orderId)) {
     exit;
 }
 
-$sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$orderId' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select * from {$g5['g5_shop_order_data_table']} where od_id = :od_id ", [':od_id' => $orderId]);
 
 $data = isset($row['dt_data']) ? unserialize(base64_decode($row['dt_data'])) : array();
 
@@ -33,8 +32,8 @@ $data = isset($row['dt_data']) ? unserialize(base64_decode($row['dt_data'])) : a
 // 주문 임시데이터에 paymentKey 업데이트
 $data['paymentKey'] = $paymentKey;
 $data_new = base64_encode(serialize($data));
-$sql = " update {$g5['g5_shop_order_data_table']} set dt_data = '$data_new' where od_id = '$orderId' limit 1 ";
-sql_query($sql);
+sql_pdo_query(" update {$g5['g5_shop_order_data_table']} set dt_data = :dt_data where od_id = :od_id limit 1 ",
+              [':dt_data' => $data_new, ':od_id' => $orderId]);
 
 if(isset($data['pp_id']) && $data['pp_id']) {
     $order_action_url = G5_HTTPS_SHOP_URL.'/personalpayformupdate.php';

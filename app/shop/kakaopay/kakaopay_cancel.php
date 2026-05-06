@@ -28,30 +28,28 @@ if($cancelFlag == "true")
         $ini_oid = preg_replace('/[^a-z0-9_\-]/i', '', get_session('ss_order_id'));
         $tno = preg_replace('/[^a-z0-9_\-]/i', '', $tno);
 
-        $sql = "select oid from {$g5['g5_shop_inicis_log_table']} where oid = '$ini_oid' and P_TID = '$tno' ";
+        $exists_log = sql_pdo_fetch(" select oid from {$g5['g5_shop_inicis_log_table']} where oid = :oid and P_TID = :tid ",
+                                   [':oid' => $ini_oid, ':tid' => $tno]);
 
-        $exists_log = sql_fetch($sql);
-        
+        $auth_dt = preg_replace('/[^0-9]/', '', G5_TIME_YMDHIS);
         if( $exists_log['oid'] ){
-            $sql = " update {$g5['g5_shop_inicis_log_table']}
-                        set P_STATUS  = 'cancel',
-                        P_AUTH_DT = '".preg_replace('/[^0-9]/', '', G5_TIME_YMDHIS)."' where oid = '$ini_oid' and P_TID = '$tno' ";
+            sql_pdo_query(" update {$g5['g5_shop_inicis_log_table']}
+                              set P_STATUS = 'cancel', P_AUTH_DT = :auth_dt
+                            where oid = :oid and P_TID = :tid ",
+                          [':auth_dt' => $auth_dt, ':oid' => $ini_oid, ':tid' => $tno], false);
         } else {
-            $sql = " insert into {$g5['g5_shop_inicis_log_table']}
-                        set oid = '$ini_oid',
-                            P_TID     = '$tno',
-                            P_STATUS  = 'cancel',
-                            P_AUTH_DT = '".preg_replace('/[^0-9]/', '', G5_TIME_YMDHIS)."' ";
+            sql_pdo_query(" insert into {$g5['g5_shop_inicis_log_table']}
+                                set oid = :oid, P_TID = :tid, P_STATUS = 'cancel', P_AUTH_DT = :auth_dt ",
+                          [':oid' => $ini_oid, ':tid' => $tno, ':auth_dt' => $auth_dt], false);
         }
-
-        sql_query($sql, false);
     }
 
     $db_check = 1;
     $cancel_msg = "DB FAIL";
 
     if( $is_admin ){
-        $tmp = sql_fetch("select * from `{$g5['g5_shop_order_table']}` where od_tno = '".trim($_REQUEST['TID'])."' ");
+        $tmp = sql_pdo_fetch(" select * from `{$g5['g5_shop_order_table']}` where od_tno = :od_tno ",
+                            [':od_tno' => trim($_REQUEST['TID'])]);
 
         if( $tmp['od_pg'] === 'KAKAOPAY' ){
             $tno = trim($_REQUEST['TID']);

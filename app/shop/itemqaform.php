@@ -31,7 +31,7 @@ if($w == '') {
 
 if ($w == "u")
 {
-    $qa = sql_fetch(" select * from {$g5['g5_shop_item_qa_table']} where iq_id = '$iq_id' ");
+    $qa = sql_pdo_fetch(" select * from {$g5['g5_shop_item_qa_table']} where iq_id = :iq_id ", [':iq_id' => $iq_id]);
     if (!$qa) {
         alert_close("상품문의 정보가 없습니다.");
     }

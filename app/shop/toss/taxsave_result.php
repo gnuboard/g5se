@@ -6,7 +6,7 @@ $od_id = isset($_REQUEST['od_id']) ? safe_replace_regex($_REQUEST['od_id'], 'od_
 $tx = isset($_REQUEST['tx']) ? clean_xss_tags($_REQUEST['tx'], 1, 1) : '';
 
 if($tx == 'personalpay') {
-    $od = sql_fetch(" select * from {$g5['g5_shop_personalpay_table']} where pp_id = '$od_id' ");
+    $od = sql_pdo_fetch(" select * from {$g5['g5_shop_personalpay_table']} where pp_id = :od_id ", [':od_id' => $od_id]);
     if (!$od)
         die('<p id="scash_empty">개인결제 내역이 존재하지 않습니다.</p>');
 
@@ -24,7 +24,7 @@ if($tx == 'personalpay') {
     $od_email    = $od['pp_email'];
     $od_tel      = $od['pp_hp'];
 } else {
-    $od = sql_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
+    $od = sql_pdo_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = :od_id ", [':od_id' => $od_id]);
     if (!$od)
         die('<p id="scash_empty">주문서가 존재하지 않습니다.</p>');
 
@@ -94,20 +94,16 @@ if ($toss_result && isset($toss->responseData['receiptKey'])) {
     $cash_info = serialize($cash);
 
     if($tx == 'personalpay') {
-        $sql = " update {$g5['g5_shop_personalpay_table']}
-                    set pp_cash = '1',
-                        pp_cash_no = '$cash_no',
-                        pp_cash_info = '$cash_info'
-                  where pp_id = '$orderId' ";
+        $result = sql_pdo_query(" update {$g5['g5_shop_personalpay_table']}
+                                    set pp_cash = '1', pp_cash_no = :cash_no, pp_cash_info = :cash_info
+                                  where pp_id = :od_id ",
+                               [':cash_no' => $cash_no, ':cash_info' => $cash_info, ':od_id' => $orderId], false);
     } else {
-        $sql = " update {$g5['g5_shop_order_table']}
-                    set od_cash = '1',
-                        od_cash_no = '$cash_no',
-                        od_cash_info = '$cash_info'
-                  where od_id = '$orderId' ";
+        $result = sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                                    set od_cash = '1', od_cash_no = :cash_no, od_cash_info = :cash_info
+                                  where od_id = :od_id ",
+                               [':cash_no' => $cash_no, ':cash_info' => $cash_info, ':od_id' => $orderId], false);
     }
-
-    $result = sql_query($sql, false);
 
     if(!$result) { // DB 정보갱신 실패시 취소
         $cancel_result = $toss->cancelCashReceipt($receiptKey, 'DB 업데이트 실패로 인한 취소');

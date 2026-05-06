@@ -29,7 +29,7 @@ if ($w == "") {
     // 사용후기 작성 설정에 따른 체크
     check_itemuse_write($it_id, $member['mb_id']);
 } else if ($w == "u") {
-    $use = sql_fetch(" select * from {$g5['g5_shop_item_use_table']} where is_id = '$is_id' ");
+    $use = sql_pdo_fetch(" select * from {$g5['g5_shop_item_use_table']} where is_id = :is_id ", [':is_id' => $is_id]);
     if (!$use) {
         alert_close("사용후기 정보가 없습니다.");
     }

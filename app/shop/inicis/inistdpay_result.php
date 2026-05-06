@@ -112,8 +112,7 @@ try {
             $secureSignature = $util->makeSignatureAuth($secureMap);
             /*************************  결제보안 추가 2016-05-18 END ****************************/
 
-            $sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$oid' ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch(" select * from {$g5['g5_shop_order_data_table']} where od_id = :od_id ", [':od_id' => $oid]);
 
             $data = isset($row['dt_data']) ? unserialize(base64_decode($row['dt_data'])) : array();
 

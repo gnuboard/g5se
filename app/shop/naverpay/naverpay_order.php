@@ -28,8 +28,11 @@ if($post_naverpay_form == 'cart.php') {
             continue;
 
         // 장바구니 상품
-        $sql = " select ct_id, it_id, ct_option, io_id, io_type, ct_qty, ct_send_cost, it_sc_type from {$g5['g5_shop_cart_table']} where od_id = '$s_cart_id' and it_id = '$it_id' and ct_status = '쇼핑' order by ct_id asc ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query(" select ct_id, it_id, ct_option, io_id, io_type, ct_qty, ct_send_cost, it_sc_type
+                                    from {$g5['g5_shop_cart_table']}
+                                   where od_id = :od_id and it_id = :it_id and ct_status = '쇼핑'
+                                   order by ct_id asc ",
+                               [':od_id' => $s_cart_id, ':it_id' => $it_id]);
 
         for($k=0; $row=sql_fetch_array($result); $k++) {
             $_POST['io_id'][$it_id][] = $row['io_id'];
@@ -42,13 +45,11 @@ if($post_naverpay_form == 'cart.php') {
 
             if( $row['it_sc_type'] == 2 ){
                 // 합계금액 계산
-                $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
-                                SUM(ct_point * ct_qty) as point,
-                                SUM(ct_qty) as qty
-                            from {$g5['g5_shop_cart_table']}
-                            where it_id = '{$row['it_id']}'
-                              and od_id = '$s_cart_id' ";
-                $sum = sql_fetch($sql);
+                $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
+                                              SUM(ct_point * ct_qty) as point, SUM(ct_qty) as qty
+                                         from {$g5['g5_shop_cart_table']}
+                                        where it_id = :it_id and od_id = :od_id ",
+                                    [':it_id' => $row['it_id'], ':od_id' => $s_cart_id]);
 
                 $sendcost = get_item_sendcost($row['it_id'], $sum['price'], $sum['qty'], $s_cart_id);
 
@@ -136,8 +137,8 @@ for($i=0; $i<$count; $i++) {
 
     // 옵션정보를 얻어서 배열에 저장
     $opt_list = array();
-    $sql = " select * from {$g5['g5_shop_item_option_table']} where it_id = '$it_id' order by io_no asc ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']} where it_id = :it_id order by io_no asc ",
+                           [':it_id' => $it_id]);
     $lst_count = 0;
     for($k=0; $row=sql_fetch_array($result); $k++) {
         $opt_list[$row['io_type']][$row['io_id']]['id'] = $row['io_id'];

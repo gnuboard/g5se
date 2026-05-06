@@ -20,21 +20,23 @@ if ($is_member && $count) {
         $k = isset($_POST['chk'][$i]) ? (int) $_POST['chk'][$i] : 0;
         $ad_id = isset($_POST['ad_id'][$k]) ? (int) $_POST['ad_id'][$k] : 0;
 
-        $ad_subject = isset($_POST['ad_subject'][$k]) ? addslashes(clean_xss_tags(stripslashes($_POST['ad_subject'][$k]))) : '';
+        $ad_subject = isset($_POST['ad_subject'][$k]) ? clean_xss_tags(stripslashes($_POST['ad_subject'][$k])) : '';
 
-        $sql = " update {$g5['g5_shop_order_address_table']}
-                    set ad_subject = '".sql_real_escape_string($ad_subject)."' ";
+        $sql = " update {$g5['g5_shop_order_address_table']} set ad_subject = :ad_subject ";
+        $params = [':ad_subject' => $ad_subject];
 
         if(!empty($_POST['ad_default']) && $ad_id === $_POST['ad_default']) {
-            sql_query(" update {$g5['g5_shop_order_address_table']} set ad_default = '0' where mb_id = '{$member['mb_id']}' ");
+            sql_pdo_query(" update {$g5['g5_shop_order_address_table']} set ad_default = '0' where mb_id = :mb_id ",
+                          [':mb_id' => $member['mb_id']]);
 
-            $sql .= ", ad_default = '1' ";
+            $sql .= " , ad_default = '1' ";
         }
 
-        $sql .= " where ad_id = '".$ad_id."'
-                    and mb_id = '{$member['mb_id']}' ";
+        $sql .= " where ad_id = :ad_id and mb_id = :mb_id ";
+        $params[':ad_id'] = $ad_id;
+        $params[':mb_id'] = $member['mb_id'];
 
-        sql_query($sql);
+        sql_pdo_query($sql, $params);
     }
 }
 

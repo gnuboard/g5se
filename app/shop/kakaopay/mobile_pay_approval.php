@@ -19,8 +19,7 @@ if( ! $p_req_url || !preg_match('/^https\:\/\//i', $p_req_url)){
     alert("잘못된 요청 URL 입니다.");
 }
 
-$sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$oid' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select * from {$g5['g5_shop_order_data_table']} where od_id = :od_id ", [':od_id' => $oid]);
 
 if (isset($row['dt_data']) && (base64_encode(base64_decode($row['dt_data'], true)) === $row['dt_data'])){
     $data = unserialize(base64_decode($row['dt_data']));
@@ -48,16 +47,10 @@ if(isset($data['pp_id']) && $data['pp_id']) {
 
     $error = "";
     // 장바구니 상품 재고 검사
-    $sql = " select it_id,
-                    ct_qty,
-                    it_name,
-                    io_id,
-                    io_type,
-                    ct_option
-               from {$g5['g5_shop_cart_table']}
-              where od_id = '$tmp_cart_id'
-                and ct_select = '1' ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query(" select it_id, ct_qty, it_name, io_id, io_type, ct_option
+                                from {$g5['g5_shop_cart_table']}
+                               where od_id = :od_id and ct_select = '1' ",
+                           [':od_id' => $tmp_cart_id]);
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
         // 상품에 대한 현재고수량
@@ -122,8 +115,8 @@ $params = array();
 if(isset($data['pp_id']) && !empty($data['pp_id'])) {
     // 개인결제 정보
     $pp_check = false;
-    $sql = " select * from {$g5['g5_shop_personalpay_table']} where pp_id = '{$PAY['P_OID']}' and pp_tno = '{$PAY['P_TID']}' and pp_use = '1' ";
-    $pp = sql_fetch($sql);
+    $pp = sql_pdo_fetch(" select * from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id and pp_tno = :pp_tno and pp_use = '1' ",
+                       [':pp_id' => $PAY['P_OID'], ':pp_tno' => $PAY['P_TID']]);
 
     if( !$pp['pp_tno'] && $data['pp_id'] == $oid ){
         $res_cd = $PAY['P_STATUS'];
@@ -138,10 +131,10 @@ if(isset($data['pp_id']) && !empty($data['pp_id'])) {
         }
 
         $good_mny = $PAY['P_AMT'];
-        $pp_name = addslashes(clean_xss_tags($data['pp_name']));
-        $pp_email = addslashes(clean_xss_tags($data['pp_email']));
-        $pp_hp = addslashes(clean_xss_tags($data['pp_hp']));
-        $pp_settle_case = addslashes(clean_xss_tags($data['pp_settle_case']));
+        $pp_name        = clean_xss_tags($data['pp_name']);
+        $pp_email       = clean_xss_tags($data['pp_email']);
+        $pp_hp          = clean_xss_tags($data['pp_hp']);
+        $pp_settle_case = clean_xss_tags($data['pp_settle_case']);
 
         $_POST['P_HASH'] = $hash;
         $_POST['P_AUTH_NO'] = $PAY['P_AUTH_NO'];

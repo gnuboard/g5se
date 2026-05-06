@@ -20,34 +20,35 @@ $sql_search = " where a.is_confirm = '1' ";
 if(!$sfl)
     $sfl = 'b.it_name';
 
+$search_params = [];
 if ($stx) {
-    $sql_search .= " and ( ";
     switch ($sfl) {
         case "a.it_id" :
-            $sql_search .= " ($sfl like '$stx%') ";
+            $sql_search .= " and ($sfl like :stx) ";
+            $search_params[':stx'] = $stx.'%';
             break;
         case "a.is_name" :
         case "a.mb_id" :
-            $sql_search .= " ($sfl = '$stx') ";
+            $sql_search .= " and ($sfl = :stx) ";
+            $search_params[':stx'] = $stx;
             break;
         default :
-            $sql_search .= " ($sfl like '%$stx%') ";
+            $sql_search .= " and ($sfl like :stx) ";
+            $search_params[':stx'] = '%'.$stx.'%';
             break;
     }
-    $sql_search .= " ) ";
 }
 
 if (!$sst) {
     $sst  = "a.is_id";
     $sod = "desc";
 }
+$allowed_sst = ['a.is_id', 'a.is_subject', 'a.is_time', 'b.it_name', 'a.is_score'];
+if (!in_array($sst, $allowed_sst, true)) $sst = 'a.is_id';
+$sod = (strtolower($sod) === 'asc') ? 'asc' : 'desc';
 $sql_order = " order by $sst $sod ";
 
-$sql = " select count(*) as cnt
-         $sql_common
-         $sql_search
-         $sql_order ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt $sql_common $sql_search $sql_order ", $search_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -55,12 +56,8 @@ $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
 if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " select *
-          $sql_common
-          $sql_search
-          $sql_order
-          limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * $sql_common $sql_search $sql_order limit ".(int)$from_record.', '.(int)$rows.' ',
+                       $search_params);
 
 $itemuselist_skin = G5_SHOP_SKIN_PATH.'/itemuselist.skin.php';
 

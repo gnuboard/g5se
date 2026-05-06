@@ -15,8 +15,7 @@ if (!$is_member)
 $token = get_random_token_string(16);
 set_session("ss_token", $token);
 
-$sql = " select it_name from {$g5['g5_shop_item_table']} where it_id='$it_id' ";
-$it = sql_fetch($sql);
+$it = sql_pdo_fetch(" select it_name from {$g5['g5_shop_item_table']} where it_id = :it_id ", [':it_id' => $it_id]);
 if (!$it['it_name'])
     alert_close("등록된 상품이 아닙니다.");
 

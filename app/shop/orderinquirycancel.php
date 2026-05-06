@@ -12,18 +12,19 @@ if ($token && get_session("ss_token") == $token) {
     alert("토큰 에러", G5_SHOP_URL);
 }
 
-$od = sql_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' and mb_id = '{$member['mb_id']}' ");
+$od = sql_pdo_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = :od_id and mb_id = :mb_id ",
+                   [':od_id' => $od_id, ':mb_id' => $member['mb_id']]);
 
 if (! (isset($od['od_id']) && $od['od_id'])) {
     alert("존재하는 주문이 아닙니다.");
 }
 
 // 주문상품의 상태가 주문인지 체크
-$sql = " select SUM(IF(ct_status = '주문', 1, 0)) as od_count2,
-                COUNT(*) as od_count1
-            from {$g5['g5_shop_cart_table']}
-            where od_id = '$od_id' ";
-$ct = sql_fetch($sql);
+$ct = sql_pdo_fetch(" select SUM(IF(ct_status = '주문', 1, 0)) as od_count2,
+                            COUNT(*) as od_count1
+                       from {$g5['g5_shop_cart_table']}
+                      where od_id = :od_id ",
+                   [':od_id' => $od_id]);
 
 $uid = function_exists('get_shop_uid') ? get_shop_uid('order', $od['od_id'], $od['od_time'], $od['od_ip']) : md5($od['od_id'].$od['od_time'].$od['od_ip']);
 
@@ -152,27 +153,25 @@ if($od['od_tno']) {
 }
 
 // 장바구니 자료 취소
-sql_query(" update {$g5['g5_shop_cart_table']} set ct_status = '취소' where od_id = '$od_id' ");
+sql_pdo_query(" update {$g5['g5_shop_cart_table']} set ct_status = '취소' where od_id = :od_id ", [':od_id' => $od_id]);
 
 // 주문 취소
-$cancel_memo = addslashes(strip_tags($cancel_memo));
+$cancel_memo  = strip_tags($cancel_memo);
 $cancel_price = $od['od_cart_price'];
 
-$sql = " update {$g5['g5_shop_order_table']}
-            set od_send_cost = '0',
-                od_send_cost2 = '0',
-                od_receipt_price = '0',
-                od_receipt_point = '0',
-                od_misu = '0',
-                od_cancel_price = '$cancel_price',
-                od_cart_coupon = '0',
-                od_coupon = '0',
-                od_send_coupon = '0',
-                od_status = '취소',
-                od_shop_memo = concat(od_shop_memo,\"\\n주문자 본인 직접 취소 - ".G5_TIME_YMDHIS." (취소이유 : {$cancel_memo})\")
-            where od_id = '$od_id' 
-              and od_cancel_price = 0";
-sql_query($sql);
+sql_pdo_query(" update {$g5['g5_shop_order_table']}
+                  set od_send_cost = '0', od_send_cost2 = '0',
+                      od_receipt_price = '0', od_receipt_point = '0', od_misu = '0',
+                      od_cancel_price = :cancel_price,
+                      od_cart_coupon = '0', od_coupon = '0', od_send_coupon = '0',
+                      od_status = '취소',
+                      od_shop_memo = concat(od_shop_memo, :memo)
+                where od_id = :od_id and od_cancel_price = 0 ",
+              [
+                  ':cancel_price' => $cancel_price,
+                  ':memo'         => "\n주문자 본인 직접 취소 - ".G5_TIME_YMDHIS." (취소이유 : {$cancel_memo})",
+                  ':od_id'        => $od_id,
+              ]);
 
 // 주문취소 회원의 포인트를 되돌려 줌
 // get_sql_affected_rows 함수가 존재하지 않으면 포인트를 돌려주는것을 실행 할수 없음
