@@ -1,6 +1,9 @@
 <?php
 $sub_menu = '400100';
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'r');
 include_once(G5_EDITOR_LIB);
 
 auth_check_menu($auth, $sub_menu, "r");
@@ -14,7 +17,14 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 }
 
 $g5['title'] = '쇼핑몰설정';
-include_once (G5_ADMIN_PATH.'/admin.head.php');
+admin_layout_start($g5["title"], "shop");
+?>
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<header class="flex items-center gap-3 mb-5">
+    <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5["title"]) ?></h2>
+</header>
+<div class="legacy-admin-content space-y-4">
+<?php
 
 $pg_anchor = '<ul class="anchor">
 <li><a href="#anc_scf_info">사업자정보</a></li>
@@ -2142,4 +2152,8 @@ if($default['de_iche_use'] || $default['de_vbank_use'] || $default['de_hp_use'] 
 }
 
 
-include_once (G5_ADMIN_PATH.'/admin.tail.php');
+?>
+</div><!-- /.legacy-admin-content -->
+</main>
+<?php admin_layout_end(); ?>
+<?php

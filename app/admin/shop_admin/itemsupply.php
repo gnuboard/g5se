@@ -1,6 +1,9 @@
 <?php
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
 
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'w');
 $ps_run = false;
 $post_it_id = isset($_POST['it_id']) ? safe_replace_regex($_POST['it_id'], 'it_id') : '';
 

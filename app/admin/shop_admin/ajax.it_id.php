@@ -1,6 +1,9 @@
 <?php
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
 
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'r');
 $it_id = isset($_POST['it_id']) ? trim($_POST['it_id']) : '';
 if (preg_match("/[^\w\-]/", $it_id)) { // \w : 0-9 A-Z a-z _
     die("{\"error\":\"상품코드는 영문자 숫자 _ - 만 입력 가능합니다.\"}");

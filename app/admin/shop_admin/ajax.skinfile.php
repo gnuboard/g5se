@@ -1,6 +1,9 @@
 <?php
-include_once('./_common.php');
+require_once __DIR__.'/_common.php';
 
+require_once __DIR__.'/../_layout.php';
+admin_require_login();
+auth_check_menu($auth, $sub_menu, 'r');
 $type = isset($_REQUEST['type']) ? clean_xss_tags($_REQUEST['type'], 1, 1) : '';
 
 if($type === 'mobile') {
