@@ -637,3 +637,49 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 ---
 
 다음 세션에서는 시스템(관리자 영역 `/adm/*`) 모던화나 사용자 플로우 실 사용 검증, 잔여 마이크로 폴리시(다크모드 토글 위치 미세조정 등) 진행 가능.
+
+---
+
+## shop 모더나이즈 트래커 (진행 중)
+
+활성 (`G5_USE_SHOP=true`). DB 스킨 `theme/basic` → 실제 마크업은 `app/theme/basic/skin/shop/basic/*.skin.php`.
+~36 skin + `shop.head.php` chrome 270 줄 + 70 PHP entry. 점진적으로 진행.
+
+### 진행 순서
+- **B-1** 핵심 페이지 (skin 단위) — list, item, cart
+- **A** chrome (`shop.head.php`) 헤더/네비/사이드바
+- **B-2** 나머지 — orderform, orderinquiry/view, mypage, coupon/couponzone, itemqa/use*, search, etc.
+
+### 상태 (legacy ✗ / 작업중 ◯ / 완료 ●)
+
+| 영역 | 파일 | 상태 |
+|---|---|---|
+| chrome | `theme/basic/shop/shop.head.php` | ✗ |
+| chrome | `theme/basic/shop/shop.tail.php` | ✗ |
+| chrome | `theme/basic/shop/category.php` | ✗ |
+| 진입 | `theme/basic/shop/index.php` | ✗ |
+| 카테고리 list | `skin/shop/basic/list.10~40.skin.php` | ✗ |
+| 카테고리 list | `skin/shop/basic/list.sort.skin.php` | ✗ |
+| 카테고리 list | `skin/shop/basic/list.sub.skin.php` | ✗ |
+| 카테고리 list | `skin/shop/basic/listcategory*.skin.php` | ✗ |
+| 메인 typed | `skin/shop/basic/main.10~40.skin.php` | ✗ |
+| 상품 detail | `skin/shop/basic/item.form.skin.php` | ✗ |
+| 상품 detail | `skin/shop/basic/item.info.skin.php` | ✗ |
+| 상품문의 | `skin/shop/basic/itemqa{,form,list}.skin.php` | ✗ |
+| 사용후기 | `skin/shop/basic/itemuse{,form,list}.skin.php` | ✗ |
+| 쿠폰존 | `skin/shop/basic/couponzone.10.skin.php` | ✗ |
+| box 위젯 | `skin/shop/basic/box{cart,wish,category,banner,event,today,community}.skin.php` | ✗ |
+| 큰 이미지 | `skin/shop/basic/largeimage.skin.php` | ✗ |
+| cart | `app/shop/cart.php` | ✗ |
+| orderform | `app/shop/orderform.php` + `orderform.sub.php` | ✗ |
+| orderinquiry | `app/shop/orderinquiry.php` + `orderinquiryview.php` + `orderinquirycancel.php` | ✗ |
+| 주문주소 | `app/shop/orderaddress.php` | ✗ |
+| mypage | `app/shop/mypage.php` (theme variant 도) | ✗ |
+| 검색 | `app/shop/search.php` | ✗ |
+| 쿠폰 | `app/shop/coupon.php`, `couponzone.php`, `ordercoupon.php` | ✗ |
+| 개인결제 | `app/shop/personalpay.php`, `personalpayform.php`, `personalpayresult.php` | ✗ |
+| 영수증 | `app/shop/taxsave.php`, `inicis/lg/nicepay/toss/taxsave_form.php` | ✗ |
+| 옵션 popup | `app/shop/cartoption.php`, `itemoption.php` | ✗ |
+| 추천 | `app/shop/itemrecommend.php` | ✗ |
+| 재고 SMS | `app/shop/itemstocksms.php` | ✗ |
+
