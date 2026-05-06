@@ -172,54 +172,6 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
 }
-
-/* item.php 레이아웃 폭/구성 정리
-   legacy 가 width:1200px 고정 + #sit_pvi(float:left), 안의 #sit_pvi_big(float:right)
-   + #sit_pvi_thumb(float:left), 그리고 #sit_ov(float:right) 로 잡혀 있어
-   모던 컨테이너에서 어색함. grid 로 단순화하고 썸네일은 큰 이미지 아래로. */
-#sit_ov_wrap {
-    width: 100% !important;
-    padding: 0 !important;
-    border-top: 0 !important;
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 360px;
-    gap: 32px;
-    align-items: start;
-}
-#sit_pvi {
-    float: none !important;
-    width: auto !important;
-}
-#sit_pvi_big {
-    float: none !important;
-    text-align: center;
-    position: relative;
-}
-#sit_pvi_big img {
-    width: 100% !important;
-    height: auto !important;
-    max-width: 500px;
-}
-#sit_pvi_thumb {
-    float: none !important;
-    margin: 12px 0 0 !important;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
-#sit_pvi_thumb li {
-    margin: 0 !important;
-}
-#sit_ov {
-    float: none !important;
-    width: auto !important;
-    min-height: 0 !important;
-    padding-bottom: 0 !important;
-}
-@media (max-width: 880px) {
-    #sit_ov_wrap { grid-template-columns: 1fr; }
-}
 </style>
 
 
