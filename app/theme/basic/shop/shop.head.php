@@ -131,14 +131,14 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-color: var(--m-border) !important;
 }
 
-/* item.php (상품상세) 다크모드 — legacy style.css 의 sit_* 흰배경 / 검정텍스트 hardcode 오버라이드 */
+/* item.php 다크모드 — sit_ov_from / sit_pvi / sit_ov / sit_opt_added / sit_btn_*
+   / sit_siblings 등 메인 영역은 legacy style.css 가 var(--m-*) 토큰 사용 (모드 자동).
+   여기 남은 부분은 #sit_tab (하단 탭 영역, 사용후기 / 상품문의) + 일부 hardcode 박스. */
 [data-theme="dark"] #sit_info,
 [data-theme="dark"] #sit_tab .tab_tit,
 [data-theme="dark"] #sit_tab .tab_tit li button,
 [data-theme="dark"] #sit_tab .tab_con,
 [data-theme="dark"] #sit_rel,
-[data-theme="dark"] #sit_ov_from,
-[data-theme="dark"] #sit_siblings,
 [data-theme="dark"] #sit_inf_open td {
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
@@ -158,11 +158,6 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-bottom-color: var(--m-surface) !important;
 }
 [data-theme="dark"] #sit_tab .tab_tit li button {
-    color: var(--m-text-soft) !important;
-}
-[data-theme="dark"] #sit_desc,
-[data-theme="dark"] #sit_star_sns span,
-[data-theme="dark"] #sit_siblings a {
     color: var(--m-text-soft) !important;
 }
 [data-theme="dark"] #sit_ov_soldout {
