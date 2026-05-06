@@ -51,31 +51,42 @@ foreach ($check_keys as $key => $val) {
     }
 }
 
-$sql_common = " nw_device = '{$posts['nw_device']}',
-                nw_division = '{$posts['nw_division']}',
-                nw_begin_time = '{$posts['nw_begin_time']}',
-                nw_end_time = '{$posts['nw_end_time']}',
-                nw_disable_hours = '{$posts['nw_disable_hours']}',
-                nw_left = '{$posts['nw_left']}',
-                nw_top = '{$posts['nw_top']}',
-                nw_height = '{$posts['nw_height']}',
-                nw_width = '{$posts['nw_width']}',
-                nw_subject = '{$nw_subject}',
-                nw_content = '{$posts['nw_content']}',
-                nw_content_html = '{$posts['nw_content_html']}' ";
+$sql_common = " nw_device = :nw_device,
+                nw_division = :nw_division,
+                nw_begin_time = :nw_begin_time,
+                nw_end_time = :nw_end_time,
+                nw_disable_hours = :nw_disable_hours,
+                nw_left = :nw_left, nw_top = :nw_top,
+                nw_height = :nw_height, nw_width = :nw_width,
+                nw_subject = :nw_subject,
+                nw_content = :nw_content,
+                nw_content_html = :nw_content_html ";
+
+$common_params = [
+    ':nw_device'        => $posts['nw_device'],
+    ':nw_division'      => $posts['nw_division'],
+    ':nw_begin_time'    => $posts['nw_begin_time'],
+    ':nw_end_time'      => $posts['nw_end_time'],
+    ':nw_disable_hours' => $posts['nw_disable_hours'],
+    ':nw_left'          => $posts['nw_left'],
+    ':nw_top'           => $posts['nw_top'],
+    ':nw_height'        => $posts['nw_height'],
+    ':nw_width'         => $posts['nw_width'],
+    ':nw_subject'       => $nw_subject,
+    ':nw_content'       => $posts['nw_content'],
+    ':nw_content_html'  => $posts['nw_content_html'],
+];
 
 if ($w == "") {
-    $sql = " insert {$g5['new_win_table']} set $sql_common ";
-    sql_query($sql);
+    sql_pdo_query(" insert {$g5['new_win_table']} set $sql_common ", $common_params);
     $nw_id = sql_insert_id();
     run_event('admin_newwin_created', $nw_id);
 } elseif ($w == "u") {
-    $sql = " update {$g5['new_win_table']} set $sql_common where nw_id = '$nw_id' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['new_win_table']} set $sql_common where nw_id = :nw_id ",
+                  array_merge($common_params, [':nw_id' => $nw_id]));
     run_event('admin_newwin_updated', $nw_id);
 } elseif ($w == "d") {
-    $sql = " delete from {$g5['new_win_table']} where nw_id = '$nw_id' ";
-    sql_query($sql);
+    sql_pdo_query(" delete from {$g5['new_win_table']} where nw_id = :nw_id ", [':nw_id' => $nw_id]);
     run_event('admin_newwin_deleted', $nw_id);
 }
 

@@ -35,10 +35,10 @@ if(!$month)
 $del_date = $year.'-'.str_pad($month, 2, '0', STR_PAD_LEFT);
 switch($method) {
     case 'before':
-        $sql_common = " where substring(vi_date, 1, 7) < '$del_date' ";
+        $sql_where = " where substring(vi_date, 1, 7) < :del_date ";
         break;
     case 'specific':
-        $sql_common = " where substring(vi_date, 1, 7) = '$del_date' ";
+        $sql_where = " where substring(vi_date, 1, 7) = :del_date ";
         break;
     default:
         alert('올바른 방법으로 이용해 주십시오.');
@@ -46,17 +46,14 @@ switch($method) {
 }
 
 // 총 로그수
-$sql = " select count(*) as cnt from {$g5['visit_table']} ";
-$row = sql_fetch($sql);
+$row = sql_fetch(" select count(*) as cnt from {$g5['visit_table']} ");
 $total_count = $row['cnt'];
 
 // 로그삭제
-$sql = " delete from {$g5['visit_table']} $sql_common ";
-sql_query($sql);
+sql_pdo_query(" delete from {$g5['visit_table']} {$sql_where} ", [':del_date' => $del_date]);
 
 // 삭제 후 총 로그수
-$sql = " select count(*) as cnt from {$g5['visit_table']} ";
-$row = sql_fetch($sql);
+$row = sql_fetch(" select count(*) as cnt from {$g5['visit_table']} ");
 $total_count2 = $row['cnt'];
 
 alert('총 '.number_format($total_count).'건 중 '.number_format($total_count - $total_count2).'건 삭제 완료', G5_ADMIN_URL.'/visit_delete');

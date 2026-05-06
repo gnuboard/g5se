@@ -37,39 +37,38 @@ if ($fm_timg_del) {
     @unlink(G5_DATA_PATH . "/faq/{$fm_id}_t");
 }
 
-$sql_common = " set fm_subject = '$fm_subject',
-                    fm_head_html = '$fm_head_html',
-                    fm_tail_html = '$fm_tail_html',
-                    fm_mobile_head_html = '$fm_mobile_head_html',
-                    fm_mobile_tail_html = '$fm_mobile_tail_html',
-                    fm_order = '$fm_order' ";
+$sql_common = " set fm_subject = :fm_subject,
+                    fm_head_html = :fm_head_html,
+                    fm_tail_html = :fm_tail_html,
+                    fm_mobile_head_html = :fm_mobile_head_html,
+                    fm_mobile_tail_html = :fm_mobile_tail_html,
+                    fm_order = :fm_order ";
+$common_params = [
+    ':fm_subject'          => $fm_subject,
+    ':fm_head_html'        => $fm_head_html,
+    ':fm_tail_html'        => $fm_tail_html,
+    ':fm_mobile_head_html' => $fm_mobile_head_html,
+    ':fm_mobile_tail_html' => $fm_mobile_tail_html,
+    ':fm_order'            => $fm_order,
+];
 
 if ($w == "") {
-    $sql = " alter table {$g5['faq_master_table']} auto_increment=1 ";
-    sql_query($sql);
-
-    $sql = " insert {$g5['faq_master_table']} $sql_common ";
-    sql_query($sql);
-
+    sql_query(" alter table {$g5['faq_master_table']} auto_increment=1 ");
+    sql_pdo_query(" insert {$g5['faq_master_table']} $sql_common ", $common_params);
     $fm_id = sql_insert_id();
     run_event('admin_faq_master_created', $fm_id);
 
 } elseif ($w == "u") {
-    $sql = " update {$g5['faq_master_table']} $sql_common where fm_id = '$fm_id' ";
-    sql_query($sql);
+    sql_pdo_query(" update {$g5['faq_master_table']} $sql_common where fm_id = :fm_id ",
+                  array_merge($common_params, [':fm_id' => $fm_id]));
     run_event('admin_faq_master_updated', $fm_id);
 
 } elseif ($w == "d") {
     @unlink(G5_DATA_PATH . "/faq/{$fm_id}_h");
     @unlink(G5_DATA_PATH . "/faq/{$fm_id}_t");
 
-    // FAQ삭제
-    $sql = " delete from {$g5['faq_master_table']} where fm_id = '$fm_id' ";
-    sql_query($sql);
-
-    // FAQ상세삭제
-    $sql = " delete from {$g5['faq_table']} where fm_id = '$fm_id' ";
-    sql_query($sql);
+    sql_pdo_query(" delete from {$g5['faq_master_table']} where fm_id = :fm_id ", [':fm_id' => $fm_id]);
+    sql_pdo_query(" delete from {$g5['faq_table']}        where fm_id = :fm_id ", [':fm_id' => $fm_id]);
 
     run_event('admin_faq_master_deleted', $fm_id);
 }

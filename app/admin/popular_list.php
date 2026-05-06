@@ -13,28 +13,32 @@ auth_check_menu($auth, $sub_menu, 'r');
 if (isset($_POST['chk']) && is_array($_POST['chk'])) {
     for ($i = 0; $i < count($_POST['chk']); $i++) {
         $pp_id = (int) $_POST['chk'][$i];
-
-        sql_query(" delete from {$g5['popular_table']} where pp_id = '$pp_id' ", true);
+        sql_pdo_query(" delete from {$g5['popular_table']} where pp_id = :pp_id ", [':pp_id' => $pp_id]);
     }
 }
 
-$sql_common = " from {$g5['popular_table']} a ";
-$sql_search = " where (1) ";
+$sql_common  = " from {$g5['popular_table']} a ";
+$sql_search  = " where (1) ";
+$sql_params  = [];
 
+// $sfl 화이트리스트 (컬럼명은 placeholder 불가)
+$allowed_sfl = ['pp_word', 'pp_date', 'pp_ip'];
 if ($stx) {
-    $sql_search .= " and ( ";
-    switch ($sfl) {
-        case "pp_word":
-            $sql_search .= " ({$sfl} like '{$stx}%') ";
+    $sfl_safe = in_array($sfl, $allowed_sfl, true) ? $sfl : 'pp_word';
+    switch ($sfl_safe) {
+        case 'pp_word':
+            $sql_search .= " and ({$sfl_safe} like :stx) ";
+            $sql_params[':stx'] = $stx.'%';
             break;
-        case "pp_date":
-            $sql_search .= " ({$sfl} = '{$stx}') ";
+        case 'pp_date':
+            $sql_search .= " and ({$sfl_safe} = :stx) ";
+            $sql_params[':stx'] = $stx;
             break;
         default:
-            $sql_search .= " ({$sfl} like '%{$stx}%') ";
+            $sql_search .= " and ({$sfl_safe} like :stx) ";
+            $sql_params[':stx'] = '%'.$stx.'%';
             break;
     }
-    $sql_search .= " ) ";
 }
 
 if (!$sst) {
@@ -46,11 +50,7 @@ if ($sst && !in_array($sst, $allowed_sst)) $sst = 'pp_id';
 if ($sod && !in_array(strtolower($sod), array('asc', 'desc'))) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
-$sql = " select count(*) as cnt
-            {$sql_common}
-            {$sql_search}
-            {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} {$sql_order} ", $sql_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -60,12 +60,7 @@ if ($page < 1) {
 } // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " select *
-            {$sql_common}
-            {$sql_search}
-            {$sql_order}
-            limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * {$sql_common} {$sql_search} {$sql_order} limit ".(int)$from_record.', '.(int)$rows.' ', $sql_params);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/popular_list" class="ov_listall">전체목록</a>';
 

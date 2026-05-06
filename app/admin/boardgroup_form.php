@@ -30,7 +30,7 @@ if ($w == '') {
     $html_title .= ' 생성';
 } elseif ($w == 'u') {
     $gr_id_attr = 'readonly';
-    $gr = sql_fetch(" select * from {$g5['group_table']} where gr_id = '$gr_id' ");
+    $gr = sql_pdo_fetch(" select * from {$g5['group_table']} where gr_id = :gr_id ", [':gr_id' => $gr_id]);
     $html_title .= ' 수정';
 } else {
     alert('제대로 된 값이 넘어오지 않았습니다.');
@@ -41,8 +41,8 @@ if (!isset($group['gr_device'])) {
 }
 
 // 접근회원수
-$sql1 = " select count(*) as cnt from {$g5['group_member_table']} where gr_id = '{$gr_id}' ";
-$row1 = sql_fetch($sql1);
+$row1 = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_member_table']} where gr_id = :gr_id ",
+                    [':gr_id' => $gr_id]);
 $group_member_count = $row1['cnt'];
 
 $g5['title'] = $html_title;
