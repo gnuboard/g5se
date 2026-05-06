@@ -5,11 +5,6 @@ require_once __DIR__.'/../_layout.php';
 admin_require_login();
 auth_check_menu($auth, $sub_menu, 'w');
 
-require_once __DIR__.'/../_layout.php';
-admin_require_login();
-auth_check_menu($auth, $sub_menu, 'w');
-auth_check_menu($auth, $sub_menu, "w");
-
 $ca_include_head = isset($_POST['ca_include_head']) ? trim($_POST['ca_include_head']) : '';
 $ca_include_tail = isset($_POST['ca_include_tail']) ? trim($_POST['ca_include_tail']) : '';
 $ca_id = isset($_REQUEST['ca_id']) ? preg_replace('/[^0-9a-z]/i', '', $_REQUEST['ca_id']) : '';

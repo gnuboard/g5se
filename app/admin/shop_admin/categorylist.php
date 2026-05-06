@@ -5,11 +5,6 @@ require_once __DIR__.'/../_layout.php';
 admin_require_login();
 auth_check_menu($auth, $sub_menu, 'r');
 
-require_once __DIR__.'/../_layout.php';
-admin_require_login();
-auth_check_menu($auth, $sub_menu, 'r');
-auth_check_menu($auth, $sub_menu, "r");
-
 $g5['title'] = '분류관리';
 admin_layout_start($g5["title"], "shop");
 ?>

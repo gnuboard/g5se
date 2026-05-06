@@ -5,9 +5,6 @@ require_once __DIR__.'/../_layout.php';
 admin_require_login();
 auth_check_menu($auth, $sub_menu, 'w');
 
-require_once __DIR__.'/../_layout.php';
-admin_require_login();
-auth_check_menu($auth, $sub_menu, 'w');
 if ($w == "u" || $w == "d")
     check_demo();
 
