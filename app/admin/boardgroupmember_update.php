@@ -20,21 +20,20 @@ if ($w == '') {
         alert('존재하지 않는 그룹입니다.');
     }
 
-    $sql = " select count(*) as cnt
-                from {$g5['group_member_table']}
-                where gr_id = '{$gr_id}'
-                and mb_id = '{$mb_id}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_member_table']} where gr_id = :gr_id and mb_id = :mb_id ",
+                        [':gr_id' => $gr_id, ':mb_id' => $mb_id]);
     if ($row['cnt']) {
         alert('이미 등록되어 있는 자료입니다.');
     } else {
         check_admin_token();
 
-        $sql = " insert into {$g5['group_member_table']}
-                    set gr_id = '{$_POST['gr_id']}',
-                         mb_id = '{$_POST['mb_id']}',
-                         gm_datetime = '" . G5_TIME_YMDHIS . "' ";
-        sql_query($sql);
+        sql_pdo_query(" insert into {$g5['group_member_table']}
+                            set gr_id = :gr_id, mb_id = :mb_id, gm_datetime = :gm_datetime ",
+                      [
+                          ':gr_id'       => $_POST['gr_id'],
+                          ':mb_id'       => $_POST['mb_id'],
+                          ':gm_datetime' => G5_TIME_YMDHIS,
+                      ]);
     }
 } elseif ($w == 'd' || $w == 'ld') {
     auth_check_menu($auth, $sub_menu, 'd');
@@ -48,8 +47,7 @@ if ($w == '') {
 
     for ($i = 0; $i < $count; $i++) {
         $gm_id = (int) $_POST['chk'][$i];
-        $sql = " select * from {$g5['group_member_table']} where gm_id = '$gm_id' ";
-        $gm = sql_fetch($sql);
+        $gm = sql_pdo_fetch(" select * from {$g5['group_member_table']} where gm_id = :gm_id ", [':gm_id' => $gm_id]);
         if (!$gm['gm_id']) {
             if ($count == 1) {
                 alert('존재하지 않는 자료입니다.');
@@ -58,8 +56,7 @@ if ($w == '') {
             }
         }
 
-        $sql = " delete from {$g5['group_member_table']} where gm_id = '$gm_id' ";
-        sql_query($sql);
+        sql_pdo_query(" delete from {$g5['group_member_table']} where gm_id = :gm_id ", [':gm_id' => $gm_id]);
     }
 }
 

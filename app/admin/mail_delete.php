@@ -25,8 +25,7 @@ if (!$post_count_chk) {
 for ($i = 0; $i < $post_count_chk; $i++) {
     $ma_id = isset($_POST['chk'][$i]) ? (int) $_POST['chk'][$i] : 0;
 
-    $sql = " delete from {$g5['mail_table']} where ma_id = '$ma_id' ";
-    sql_query($sql);
+    sql_pdo_query(" delete from {$g5['mail_table']} where ma_id = :ma_id ", [':ma_id' => $ma_id]);
     run_event('admin_mail_deleted', $ma_id);
 }
 

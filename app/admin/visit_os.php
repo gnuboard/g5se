@@ -27,9 +27,8 @@ $max = 0;
 $sum_count = 0;
 $arr = array();
 
-$sql = " select * from {$g5['visit_table']}
-          where vi_date between '$fr_date' and '$to_date' ";
-$result = sql_query($sql);
+$result = sql_pdo_query(" select * from {$g5['visit_table']} where vi_date between :fr_date and :to_date ",
+                       [':fr_date' => $fr_date, ':to_date' => $to_date]);
 while ($row=sql_fetch_array($result)) {
     $s = $row['vi_os'];
     if(!$s)

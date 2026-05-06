@@ -21,8 +21,7 @@ $post_set_default_skin = isset($_POST['set_default_skin']) ? clean_xss_tags($_PO
 $theme_dir = get_theme_dir();
 
 if($post_type == 'reset') {
-    $sql = " update {$g5['config_table']} set cf_theme = '' ";
-    sql_query($sql);
+    sql_query(" update {$g5['config_table']} set cf_theme = '' ");
     die('');
 }
 
@@ -30,8 +29,7 @@ if(!in_array($theme, $theme_dir))
     die('선택하신 테마가 설치되어 있지 않습니다.');
 
 // 테마적용
-$sql = " update {$g5['config_table']} set cf_theme = '$theme' ";
-sql_query($sql);
+sql_pdo_query(" update {$g5['config_table']} set cf_theme = :theme ", [':theme' => $theme]);
 
 // 테마 설정 스킨 적용
 if($post_set_default_skin == 1) {
@@ -40,60 +38,50 @@ if($post_set_default_skin == 1) {
     $tconfig = get_theme_config_value($theme, $keys);
 
     if($tconfig['set_default_skin']) {
-        $sql_common = array();
-        $qa_sql_common = array();
-        $de_sql_common = array();
+        // 컬럼명은 placeholder 불가 — config 키 화이트리스트 통과 후 컬럼으로 사용, 값만 :param
+        $cf_set = []; $cf_params = [];
+        $qa_set = []; $qa_params = [];
+        $de_set = []; $de_params = [];
 
         foreach($tconfig as $key => $val) {
+            if (!preg_match('#^[a-z0-9_]+$#i', $key)) continue; // 컬럼명 가드
+
             if(preg_match('#^qa_.+$#', $key)) {
                 if($val) {
-                    if(!preg_match('#^theme/.+$#', $val))
-                        $val = 'theme/'.$val;
-
-                    $qa_sql_common[] = " $key = '$val' ";
+                    if(!preg_match('#^theme/.+$#', $val)) $val = 'theme/'.$val;
+                    $qa_set[] = " $key = :$key ";
+                    $qa_params[':'.$key] = $val;
                 }
-
                 continue;
             }
 
             if(preg_match('#^de_.+$#', $key)) {
-                if(!isset($default[$key]))
-                    continue;
-
+                if(!isset($default[$key])) continue;
                 if($val) {
-                    if(!preg_match('#^theme/.+$#', $val))
-                        $val = 'theme/'.$val;
-
-                    $de_sql_common[] = " $key = '$val' ";
+                    if(!preg_match('#^theme/.+$#', $val)) $val = 'theme/'.$val;
+                    $de_set[] = " $key = :$key ";
+                    $de_params[':'.$key] = $val;
                 }
-
                 continue;
             }
 
-            if(!isset($config[$key]))
-                continue;
+            if(!isset($config[$key])) continue;
 
             if($val) {
-                if(!preg_match('#^theme/.+$#', $val))
-                    $val = 'theme/'.$val;
-
-                $sql_common[] = " $key = '$val' ";
+                if(!preg_match('#^theme/.+$#', $val)) $val = 'theme/'.$val;
+                $cf_set[] = " $key = :$key ";
+                $cf_params[':'.$key] = $val;
             }
         }
 
-        if(!empty($sql_common)) {
-            $sql = " update {$g5['config_table']} set " . implode(', ', $sql_common);
-            sql_query($sql);
+        if(!empty($cf_set)) {
+            sql_pdo_query(" update {$g5['config_table']}            set " . implode(', ', $cf_set), $cf_params);
         }
-
-        if(!empty($qa_sql_common)) {
-            $sql = " update {$g5['qa_config_table']} set " . implode(', ', $qa_sql_common);
-            sql_query($sql);
+        if(!empty($qa_set)) {
+            sql_pdo_query(" update {$g5['qa_config_table']}         set " . implode(', ', $qa_set), $qa_params);
         }
-
-        if(!empty($de_sql_common)) {
-            $sql = " update {$g5['g5_shop_default_table']} set " . implode(', ', $de_sql_common);
-            sql_query($sql);
+        if(!empty($de_set)) {
+            sql_pdo_query(" update {$g5['g5_shop_default_table']} set " . implode(', ', $de_set), $de_params);
         }
     }
 }

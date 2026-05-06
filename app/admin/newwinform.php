@@ -27,8 +27,7 @@ sql_query($sql, false);
 
 if ($w == "u") {
     $html_title .= " 수정";
-    $sql = " select * from {$g5['new_win_table']} where nw_id = '$nw_id' ";
-    $nw = sql_fetch($sql);
+    $nw = sql_pdo_fetch(" select * from {$g5['new_win_table']} where nw_id = :nw_id ", [':nw_id' => $nw_id]);
     if (!(isset($nw['nw_id']) && $nw['nw_id'])) {
         alert("등록된 자료가 없습니다.");
     }
