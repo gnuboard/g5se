@@ -130,6 +130,48 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface-2) !important;
     border-color: var(--m-border) !important;
 }
+
+/* item.php (상품상세) 다크모드 — legacy style.css 의 sit_* 흰배경 / 검정텍스트 hardcode 오버라이드 */
+[data-theme="dark"] #sit_info,
+[data-theme="dark"] #sit_tab .tab_tit,
+[data-theme="dark"] #sit_tab .tab_tit li button,
+[data-theme="dark"] #sit_tab .tab_con,
+[data-theme="dark"] #sit_rel,
+[data-theme="dark"] #sit_ov_from,
+[data-theme="dark"] #sit_siblings,
+[data-theme="dark"] #sit_inf_open td {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text);
+}
+[data-theme="dark"] #sit_inf_open th,
+[data-theme="dark"] #sit_sms_new .prd_name,
+[data-theme="dark"] #sit_tab .item_use_count,
+[data-theme="dark"] #sit_tab .item_qa_count {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text-soft) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sit_tab .tab_tit li .selected {
+    background: var(--m-surface) !important;
+    color: var(--m-primary) !important;
+    border-bottom-color: var(--m-surface) !important;
+}
+[data-theme="dark"] #sit_tab .tab_tit li button {
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #sit_desc,
+[data-theme="dark"] #sit_star_sns span,
+[data-theme="dark"] #sit_siblings a {
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #sit_ov_soldout {
+    background: rgba(239, 68, 68, 0.1) !important;
+}
+[data-theme="dark"] #sit_star_sns .sns_area {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
 </style>
 
 
