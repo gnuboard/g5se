@@ -415,10 +415,12 @@ class item_list
             $content = ob_get_contents();
             ob_end_clean();
             // gnu5se: 레거시 skin 의 fixed-width float 가 list_mod (1줄당 개수) 설정을 반영
-            // 못 하므로, 결과를 CSS Grid 래퍼로 감싸 --m-list-cols 로 컬럼 수를 강제한다.
-            // CSS 는 theme/basic/shop/shop.head.php 의 .m-shop-grid 규칙 참고.
+            // 못 하므로, 결과를 CSS Grid 래퍼로 감싸 --m-list-cols (최대 컬럼) 와
+            // --m-img-width (최소 cell 폭) 를 주입한다. CSS 는 theme/basic/shop/shop.head.php
+            // 의 .m-shop-grid 규칙 참고.
             $cols = max(1, (int) $this->list_mod);
-            return "<div class=\"m-shop-grid\" style=\"--m-list-cols: {$cols}\">{$content}</div>";
+            $imgw = max(1, (int) $this->img_width);
+            return "<div class=\"m-shop-grid\" style=\"--m-list-cols: {$cols}; --m-img-width: {$imgw}px\">{$content}</div>";
         }
     }
 }
