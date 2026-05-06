@@ -24,6 +24,35 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 ?>
 
 <style>
+/* item_list::run() 가 결과를 .m-shop-grid 로 감싸고 --m-list-cols 를 주입함.
+   레거시 skin 의 fixed-width float 를 CSS Grid 로 강제 → 쇼핑몰설정의
+   "1줄당 이미지 수" 가 실제 컬럼수에 반영되도록 함. owl-carousel 은 제외. */
+/* .smt_30 은 사이드바용 (thumb 80px 좌측 + 텍스트 우측 리스트) → grid 미적용 */
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30) {
+    display: grid !important;
+    grid-template-columns: repeat(var(--m-list-cols, 4), minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30) > li.sct_li {
+    float: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    border-bottom: 0 !important;
+}
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30) > li.sct_li .sct_img img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+@media (max-width: 880px) {
+    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 /* 레거시 shop skin (style.css) 의 흰 배경 / 검정 텍스트 hardcode 를 다크모드에서 토큰으로 덮어씀 */
 [data-theme="dark"] .smt_40 {
     background: var(--m-surface) !important;
