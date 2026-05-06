@@ -112,6 +112,12 @@ class Router
         '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*/ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i' => 'admin/{_adminpage}.php',
         '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'admin/{_adminpage}.php',
 
+        // shop — admin 동일 패턴. 정적 자산 (img/css/js) 은 .htaccess 가 먼저 매핑.
+        // 서브디렉토리 (inicis/lg/nicepay/toss/kakaopay/naverpay/kcp) 도 segment-by-segment 룰로 통과.
+        '#^/shop/?$#'                                                                  => 'shop/index.php',
+        '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i'                     => 'shop/{_shoppage}.php',
+        '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
+
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
         // 1:1 문의 수정 — /qa/{qa_id}/edit (resource-first; w=u 자동 주입)
