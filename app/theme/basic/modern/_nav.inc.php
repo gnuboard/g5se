@@ -295,7 +295,8 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     transition: background 0.15s, color 0.15s;
 }
 .m-nav-segment-item.is-active {
-    background: var(--m-surface); color: var(--m-primary);
+    /* primary tint 로 통일 — dark 에서 surface 가 surface-2 보다 어두워 invert 되는 문제 회피 */
+    background: var(--m-primary-soft); color: var(--m-primary);
     box-shadow: var(--m-shadow);
 }
 
@@ -448,7 +449,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     color: var(--m-text-soft); text-decoration: none;
 }
 .m-nav-drawer-segment-item.is-active {
-    background: var(--m-surface); color: var(--m-primary);
+    background: var(--m-primary-soft); color: var(--m-primary);
     box-shadow: var(--m-shadow);
 }
 
