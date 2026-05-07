@@ -309,6 +309,14 @@ class Router
             header('Location: '.$url, true, 301);
             exit;
         }
+        // 쿠폰: /shop/coupon.php → /shop/coupon
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/coupon.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/coupon';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderform.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/orderform';
