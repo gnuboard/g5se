@@ -79,15 +79,22 @@ $tot_price = $tot_sell_price + $send_cost;
 .m-cart-title { margin: 0; font-size: 28px; line-height: 1.2; color: var(--m-text); }
 .m-cart-count { color: var(--m-primary); font-weight: 800; }
 .m-cart-sub { margin: 6px 0 0; color: var(--m-text-soft); font-size: var(--m-text-sm); }
-.m-cart-btn {
+.m-cart-btn, a.m-cart-btn, a.m-cart-btn:link, a.m-cart-btn:visited {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
     min-height: 40px; padding: 0 15px; border: 1px solid var(--m-border);
     border-radius: var(--m-radius-sm); background: var(--m-surface-2);
     color: var(--m-text); text-decoration: none; font-weight: 700; cursor: pointer;
 }
-.m-cart-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
-.m-cart-btn-primary { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
-.m-cart-btn-primary:hover { color: #fff; filter: brightness(0.96); }
+.m-cart-btn:hover, a.m-cart-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
+/* primary — !important 로 default_shop.css a{color:#000} 등 cascade 차단 */
+a.m-cart-btn-primary, a.m-cart-btn-primary:link, a.m-cart-btn-primary:visited,
+a.m-cart-btn-primary:hover, a.m-cart-btn-primary:active,
+button.m-cart-btn-primary, .m-cart-btn-primary {
+    background: var(--m-primary) !important;
+    border-color: var(--m-primary) !important;
+    color: #fff !important;
+}
+a.m-cart-btn-primary:hover, button.m-cart-btn-primary:hover { filter: brightness(0.96); }
 .m-cart-btn-danger:hover { border-color: #ef4444; color: #ef4444; }
 .m-cart-list-wrap { min-width: 0; width: 100%; }
 .m-cart-checkline { display: inline-flex; align-items: center; gap: 8px; color: var(--m-text-soft); font-weight: 700; }
