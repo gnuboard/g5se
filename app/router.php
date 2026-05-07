@@ -300,6 +300,14 @@ class Router
             header('Location: '.$url, true, 301);
             exit;
         }
+        // 배송지목록: /shop/orderaddress.php → /shop/orderaddress
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderaddress.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/orderaddress';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderform.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/orderform';

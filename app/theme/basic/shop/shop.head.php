@@ -3,10 +3,8 @@ if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 
 $q = isset($_GET['q']) ? clean_xss_tags($_GET['q'], 1, 1) : '';
 
-if(G5_IS_MOBILE) {
-    include_once(G5_THEME_MSHOP_PATH.'/shop.head.php');
-    return;
-}
+// gnu5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 chrome + @media query 만 사용.
+// (G5_THEME_MSHOP_PATH 의 mobile 전용 chrome 은 미사용)
 
 include_once(G5_THEME_PATH.'/head.sub.php');
 // modern 디자인 시스템 — UnoCSS runtime + Pretendard 폰트 + 토큰
@@ -500,11 +498,36 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-bottom: 1px solid var(--m-border) !important;
     color: var(--m-text);
 }
+.m-shell #sod_fin_pay ul {
+    margin: 0 !important;
+    padding: 12px 20px !important;
+}
 .m-shell #sod_fin_pay li {
+    display: block !important;
     color: var(--m-text);
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--m-border);
+    list-style: none;
+}
+.m-shell #sod_fin_pay li:last-child {
+    border-bottom: 0;
 }
 .m-shell #sod_fin_pay li > strong {
+    display: block !important;
+    float: none !important;
+    width: auto !important;
+    margin: 0 0 4px !important;
     color: var(--m-text-soft);
+    font-weight: 600;
+    font-size: 0.92em;
+}
+.m-shell #sod_fin_pay li > span {
+    display: block !important;
+    float: none !important;
+    width: auto !important;
+    padding-left: 14px !important;
+    color: var(--m-text);
+    font-weight: 500;
 }
 
 /* 우측 총계 박스 (#sod_bsk_tot.order_view_infos) — 카드형 + 토큰 */
@@ -1029,6 +1052,188 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 .m-shell #forderform #sod_list .cp_btn:hover {
     border-color: var(--m-primary);
     color: var(--m-primary);
+}
+
+/* ── 모바일 (≤768px): orderform 의 #sod_list 를 카드형으로 stack ────────── */
+@media (max-width: 768px) {
+    .m-shell #forderform .od_prd_list {
+        overflow-x: visible !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    .m-shell #forderform #sod_list {
+        min-width: 0 !important;
+        display: block !important;
+    }
+    .m-shell #forderform #sod_list thead {
+        display: none !important;
+    }
+    .m-shell #forderform #sod_list tbody,
+    .m-shell #forderform #sod_list tr {
+        display: block !important;
+        width: 100% !important;
+    }
+    .m-shell #forderform #sod_list tr {
+        margin-bottom: 12px;
+        border: 1px solid var(--m-border);
+        border-radius: var(--m-radius, 8px);
+        background: var(--m-surface);
+        overflow: hidden;
+    }
+    .m-shell #forderform #sod_list td {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px !important;
+        border-top: 0 !important;
+        border-bottom: 1px solid var(--m-border) !important;
+        text-align: right !important;
+        white-space: normal !important;
+    }
+    .m-shell #forderform #sod_list tr td:last-child {
+        border-bottom: 0 !important;
+    }
+    /* 상품 cell — 이미지 + 이름 (라벨 없음, 헤더 영역 역할) */
+    .m-shell #forderform #sod_list td.td_prd {
+        display: grid !important;
+        grid-template-columns: 64px 1fr;
+        gap: 12px;
+        background: var(--m-surface-2);
+        text-align: left !important;
+    }
+    .m-shell #forderform #sod_list td.td_prd .sod_img {
+        width: 64px !important;
+        height: 64px !important;
+    }
+    /* 데이터 cell ::before 로 라벨 (thead 자리 대체) */
+    .m-shell #forderform #sod_list td.td_num::before { content: "총수량"; }
+    .m-shell #forderform #sod_list td.td_dvr::before { content: "배송비"; }
+    .m-shell #forderform #sod_list td.td_numbig:nth-of-type(3)::before { content: "판매가"; }
+    .m-shell #forderform #sod_list td.td_numbig:nth-of-type(4)::before { content: "포인트"; }
+    .m-shell #forderform #sod_list td.td_numbig:last-child::before { content: "소계"; }
+    .m-shell #forderform #sod_list td::before {
+        color: var(--m-text-soft);
+        font-weight: 600;
+        font-size: 0.92em;
+    }
+
+    /* 주문하시는 분 / 받으시는 분 form (#sod_frm_orderer / #sod_frm_taker / 등) — th/td block stack + 100% 입력 */
+    .m-shell #sod_frm .tbl_frm01 table,
+    .m-shell #sod_frm .tbl_frm01 tbody,
+    .m-shell #sod_frm .tbl_frm01 tr,
+    .m-shell #sod_frm .tbl_frm01 th,
+    .m-shell #sod_frm .tbl_frm01 td {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        background: transparent !important;  /* codex 다크룰의 surface-2 박스 무력화 */
+        border: 0 !important;
+    }
+    .m-shell #sod_frm .tbl_frm01 th {
+        padding: 12px 4px 4px !important;
+        text-align: left !important;
+        font-size: 0.9em;
+        font-weight: 600;
+        color: var(--m-text-soft) !important;
+        line-height: 1.3 !important;
+    }
+    .m-shell #sod_frm .tbl_frm01 td {
+        padding: 0 4px 8px !important;
+        line-height: 1.4 !important;
+        color: var(--m-text) !important;
+    }
+    /* tr 사이 dashed 분리 */
+    .m-shell #sod_frm .tbl_frm01 tr {
+        padding: 0 0 4px !important;
+        border-bottom: 1px dashed var(--m-border) !important;
+        margin-bottom: 8px;
+    }
+    .m-shell #sod_frm .tbl_frm01 tr:last-child {
+        border-bottom: 0 !important;
+    }
+    .m-shell #sod_frm .tbl_frm01 td input[type="text"],
+    .m-shell #sod_frm .tbl_frm01 td input[type="password"],
+    .m-shell #sod_frm .tbl_frm01 td input[type="email"],
+    .m-shell #sod_frm .tbl_frm01 td input[type="tel"],
+    .m-shell #sod_frm .tbl_frm01 td .frm_input,
+    .m-shell #sod_frm .tbl_frm01 td textarea,
+    .m-shell #sod_frm .tbl_frm01 td select {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        margin-bottom: 6px;
+    }
+    /* 주소 cluster — zip(좁게) + 검색 버튼 가로, 기본/상세/참고 stacked 100% */
+    .m-shell #sod_frm .tbl_frm01 td #od_zip,
+    .m-shell #sod_frm .tbl_frm01 td #od_b_zip {
+        width: calc(100% - 130px) !important;
+        display: inline-block !important;
+        vertical-align: middle;
+    }
+    .m-shell #sod_frm .tbl_frm01 td .btn_address {
+        width: 120px !important;
+        display: inline-block !important;
+        vertical-align: middle;
+        height: auto;
+    }
+
+    /* 받으시는 분 / 배송지선택 (.order_choice_place) — radio + label 한 줄 쌍, 각 쌍은 line-break 으로 다음 줄 */
+    .m-shell #sod_frm_taker .order_choice_place {
+        display: block !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+    }
+    .m-shell #sod_frm_taker .order_choice_place input[type="radio"] {
+        margin: 0 6px 0 0 !important;
+        vertical-align: middle;
+    }
+    .m-shell #sod_frm_taker .order_choice_place label {
+        display: inline-block !important;
+        vertical-align: middle;
+        margin: 0 !important;
+        padding: 6px 0;
+    }
+    /* 각 label 뒤에 줄바꿈 — input/label/input/label/... 마크업에서 label 뒤에 line break */
+    .m-shell #sod_frm_taker .order_choice_place label::after {
+        content: "";
+        display: block;
+    }
+    .m-shell #sod_frm_taker .order_choice_place br {
+        display: none !important;
+    }
+    /* 배송지목록 버튼 — float 무력화, 풀폭 + 텍스트 가운데 */
+    .m-shell #sod_frm_taker .order_choice_place #order_address {
+        float: none !important;
+        position: static !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 100% !important;
+        margin: 8px 0 0 !important;
+        padding: 10px 12px !important;
+        text-align: center !important;
+        text-decoration: none;
+    }
+    /* 배송지명 입력 + 기본배송지 체크박스 — 같은 td 안 인라인 분리 */
+    .m-shell #sod_frm_taker .tbl_frm01 td input[type="checkbox"] + label {
+        display: inline-block !important;
+        margin: 4px 0 0;
+    }
+}
+
+/* KCP 결제 modal (blockUI) — body 직속에 inject 되는데 .m-shell 의 z-index:9999
+   에 가려져 보이지 않던 문제. 모달 / 오버레이 / NAX_BLOCK / 결제 iframe 모두
+   m-shell 위로 올림. */
+body > .blockUI,
+body > #blockOverlayID,
+body > #NAX_BLOCK,
+body > #NAX_BLOCK iframe,
+#naxIfr {
+    z-index: 2147483000 !important;
 }
 
 /* ============================================================

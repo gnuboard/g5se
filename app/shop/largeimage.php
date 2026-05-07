@@ -4,11 +4,6 @@ include_once('./_common.php');
 $it_id = isset($_GET['it_id']) ? get_search_string(trim($_GET['it_id'])) : '';
 $no = (isset($_GET['no']) && $_GET['no']) ? (int) $_GET['no'] : 1;
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/largeimage.php');
-    return;
-}
-
 $row = get_shop_item($it_id, true);
 
 if(! (isset($row['it_id']) && $row['it_id']))

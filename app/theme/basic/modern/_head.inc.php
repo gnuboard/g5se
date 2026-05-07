@@ -608,28 +608,111 @@ $_modern_main_css = ob_get_clean();
 add_stylesheet($_modern_main_css, 50);
 
 // ──────────────────────────────────────────────
-// 토글 버튼을 모든 .m-nav-actions 에 자동 주입 + 클릭 핸들러
-// (각 페이지 스킨을 수정하지 않아도 됨)
+// 화면 우하단 floating 버튼 클러스터 — 다크모드 토글 + 위로가기.
+// (m-nav-actions 안에 inject 하던 방식 폐기)
 // ──────────────────────────────────────────────
+$_modern_float_css = <<<'CSS'
+<style>
+.m-float-actions {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 10001;  /* .m-shell (9999) 위로 — 덮이지 않도록 */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.m-float-actions button {
+    width: 44px; height: 44px;
+    padding: 0; margin: 0;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: 999px;
+    color: var(--m-text-soft);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--m-shadow);
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s, opacity 0.2s;
+}
+.m-float-actions button:hover {
+    background: var(--m-surface-2);
+    color: var(--m-text);
+    border-color: var(--m-border-hover);
+}
+.m-float-actions button svg { width: 18px; height: 18px; }
+.m-float-actions .m-float-top {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+}
+.m-float-actions.is-scrolled .m-float-top {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+/* 모바일 — 살짝 작게 */
+@media (max-width: 768px) {
+    .m-float-actions { right: 12px; bottom: 12px; gap: 6px; }
+    .m-float-actions button { width: 40px; height: 40px; }
+}
+/* 다크모드 sun/moon icon swap (이전 .m-theme-toggle 룰과 동일) */
+.m-float-actions .m-icon-sun  { display: none; }
+.m-float-actions .m-icon-moon { display: block; }
+[data-theme="dark"] .m-float-actions .m-icon-sun  { display: block; }
+[data-theme="dark"] .m-float-actions .m-icon-moon { display: none; }
+</style>
+CSS;
+add_stylesheet($_modern_float_css, 51);
+
 $_modern_toggle_js = <<<'JS'
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-    var html = ''
-        + '<button type="button" class="m-theme-toggle" aria-label="테마 전환">'
+    // 우하단 floating cluster 생성 (theme toggle + scroll to top)
+    var wrap = document.createElement("div");
+    wrap.className = "m-float-actions";
+    wrap.innerHTML = ''
+        + '<button type="button" class="m-theme-toggle" aria-label="테마 전환" title="테마 전환">'
         +   '<svg class="m-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
         +   '<svg class="m-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>'
+        + '</button>'
+        + '<button type="button" class="m-float-top" aria-label="위로 가기" title="위로 가기">'
+        +   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>'
         + '</button>';
-    document.querySelectorAll(".m-nav-actions").forEach(function(nav){
-        var tmp = document.createElement("div"); tmp.innerHTML = html;
-        var btn = tmp.firstChild;
-        btn.addEventListener("click", function(){
-            var cur = document.documentElement.dataset.theme || "light";
-            var next = cur === "dark" ? "light" : "dark";
-            document.documentElement.dataset.theme = next;
-            try { localStorage.setItem("m-theme", next); } catch(e) {}
-        });
-        nav.insertBefore(btn, nav.firstChild);
+    document.body.appendChild(wrap);
+
+    var themeBtn = wrap.querySelector(".m-theme-toggle");
+    var topBtn   = wrap.querySelector(".m-float-top");
+
+    themeBtn.addEventListener("click", function(){
+        var cur = document.documentElement.dataset.theme || "light";
+        var next = cur === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem("m-theme", next); } catch(e) {}
     });
+
+    // 위로 가기 — m-shell 이 실제 scroll container 면 그걸, 아니면 window
+    var shell = document.querySelector(".m-shell");
+    var scroller = (shell && shell.scrollHeight > shell.clientHeight + 10) ? shell : window;
+    topBtn.addEventListener("click", function(){
+        if (scroller === window) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+            scroller.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    });
+
+    function onScroll() {
+        var y = (scroller === window) ? window.scrollY : scroller.scrollTop;
+        wrap.classList.toggle("is-scrolled", y > 200);
+    }
+    if (scroller === window) {
+        window.addEventListener("scroll", onScroll, { passive: true });
+    } else {
+        scroller.addEventListener("scroll", onScroll, { passive: true });
+    }
+    onScroll();
 });
 </script>
 JS;

@@ -13,7 +13,7 @@
 
 if (!defined('_GNUBOARD_')) return;
 
-global $config, $g5;
+global $config, $g5, $default;
 
 // 공지사항 최근 5건 (notice 게시판이 있으면)
 $_ft_notices = [];
@@ -34,6 +34,17 @@ if (!empty($config['cf_visit']) && preg_match('/오늘:(\d+),어제:(\d+),최대
     $_ft_visit['total']     = (int)$_vm[4];
 }
 
+// 현재 접속자 — g5_login 의 lo_datetime 가 cf_login_minutes 분 이내인 row 수
+$_ft_now = 0;
+$_login_minutes = (int)($config['cf_login_minutes'] ?? 10);
+if ($_login_minutes > 0) {
+    $_r = @sql_pdo_fetch(
+        " select count(*) as cnt from {$g5['login_table']} where lo_datetime >= :cutoff ",
+        [':cutoff' => date('Y-m-d H:i:s', G5_SERVER_TIME - 60 * $_login_minutes)]
+    );
+    $_ft_now = (int)($_r['cnt'] ?? 0);
+}
+
 $_ft_year = date('Y');
 ?>
 
@@ -51,27 +62,50 @@ $_ft_year = date('Y');
             </ul>
         </div>
 
-        <!-- 컬럼 2: 사이트 정보 -->
+        <!-- 컬럼 2: 사이트 정보 — $default (g5_shop_default) 우선, 없으면 $config 폴백 -->
+        <?php
+        // 회사 정보 fallback chain — shop default 가 풍부, config 는 이메일 정도만
+        $_ft_company = [
+            'name'    => $default['de_admin_company_name']      ?? $config['cf_company_name']      ?? '',
+            'owner'   => $default['de_admin_company_owner']     ?? $config['cf_company_owner']     ?? '',
+            'addr'    => $default['de_admin_company_addr']      ?? $config['cf_company_addr']      ?? '',
+            'saupja'  => $default['de_admin_company_saupja_no'] ?? $config['cf_company_saupja_no'] ?? '',
+            'tongsin' => $default['de_admin_tongsin_no']        ?? '',
+            'tel'     => $default['de_admin_company_tel']       ?? $config['cf_company_phone']     ?? '',
+            'fax'     => $default['de_admin_company_fax']       ?? '',
+            'info'    => $default['de_admin_info_name']         ?? '',
+            'email'   => $config['cf_admin_email']              ?? '',
+        ];
+        ?>
         <div class="m-footer-col">
             <h3 class="m-footer-title">사이트 정보</h3>
             <dl class="m-footer-info">
-                <?php if (!empty($config['cf_company_name'])) { ?>
-                <dt>회사명</dt><dd><?php echo get_text($config['cf_company_name']) ?></dd>
+                <?php if ($_ft_company['name']) { ?>
+                <dt>회사명</dt><dd><?php echo get_text($_ft_company['name']) ?></dd>
                 <?php } ?>
-                <?php if (!empty($config['cf_admin_email'])) { ?>
-                <dt>이메일</dt><dd><a href="mailto:<?php echo $config['cf_admin_email'] ?>"><?php echo $config['cf_admin_email'] ?></a></dd>
+                <?php if ($_ft_company['owner']) { ?>
+                <dt>대표</dt><dd><?php echo get_text($_ft_company['owner']) ?></dd>
                 <?php } ?>
-                <?php if (!empty($config['cf_company_owner'])) { ?>
-                <dt>대표</dt><dd><?php echo get_text($config['cf_company_owner']) ?></dd>
+                <?php if ($_ft_company['addr']) { ?>
+                <dt>주소</dt><dd><?php echo get_text($_ft_company['addr']) ?></dd>
                 <?php } ?>
-                <?php if (!empty($config['cf_company_addr'])) { ?>
-                <dt>주소</dt><dd><?php echo get_text($config['cf_company_addr']) ?></dd>
+                <?php if ($_ft_company['saupja']) { ?>
+                <dt>사업자번호</dt><dd><?php echo get_text($_ft_company['saupja']) ?></dd>
                 <?php } ?>
-                <?php if (!empty($config['cf_company_saupja_no'])) { ?>
-                <dt>사업자번호</dt><dd><?php echo get_text($config['cf_company_saupja_no']) ?></dd>
+                <?php if ($_ft_company['tongsin']) { ?>
+                <dt>통신판매</dt><dd><?php echo get_text($_ft_company['tongsin']) ?></dd>
                 <?php } ?>
-                <?php if (!empty($config['cf_company_phone'])) { ?>
-                <dt>전화</dt><dd><?php echo get_text($config['cf_company_phone']) ?></dd>
+                <?php if ($_ft_company['tel']) { ?>
+                <dt>전화</dt><dd><?php echo get_text($_ft_company['tel']) ?></dd>
+                <?php } ?>
+                <?php if ($_ft_company['fax']) { ?>
+                <dt>팩스</dt><dd><?php echo get_text($_ft_company['fax']) ?></dd>
+                <?php } ?>
+                <?php if ($_ft_company['info']) { ?>
+                <dt>책임자</dt><dd><?php echo get_text($_ft_company['info']) ?></dd>
+                <?php } ?>
+                <?php if ($_ft_company['email']) { ?>
+                <dt>이메일</dt><dd><a href="mailto:<?php echo $_ft_company['email'] ?>"><?php echo $_ft_company['email'] ?></a></dd>
                 <?php } ?>
             </dl>
         </div>
@@ -93,10 +127,11 @@ $_ft_year = date('Y');
             <?php } ?>
         </div>
 
-        <!-- 컬럼 4: 접속자 통계 -->
+        <!-- 컬럼 4: 접속자 통계 + 현재 접속자 -->
         <div class="m-footer-col">
-            <h3 class="m-footer-title">접속자 통계</h3>
+            <h3 class="m-footer-title">접속자</h3>
             <dl class="m-footer-stats">
+                <dt>현재</dt><dd><a href="/connect" class="m-footer-online" title="현재 접속자 보기"><strong><?php echo number_format($_ft_now) ?></strong></a></dd>
                 <dt>오늘</dt><dd><?php echo number_format($_ft_visit['today']) ?></dd>
                 <dt>어제</dt><dd><?php echo number_format($_ft_visit['yesterday']) ?></dd>
                 <dt>최대</dt><dd><?php echo number_format($_ft_visit['max']) ?></dd>
@@ -163,6 +198,8 @@ $_ft_year = date('Y');
 .m-footer-info dd a { color: inherit; text-decoration: none; }
 .m-footer-info dd a:hover { color: var(--m-primary); }
 .m-footer-stats dd { font-weight: 600; color: var(--m-text); text-align: right; }
+.m-footer-online { color: var(--m-primary); text-decoration: none; }
+.m-footer-online:hover { text-decoration: underline; }
 
 .m-footer-empty { font-size: var(--m-text-sm); color: var(--m-text-faint); margin: 0; }
 

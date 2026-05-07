@@ -1,11 +1,6 @@
 <?php
 include_once('./_common.php');
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/coupon.php');
-    return;
-}
-
 // 테마에 coupon.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
     $theme_coupon_file = G5_THEME_SHOP_PATH.'/coupon.php';

@@ -3,11 +3,6 @@ include_once('./_common.php');
 
 $pp_id = isset($_REQUEST['pp_id']) ? preg_replace('/[^0-9]/', '', $_REQUEST['pp_id']) : 0;
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/personalpayresult.php');
-    return;
-}
-
 $pp = sql_pdo_fetch(" select * from {$g5['g5_shop_personalpay_table']} where pp_id = :pp_id ", [':pp_id' => $pp_id]);
 $pp_uid = function_exists('get_shop_uid') ? get_shop_uid('personalpay', $pp['pp_id'], $pp['pp_time'], $_SERVER['REMOTE_ADDR']) : md5($pp['pp_id'].$pp['pp_time'].$_SERVER['REMOTE_ADDR']);
 if (! (isset($pp['pp_id']) && $pp['pp_id']) || ($pp_uid != get_session('ss_personalpay_uid'))) {

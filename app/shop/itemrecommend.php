@@ -3,11 +3,6 @@ include_once('./_common.php');
 
 $it_id = isset($_REQUEST['it_id']) ? safe_replace_regex($_REQUEST['it_id'], 'it_id') : '';
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/itemrecommend.php');
-    return;
-}
-
 if (!$is_member)
     alert_close('회원만 메일을 발송할 수 있습니다.');
 

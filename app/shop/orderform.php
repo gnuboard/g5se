@@ -39,26 +39,17 @@ $tot_price = 0;
 
 $g5['title'] = '주문서 작성';
 
-if(G5_IS_MOBILE)
-    include_once(G5_MSHOP_PATH.'/_head.php');
-else
-    include_once(G5_SHOP_PATH.'/_head.php');
+// gnu5se: 단일 마크업 정책 — 모바일/데스크탑 분기 없음. 반응형 CSS + 다크모드 한 코드에서.
+// 결제(PG) 도 desktop 모듈 단일 사용. (KCP popup 이 모바일에서 호환 이슈 있으면
+//  modern KCP API 로 마이그레이션 필요 — 별개 작업)
+include_once(G5_SHOP_PATH.'/_head.php');
 
 // 희망배송일 지정
 if ($default['de_hope_date_use']) {
     include_once(G5_PLUGIN_PATH.'/jquery-ui/datepicker.php');
 }
 
-// 기기별 주문폼 include
-if($is_mobile_order) {
-    $order_action_url = G5_HTTPS_MSHOP_URL.'/orderformupdate.php';
-    require_once(G5_MSHOP_PATH.'/orderform.sub.php');
-} else {
-    $order_action_url = G5_HTTPS_SHOP_URL.'/orderformupdate.php';
-    require_once(G5_SHOP_PATH.'/orderform.sub.php');
-}
+$order_action_url = G5_HTTPS_SHOP_URL.'/orderformupdate.php';
+require_once(G5_SHOP_PATH.'/orderform.sub.php');
 
-if(G5_IS_MOBILE)
-    include_once(G5_MSHOP_PATH.'/_tail.php');
-else
-    include_once(G5_SHOP_PATH.'/_tail.php');
+include_once(G5_SHOP_PATH.'/_tail.php');

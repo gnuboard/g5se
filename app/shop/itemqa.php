@@ -13,11 +13,7 @@ if( !isset($it) && !get_session("ss_tv_idx") ){
     }
     */
 }
-
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/itemqa.php');
-    return;
-}
+
 
 include_once(G5_LIB_PATH.'/thumbnail.lib.php');
 

@@ -1264,9 +1264,12 @@ function calculate_tax()
 
 function forderform_check(f)
 {
+    // gnu5se 진단 — 클릭이 들어오는지, 어느 단에서 죽는지
+    console.log('[gnu5se] forderform_check called', f);
     // 재고체크
     var stock_msg = order_stock_check();
     if(stock_msg != "") {
+        console.log('[gnu5se] stock check failed:', stock_msg);
         alert(stock_msg);
         return false;
     }
@@ -1317,6 +1320,7 @@ function forderform_check(f)
 
     if (errmsg)
     {
+        console.log('[gnu5se] field validation failed:', errmsg);
         alert(errmsg);
         errfld.focus();
         return false;
@@ -1335,6 +1339,7 @@ function forderform_check(f)
             break;
         }
     }
+    console.log('[gnu5se] settle_check:', settle_check, 'method:', settle_method, 'count:', settle_case.length);
     if (!settle_check)
     {
         alert("결제방식을 선택하십시오.");
@@ -1449,8 +1454,9 @@ function forderform_check(f)
         }
     }
 
+    console.log('[gnu5se] reached final block, form_order_method:', form_order_method);
     if( jQuery(f).triggerHandler("form_sumbit_order_"+form_order_method) !== false ) {
-        
+        console.log('[gnu5se] entering PG dispatch (de_pg_service=kcp)');
         // pay_method 설정
         <?php if($default['de_pg_service'] == 'kcp') { ?>
         f.site_cd.value = f.def_site_cd.value;
@@ -1667,6 +1673,7 @@ function forderform_check(f)
         f.rcvr_add1.value = f.od_b_addr1.value;
         f.rcvr_add2.value = f.od_b_addr2.value;
 
+        console.log('[gnu5se] kcp: pay_method=', f.pay_method.value, 'invoking', f.pay_method.value !== '무통장' ? 'jsf__pay' : 'f.submit()');
         if(f.pay_method.value != "무통장") {
             jsf__pay( f );
         } else {
