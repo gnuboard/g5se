@@ -145,6 +145,7 @@ $html = preg_replace_callback(
 - `/shop/listtype.php?type=4` → 301 → `/shop/listtype/4`
 - `/shop/listtype.php?type=4&page=2&sort=it_price` → 301 → `/shop/listtype/4?page=2&sort=it_price`
 - `/shop/listtype/99` → listtype.php 진입 → 기존 alert 분기 동작 (정상)
+- `/shop/listtype.php?type=99` → 301 → `/shop/listtype/99` → alert (router 는 1~5 검증을 listtype.php 에 위임. 결과는 동일하나 redirect 한 단계 추가)
 - 출력 HTML 에 `/shop/listtype.php?type=N` 패턴 남지 않음 (grep)
 - 1·2단계 회귀 없음
 

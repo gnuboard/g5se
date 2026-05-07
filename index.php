@@ -146,6 +146,26 @@ ob_start(function ($html) {
         $html
     );
 
+    // 7) shop 리스트 타입: /shop/listtype.php?type=N[&...] → /shop/listtype/N[?...]
+    //    type 1~5 외 값은 listtype.php 의 alert 분기로 떨어지므로 router 단에선 \d+ 만 검증
+    $html = preg_replace_callback(
+        '#/shop/listtype\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['type']) || !preg_match('/^\d+$/', $params['type'])) {
+                return $m[0];
+            }
+            $url = '/shop/listtype/'.$params['type'];
+            unset($params['type']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
     return $html;
 });
 
