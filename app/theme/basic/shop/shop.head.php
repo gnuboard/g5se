@@ -165,32 +165,31 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 }
 
 /* 관리자 빠른편집 톱니바퀴 (poll/visit skin 의 .btn_admin) — 사용자 화면 노이즈라 숨김.
-   단, shop 카테고리 list 의 .sct_admin > .btn_admin 은 *분류 관리* 바로가기라 의미 있어서 노출.
-   sct_admin 은 list.php 에서 #sct 형제로 출력되지만 #sct_location (홈/네비 breadcrumb)
-   이 main 우상단에 absolute 로 떠 있어 두 element 가 따로 노는 모양 → 아래 JS 로
-   sct_admin 을 sct_location 안 끝부분으로 옮겨 한 묶음으로 정렬. */
+   단, shop 의 .sct_admin (분류 관리 — list.php) / .sit_admin (상품 관리 — item.php) 안의
+   .btn_admin 은 의미 있어서 예외 노출. */
 .m-shell .btn_admin { display: none !important; }
 .m-shell main.m-container { position: relative; }
-/* sct_location (홈/네비/categorydropdown) + sct_admin (admin 톱니) 한 줄 정렬.
-   - sct_location 은 style.css 가 absolute right:0 top:12px 로 띄움
-   - inline-flex + align-items:center 로 legacy vertical-align:top (.go_home, .dividing-line) 무시하고
-     자식 baseline 일괄 가운데로 강제. gap 으로 간격 통일. */
+/* sct_location (홈/네비/categorydropdown) + sct_admin/sit_admin (admin 톱니) 한 줄 정렬.
+   - sct_location 은 style.css 가 absolute right:0 top:12px 로 띄움 (item view 에선 view_location → relative)
+   - inline-flex + align-items:center 로 legacy vertical-align:top 무시하고 baseline 통일. */
 .m-shell #sct_location {
     display: inline-flex !important;
     align-items: center;
     gap: 8px;
     white-space: nowrap;
 }
-.m-shell #sct_location > .sct_admin {
+.m-shell #sct_location > .sct_admin,
+.m-shell #sct_location > .sit_admin {
     display: inline-block !important;
     margin: 0 !important;
     position: static !important;
 }
-.m-shell .sct_admin .btn_admin {
+.m-shell .sct_admin .btn_admin,
+.m-shell .sit_admin .btn_admin {
     display: inline-flex !important;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;  /* 살짝 줄여 breadcrumb 텍스트 높이와 비슷하게 */
+    padding: 4px 10px;
     background: var(--m-surface-2);
     color: var(--m-text-soft);
     border: 1px solid var(--m-border);
@@ -199,13 +198,15 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     line-height: 1.2;
     text-decoration: none;
 }
-.m-shell .sct_admin .btn_admin:hover {
+.m-shell .sct_admin .btn_admin:hover,
+.m-shell .sit_admin .btn_admin:hover {
     background: var(--m-primary);
     color: #fff;
     border-color: var(--m-primary);
 }
-/* 톱니 아이콘 회전 비활성화 — list.php 가 fa-spin hardcode (`<i class="fa fa-cog fa-spin">`) */
-.m-shell .sct_admin .btn_admin .fa-spin {
+/* 톱니 아이콘 회전 비활성화 — list.php / item.php 가 fa-spin hardcode (`<i class="fa fa-cog fa-spin">`) */
+.m-shell .sct_admin .btn_admin .fa-spin,
+.m-shell .sit_admin .btn_admin .fa-spin {
     animation: none !important;
     -webkit-animation: none !important;
 }
@@ -227,87 +228,6 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_op_btn > .btn_wish.is_active,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_op_btn > .btn_wish.is_active i.fa-heart {
     color: var(--m-primary) !important;
-}
-
-/* ============================================================
-   장바구니 (#sod_bsk) — legacy default_shop.css 가 흰배경/검정 hardcode
-   light 에선 그대로 두고 다크에서만 토큰화. 약간의 모던 폴리시 추가.
-   ============================================================ */
-/* 약간의 카드형 시각 폴리시 (light + dark 공통) */
-.m-shell #sod_bsk { margin: 8px 0 32px; }
-.m-shell #sod_bsk .tbl_head03 td {
-    vertical-align: middle;
-}
-.m-shell #sod_bsk .btn_cart_del button {
-    margin-right: 6px;
-    transition: background .15s, color .15s;
-}
-.m-shell #sod_bsk .btn_cart_del button:hover {
-    background: var(--m-surface-2);
-}
-.m-shell #sod_bsk_act {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 16px;
-}
-.m-shell #sod_bsk_act .btn01,
-.m-shell #sod_bsk_act .btn_submit {
-    padding: 10px 20px;
-    font-size: 1em;
-    border-radius: 6px;
-}
-
-/* 다크모드 토큰화 */
-[data-theme="dark"] #sod_bsk .tbl_head03 td {
-    background: var(--m-surface) !important;
-    border-color: var(--m-border) !important;
-    color: var(--m-text) !important;
-}
-[data-theme="dark"] #sod_bsk .tbl_head03 thead th {
-    background: var(--m-surface-2) !important;
-    border-color: var(--m-border) !important;
-    color: var(--m-text) !important;
-}
-[data-theme="dark"] #sod_bsk .tbl_head03 table {
-    border-bottom-color: var(--m-border) !important;
-}
-[data-theme="dark"] #sod_bsk .tbl_head03 a,
-[data-theme="dark"] #sod_bsk .tbl_head03 .prd_name b {
-    color: var(--m-text) !important;
-}
-[data-theme="dark"] #sod_bsk .sod_opt {
-    color: var(--m-text-soft) !important;
-}
-[data-theme="dark"] #sod_bsk .empty_table {
-    color: var(--m-text-soft) !important;
-    background: var(--m-surface) !important;
-}
-[data-theme="dark"] #sod_bsk .btn_cart_del {
-    border-bottom-color: var(--m-border) !important;
-}
-[data-theme="dark"] #sod_bsk .btn_cart_del button {
-    background: var(--m-surface-2) !important;
-    color: var(--m-text) !important;
-    border-color: var(--m-border) !important;
-}
-[data-theme="dark"] #sod_bsk .btn_cart_del button:hover {
-    background: var(--m-surface) !important;
-}
-[data-theme="dark"] #sod_bsk #sod_bsk_tot {
-    border-color: var(--m-border) !important;
-}
-[data-theme="dark"] #sod_bsk #sod_bsk_tot li {
-    background: var(--m-surface-2) !important;
-    border-left-color: var(--m-border) !important;
-    color: var(--m-text) !important;
-}
-[data-theme="dark"] #sod_bsk_act a.btn01,
-[data-theme="dark"] #sod_bsk_act button.btn01 {
-    background: var(--m-surface-2) !important;
-    color: var(--m-text) !important;
-    border-color: var(--m-border) !important;
 }
 
 /* 레거시 shop skin (style.css) 의 흰 배경 / 검정 텍스트 hardcode 를 다크모드에서 토큰으로 덮어씀 */
@@ -407,13 +327,11 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 </style>
 
 <script>
-// shop 카테고리 list 의 admin 톱니 (.sct_admin) 을 #sct_location (홈/네비 breadcrumb) 안 끝으로
-// 이동시켜 우상단 한 줄로 묶음. 두 element 가 main 우상단에 따로 absolute 로 떠 있던 어색함 해소.
+// shop 의 admin 톱니 (.sct_admin / .sit_admin) 을 #sct_location (홈/네비 breadcrumb) 안 끝으로
+// 이동시켜 우상단 한 줄로 묶음. 두 element 가 따로 떠 있던 어색함 해소.
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
-        // sct_admin 은 _head.php 가 열어둔 main > m-main-col > .shop-content 안에 들어가므로
-        // 직속 자식이 아니라 descendant 로 잡음.
-        var adm = document.querySelector('main.m-container .sct_admin');
+        var adm = document.querySelector('main.m-container .sct_admin, main.m-container .sit_admin');
         var loc = document.querySelector('#sct_location');
         if (adm && loc) loc.appendChild(adm);
     });
