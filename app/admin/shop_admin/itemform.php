@@ -224,6 +224,7 @@ if(!sql_query(" select it_skin from {$g5['g5_shop_item_table']} limit 1", false)
 
 <form name="fitemform" action="./itemformupdate.php" method="post" enctype="MULTIPART/FORM-DATA" autocomplete="off" onsubmit="return fitemformcheck(this)">
 
+<input type="hidden" name="token" value="">
 <input type="hidden" name="w" value="<?php echo $w; ?>">
 <input type="hidden" name="sca" value="<?php echo $sca; ?>">
 <input type="hidden" name="sst" value="<?php echo $sst; ?>">
