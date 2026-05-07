@@ -35,7 +35,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
         <!-- 활동 카드 그리드 -->
         <h2 class="my-section-title">활동</h2>
         <div class="my-grid">
-            <a class="my-card" href="/point">
+            <a class="my-card" href="<?php echo G5_BBS_URL ?>/point.php" target="win_point" onclick="window.open(this.href, 'win_point', 'left=100,top=100,width=600,height=600,scrollbars=1'); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 </div>
@@ -44,16 +44,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     <div class="my-card-value"><?php echo number_format($_my['point']); ?> <em>점</em></div>
                 </div>
             </a>
-            <a class="my-card" href="/scrap">
-                <div class="my-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                </div>
-                <div class="my-card-body">
-                    <div class="my-card-label">스크랩</div>
-                    <div class="my-card-value"><?php echo number_format($_my_count['scrap']); ?> <em>건</em></div>
-                </div>
-            </a>
-            <a class="my-card" href="/memo">
+            <a class="my-card" href="<?php echo G5_BBS_URL ?>/memo.php" target="win_memo" onclick="window.open(this.href, 'win_memo', 'left=100,top=100,width=620,height=500,scrollbars=1'); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
@@ -63,6 +54,15 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                         <?php echo number_format($_my_count['memo']); ?> <em>건</em>
                         <?php if ($_my_count['memo_unread'] > 0) { ?><small>(읽지않음 <?php echo $_my_count['memo_unread']; ?>)</small><?php } ?>
                     </div>
+                </div>
+            </a>
+            <a class="my-card" href="<?php echo G5_BBS_URL ?>/scrap.php" target="win_scrap" onclick="window.open(this.href, 'win_scrap', 'left=100,top=100,width=600,height=600,scrollbars=1'); return false;">
+                <div class="my-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="my-card-body">
+                    <div class="my-card-label">스크랩</div>
+                    <div class="my-card-value"><?php echo number_format($_my_count['scrap']); ?> <em>건</em></div>
                 </div>
             </a>
         </div>
