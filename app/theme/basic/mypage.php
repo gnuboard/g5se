@@ -219,7 +219,7 @@ a.my-btn-ghost, a.my-btn-ghost:link, a.my-btn-ghost:visited, a.my-btn-ghost:hove
 .my-foot {
     margin-top: 40px; padding-top: 16px;
     border-top: 1px solid var(--m-border);
-    text-align: right;
+    text-align: left;
 }
 .my-foot-link, .my-foot-link:link, .my-foot-link:visited {
     color: var(--m-text-faint);
