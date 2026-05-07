@@ -53,60 +53,7 @@ $is_index = defined('_INDEX_') && _INDEX_;
     <!-- gnu5se: 통합 footer — community 와 shop 동일 (_footer.inc.php). 사이트 정보 + 공지 + 접속자 (현재/오늘/어제/최대/전체) -->
     <?php require_once(G5_THEME_PATH.'/modern/_footer.inc.php'); ?>
 
-    <!-- 우측 fixed quick action — 장바구니/위시/최근본/위로 -->
-    <aside class="m-shop-quick" aria-label="빠른 메뉴">
-        <a href="<?php echo G5_SHOP_URL; ?>/cart" class="m-shop-quick-btn" title="장바구니">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            <span class="m-shop-quick-label">장바구니</span>
-            <?php if (function_exists('get_boxcart_datas_count')) { $_qcnt = (int) get_boxcart_datas_count(); if ($_qcnt > 0) { ?>
-                <span class="m-shop-quick-badge"><?php echo $_qcnt > 99 ? '99+' : $_qcnt; ?></span>
-            <?php }} ?>
-        </a>
-        <a href="<?php echo G5_SHOP_URL; ?>/wishlist" class="m-shop-quick-btn" title="위시리스트">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span class="m-shop-quick-label">위시</span>
-        </a>
-        <button type="button" class="m-shop-quick-btn js-shop-quick-today" title="최근 본 상품" aria-expanded="false" aria-controls="m-shop-today-panel">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span class="m-shop-quick-label">최근본</span>
-        </button>
-        <?php /* 위로 가기 버튼은 통합 .m-float-actions (theme toggle + scroll-to-top) 가 담당. shop 전용 중복 제거. */ ?>
-    </aside>
-
-    <!-- 최근 본 상품 패널 (quick-today 클릭 시 펼침) -->
-    <?php $_today_items = function_exists('get_view_today_items') ? get_view_today_items(true) : []; ?>
-    <div id="m-shop-today-panel" class="m-shop-today-panel" hidden>
-        <div class="m-shop-today-panel-head">
-            <strong>최근 본 상품 <span style="color: var(--m-text-faint); font-weight: 500; font-size: var(--m-text-xs);">(<?php echo count($_today_items); ?>)</span></strong>
-            <button type="button" class="m-shop-today-close" aria-label="닫기">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-        <div class="m-shop-today-panel-body">
-            <?php if (!empty($_today_items)) { ?>
-                <ul class="m-shop-today-list">
-                    <?php foreach ($_today_items as $_tv) {
-                        if (empty($_tv['it_id'])) continue;
-                        $_tv_url = shop_item_url($_tv['it_id']);
-                        $_tv_img = get_it_image($_tv['it_id'], 56, 56, $_tv['it_id'], '', get_text($_tv['it_name']));
-                        $_tv_price = get_price($_tv);
-                    ?>
-                    <li class="m-shop-today-item">
-                        <a href="<?php echo $_tv_url; ?>" class="m-shop-today-link">
-                            <span class="m-shop-today-thumb"><?php echo $_tv_img; ?></span>
-                            <span class="m-shop-today-meta">
-                                <span class="m-shop-today-name"><?php echo cut_str(get_text($_tv['it_name']), 30, ''); ?></span>
-                                <span class="m-shop-today-price"><?php echo is_int($_tv_price) ? number_format($_tv_price).'원' : $_tv_price; ?></span>
-                            </span>
-                        </a>
-                    </li>
-                    <?php } ?>
-                </ul>
-            <?php } else { ?>
-                <p class="m-shop-today-empty">최근 본 상품이 없습니다.</p>
-            <?php } ?>
-        </div>
-    </div>
+    <?php /* gnu5se: shop 전용 floating quick action (장바구니/위시/최근본/위로) 제거 — top nav 의 카트 + 마이페이지 아이콘 + 통합 /mypage hub 로 대체 */ ?>
 
 </div><!-- } .m-shell 끝 -->
 
