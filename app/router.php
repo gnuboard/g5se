@@ -12,6 +12,7 @@ class Router
      */
     private $cleanRoutes = [
         '/'                       => 'index.php',
+        '/mypage'                 => 'mypage.php',
         '/login'                  => 'bbs/login.php',
         '/login_check'            => 'bbs/login_check.php',
         '/logout'                 => 'bbs/logout.php',

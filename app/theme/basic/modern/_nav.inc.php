@@ -68,7 +68,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
             <?php /* 장바구니 아이콘 — shop 활성 시 항상 노출, 아이템 수 badge */
             if (defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
-            <a href="<?php echo G5_SHOP_URL ?>/cart" class="m-nav-cart-link" aria-label="장바구니">
+            <a href="<?php echo G5_SHOP_URL ?>/cart" class="m-nav-cart-link" aria-label="장바구니" title="장바구니">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 <?php
                 // 카트 아이템 수 (세션에 저장된 ss_cart_id 의 ct 카운트)
@@ -81,6 +81,13 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                 if ($_nav_cart_count > 0) { ?>
                 <span class="m-nav-cart-badge"><?php echo $_nav_cart_count > 99 ? '99+' : $_nav_cart_count ?></span>
                 <?php } ?>
+            </a>
+            <?php } ?>
+
+            <?php /* 마이페이지 사람 아이콘 — 로그인 상태일 때만 노출. 통합 mypage hub */
+            if (!empty($is_member)) { ?>
+            <a href="/mypage" class="m-nav-cart-link m-nav-mypage-link" aria-label="마이페이지" title="마이페이지">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </a>
             <?php } ?>
 

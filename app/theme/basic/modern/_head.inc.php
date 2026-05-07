@@ -141,7 +141,8 @@ html, body {
     align-items: start;
 }
 .m-main-col { min-width: 0; }   /* grid item 의 자식이 overflow 나지 않도록 */
-.m-side-col { position: sticky; top: 80px; }
+.m-side-col { position: sticky; top: 80px; display: flex; flex-direction: column; gap: 16px; }
+.m-side-card { display: block; }
 @media (max-width: 880px) {
     .m-with-sidebar { grid-template-columns: 1fr; }
     .m-side-col { position: static; order: -1; }   /* 모바일에선 사이드(outlogin)가 위로 */
@@ -345,6 +346,34 @@ html, body {
 .m-theme-toggle .m-icon-moon { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-sun  { display: block; }
 [data-theme="dark"] .m-theme-toggle .m-icon-moon { display: none; }
+
+/* 관리자 빠른편집 톱니 (.btn_admin) — outlogin 의 .m-ol-admin-shortcut 와 동일한 톤 */
+.m-shell .btn_admin {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    padding: 0 !important;
+    background: var(--m-surface-2) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius) !important;
+    color: var(--m-text-muted) !important;
+    text-decoration: none !important;
+    vertical-align: middle;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.4s;
+}
+.m-shell .btn_admin:hover {
+    background: var(--m-primary-soft) !important;
+    color: var(--m-primary) !important;
+    border-color: var(--m-primary) !important;
+    transform: rotate(45deg);
+}
+.m-shell .btn_admin .fa-spin,
+.m-shell .btn_admin .fa-cog {
+    animation: none !important;
+    -webkit-animation: none !important;
+    margin: 0;
+}
 
 /* SmartEditor2 단축키 일람 — 다크모드에서 짙은 바탕 + 밝은 글자로. */
 [data-theme="dark"] .cke_sc_def {
@@ -642,16 +671,6 @@ $_modern_float_css = <<<'CSS'
     border-color: var(--m-border-hover);
 }
 .m-float-actions button svg { width: 18px; height: 18px; }
-.m-float-actions .m-float-top {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(8px);
-}
-.m-float-actions.is-scrolled .m-float-top {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
 /* 모바일 — 살짝 작게 */
 @media (max-width: 768px) {
     .m-float-actions { right: 12px; bottom: 12px; gap: 6px; }
