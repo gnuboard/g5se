@@ -421,14 +421,96 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 .m-shell #sod_fin_list .tbl_head03 a:hover {
     color: var(--m-primary);
 }
+.m-shell #sod_fin_list .tbl_head03 .td_imgsmall {
+    width: 90px;
+    padding: 14px 8px !important;
+}
 .m-shell #sod_fin_list .tbl_head03 .td_imgsmall img {
+    max-width: 70px;
+    width: 70px;
+    height: auto;
     border-radius: 6px;
     border: 1px solid var(--m-border);
     background: var(--m-surface-2);
+    display: inline-block;
 }
 .m-shell #sod_fin_list .tbl_head03 .td_bdno {
     border-bottom: 0 !important;
     font-weight: 700;
+}
+
+/* 주문번호 박스 (#sod_fin_no) — 카드형 surface */
+.m-shell #sod_fin #sod_fin_no {
+    padding: 16px 20px !important;
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius, 8px);
+    color: var(--m-text);
+    font-size: 1em;
+    margin-bottom: 16px;
+}
+.m-shell #sod_fin #sod_fin_no strong {
+    color: var(--m-primary);
+    font-size: 1.05em;
+    margin-left: 4px;
+}
+
+/* 결제정보 박스 (#sod_fin_pay) — light/dark 공통 토큰 (legacy #fff hardcode 무력화) */
+.m-shell #sod_fin_pay {
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius, 8px);
+    color: var(--m-text);
+    margin-bottom: 20px !important;
+    overflow: hidden;
+}
+.m-shell #sod_fin_pay h3 {
+    background: var(--m-surface-2) !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    color: var(--m-text);
+}
+.m-shell #sod_fin_pay li {
+    color: var(--m-text);
+}
+.m-shell #sod_fin_pay li > strong {
+    color: var(--m-text-soft);
+}
+
+/* 우측 총계 박스 (#sod_bsk_tot.order_view_infos) — 카드형 + 토큰 */
+.m-shell #sod_fin #sod_bsk_tot.order_view_infos {
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius, 8px);
+    color: var(--m-text);
+    overflow: hidden;
+    margin-bottom: 20px !important;
+}
+.m-shell #sod_fin #sod_bsk_tot.order_view_infos li {
+    background: transparent !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    border-left: 0 !important;
+    color: var(--m-text) !important;
+    width: auto !important;
+    float: none !important;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px !important;
+}
+.m-shell #sod_fin #sod_bsk_tot.order_view_infos li:last-child {
+    border-bottom: 0 !important;
+}
+
+/* 주문 취소하기 (.btn_cancel) — 다크 친화 토큰 */
+.m-shell #sod_fin .btn_cancel,
+.m-shell .btn_cancel {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+    border: 1px solid var(--m-border) !important;
+}
+.m-shell #sod_fin .btn_cancel:hover,
+.m-shell .btn_cancel:hover {
+    border-color: var(--m-primary) !important;
+    color: var(--m-primary) !important;
 }
 
 /* 다크 — tbl_head01 (orderer/receiver/payment/dvr) — 상세 정보 테이블 */
