@@ -127,6 +127,11 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
             </a>
         </div>
         <?php } ?>
+
+        <!-- 하단 보조 링크 (회원 탈퇴 등 위험 액션) -->
+        <div class="my-foot">
+            <a href="<?php echo G5_BBS_URL ?>/member_confirm.php?url=<?php echo urlencode(G5_BBS_URL.'/member_leave.php'); ?>" class="my-foot-link">회원 탈퇴</a>
+        </div>
     </main>
 
     <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
@@ -209,6 +214,20 @@ a.my-btn-ghost, a.my-btn-ghost:link, a.my-btn-ghost:visited, a.my-btn-ghost:hove
     border-radius: 999px; font-size: 0.7em; font-weight: 700; line-height: 14px;
     text-align: center;
 }
+
+/* 하단 보조 영역 — 회원 탈퇴 등 위험 액션, 카드 X */
+.my-foot {
+    margin-top: 40px; padding-top: 16px;
+    border-top: 1px solid var(--m-border);
+    text-align: right;
+}
+.my-foot-link, .my-foot-link:link, .my-foot-link:visited {
+    color: var(--m-text-faint);
+    font-size: 0.82em; text-decoration: none;
+    padding: 4px 8px;
+    transition: color 0.15s;
+}
+.my-foot-link:hover { color: #ef4444; text-decoration: underline; }
 </style>
 
 <?php include_once(G5_PATH.'/tail.sub.php'); ?>
