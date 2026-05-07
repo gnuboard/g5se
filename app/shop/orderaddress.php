@@ -15,7 +15,7 @@ if($w == 'd') {
 $sql_common = " from {$g5['g5_shop_order_address_table']} where mb_id = :mb_id ";
 
 $row = sql_pdo_fetch(" select count(ad_id) as cnt " . $sql_common, [':mb_id' => $member['mb_id']]);
-$total_count = $row['cnt'];
+$total_count = (int)$row['cnt'];
 
 $rows = $config['cf_page_rows'];
 $total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
@@ -25,8 +25,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 $result = sql_pdo_query(" select * $sql_common order by ad_default desc, ad_id desc limit ".(int)$from_record.', '.(int)$rows.' ',
                        [':mb_id' => $member['mb_id']]);
 
-if(!sql_num_rows($result))
-    alert_close('배송지 목록 자료가 없습니다.');
+$_addr_empty = !sql_num_rows($result);
 
 $order_action_url = G5_HTTPS_SHOP_URL.'/orderaddressupdate.php';
 
@@ -44,38 +43,20 @@ if(defined('G5_THEME_SHOP_PATH')) {
 
 $g5['title'] = '배송지 목록';
 include_once(G5_PATH.'/head.sub.php');
-// gnu5se: modern 토큰 (var(--m-*)) 로드 — head.sub.php 가 자동 로드 안 하므로 명시적 require
+// gnu5se: modern 토큰 + .m-popup 컴포넌트 로드
 if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 ?>
 <style>
-/* gnu5se: 배송지 목록 — modern card list (table 폐기). light/dark + 반응형 */
-#sod_addr {
-    background: var(--m-bg);
-    color: var(--m-text);
-    padding: 24px 20px;
-    min-height: 100vh;
-    box-sizing: border-box;
-}
-#sod_addr #win_title {
-    background: transparent !important;
-    color: var(--m-text) !important;
-    box-shadow: none !important;
-    height: auto !important;
-    line-height: 1.3 !important;
-    padding: 0 !important;
-    font-size: 1.5em;
-    font-weight: 700;
-    margin: 0 0 20px;
-}
+/* gnu5se: 배송지 목록 popup — coupon 과 동일한 .m-popup shell + 카드 list */
 
 /* 카드 list */
 .adr-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 .adr-card {
     display: grid;
@@ -85,12 +66,14 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     padding: 18px 20px;
     background: var(--m-surface);
     border: 1px solid var(--m-border);
-    border-radius: 10px;
+    border-radius: var(--m-radius);
+    transition: border-color 0.15s;
 }
+.adr-card:hover { border-color: var(--m-border-hover); }
 .adr-check { display: flex; align-items: center; }
 /* legacy .selec_chk 의 absolute hide 무력화 — 카드 안에선 native 체크박스 노출 */
-#sod_addr .adr-check input[type="checkbox"],
-#sod_addr .adr-check input.selec_chk {
+.adr-check input[type="checkbox"],
+.adr-check input.selec_chk {
     position: static !important;
     visibility: visible !important;
     width: 20px !important;
@@ -102,8 +85,8 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     accent-color: var(--m-primary);
     cursor: pointer;
 }
-/* legacy #sod_addr input[type="radio"] { position:absolute; visibility:hidden } 무력화 — radio 는 label 안에 hidden 으로 둬도 OK 단 click 동작용 */
-#sod_addr .adr-default input[type="radio"] {
+/* legacy input[type="radio"] hidden 무력화 */
+.adr-default input[type="radio"] {
     position: static !important;
     visibility: visible !important;
     width: 14px !important;
@@ -145,8 +128,8 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     line-height: 1.3;
 }
 .adr-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
-.adr-btn-select { background: var(--m-primary); color: #fff; border-color: var(--m-primary); }
-.adr-btn-select:hover { background: var(--m-primary); color: #fff; opacity: 0.9; }
+.adr-btn-select { background: var(--m-primary) !important; color: #fff !important; border-color: var(--m-primary) !important; }
+.adr-btn-select:hover { opacity: 0.9; }
 .adr-btn-delete:hover { color: #ef4444; border-color: #ef4444; }
 .adr-default {
     display: flex; align-items: center; justify-content: center; gap: 4px;
@@ -167,30 +150,16 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     border-color: var(--m-primary);
 }
 
-/* 하단 액션 */
-.adr-foot {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+/* 빈 상태 — coupon 과 동일 톤 */
+.adr-empty {
+    padding: 50px 20px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    background: var(--m-surface); border: 1px dashed var(--m-border);
+    border-radius: var(--m-radius);
+    list-style: none;
 }
-.adr-foot input,
-.adr-foot button {
-    padding: 7px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.9em;
-    border: 1px solid var(--m-border);
-}
-.adr-foot .btn_submit {
-    background: var(--m-primary);
-    color: #fff;
-    border-color: var(--m-primary);
-}
-.adr-foot .btn_close {
-    background: var(--m-surface-2);
-    color: var(--m-text);
-}
+.adr-empty svg { color: var(--m-text-faint); }
+.adr-empty p { margin: 0; color: var(--m-text-muted); font-size: var(--m-text-sm); }
 
 /* 모바일 — 카드를 stack */
 @media (max-width: 768px) {
@@ -209,59 +178,79 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     .adr-info-subject input { max-width: 100%; }
 }
 </style>
-<form name="forderaddress" method="post" action="<?php echo $order_action_url; ?>" autocomplete="off">
-<div id="sod_addr" class="new_win">
 
-    <h1 id="win_title">배송지 목록</h1>
+<!-- 배송지 목록 시작 { -->
+<div class="m-popup">
+    <header class="m-popup-head">
+        <h1 class="m-popup-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            배송지 목록
+        </h1>
+    </header>
 
-    <div class="adr-list">
-        <?php
-        $sep = chr(30);
-        for($i=0; $row=sql_fetch_array($result); $i++) {
-            $addr = $row['ad_name'].$sep.$row['ad_tel'].$sep.$row['ad_hp'].$sep.$row['ad_zip1'].$sep.$row['ad_zip2'].$sep.$row['ad_addr1'].$sep.$row['ad_addr2'].$sep.$row['ad_addr3'].$sep.$row['ad_jibeon'].$sep.$row['ad_subject'];
-            $addr = get_text($addr);
-            $is_default = !empty($row['ad_default']);
-        ?>
-        <div class="adr-card">
-            <div class="adr-check">
-                <input type="hidden" name="ad_id[<?php echo $i; ?>]" value="<?php echo $row['ad_id']; ?>">
-                <input type="checkbox" name="chk[]" value="<?php echo $i; ?>" id="chk_<?php echo $i; ?>" class="selec_chk">
-            </div>
-            <div class="adr-info">
-                <div class="adr-info-row">
-                    <span class="adr-info-name"><?php echo get_text($row['ad_name']); ?></span>
-                    <span class="adr-info-tel"><?php echo $row['ad_tel']; ?> / <?php echo $row['ad_hp']; ?></span>
+    <?php if ($_addr_empty) { ?>
+    <div class="adr-empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <p>저장된 배송지가 없습니다.</p>
+    </div>
+
+    <div class="m-popup-actions">
+        <button type="button" onclick="window.close();" class="m-btn m-btn-ghost" style="width:auto; padding:9px 20px;">창닫기</button>
+    </div>
+
+    <?php } else { ?>
+    <form name="forderaddress" method="post" action="<?php echo $order_action_url; ?>" autocomplete="off">
+        <div class="adr-list">
+            <?php
+            $sep = chr(30);
+            for($i=0; $row=sql_fetch_array($result); $i++) {
+                $addr = $row['ad_name'].$sep.$row['ad_tel'].$sep.$row['ad_hp'].$sep.$row['ad_zip1'].$sep.$row['ad_zip2'].$sep.$row['ad_addr1'].$sep.$row['ad_addr2'].$sep.$row['ad_addr3'].$sep.$row['ad_jibeon'].$sep.$row['ad_subject'];
+                $addr = get_text($addr);
+                $is_default = !empty($row['ad_default']);
+            ?>
+            <div class="adr-card">
+                <div class="adr-check">
+                    <input type="hidden" name="ad_id[<?php echo $i; ?>]" value="<?php echo $row['ad_id']; ?>">
+                    <input type="checkbox" name="chk[]" value="<?php echo $i; ?>" id="chk_<?php echo $i; ?>" class="selec_chk">
                 </div>
-                <div class="adr-info-row">
-                    <span class="adr-info-value"><?php echo print_address($row['ad_addr1'], $row['ad_addr2'], $row['ad_addr3'], $row['ad_jibeon']); ?></span>
+                <div class="adr-info">
+                    <div class="adr-info-row">
+                        <span class="adr-info-name"><?php echo get_text($row['ad_name']); ?></span>
+                        <span class="adr-info-tel"><?php echo $row['ad_tel']; ?> / <?php echo $row['ad_hp']; ?></span>
+                    </div>
+                    <div class="adr-info-row">
+                        <span class="adr-info-value"><?php echo print_address($row['ad_addr1'], $row['ad_addr2'], $row['ad_addr3'], $row['ad_jibeon']); ?></span>
+                    </div>
+                    <div class="adr-info-row adr-info-subject">
+                        <span class="adr-info-label">배송지명</span>
+                        <input type="text" name="ad_subject[<?php echo $i; ?>]" id="ad_subject<?php echo $i; ?>" maxlength="20" placeholder="별칭 (예: 집/회사)" value="<?php echo get_text($row['ad_subject']); ?>">
+                    </div>
                 </div>
-                <div class="adr-info-row adr-info-subject">
-                    <span class="adr-info-label">배송지명</span>
-                    <input type="text" name="ad_subject[<?php echo $i; ?>]" id="ad_subject<?php echo $i; ?>" maxlength="20" placeholder="별칭 (예: 집/회사)" value="<?php echo get_text($row['ad_subject']); ?>">
+                <div class="adr-actions">
+                    <input type="hidden" class="adr-payload" value="<?php echo $addr; ?>">
+                    <button type="button" class="sel_address adr-btn adr-btn-select">선택</button>
+                    <a href="/shop/orderaddress?w=d&amp;ad_id=<?php echo $row['ad_id']; ?>" class="del_address adr-btn adr-btn-delete">삭제</a>
+                    <label class="adr-default <?php echo $is_default ? 'is-default' : ''; ?>">
+                        <input type="radio" name="ad_default" value="<?php echo $row['ad_id']; ?>" id="ad_default<?php echo $i; ?>" <?php if($is_default) echo 'checked="checked"'; ?>>
+                        기본배송지
+                    </label>
                 </div>
             </div>
-            <div class="adr-actions">
-                <input type="hidden" class="adr-payload" value="<?php echo $addr; ?>">
-                <button type="button" class="sel_address adr-btn adr-btn-select">선택</button>
-                <a href="/shop/orderaddress?w=d&amp;ad_id=<?php echo $row['ad_id']; ?>" class="del_address adr-btn adr-btn-delete">삭제</a>
-                <label class="adr-default <?php echo $is_default ? 'is-default' : ''; ?>">
-                    <input type="radio" name="ad_default" value="<?php echo $row['ad_id']; ?>" id="ad_default<?php echo $i; ?>" <?php if($is_default) echo 'checked="checked"'; ?>>
-                    기본배송지
-                </label>
-            </div>
+            <?php } ?>
         </div>
-        <?php } ?>
-    </div>
 
-    <div class="adr-foot">
-        <input type="submit" name="act_button" value="선택수정" class="btn_submit">
-        <button type="button" onclick="self.close();" class="btn_close">닫기</button>
-    </div>
+        <?php echo get_paging($config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr&amp;page="); ?>
+
+        <div class="m-popup-actions">
+            <input type="submit" name="act_button" value="선택수정" class="m-btn m-btn-primary btn_submit" style="width:auto; padding:9px 20px;">
+            <button type="button" onclick="window.close();" class="m-btn m-btn-ghost" style="width:auto; padding:9px 20px;">창닫기</button>
+        </div>
+    </form>
+    <?php } ?>
 </div>
-</form>
+<!-- } 배송지 목록 끝 -->
 
-<?php echo get_paging($config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr&amp;page="); ?>
-
+<?php if (!$_addr_empty) { ?>
 <script>
 $(function() {
     $(".sel_address").on("click", function() {
@@ -315,6 +304,7 @@ $(function() {
 
 });
 </script>
+<?php } ?>
 
 <?php
 include_once(G5_PATH.'/tail.sub.php');
