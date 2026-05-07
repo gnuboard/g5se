@@ -124,6 +124,7 @@ class Router
         // 자원형 클린 URL — segment catch-all 보다 먼저 매칭되어야 함
         // (catch-all 이 /shop/item/item0008 도 잡아 shop/item/item0008.php 를 시도하면 404)
         '#^/shop/item/(?P<it_id>[a-zA-Z0-9_-]+)/?$#'                                   => 'shop/item.php',
+        '#^/shop/category/(?P<ca_id>[a-zA-Z0-9_-]+)/?$#'                               => 'shop/list.php',
         '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
@@ -243,12 +244,23 @@ class Router
 
         // 2.5) shop 자원형 레거시 URL → 클린 URL 301 (GET/HEAD)
         //      /shop/item.php?it_id=X → /shop/item/X
-        //      it_id 형식 이상하면 통과시켜 legacy 동작 유지 (404 등)
+        //      /shop/list.php?ca_id=X → /shop/category/X
+        //      id 형식 이상하면 통과시켜 legacy 동작 유지 (404 등)
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/item.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             if (!empty($params['it_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['it_id'])) {
                 $url = '/shop/item/'.$params['it_id'];
                 unset($params['it_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/list.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['ca_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['ca_id'])) {
+                $url = '/shop/category/'.$params['ca_id'];
+                unset($params['ca_id']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
                 header('Location: '.$url, true, 301);
                 exit;
