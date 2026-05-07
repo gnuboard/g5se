@@ -583,19 +583,20 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 
 /* 주문조회 상세 - 상품목록/요약/정보 UI 보정 */
 .m-shell #sod_fin_list .tbl_head03 {
-    overflow-x: auto;
+    overflow: hidden;
 }
 .m-shell #sod_fin_list .tbl_head03 table {
-    min-width: 960px;
+    min-width: 0;
+    width: 100%;
     table-layout: fixed;
 }
 .m-shell #sod_fin_list .tbl_head03 #th_itname { width: auto; }
-.m-shell #sod_fin_list .tbl_head03 #th_itqty { width: 86px; }
+.m-shell #sod_fin_list .tbl_head03 #th_itqty { width: 74px; }
 .m-shell #sod_fin_list .tbl_head03 #th_itprice,
 .m-shell #sod_fin_list .tbl_head03 #th_itpt,
 .m-shell #sod_fin_list .tbl_head03 #th_itsd,
-.m-shell #sod_fin_list .tbl_head03 #th_itst { width: 104px; }
-.m-shell #sod_fin_list .tbl_head03 #th_itsum { width: 126px; }
+.m-shell #sod_fin_list .tbl_head03 #th_itst { width: 88px; }
+.m-shell #sod_fin_list .tbl_head03 #th_itsum { width: 96px; }
 .m-shell #sod_fin_list .tbl_head03 thead th {
     height: 58px;
     padding: 0 14px !important;
@@ -1036,13 +1037,14 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
    ============================================================ */
 .m-shell #sod_fin_list .tbl_head03 .td_prd {
     position: static !important;
-    padding: 14px !important;
+    padding: 22px 14px !important;
     min-height: 0 !important;
     display: grid !important;
-    grid-template-columns: 90px minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 18px;
     align-items: center;
     text-align: left !important;
+    white-space: normal !important;
 }
 .m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img {
     position: static !important;
@@ -1050,10 +1052,10 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     left: auto !important;
     grid-column: 1;
     grid-row: 1;
-    width: 90px !important;
-    height: 90px !important;
-    max-width: 90px !important;
-    min-width: 90px !important;
+    width: 96px !important;
+    height: 96px !important;
+    max-width: 96px !important;
+    min-width: 96px !important;
     overflow: hidden !important;
     border-radius: 6px;
     background: var(--m-surface-2);
@@ -1079,6 +1081,64 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     min-height: 0 !important;
     padding-left: 0 !important;
     min-width: 0;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    color: var(--m-text) !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_name > a {
+    display: block;
+    margin: 0 !important;
+    color: var(--m-text) !important;
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+    text-decoration: none;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_name br {
+    display: none !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt {
+    margin: 0 !important;
+    padding: 0 0 0 18px !important;
+    color: var(--m-text) !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt ul {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt li {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: var(--m-text) !important;
+    line-height: 1.6 !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt:before,
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt li:before,
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt .opt_name:before {
+    display: none !important;
+    content: none !important;
+}
+
+@media (max-width: 768px) {
+    .m-shell #sod_fin_list .tbl_head03 .td_prd {
+        grid-template-columns: 80px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px !important;
+    }
+    .m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img {
+        width: 80px !important;
+        height: 80px !important;
+        max-width: 80px !important;
+        min-width: 80px !important;
+    }
 }
 
 </style>
