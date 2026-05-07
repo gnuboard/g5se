@@ -422,21 +422,52 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-primary);
 }
 .m-shell #sod_fin_list .tbl_head03 .td_imgsmall {
-    width: 90px;
+    width: 100px !important;
+    min-width: 100px;
+    max-width: 100px;
     padding: 14px 8px !important;
+    box-sizing: border-box;
+    text-align: center !important;
 }
 .m-shell #sod_fin_list .tbl_head03 .td_imgsmall img {
-    max-width: 70px;
-    width: 70px;
-    height: auto;
+    width: 80px !important;
+    max-width: 80px !important;
+    height: 80px !important;
+    object-fit: cover;
     border-radius: 6px;
     border: 1px solid var(--m-border);
     background: var(--m-surface-2);
-    display: inline-block;
+    display: block !important;
+    margin: 0 auto !important;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
 }
 .m-shell #sod_fin_list .tbl_head03 .td_bdno {
     border-bottom: 0 !important;
     font-weight: 700;
+}
+/* (legacy 마크업용 옵션 indent 룰 — theme 마크업 (.td_prd) 과는 무관) */
+.m-shell #sod_fin_list .tbl_head03 td[headers="th_itopt"]:not(.td_prd) {
+    padding-left: 32px !important;
+    color: var(--m-text-soft) !important;
+    font-weight: normal !important;
+    text-align: left !important;
+}
+/* theme 마크업의 sod_opt 들여쓰기 (cart 의 m-cart-options 톤) */
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt {
+    padding-left: 14px !important;
+    color: var(--m-text-soft) !important;
+    font-size: 0.92em !important;
+    margin-top: 4px !important;
+}
+/* legacy "옵션" pill (default_shop.css:1154) 제거 */
+.m-shell #sod_fin_list .sod_name .sod_opt:before {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 /* 주문번호 박스 (#sod_fin_no) — 카드형 surface */
@@ -550,6 +581,327 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-text) !important;
 }
 
+/* 주문조회 상세 - 상품목록/요약/정보 UI 보정 */
+.m-shell #sod_fin_list .tbl_head03 {
+    overflow-x: auto;
+}
+.m-shell #sod_fin_list .tbl_head03 table {
+    min-width: 960px;
+    table-layout: fixed;
+}
+.m-shell #sod_fin_list .tbl_head03 #th_itname { width: auto; }
+.m-shell #sod_fin_list .tbl_head03 #th_itqty { width: 86px; }
+.m-shell #sod_fin_list .tbl_head03 #th_itprice,
+.m-shell #sod_fin_list .tbl_head03 #th_itpt,
+.m-shell #sod_fin_list .tbl_head03 #th_itsd,
+.m-shell #sod_fin_list .tbl_head03 #th_itst { width: 104px; }
+.m-shell #sod_fin_list .tbl_head03 #th_itsum { width: 126px; }
+.m-shell #sod_fin_list .tbl_head03 thead th {
+    height: 58px;
+    padding: 0 14px !important;
+    font-size: 17px;
+    font-weight: 800;
+}
+.m-shell #sod_fin_list .tbl_head03 tbody td {
+    height: 118px;
+    padding: 22px 14px !important;
+    border-top: 1px solid var(--m-border) !important;
+    font-size: 17px;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+}
+.m-shell #sod_fin_list .tbl_head03 tbody tr:first-child td {
+    border-top: 0 !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd {
+    position: relative;
+    min-height: 118px;
+    padding-left: 136px !important;
+    text-align: left;
+    white-space: normal;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    border-radius: var(--m-radius-sm, 6px);
+    background: var(--m-surface-2);
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_name {
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    color: var(--m-text);
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_name a {
+    color: var(--m-text);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt {
+    margin: 0;
+    color: var(--m-text);
+    font-size: 16px;
+    line-height: 1.5;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_opt:before {
+    display: none !important;
+    content: none !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_numbig,
+.m-shell #sod_fin_list .tbl_head03 #th_itsum ~ td,
+.m-shell #sod_fin_list .tbl_head03 td[headers="th_itsum"] {
+    font-weight: 400;
+}
+.m-shell #sod_fin_list .tbl_head03 td[headers="th_itsum"] {
+    font-weight: 900;
+}
+.m-shell #sod_sts_wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin: 18px 0 28px;
+}
+.m-shell #sod_sts_wrap .btn_frmline {
+    min-width: 150px;
+    height: 44px;
+    border-radius: var(--m-radius-sm, 6px);
+    font-weight: 700;
+}
+.m-shell #sod_sts_explan {
+    position: absolute;
+    right: 0;
+    z-index: 20;
+    max-width: min(520px, calc(100vw - 32px));
+    padding: 16px;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius, 8px);
+    background: var(--m-surface);
+    box-shadow: var(--m-shadow-md);
+}
+.m-shell #sod_fin #sod_bsk_tot2 {
+    margin: 0 0 20px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius, 8px);
+    background: var(--m-surface);
+    color: var(--m-text);
+    list-style: none;
+}
+.m-shell #sod_fin #sod_bsk_tot2 li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--m-border);
+    background: var(--m-surface);
+    color: var(--m-text);
+}
+.m-shell #sod_fin #sod_bsk_tot2 li:last-child {
+    border-bottom: 0;
+}
+.m-shell #sod_fin #sod_bsk_tot2 span {
+    color: var(--m-text-soft);
+    font-weight: 700;
+}
+.m-shell #sod_fin #sod_bsk_tot2 strong {
+    color: var(--m-text);
+    font-weight: 900;
+    text-align: right;
+}
+.m-shell #sod_fin #sod_bsk_tot2 .sod_fin_tot {
+    background: var(--m-surface-2);
+}
+.m-shell #sod_fin #sod_bsk_tot2 .sod_bsk_cnt strong,
+.m-shell #sod_fin #sod_bsk_tot2 .sod_fin_tot strong {
+    color: var(--m-primary);
+}
+.m-shell #sod_fin_orderer,
+.m-shell #sod_fin_receiver,
+.m-shell #sod_fin_dvr {
+    overflow: hidden;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius, 8px);
+    background: var(--m-surface);
+}
+.m-shell #sod_fin_orderer h3,
+.m-shell #sod_fin_receiver h3,
+.m-shell #sod_fin_dvr h3 {
+    margin: 0;
+    background: var(--m-surface-2) !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    color: var(--m-text);
+}
+.m-shell #sod_fin_orderer .tbl_head01,
+.m-shell #sod_fin_receiver .tbl_head01,
+.m-shell #sod_fin_dvr .tbl_head01 {
+    border: 0 !important;
+    background: var(--m-surface) !important;
+}
+.m-shell #sod_fin_orderer .tbl_wrap,
+.m-shell #sod_fin_receiver .tbl_wrap,
+.m-shell #sod_fin_dvr .tbl_wrap {
+    padding: 0 !important;
+}
+.m-shell #sod_fin_orderer table,
+.m-shell #sod_fin_receiver table,
+.m-shell #sod_fin_dvr table {
+    width: 100%;
+}
+.m-shell #sod_fin_orderer th,
+.m-shell #sod_fin_receiver th,
+.m-shell #sod_fin_dvr th,
+.m-shell #sod_fin_orderer td,
+.m-shell #sod_fin_receiver td,
+.m-shell #sod_fin_dvr td {
+    padding: 12px 16px !important;
+    border-top: 1px solid var(--m-border) !important;
+    background: var(--m-surface) !important;
+    color: var(--m-text) !important;
+    word-break: keep-all;
+}
+.m-shell #sod_fin_orderer tr:first-child th,
+.m-shell #sod_fin_receiver tr:first-child th,
+.m-shell #sod_fin_dvr tr:first-child th,
+.m-shell #sod_fin_orderer tr:first-child td,
+.m-shell #sod_fin_receiver tr:first-child td,
+.m-shell #sod_fin_dvr tr:first-child td {
+    border-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .m-shell #sod_fin {
+        display: block;
+    }
+    .m-shell #sod_fin_list .tbl_head03 {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+    .m-shell #sod_fin_list .tbl_head03 table,
+    .m-shell #sod_fin_list .tbl_head03 thead,
+    .m-shell #sod_fin_list .tbl_head03 tbody,
+    .m-shell #sod_fin_list .tbl_head03 tr,
+    .m-shell #sod_fin_list .tbl_head03 th,
+    .m-shell #sod_fin_list .tbl_head03 td {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .m-shell #sod_fin_list .tbl_head03 thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+    .m-shell #sod_fin_list .tbl_head03 tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .m-shell #sod_fin_list .tbl_head03 tr {
+        overflow: hidden;
+        border: 1px solid var(--m-border);
+        border-radius: var(--m-radius, 8px);
+        background: var(--m-surface);
+        box-shadow: var(--m-shadow);
+    }
+    .m-shell #sod_fin_list .tbl_head03 tbody td {
+        height: auto;
+        min-height: 42px;
+        padding: 11px 14px !important;
+        border-top: 1px solid var(--m-border) !important;
+        text-align: right;
+    }
+    .m-shell #sod_fin_list .tbl_head03 tbody td:first-child {
+        border-top: 0 !important;
+    }
+    .m-shell #sod_fin_list .tbl_head03 .td_prd {
+        min-height: 112px;
+        padding: 14px 14px 14px 112px !important;
+        text-align: left;
+    }
+    .m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img {
+        top: 14px;
+        left: 14px;
+        width: 80px;
+        height: 80px;
+    }
+    .m-shell #sod_fin_list .tbl_head03 .td_prd .sod_name {
+        min-height: 80px;
+    }
+    .m-shell #sod_fin_list .tbl_head03 td:not(.td_prd):before {
+        float: left;
+        color: var(--m-text-soft);
+        font-weight: 700;
+    }
+    .m-shell #sod_fin_list .tbl_head03 td[headers="th_itqty"]:before { content: "총수량"; }
+    .m-shell #sod_fin_list .tbl_head03 td[headers="th_itprice"]:before { content: "판매가"; }
+    .m-shell #sod_fin_list .tbl_head03 td[headers="th_itpt"]:before { content: "포인트"; }
+    .m-shell #sod_fin_list .tbl_head03 td[headers="th_itsd"]:before { content: "배송비"; }
+    .m-shell #sod_fin_list .tbl_head03 td[headers="th_itsum"]:before { content: "소계"; }
+    .m-shell #sod_fin_list .tbl_head03 td[headers="th_itst"]:before { content: "상태"; }
+    .m-shell #sod_sts_wrap {
+        justify-content: stretch;
+    }
+    .m-shell #sod_sts_wrap .btn_frmline {
+        width: 100%;
+    }
+    .m-shell #sod_sts_explan {
+        left: 16px;
+        right: 16px;
+        max-width: none;
+    }
+    .m-shell #sod_fin_orderer table,
+    .m-shell #sod_fin_receiver table,
+    .m-shell #sod_fin_dvr table,
+    .m-shell #sod_fin_orderer tbody,
+    .m-shell #sod_fin_receiver tbody,
+    .m-shell #sod_fin_dvr tbody,
+    .m-shell #sod_fin_orderer tr,
+    .m-shell #sod_fin_receiver tr,
+    .m-shell #sod_fin_dvr tr,
+    .m-shell #sod_fin_orderer th,
+    .m-shell #sod_fin_receiver th,
+    .m-shell #sod_fin_dvr th,
+    .m-shell #sod_fin_orderer td,
+    .m-shell #sod_fin_receiver td,
+    .m-shell #sod_fin_dvr td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .m-shell #sod_fin_orderer th,
+    .m-shell #sod_fin_receiver th,
+    .m-shell #sod_fin_dvr th {
+        padding-bottom: 4px !important;
+        border-bottom: 0 !important;
+        color: var(--m-text-soft) !important;
+    }
+    .m-shell #sod_fin_orderer td,
+    .m-shell #sod_fin_receiver td,
+    .m-shell #sod_fin_dvr td {
+        padding-top: 4px !important;
+    }
+}
+
 /* ============================================================
    주문서 (#forderform) 의 상품 목록 테이블 — cart 의 m-cart-table 톤과 동일하게 정렬.
    legacy 마크업 (.tbl_head03 .od_prd_list > #sod_list) 위에 카드형 overlay.
@@ -635,7 +987,29 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 .m-shell #forderform #sod_list .sod_opt {
     color: var(--m-text-soft) !important;
     font-size: 0.9em;
-    margin-top: 4px;
+    margin: 6px 0 0 !important;
+    line-height: 1.6 !important;
+}
+/* cart 의 m-cart-options 스타일 mirror — ul block + padding-left:18px, bullet 없음, "옵션" pill 제거 */
+.m-shell #forderform #sod_list .sod_opt ul {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 0 0 18px !important;
+    list-style: none !important;
+}
+.m-shell #forderform #sod_list .sod_opt li {
+    color: var(--m-text-soft) !important;
+    margin: 3px 0 !important;
+    padding: 0 !important;
+    line-height: 1.5 !important;
+}
+.m-shell #forderform #sod_list .sod_opt li:before,
+.m-shell #forderform #sod_list .sod_opt .opt_name:before {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 .m-shell #forderform #sod_list .total_price {
     font-weight: 800;
@@ -655,6 +1029,58 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-color: var(--m-primary);
     color: var(--m-primary);
 }
+
+/* ============================================================
+   FINAL OVERRIDES — orderinquiryview 의 .td_prd 를 grid 로 재구성
+   (absolute 방식이 어떤 이유로 작동 안함 → flex/grid 로 강제)
+   ============================================================ */
+.m-shell #sod_fin_list .tbl_head03 .td_prd {
+    position: static !important;
+    padding: 14px !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    text-align: left !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    grid-column: 1;
+    grid-row: 1;
+    width: 90px !important;
+    height: 90px !important;
+    max-width: 90px !important;
+    min-width: 90px !important;
+    overflow: hidden !important;
+    border-radius: 6px;
+    background: var(--m-surface-2);
+    border: 1px solid var(--m-border);
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_img img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+.m-shell #sod_fin_list .tbl_head03 .td_prd .sod_name {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 0 !important;
+    padding-left: 0 !important;
+    min-width: 0;
+}
+
 </style>
 
 <script>
