@@ -116,13 +116,13 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     <div class="my-card-value"><?php echo number_format($_my_count['address']); ?> <em>곳</em></div>
                 </div>
             </a>
-            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/itemuselist">
+            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/itemuselist?sfl=a.mb_id&amp;stx=<?php echo urlencode($_my['mb_id']); ?>">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 </div>
                 <div class="my-card-body">
                     <div class="my-card-label">사용후기</div>
-                    <div class="my-card-value">전체보기 →</div>
+                    <div class="my-card-value"><?php echo number_format($_my_count['itemuse']); ?> <em>건</em></div>
                 </div>
             </a>
         </div>

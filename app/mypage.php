@@ -20,7 +20,7 @@ $_my = [
 // 활동 카운트 — silent fetch (테이블 없거나 NULL 이면 0)
 $_my_count = [
     'scrap' => 0, 'memo' => 0, 'memo_unread' => 0,
-    'cart'  => 0, 'wish' => 0, 'order' => 0, 'coupon' => 0, 'address' => 0,
+    'cart'  => 0, 'wish' => 0, 'order' => 0, 'coupon' => 0, 'address' => 0, 'itemuse' => 0,
 ];
 
 $_r = @sql_pdo_fetch("select count(*) c from {$g5['scrap_table']} where mb_id = :mb_id", [':mb_id' => $_my['mb_id']]);
@@ -45,6 +45,10 @@ if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
     $_my_count['order'] = (int)($_r['c'] ?? 0);
     $_r = @sql_pdo_fetch("select count(*) c from {$g5['g5_shop_order_address_table']} where mb_id = :mb_id", [':mb_id' => $_my['mb_id']]);
     $_my_count['address'] = (int)($_r['c'] ?? 0);
+
+    // 사용후기 — 본인이 작성한 모든 후기 (확인 대기 포함)
+    $_r = @sql_pdo_fetch("select count(*) c from {$g5['g5_shop_item_use_table']} where mb_id = :mb_id", [':mb_id' => $_my['mb_id']]);
+    $_my_count['itemuse'] = (int)($_r['c'] ?? 0);
 
     // 쿠폰 — 만료 안 된 사용 가능 쿠폰
     $_r = @sql_pdo_query("
