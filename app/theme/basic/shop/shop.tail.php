@@ -92,7 +92,7 @@ $is_index = defined('_INDEX_') && _INDEX_;
 
     <!-- 우측 fixed quick action — 장바구니/위시/최근본/위로 -->
     <aside class="m-shop-quick" aria-label="빠른 메뉴">
-        <a href="<?php echo G5_SHOP_URL; ?>/cart.php" class="m-shop-quick-btn" title="장바구니">
+        <a href="<?php echo G5_SHOP_URL; ?>/cart" class="m-shop-quick-btn" title="장바구니">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             <span class="m-shop-quick-label">장바구니</span>
             <?php if (function_exists('get_boxcart_datas_count')) { $_qcnt = (int) get_boxcart_datas_count(); if ($_qcnt > 0) { ?>
