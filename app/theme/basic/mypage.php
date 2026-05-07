@@ -157,8 +157,10 @@ a.my-btn-ghost, a.my-btn-ghost:link, a.my-btn-ghost:visited, a.my-btn-ghost:hove
 }
 
 .my-section-title {
-    margin: 28px 0 12px; font-size: 1em; font-weight: 600; color: var(--m-text);
+    margin: 36px 0 14px; font-size: 1em; font-weight: 600; color: var(--m-text);
 }
+/* 첫 섹션은 위 여백 X (회원헤더 카드 바로 다음) */
+.my-section-title:first-of-type { margin-top: 8px; }
 .my-grid {
     display: grid; gap: 12px;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
