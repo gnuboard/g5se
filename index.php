@@ -127,6 +127,25 @@ ob_start(function ($html) {
         $html
     );
 
+    // 6) shop 카테고리 리스트: /shop/list.php?ca_id=X[&...] → /shop/category/X[?...]
+    $html = preg_replace_callback(
+        '#/shop/list\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['ca_id']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $params['ca_id'])) {
+                return $m[0];
+            }
+            $url = '/shop/category/'.$params['ca_id'];
+            unset($params['ca_id']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
     return $html;
 });
 
