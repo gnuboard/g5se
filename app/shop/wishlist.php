@@ -4,11 +4,6 @@ include_once('./_common.php');
 if (!$is_member)
     goto_url(G5_BBS_URL."/login.php?url=".urlencode(G5_SHOP_URL.'/wishlist'));
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/wishlist.php');
-    return;
-}
-
 // 테마에 wishlist.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
     $theme_wishlist_file = G5_THEME_SHOP_PATH.'/wishlist.php';

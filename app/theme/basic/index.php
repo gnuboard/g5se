@@ -73,9 +73,19 @@ include_once(G5_PATH.'/head.sub.php');
             </section>
         </div>
 
-        <!-- 우측: 사이드바 (outlogin 등) -->
+        <!-- 우측: 사이드바 (outlogin + 설문) -->
         <aside class="m-side-col">
             <?php require G5_THEME_PATH.'/modern/_outlogin.inc.php'; ?>
+            <?php
+            // 설문 (poll) — 활성 설문이 있을 때만 카드 노출. poll.lib 명시적 로드 (modern 흐름이 자동 로드 안 함).
+            if (!function_exists('poll')) {
+                @include_once(G5_LIB_PATH.'/poll.lib.php');
+            }
+            $_poll_html = function_exists('poll') ? poll('theme/basic') : '';
+            if ($_poll_html) {
+                echo '<div class="m-side-card">'.$_poll_html.'</div>';
+            }
+            ?>
         </aside>
     </main>
 

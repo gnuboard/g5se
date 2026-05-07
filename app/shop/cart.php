@@ -21,11 +21,6 @@ if(function_exists('before_check_cart_price')) {
     before_check_cart_price($s_cart_id, true, true, true);
 }
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/cart.php');
-    return;
-}
-
 // 테마에 cart.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
     $theme_cart_file = G5_THEME_SHOP_PATH.'/cart.php';

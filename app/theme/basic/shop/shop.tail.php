@@ -1,10 +1,7 @@
 <?php
 if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 
-if (G5_IS_MOBILE) {
-    include_once(G5_THEME_MSHOP_PATH.'/shop.tail.php');
-    return;
-}
+// gnu5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거.
 
 $admin = get_admin("super");
 $is_index = defined('_INDEX_') && _INDEX_;
@@ -53,42 +50,8 @@ $is_index = defined('_INDEX_') && _INDEX_;
         <?php } ?>
     </main>
 
-    <!-- 푸터 -->
-    <footer class="m-footer" style="margin-top: auto; padding: 32px 0 24px; border-top: 1px solid var(--m-border); background: var(--m-surface);">
-        <div class="m-container" style="padding: 0 20px;">
-            <ul style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 0; margin: 0 0 18px; list-style: none; font-size: var(--m-text-base);">
-                <li><a href="<?php echo get_pretty_url('content', 'company'); ?>" style="color: var(--m-text-soft); text-decoration: none;">회사소개</a></li>
-                <li style="color: var(--m-text-faint);">·</li>
-                <li><a href="<?php echo get_pretty_url('content', 'provision'); ?>" style="color: var(--m-text-soft); text-decoration: none;">서비스이용약관</a></li>
-                <li style="color: var(--m-text-faint);">·</li>
-                <li><a href="<?php echo get_pretty_url('content', 'privacy'); ?>" style="color: var(--m-text); font-weight: 600; text-decoration: none;">개인정보처리방침</a></li>
-                <li style="color: var(--m-text-faint);">·</li>
-                <li><a href="<?php echo get_device_change_url(); ?>" style="color: var(--m-text-soft); text-decoration: none;">모바일버전</a></li>
-            </ul>
-
-            <div style="display: grid; gap: 24px; grid-template-columns: 2fr 1fr 1fr;">
-                <div>
-                    <h2 style="font-size: var(--m-text-base); font-weight: 700; color: var(--m-text); margin: 0 0 10px;">사이트 정보</h2>
-                    <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; margin: 0; font-size: var(--m-text-sm); color: var(--m-text-muted); line-height: 1.6;">
-                        <div><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">회사명</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_company_name']; ?></dd></div>
-                        <div><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">대표</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_company_owner']; ?></dd></div>
-                        <div style="grid-column: 1/3;"><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">주소</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_company_addr']; ?></dd></div>
-                        <div><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">사업자번호</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_company_saupja_no']; ?></dd></div>
-                        <div><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">통신판매번호</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_tongsin_no']; ?></dd></div>
-                        <div><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">전화</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_company_tel']; ?></dd></div>
-                        <div><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">팩스</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_company_fax']; ?></dd></div>
-                        <div style="grid-column: 1/3;"><dt style="display: inline; font-weight: 600; color: var(--m-text-soft);">개인정보 보호책임자</dt> <dd style="display: inline; margin: 0;"><?php echo $default['de_admin_info_name']; ?></dd></div>
-                    </dl>
-                </div>
-                <section class="m-card" style="padding: 14px;"><?php echo latest('theme/notice', 'notice', 5, 30); ?></section>
-                <section class="m-card" style="padding: 14px;"><?php echo visit('theme/shop_basic'); ?></section>
-            </div>
-
-            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--m-border); text-align: center; font-size: var(--m-text-xs); color: var(--m-text-faint);">
-                Copyright &copy; 2001-<?php echo date('Y'); ?> <?php echo $default['de_admin_company_name']; ?>. All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    <!-- gnu5se: 통합 footer — community 와 shop 동일 (_footer.inc.php). 사이트 정보 + 공지 + 접속자 (현재/오늘/어제/최대/전체) -->
+    <?php require_once(G5_THEME_PATH.'/modern/_footer.inc.php'); ?>
 
     <!-- 우측 fixed quick action — 장바구니/위시/최근본/위로 -->
     <aside class="m-shop-quick" aria-label="빠른 메뉴">
@@ -107,10 +70,7 @@ $is_index = defined('_INDEX_') && _INDEX_;
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span class="m-shop-quick-label">최근본</span>
         </button>
-        <button type="button" class="m-shop-quick-btn m-shop-quick-top" title="위로">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-            <span class="m-shop-quick-label">위로</span>
-        </button>
+        <?php /* 위로 가기 버튼은 통합 .m-float-actions (theme toggle + scroll-to-top) 가 담당. shop 전용 중복 제거. */ ?>
     </aside>
 
     <!-- 최근 본 상품 패널 (quick-today 클릭 시 펼침) -->
@@ -246,6 +206,18 @@ $is_index = defined('_INDEX_') && _INDEX_;
     .m-shop-quick { right: 8px; }
     .m-shop-quick-btn { width: 44px; height: 44px; }
     .m-shop-today-panel { right: 60px; width: 240px; }
+
+    /* footer 의 inline grid-template-columns: 2fr 1fr 1fr 무력화 → 1열 stack */
+    .m-footer [style*="grid-template-columns: 2fr 1fr 1fr"],
+    .m-footer [style*="grid-template-columns:2fr 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+@media (max-width: 600px) {
+    /* 사이트 정보 dl 의 inline 1fr 1fr — 600px 이하에선 dt/dd 도 1열로 */
+    .m-footer dl[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
 }
 </style>
 

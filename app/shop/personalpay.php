@@ -1,11 +1,6 @@
 <?php
 include_once('./_common.php');
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/personalpay.php');
-    return;
-}
-
 $g5['title'] = '개인결제 리스트';
 include_once('./_head.php');
 ?>
