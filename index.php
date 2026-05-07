@@ -181,6 +181,9 @@ ob_start(function ($html) {
     // 12) shop 배송지목록: /shop/orderaddress.php → /shop/orderaddress
     $html = preg_replace('#/shop/orderaddress\.php(?![a-zA-Z0-9])#', '/shop/orderaddress', $html);
 
+    // 13) shop 쿠폰: /shop/coupon.php → /shop/coupon
+    $html = preg_replace('#/shop/coupon\.php(?![a-zA-Z0-9])#', '/shop/coupon', $html);
+
     return $html;
 });
 
