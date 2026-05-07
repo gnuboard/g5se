@@ -140,15 +140,17 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
 .my-head-sub { margin: 4px 0 0; color: var(--m-text-soft); font-size: 0.92em; display: flex; gap: 12px; flex-wrap: wrap; }
 .my-head-since { color: var(--m-text-faint); }
 .my-head-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.my-btn {
+/* a.my-btn 으로 specificity 올림 — default.css 의 a{color:#000} 가 my-btn 의 흰색을 덮어쓰는 케이스 방지 */
+a.my-btn, a.my-btn:link, a.my-btn:visited {
     display: inline-flex; align-items: center; padding: 7px 14px;
     background: var(--m-primary); color: #fff; border: 1px solid var(--m-primary);
     border-radius: 6px; font-size: 0.9em; font-weight: 600; text-decoration: none;
 }
-.my-btn:hover { opacity: 0.9; }
-.my-btn-ghost {
+a.my-btn:hover { opacity: 0.9; color: #fff; }
+a.my-btn-ghost, a.my-btn-ghost:link, a.my-btn-ghost:visited {
     background: var(--m-surface-2); color: var(--m-text); border-color: var(--m-border);
 }
+a.my-btn-ghost:hover { color: var(--m-text); }
 
 .my-section-title {
     margin: 28px 0 12px; font-size: 1em; font-weight: 600; color: var(--m-text);
