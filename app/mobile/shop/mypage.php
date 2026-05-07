@@ -88,7 +88,7 @@ $cp_count = get_shop_member_coupon_count($member['mb_id'], true);
     </section>
 
     <section id="smb_my_wish" class="wishlist">
-        <h2><a href="<?php echo G5_SHOP_URL; ?>/wishlist.php">최근 위시리스트</a></h2>
+        <h2><a href="<?php echo G5_SHOP_URL; ?>/wishlist">최근 위시리스트</a></h2>
 
         <ul>
             <?php
@@ -123,7 +123,7 @@ $cp_count = get_shop_member_coupon_count($member['mb_id'], true);
                 echo '<li class="empty_list">보관 내역이 없습니다.</li>';
             ?>
         </ul>
-         <a href="<?php echo G5_SHOP_URL; ?>/wishlist.php" class="btn_more">더보기</a>
+         <a href="<?php echo G5_SHOP_URL; ?>/wishlist" class="btn_more">더보기</a>
     </section>
 
 </div>

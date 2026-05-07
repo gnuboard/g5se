@@ -166,6 +166,7 @@ else {
 
 <form name="fcategoryform" action="./categoryformupdate.php" onsubmit="return fcategoryformcheck(this);" method="post" enctype="multipart/form-data">
 
+<input type="hidden" name="token" value="">
 <input type="hidden" name="w" value="<?php echo $w; ?>">
 <input type="hidden" name="sst" value="<?php echo $sst; ?>">
 <input type="hidden" name="sod" value="<?php echo $sod; ?>">

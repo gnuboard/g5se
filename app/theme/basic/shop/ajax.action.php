@@ -348,9 +348,12 @@ switch ($action) {
                               ':wi_ip'   => $_SERVER['REMOTE_ADDR'],
                           ]);
 
-            die('OK');
+            die(json_encode(['result' => 'OK', 'status' => 'added']));
         } else {
-            die('위시리스트에 이미 등록된 상품입니다.');
+            sql_pdo_query(" delete from {$g5['g5_shop_wish_table']} where wi_id = :wi_id and mb_id = :mb_id ",
+                          [':wi_id' => $row['wi_id'], ':mb_id' => $member['mb_id']]);
+
+            die(json_encode(['result' => 'OK', 'status' => 'deleted']));
         }
 
         break;

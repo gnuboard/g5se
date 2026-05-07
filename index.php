@@ -166,6 +166,12 @@ ob_start(function ($html) {
         $html
     );
 
+    // 8) shop 위시리스트: /shop/wishlist.php → /shop/wishlist
+    $html = preg_replace('#/shop/wishlist\.php(?![a-zA-Z0-9])#', '/shop/wishlist', $html);
+
+    // 9) shop 장바구니: /shop/cart.php → /shop/cart (query 없음, 세션 기반)
+    $html = preg_replace('#/shop/cart\.php(?![a-zA-Z0-9])#', '/shop/cart', $html);
+
     return $html;
 });
 

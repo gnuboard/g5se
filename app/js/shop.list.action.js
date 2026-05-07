@@ -24,14 +24,36 @@ jQuery(function ($) {
         $.post(
             g5_shop_url + "/ajax.action.php",
             { it_id: it_id, action : "wish_update" },
-            function(error) {
-                if(error != "OK") {
-                    alert(error.replace(/\\n/g, "\n"));
+            function(response) {
+                var data = response;
+
+                if (typeof data === "string") {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e) {
+                        data = { result: data };
+                    }
+                }
+
+                // 구버전 문자열 응답 호환: 이미 등록 응답은 위시에 들어있는 상태로 sync.
+                var already = (data.result !== "OK") && /이미\s*등록/.test(data.result || "");
+                if (data.result !== "OK" && !already) {
+                    alert(String(data.result || response).replace(/\\n/g, "\n"));
                     return false;
                 }
-                
+
+                if (data.status === "deleted") {
+                    $el.removeClass("is_active text-rose-500");
+                    $el.find("i.fa-heart").removeClass("fa-heart").addClass("fa-heart-o");
+                } else {
+                    $el.addClass("is_active");
+                    $el.find("i.fa-heart-o").removeClass("fa-heart-o").addClass("fa-heart");
+                }
+
+                if (already) {
+                    return false;
+                }
                 mainCart.update_wish_side();
-                alert("상품을 위시리스트에 담았습니다.");
                 return;
             }
         );
@@ -114,7 +136,10 @@ jQuery(function ($) {
                 
                 mainCart.update_cart_side();
 
-                alert("상품을 장바구니에 담았습니다.");
+                // gnu5se: 담았다 alert 대신 confirm 으로 이동 여부 묻기.
+                if (confirm("상품을 장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?")) {
+                    location.href = g5_shop_url + "/cart";
+                }
             },
             error : function(request, status, error){
                 mainCart.add_cart_after(frm);

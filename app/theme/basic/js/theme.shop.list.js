@@ -24,14 +24,31 @@ jQuery(function ($) {
         $.post(
             g5_theme_shop_url + "/ajax.action.php",
             { it_id: it_id, action : "wish_update" },
-            function(error) {
-                if(error != "OK") {
-                    alert(error.replace(/\\n/g, "\n"));
+            function(response) {
+                var data = response;
+
+                if (typeof data === "string") {
+                    try {
+                        data = JSON.parse(data);
+                    } catch (e) {
+                        data = { result: data };
+                    }
+                }
+
+                if(data.result != "OK") {
+                    alert(String(data.result || response).replace(/\\n/g, "\n"));
                     return false;
                 }
-                
+
+                if (data.status === "deleted") {
+                    $el.removeClass("is_active text-rose-500");
+                    $el.find("i.fa-heart").removeClass("fa-heart").addClass("fa-heart-o");
+                } else {
+                    $el.addClass("is_active");
+                    $el.find("i.fa-heart-o").removeClass("fa-heart-o").addClass("fa-heart");
+                }
+
                 mainCart.update_wish_side();
-                alert("상품을 위시리스트에 담았습니다.");
                 return;
             }
         );
