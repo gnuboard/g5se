@@ -125,6 +125,7 @@ class Router
         // (catch-all 이 /shop/item/item0008 도 잡아 shop/item/item0008.php 를 시도하면 404)
         '#^/shop/item/(?P<it_id>[a-zA-Z0-9_-]+)/?$#'                                   => 'shop/item.php',
         '#^/shop/category/(?P<ca_id>[a-zA-Z0-9_-]+)/?$#'                               => 'shop/list.php',
+        '#^/shop/listtype/(?P<type>\d+)/?$#'                                           => 'shop/listtype.php',
         '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
@@ -261,6 +262,16 @@ class Router
             if (!empty($params['ca_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['ca_id'])) {
                 $url = '/shop/category/'.$params['ca_id'];
                 unset($params['ca_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/listtype.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['type']) && preg_match('/^\d+$/', $params['type'])) {
+                $url = '/shop/listtype/'.$params['type'];
+                unset($params['type']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
                 header('Location: '.$url, true, 301);
                 exit;
