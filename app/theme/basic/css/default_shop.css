@@ -1531,6 +1531,27 @@ html.no-overflowscrolling #sc_coupon_frm, html.no-overflowscrolling #od_coupon_f
 }
 #sod_frm .sod_right #sod_bsk_tot {margin:0 0 14px}
 #sod_frm .sod_right .pay_tbl {margin:0 0 14px}
+#sod_frm .sod_right .pay_tbl table {
+    table-layout: fixed;
+}
+#sod_frm .sod_right .pay_tbl th {
+    width: 132px;
+    height: auto;
+    padding: 18px 16px;
+    white-space: nowrap;
+    word-break: keep-all;
+    line-height: 1.45;
+    vertical-align: middle;
+    overflow: visible;
+}
+#sod_frm .sod_right .pay_tbl td {
+    height: auto;
+    padding: 18px 16px;
+    line-height: 1.55;
+    word-break: keep-all;
+    vertical-align: middle;
+    overflow: visible;
+}
 #sod_frm .sod_right #od_tot_price {margin:0 0 24px}
 #sod_frm .sod_right #sod_frm_pay {margin:0}
 #sod_frm .sod_right .od_pay_buttons_el {margin:0;border-bottom:0}
@@ -1588,6 +1609,89 @@ html.no-overflowscrolling #sc_coupon_frm, html.no-overflowscrolling #od_coupon_f
     width: 100%;
     margin-bottom: 0;
 }
+#sod_frm.sod_frm_pc > .od_prd_list table {
+    border-collapse: collapse;
+}
+#sod_frm.sod_frm_pc > .od_prd_list thead th {
+    height: 58px;
+    padding: 0 14px;
+    border-left: 0;
+    border-right: 0;
+    background: var(--m-surface-2);
+    color: var(--m-text);
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-align: center;
+}
+#sod_frm.sod_frm_pc > .od_prd_list tbody td {
+    padding: 22px 14px;
+    border-left: 0;
+    border-right: 0;
+    color: var(--m-text);
+    font-size: 17px;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    letter-spacing: 0;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .td_prd {
+    min-height: 124px;
+    padding: 22px 14px 22px 136px;
+    text-align: left;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_img {
+    top: 22px;
+    left: 22px;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    border-radius: var(--m-radius-sm);
+    background: var(--m-surface-2);
+}
+#sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .sod_name {
+    min-height: 96px;
+    color: var(--m-text);
+    font-size: 16px;
+    line-height: 1.6;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .sod_name b {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--m-text);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .sod_opt {
+    color: var(--m-text);
+    font-size: 16px;
+    line-height: 1.6;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .sod_opt li {
+    color: var(--m-text);
+    padding: 2px 0;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .sod_opt li:before,
+#sod_frm.sod_frm_pc > .od_prd_list .sod_opt .opt_name:before {
+    display: none;
+    content: none;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .td_num,
+#sod_frm.sod_frm_pc > .od_prd_list .td_numbig,
+#sod_frm.sod_frm_pc > .od_prd_list .td_dvr {
+    font-weight: 400;
+}
+#sod_frm.sod_frm_pc > .od_prd_list .total_price {
+    font-size: 17px;
+    font-weight: 900;
+}
 #sod_frm.sod_frm_pc > .sod_left {
     float: none;
     flex: 1 1 0;
@@ -1608,6 +1712,187 @@ html.no-overflowscrolling #sc_coupon_frm, html.no-overflowscrolling #od_coupon_f
         flex: 0 0 100%;
         width: 100%;
         margin-left: 0;
+    }
+}
+
+/* /shop/orderform 반응형: 모바일 판정 없이 PC 주문서가 내려오는 경우 */
+@media (max-width: 768px) {
+    #sod_frm.sod_frm_pc {
+        display: block;
+        width: 100%;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list {
+        margin: 0 0 18px;
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list table,
+    #sod_frm.sod_frm_pc > .od_prd_list thead,
+    #sod_frm.sod_frm_pc > .od_prd_list tbody,
+    #sod_frm.sod_frm_pc > .od_prd_list tr,
+    #sod_frm.sod_frm_pc > .od_prd_list th,
+    #sod_frm.sod_frm_pc > .od_prd_list td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list tr {
+        overflow: hidden;
+        border: 1px solid var(--m-border);
+        border-radius: var(--m-radius);
+        background: var(--m-surface);
+        box-shadow: var(--m-shadow);
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list td {
+        border: 0;
+        border-bottom: 1px solid var(--m-border);
+        background: var(--m-surface);
+        color: var(--m-text);
+        text-align: right;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list td:last-child {
+        border-bottom: 0;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd {
+        min-height: 112px;
+        padding: 14px 14px 14px 112px;
+        text-align: left;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_img {
+        top: 14px;
+        left: 14px;
+        width: 80px;
+        height: 80px;
+        overflow: hidden;
+        border-radius: var(--m-radius-sm);
+        background: var(--m-surface-2);
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_name {
+        min-height: 80px;
+        background: transparent !important;
+        color: var(--m-text);
+        line-height: 1.55;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_name b {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--m-text);
+        font-size: 17px;
+        line-height: 1.35;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .sod_opt {
+        padding: 0;
+        color: var(--m-text);
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .sod_opt li {
+        color: var(--m-text);
+        line-height: 1.45;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .cp_btn {
+        height: 30px;
+        margin-top: 8px;
+        padding: 0 10px;
+        border: 1px solid var(--m-border);
+        border-radius: var(--m-radius-sm);
+        background: var(--m-surface-2);
+        color: var(--m-text);
+        font-weight: 700;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_num,
+    #sod_frm.sod_frm_pc > .od_prd_list .td_numbig,
+    #sod_frm.sod_frm_pc > .od_prd_list .td_dvr {
+        min-height: 42px;
+        padding: 11px 14px;
+        font-size: 15px;
+        font-weight: 400;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_num:before,
+    #sod_frm.sod_frm_pc > .od_prd_list .td_numbig:before,
+    #sod_frm.sod_frm_pc > .od_prd_list .td_dvr:before {
+        float: left;
+        color: var(--m-text-soft);
+        font-weight: 700;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list tr > td:nth-child(2):before { content: "총수량"; }
+    #sod_frm.sod_frm_pc > .od_prd_list tr > td:nth-child(3):before { content: "판매가"; }
+    #sod_frm.sod_frm_pc > .od_prd_list tr > td:nth-child(4):before { content: "소계"; }
+    #sod_frm.sod_frm_pc > .od_prd_list tr > td:nth-child(5):before { content: "포인트"; }
+    #sod_frm.sod_frm_pc > .od_prd_list tr > td:nth-child(6):before { content: "배송비"; }
+    #sod_frm.sod_frm_pc > .od_prd_list .total_price {
+        color: var(--m-text);
+        font-size: 18px;
+        font-weight: 900;
+    }
+    #sod_frm.sod_frm_pc > .sod_left,
+    #sod_frm.sod_frm_pc > .sod_right {
+        display: block;
+        width: 100%;
+        margin: 0;
+    }
+    #sod_frm.sod_frm_pc section,
+    #sod_frm.sod_frm_pc .tbl_frm01,
+    #sod_frm.sod_frm_pc .sod_right #sod_bsk_tot,
+    #sod_frm.sod_frm_pc .sod_right .pay_tbl,
+    #sod_frm.sod_frm_pc .sod_right #od_tot_price,
+    #sod_frm.sod_frm_pc .sod_right .od_pay_buttons_el,
+    #sod_frm.sod_frm_pc .sod_right #display_pay_button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #sod_frm.sod_frm_pc .tbl_frm01 table,
+    #sod_frm.sod_frm_pc .tbl_frm01 tbody,
+    #sod_frm.sod_frm_pc .tbl_frm01 tr,
+    #sod_frm.sod_frm_pc .tbl_frm01 th,
+    #sod_frm.sod_frm_pc .tbl_frm01 td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #sod_frm.sod_frm_pc .tbl_frm01 th {
+        padding: 12px 14px 4px;
+        border-bottom: 0;
+        text-align: left;
+    }
+    #sod_frm.sod_frm_pc .tbl_frm01 td {
+        padding: 6px 14px 12px;
+    }
+    #sod_frm.sod_frm_pc .frm_input,
+    #sod_frm.sod_frm_pc textarea,
+    #sod_frm.sod_frm_pc select {
+        max-width: 100%;
+    }
+    #sod_frm.sod_frm_pc #od_zip,
+    #sod_frm.sod_frm_pc #od_b_zip {
+        width: calc(100% - 120px) !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd {
+        padding-left: 98px;
+    }
+    #sod_frm.sod_frm_pc > .od_prd_list .td_prd .sod_img {
+        width: 70px;
+        height: 70px;
     }
 }
 

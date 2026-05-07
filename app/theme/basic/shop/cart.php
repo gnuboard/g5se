@@ -109,35 +109,35 @@ $tot_price = $tot_sell_price + $send_cost;
 }
 .m-cart-table tbody tr:last-child td { border-bottom: 0; }
 .m-cart-table .m-cart-col-check { width: 56px; }
-.m-cart-table .m-cart-col-product { width: 64%; }
+.m-cart-table .m-cart-col-product { width: auto; }
 .m-cart-table .m-cart-col-qty { width: 86px; }
 .m-cart-table .m-cart-col-price,
-.m-cart-table .m-cart-col-point { width: 104px; }
+.m-cart-table .m-cart-col-point,
+.m-cart-table .m-cart-col-delivery { width: 104px; }
 .m-cart-table .m-cart-col-total { width: 126px; }
-.m-cart-product { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 18px; align-items: start; text-align: left; }
+.m-cart-product { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 18px; align-items: start; text-align: left; }
 .m-cart-thumb {
-    display: block; width: 124px; aspect-ratio: 1 / 1; overflow: hidden;
+    display: block; width: 96px; aspect-ratio: 1 / 1; overflow: hidden;
     border-radius: var(--m-radius-sm); background: var(--m-surface-2);
 }
 .m-cart-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.m-cart-info { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-.m-cart-name { color: var(--m-text); text-decoration: none; font-size: 22px; font-weight: 800; line-height: 1.35; }
+.m-cart-info { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.m-cart-name { color: var(--m-text); text-decoration: none; font-size: 17px; font-weight: 800; line-height: 1.35; }
 .m-cart-name:hover { color: var(--m-primary); }
 .m-cart-options {
-    color: var(--m-text-soft); font-size: 17px; line-height: 1.6;
+    color: var(--m-text); font-size: 16px; line-height: 1.6;
 }
 .m-cart-options ul, .m-cart-options ol { margin: 0; padding-left: 18px; }
 .m-cart-options li { margin: 3px 0; }
 .m-cart-option-action { margin-top: 2px; }
-.m-cart-sendcost { color: var(--m-text-soft); font-size: 15px; font-weight: 700; }
 .m-cart-option-action .mod_options {
     height: 34px; padding: 0 12px; border: 1px solid var(--m-border);
     border-radius: var(--m-radius-sm); background: transparent; color: var(--m-text-soft);
     font-size: 14px; font-weight: 700; cursor: pointer;
 }
 .m-cart-option-action .mod_options:hover { color: var(--m-primary); border-color: var(--m-primary); }
-.m-cart-table-num { font-weight: 500; white-space: nowrap; }
-.m-cart-table-total { font-size: 22px; font-weight: 900; white-space: nowrap; }
+.m-cart-table-num { font-weight: 400; white-space: nowrap; }
+.m-cart-table-total { font-size: 17px; font-weight: 900; white-space: nowrap; }
 .m-cart-table-actions { display: flex; gap: 8px; padding-top: 12px; }
 .m-cart-summary-wrap { width: 100%; padding-top: 14px; border-top: 1px solid var(--m-border); }
 .m-cart-summary {
@@ -281,8 +281,8 @@ $tot_price = $tot_sell_price + $send_cost;
         content: attr(data-label); color: var(--m-text-soft); font-weight: 700;
     }
     .m-cart-row td.m-cart-table-total { font-size: 20px; font-weight: 900; }
-    .m-cart-product { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
-    .m-cart-thumb { width: 96px; }
+    .m-cart-product { grid-template-columns: 82px minmax(0, 1fr); gap: 12px; }
+    .m-cart-thumb { width: 82px; }
     .m-cart-name { font-size: 18px; }
     .m-cart-options { font-size: 15px; }
     .m-cart-table-actions { display: grid; grid-template-columns: 1fr 1fr; }
@@ -298,10 +298,7 @@ $tot_price = $tot_sell_price + $send_cost;
 
 <div class="m-cart">
     <header class="m-cart-head">
-        <div>
-            <h1 class="m-cart-title">장바구니 <span class="m-cart-count"><?php echo number_format(count($cart_items)); ?></span></h1>
-            <p class="m-cart-sub">구매할 상품을 선택한 뒤 주문을 진행하세요.</p>
-        </div>
+        <p class="m-cart-sub">구매할 상품을 선택한 뒤 주문을 진행하세요.</p>
         <a href="<?php echo $continue_ca_id ? shop_category_url($continue_ca_id) : G5_SHOP_URL; ?>" class="m-cart-btn">쇼핑 계속하기</a>
     </header>
 
@@ -315,6 +312,7 @@ $tot_price = $tot_sell_price + $send_cost;
                     <col class="m-cart-col-qty">
                     <col class="m-cart-col-price">
                     <col class="m-cart-col-point">
+                    <col class="m-cart-col-delivery">
                     <col class="m-cart-col-total">
                 </colgroup>
                 <thead>
@@ -327,6 +325,7 @@ $tot_price = $tot_sell_price + $send_cost;
                         <th scope="col">총수량</th>
                         <th scope="col">판매가</th>
                         <th scope="col">포인트</th>
+                        <th scope="col">배송비</th>
                         <th scope="col">소계</th>
                     </tr>
                 </thead>
@@ -334,7 +333,7 @@ $tot_price = $tot_sell_price + $send_cost;
                 <?php foreach ($cart_items as $row) {
                     $idx = (int) $row['_idx'];
                     $item_url = shop_item_url($row['it_id']);
-                    $image = get_it_image($row['it_id'], 208, 208, '', '', stripslashes($row['it_name']));
+                    $image = get_it_image($row['it_id'], 160, 160, '', '', stripslashes($row['it_name']));
                 ?>
                     <tr class="m-cart-row">
                         <td>
@@ -356,15 +355,13 @@ $tot_price = $tot_sell_price + $send_cost;
                                         <button type="button" class="mod_options">선택사항수정</button>
                                     </div>
                                     <?php } ?>
-                                    <div class="m-cart-sendcost">
-                                        배송비 <?php echo $row['_send_cost_label']; ?>
-                                    </div>
                                 </div>
                             </div>
                         </td>
                         <td class="m-cart-table-num" data-label="총수량"><?php echo number_format($row['_qty']); ?></td>
                         <td class="m-cart-table-num" data-label="판매가"><?php echo number_format($row['ct_price']); ?></td>
                         <td class="m-cart-table-num" data-label="포인트"><?php echo number_format($row['_point']); ?></td>
+                        <td class="m-cart-table-num" data-label="배송비"><?php echo $row['_send_cost_label']; ?></td>
                         <td class="m-cart-table-total" data-label="소계"><span id="sell_price_<?php echo $idx; ?>"><?php echo number_format($row['_sell_price']); ?></span></td>
                     </tr>
                 <?php } ?>

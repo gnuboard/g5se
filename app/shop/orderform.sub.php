@@ -38,9 +38,9 @@ if($is_kakaopay_use) {
             <th scope="col">상품명</th>
             <th scope="col">총수량</th>
             <th scope="col">판매가</th>
-            <th scope="col">소계</th>
             <th scope="col">포인트</th>
             <th scope="col">배송비</th>
+            <th scope="col">소계</th>
         </tr>
         </thead>
         <tbody>
@@ -212,9 +212,9 @@ if($is_kakaopay_use) {
             </td>
             <td class="td_num"><?php echo number_format($sum['qty']); ?></td>
             <td class="td_numbig  text_right"><?php echo number_format($row['ct_price']); ?></td>
-            <td class="td_numbig  text_right"><span class="total_price"><?php echo number_format($sell_price); ?></span></td>
             <td class="td_numbig  text_right"><?php echo number_format($point); ?></td>
             <td class="td_dvr"><?php echo $ct_send_cost; ?></td>
+            <td class="td_numbig  text_right"><span class="total_price"><?php echo number_format($sell_price); ?></span></td>
         </tr>
 
         <?php

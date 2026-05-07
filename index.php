@@ -175,6 +175,9 @@ ob_start(function ($html) {
     // 10) shop 주문서: /shop/orderform.php → /shop/orderform
     $html = preg_replace('#/shop/orderform\.php(?![a-zA-Z0-9])#', '/shop/orderform', $html);
 
+    // 11) shop 주문조회 (orderinquiry, orderinquiryview, orderinquirycancel) — query 보존
+    $html = preg_replace('#/shop/(orderinquiry(?:view|cancel)?)\.php(?![a-zA-Z0-9])#', '/shop/$1', $html);
+
     return $html;
 });
 

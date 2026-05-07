@@ -1879,6 +1879,7 @@ function sql_connect($host, $user, $pass, $db=G5_MYSQL_DB)
             PDO::ATTR_ERRMODE              => PDO::ERRMODE_SILENT,   // gnuboard 가 직접 에러 핸들 (Exception 던지면 안 됨)
             PDO::ATTR_DEFAULT_FETCH_MODE   => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES     => true,                  // prepared 도 동일하게 동작
+            PDO::ATTR_STRINGIFY_FETCHES    => true,                  // PHP 8.1+ default false → BIGINT 가 int 로 변환되어 gnuboard 의 === 비교 (예: orderformupdate.php 의 od_id) 깨짐. 강제 string.
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,              // rowCount() / 재 iterate 가능하도록
         ];
         $pdo = new PDO($dsn, $user, $pass, $opts);

@@ -336,6 +336,243 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface);
     color: var(--m-text);
 }
+
+/* ============================================================
+   주문조회 상세 (#sod_fin — orderinquiryview.php)
+   - light/dark 공통 폴리시: 카드형 + 반응형 sod_left/sod_right 1열
+   - dark: tbl_head01/03 + sod_sts_explan + sod_fin_legend 토큰화
+   ============================================================ */
+.m-shell #sod_fin {
+    margin: 8px 0 32px;
+}
+.m-shell #sod_fin_no {
+    font-size: 1.1em;
+    margin-bottom: 16px;
+}
+.m-shell #sod_fin_no strong {
+    color: var(--m-primary);
+}
+/* sod_left/sod_right — legacy fixed 840px float. 반응형 grid 로 재배치 */
+.m-shell #sod_fin .sod_left,
+.m-shell #sod_fin .sod_right {
+    float: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: block !important;
+}
+.m-shell #sod_fin section,
+.m-shell #sod_fin > .sod_left > section {
+    margin-bottom: 24px;
+}
+@media (min-width: 980px) {
+    .m-shell #sod_fin {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 24px;
+        align-items: start;
+    }
+    .m-shell #sod_fin > #sod_fin_no,
+    .m-shell #sod_fin > #sod_fin_list {
+        grid-column: 1 / -1;
+    }
+}
+.m-shell #sod_fin .tbl_wrap {
+    overflow-x: auto;
+}
+
+/* 상품목록 (#sod_fin_list .tbl_head03) — 주문서 (#forderform #sod_list) 와 같은 카드형 톤. light/dark 공통 */
+.m-shell #sod_fin_list .tbl_head03 {
+    overflow-x: auto;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius, 8px);
+    background: var(--m-surface);
+    box-shadow: var(--m-shadow);
+    margin-bottom: 20px;
+}
+.m-shell #sod_fin_list .tbl_head03 table {
+    width: 100%;
+    border: 0 !important;
+    border-collapse: collapse;
+    margin: 0 !important;
+}
+.m-shell #sod_fin_list .tbl_head03 thead th {
+    padding: 12px 14px !important;
+    background: var(--m-surface-2) !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    color: var(--m-text) !important;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0;
+}
+.m-shell #sod_fin_list .tbl_head03 td {
+    padding: 14px 12px !important;
+    background: var(--m-surface) !important;
+    border-top: 1px solid var(--m-border) !important;
+    border-left: 0 !important;
+    border-bottom: 0 !important;
+    color: var(--m-text) !important;
+    vertical-align: middle;
+}
+.m-shell #sod_fin_list .tbl_head03 a {
+    color: var(--m-text);
+    text-decoration: none;
+}
+.m-shell #sod_fin_list .tbl_head03 a:hover {
+    color: var(--m-primary);
+}
+.m-shell #sod_fin_list .tbl_head03 .td_imgsmall img {
+    border-radius: 6px;
+    border: 1px solid var(--m-border);
+    background: var(--m-surface-2);
+}
+.m-shell #sod_fin_list .tbl_head03 .td_bdno {
+    border-bottom: 0 !important;
+    font-weight: 700;
+}
+
+/* 다크 — tbl_head01 (orderer/receiver/payment/dvr) — 상세 정보 테이블 */
+[data-theme="dark"] #sod_fin .tbl_head01 thead th {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_fin .tbl_head01 td,
+[data-theme="dark"] #sod_fin .tbl_head01 th {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_fin .tbl_head01 a {
+    color: var(--m-text) !important;
+}
+
+/* 다크 — 상태설명 */
+[data-theme="dark"] #sod_fin #sod_sts_explan,
+[data-theme="dark"] #sod_fin #sod_fin_legend {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_fin .btn_frmline {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+    border-color: var(--m-border) !important;
+}
+
+/* 다크 — 우측 총계 (#sod_bsk_tot.order_view_infos) */
+[data-theme="dark"] #sod_fin #sod_bsk_tot,
+[data-theme="dark"] #sod_fin #sod_bsk_tot li {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+
+/* ============================================================
+   주문서 (#forderform) 의 상품 목록 테이블 — cart 의 m-cart-table 톤과 동일하게 정렬.
+   legacy 마크업 (.tbl_head03 .od_prd_list > #sod_list) 위에 카드형 overlay.
+   ============================================================ */
+.m-shell #forderform .od_prd_list {
+    overflow-x: auto;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius, 8px);
+    background: var(--m-surface);
+    box-shadow: var(--m-shadow);
+    margin-bottom: 20px;
+}
+.m-shell #forderform #sod_list {
+    width: 100%;
+    min-width: 800px;
+    border: 0 !important;
+    border-collapse: collapse;
+    margin: 0 !important;
+}
+.m-shell #forderform #sod_list thead th {
+    height: 58px;
+    padding: 0 14px !important;
+    background: var(--m-surface-2) !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    color: var(--m-text) !important;
+    font-size: 1.05em;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0;
+}
+.m-shell #forderform #sod_list td {
+    padding: 18px 14px !important;
+    background: var(--m-surface) !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    color: var(--m-text) !important;
+    text-align: center;
+    vertical-align: middle;
+}
+.m-shell #forderform #sod_list tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+.m-shell #forderform #sod_list td.td_prd {
+    text-align: left;
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    position: static !important;  /* legacy .od_prd_list .td_prd 의 position:relative 무력화 */
+    padding-left: 14px !important;  /* legacy padding-left:120px (이미지 absolute 자리) 무력화 */
+}
+.m-shell #forderform #sod_list td.td_prd .sod_img {
+    /* legacy 의 position:absolute; top:25px; left:20px 무력화 — grid 자식으로 흐름 */
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    grid-column: 1;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: 6px;
+    background: var(--m-surface-2);
+    border: 1px solid var(--m-border);
+    margin: 0 !important;
+}
+.m-shell #forderform #sod_list td.td_prd .sod_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.m-shell #forderform #sod_list td.td_prd .sod_name {
+    grid-column: 2;
+    min-width: 0;
+    min-height: 0 !important;  /* legacy min-height:80px 가 grid cell 강제로 키움, 무력화 */
+}
+.m-shell #forderform #sod_list td.td_prd .sod_name b {
+    color: var(--m-text);
+    font-weight: 700;
+}
+.m-shell #forderform #sod_list .sod_opt {
+    color: var(--m-text-soft) !important;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+.m-shell #forderform #sod_list .total_price {
+    font-weight: 800;
+    color: var(--m-primary);
+}
+.m-shell #forderform #sod_list .cp_btn {
+    margin-top: 6px;
+    padding: 4px 10px;
+    background: var(--m-surface-2);
+    border: 1px solid var(--m-border);
+    border-radius: 4px;
+    color: var(--m-text);
+    font-size: 0.9em;
+    cursor: pointer;
+}
+.m-shell #forderform #sod_list .cp_btn:hover {
+    border-color: var(--m-primary);
+    color: var(--m-primary);
+}
 </style>
 
 <script>
