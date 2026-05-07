@@ -291,6 +291,15 @@ class Router
             header('Location: '.$url, true, 301);
             exit;
         }
+        // 주문조회: orderinquiry / orderinquiryview / orderinquirycancel — query 보존 (od_id, uid 등)
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^/shop/(orderinquiry(?:view|cancel)?)\.php$#', $path, $m)) {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/'.$m[1];
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderform.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/orderform';
