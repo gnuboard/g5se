@@ -141,7 +141,7 @@ for($k=0; $cp=sql_fetch_array($res); $k++) {
         </div>
 
         <div class="smb_my_more">
-            <a href="./wishlist.php">더보기</a>
+            <a href="<?php echo G5_SHOP_URL; ?>/wishlist">더보기</a>
         </div>
     </section>
     <!-- } 최근 위시리스트 끝 -->

@@ -2361,6 +2361,24 @@ function get_wishlist_datas_count($mb_id='')
     return is_array($wishlist_datas) ? count($wishlist_datas) : 0;
 }
 
+//회원이 해당 상품을 위시리스트에 담았는지 확인
+function is_wishlist_item($it_id='', $mb_id='')
+{
+    global $member;
+
+    if( !$it_id ) return false;
+
+    if( !$mb_id ){
+        $mb_id = isset($member['mb_id']) ? $member['mb_id'] : '';
+
+        if( !$mb_id ) return false;
+    }
+
+    $wishlist_datas = get_wishlist_datas($mb_id, true);
+
+    return is_array($wishlist_datas) && isset($wishlist_datas[$it_id]);
+}
+
 //각 상품에 대한 위시리스트 담은 갯수 출력
 function get_wishlist_count_by_item($it_id='')
 {

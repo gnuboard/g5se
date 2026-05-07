@@ -23,6 +23,9 @@ foreach((array) $list as $row){
     $item_link_href = shop_item_url($row['it_id']);
     $star_score = $row['it_use_avg'] ? (int) get_star($row['it_use_avg']) : '';
     $is_soldout = is_soldout($row['it_id'], true);
+    $is_wished = is_wishlist_item($row['it_id']);
+    $wish_class = $is_wished ? ' is_active text-rose-500' : '';
+    $wish_icon = $is_wished ? 'fa-heart' : 'fa-heart-o';
 
     if ($i === 0) {
         echo '<ul class="sct grid gap-4 '.$cols_class.' list-none p-0 m-0">'."\n";
@@ -101,10 +104,10 @@ foreach((array) $list as $row){
 
             <div class="sct_op_btn relative flex items-center gap-1">
                 <button type="button"
-                        class="btn_wish inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-900/30"
+                        class="btn_wish inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-900/30<?php echo $wish_class; ?>"
                         data-it_id="<?php echo $row['it_id']; ?>">
                     <span class="sound_only">위시리스트</span>
-                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                    <i class="fa <?php echo $wish_icon; ?>" aria-hidden="true"></i>
                 </button>
                 <?php if ($this->view_sns) { ?>
                     <button type="button"

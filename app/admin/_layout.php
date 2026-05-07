@@ -270,8 +270,18 @@ if ($_admin_form_token === '' && function_exists('get_admin_token')) {
     document.addEventListener('submit', function (e) {
         var f = e.target;
         if (!f || f.tagName !== 'FORM') return;
+        // POST form 에 한해 token 자동 보장 — token field 가 없으면 생성, 비어 있으면 채움.
+        // (shop_admin/categoryform 등 일부 form 이 hidden token 을 안 박는 케이스 방어막.)
+        var method = (f.method || '').toLowerCase();
+        if (method && method !== 'post') return;
         var t = f.querySelector('input[name="token"]');
-        if (t && !t.value) t.value = ADMIN_TOKEN;
+        if (!t) {
+            t = document.createElement('input');
+            t.type = 'hidden';
+            t.name = 'token';
+            f.appendChild(t);
+        }
+        if (!t.value) t.value = ADMIN_TOKEN;
     }, true);
 })();
 
