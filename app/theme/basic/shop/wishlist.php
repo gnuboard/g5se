@@ -60,15 +60,22 @@ $wish_count = count($items);
 .m-wishlist-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--m-text-faint); font-size: var(--m-text-xs); }
 .m-wishlist-price { color: var(--m-text); font-weight: 800; font-size: var(--m-text-lg); white-space: nowrap; }
 .m-wishlist-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.m-wishlist-btn {
+.m-wishlist-btn, a.m-wishlist-btn, a.m-wishlist-btn:link, a.m-wishlist-btn:visited {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
     height: 38px; padding: 0 14px; border-radius: var(--m-radius-sm);
     border: 1px solid var(--m-border); background: var(--m-surface-2);
     color: var(--m-text); text-decoration: none; font-weight: 700; cursor: pointer;
 }
-.m-wishlist-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
-.m-wishlist-btn-primary { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
-.m-wishlist-btn-primary:hover { color: #fff; filter: brightness(0.96); }
+.m-wishlist-btn:hover, a.m-wishlist-btn:hover { border-color: var(--m-primary); color: var(--m-primary); }
+/* primary — !important 로 default_shop.css a{color:#000} 등 cascade 차단 */
+a.m-wishlist-btn-primary, a.m-wishlist-btn-primary:link, a.m-wishlist-btn-primary:visited,
+a.m-wishlist-btn-primary:hover, a.m-wishlist-btn-primary:active,
+button.m-wishlist-btn-primary, .m-wishlist-btn-primary {
+    background: var(--m-primary) !important;
+    border-color: var(--m-primary) !important;
+    color: #fff !important;
+}
+a.m-wishlist-btn-primary:hover, button.m-wishlist-btn-primary:hover { filter: brightness(0.96); }
 .m-wishlist-delete {
     width: 38px; padding: 0; color: var(--m-text-soft);
 }
