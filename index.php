@@ -172,6 +172,9 @@ ob_start(function ($html) {
     // 9) shop 장바구니: /shop/cart.php → /shop/cart (query 없음, 세션 기반)
     $html = preg_replace('#/shop/cart\.php(?![a-zA-Z0-9])#', '/shop/cart', $html);
 
+    // 10) shop 주문서: /shop/orderform.php → /shop/orderform
+    $html = preg_replace('#/shop/orderform\.php(?![a-zA-Z0-9])#', '/shop/orderform', $html);
+
     return $html;
 });
 

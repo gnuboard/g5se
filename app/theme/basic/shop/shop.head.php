@@ -178,31 +178,31 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     gap: 8px;
     white-space: nowrap;
 }
-.m-shell #sct_location > .sct_admin,
-.m-shell #sct_location > .sit_admin {
+/* admin 톱니가 h1 안 인라인으로 들어왔을 때 — 제목 뒤에 약간 떨어져 작은 카드로 */
+.m-shell main.m-container > h1 > .sct_admin,
+.m-shell main.m-container > h1 > .sit_admin {
     display: inline-block !important;
-    margin: 0 !important;
+    margin: 0 0 0 12px !important;
     position: static !important;
+    vertical-align: middle;
 }
 .m-shell .sct_admin .btn_admin,
 .m-shell .sit_admin .btn_admin {
     display: inline-flex !important;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    background: var(--m-surface-2);
+    padding: 0;
+    background: transparent;
     color: var(--m-text-soft);
-    border: 1px solid var(--m-border);
-    border-radius: 6px;
-    font-size: 0.9em;
+    border: 0;
+    font-size: 0.6em;  /* h1 의 큰 font-size 를 상속하지 않게 축소 */
+    font-weight: normal;
     line-height: 1.2;
     text-decoration: none;
 }
 .m-shell .sct_admin .btn_admin:hover,
 .m-shell .sit_admin .btn_admin:hover {
-    background: var(--m-primary);
-    color: #fff;
-    border-color: var(--m-primary);
+    color: var(--m-primary);
+    background: transparent;
 }
 /* 톱니 아이콘 회전 비활성화 — list.php / item.php 가 fa-spin hardcode (`<i class="fa fa-cog fa-spin">`) */
 .m-shell .sct_admin .btn_admin .fa-spin,
@@ -324,16 +324,28 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
 }
+/* 상품 옵션 select (사이즈 등) — native <select>. 다크에선 select 자체 + 브라우저 dropdown
+   둘 다 토큰. color-scheme:dark 힌트로 브라우저가 dropdown 옵션 리스트도 다크 팔레트로 그림. */
+[data-theme="dark"] .sit_option select {
+    background: var(--m-surface) !important;
+    color: var(--m-text) !important;
+    border-color: var(--m-border) !important;
+    color-scheme: dark;
+}
+[data-theme="dark"] .sit_option select option {
+    background: var(--m-surface);
+    color: var(--m-text);
+}
 </style>
 
 <script>
-// shop 의 admin 톱니 (.sct_admin / .sit_admin) 을 #sct_location (홈/네비 breadcrumb) 안 끝으로
-// 이동시켜 우상단 한 줄로 묶음. 두 element 가 따로 떠 있던 어색함 해소.
+// shop 의 admin 톱니 (.sct_admin / .sit_admin) 을 페이지 타이틀 (h1) 끝으로 옮김.
+// 카테고리/상품명 바로 뒤에 톱니가 붙어 한 라인으로 보임.
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
         var adm = document.querySelector('main.m-container .sct_admin, main.m-container .sit_admin');
-        var loc = document.querySelector('#sct_location');
-        if (adm && loc) loc.appendChild(adm);
+        var h1  = document.querySelector('main.m-container > h1');
+        if (adm && h1) h1.appendChild(adm);
     });
 })();
 

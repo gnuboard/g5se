@@ -291,6 +291,13 @@ class Router
             header('Location: '.$url, true, 301);
             exit;
         }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderform.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/orderform';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
 
         // 3) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트
         //    (단, GET/HEAD 만 — POST 폼이 .php 로 날아오면 데이터 유실 방지 위해 그대로 처리)
