@@ -107,7 +107,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     <div class="my-card-value"><?php echo number_format($_my_count['coupon']); ?> <em>장</em></div>
                 </div>
             </a>
-            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/orderaddress">
+            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/orderaddress.php" target="win_address" onclick="window.open(this.href, 'win_address', 'left=100,top=100,width=800,height=600,scrollbars=1'); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>
