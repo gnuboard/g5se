@@ -770,7 +770,7 @@ CREATE TABLE IF NOT EXISTS `g5_autosave` (
   `as_uid` bigint(20) unsigned NOT NULL,
   `as_subject` varchar(255) NOT NULL,
   `as_content` text NOT NULL,
-  `as_datetime` datetime NOT NULL,
+  `as_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`as_id`),
   UNIQUE KEY `as_uid` (`as_uid`),
   KEY `mb_id` (`mb_id`)
