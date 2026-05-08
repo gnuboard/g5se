@@ -917,6 +917,64 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     gap: 0.5rem;
     margin: 0 0 1rem;
 }
+/* local_sch03 — orderlist 의 다중 필터 (주문상태/결제수단/기타선택/주문일자):
+   각 그룹을 별도 줄로 배치 + 작은 폰트 */
+.legacy-admin-content .local_sch03 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.legacy-admin-content .local_sch03 > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    padding: 0.45rem 0.75rem;
+    background: var(--admin-surface-2, var(--slate-50));
+    border: 1px solid var(--admin-border, var(--slate-200));
+    border-radius: 0.5rem;
+}
+.legacy-admin-content .local_sch03 > div > strong {
+    flex-shrink: 0;
+    min-width: 64px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--slate-700);
+}
+.legacy-admin-content .local_sch03 label {
+    margin-right: 0.25rem;
+    cursor: pointer;
+}
+.legacy-admin-content .local_sch03 input[type="radio"],
+.legacy-admin-content .local_sch03 input[type="checkbox"] {
+    margin-right: 0.15rem;
+    vertical-align: middle;
+}
+.legacy-admin-content .local_sch03 .frm_input {
+    height: auto;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.78rem;
+    width: 110px;
+}
+.legacy-admin-content .local_sch03 button[type="button"] {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.78rem;
+    line-height: 1;
+}
+.legacy-admin-content .local_sch03 .btn_submit {
+    margin-left: auto;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.78rem;
+}
+[data-theme="dark"] .legacy-admin-content .local_sch03 > div {
+    background: var(--admin-surface-2, var(--slate-800));
+    border-color: var(--admin-border, var(--slate-700));
+}
+[data-theme="dark"] .legacy-admin-content .local_sch03 > div > strong {
+    color: var(--slate-200);
+}
 .legacy-admin-content .local_desc01,
 .legacy-admin-content .local_desc {
     position: relative;
