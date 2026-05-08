@@ -842,6 +842,9 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-text-soft) !important;
     font-weight: 500 !important;
     line-height: 1.4 !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    min-width: 100px;
 }
 
 /* gnu5se: orderform 입력 박스 데스크탑 다듬기 — legacy default_shop.css 의 width:100% + height:45px 무력화 */
