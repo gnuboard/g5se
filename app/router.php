@@ -71,6 +71,12 @@ class Router
         '/qa/write_update'        => 'bbs/qawrite_update.php',
         '/qa/delete'              => 'bbs/qadelete.php',
         '/qa/download'            => 'bbs/qadownload.php',
+
+        // 설문조사
+        '/poll_result'            => 'bbs/poll_result.php',
+        '/poll_update'            => 'bbs/poll_update.php',
+        '/poll_etc_update'        => 'bbs/poll_etc_update.php',
+        '/poll_etc_update_mail'   => 'bbs/poll_etc_update_mail.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
