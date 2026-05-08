@@ -101,13 +101,22 @@ if ($_action === 'zerodate_all') {
     @set_time_limit(0);
     $_db_row = sql_pdo_fetch("SELECT DATABASE() AS db");
     $_db_name = $_db_row['db'] ?? '';
+    // PK 컬럼은 NULL 불가 → 제외
     $_rs = sql_pdo_query(
-        "SELECT table_name AS tbl, column_name AS col, data_type AS type
-           FROM information_schema.columns
-          WHERE table_schema = :db
-            AND data_type IN ('date','datetime','timestamp')
-            AND (column_default IN ('0000-00-00','0000-00-00 00:00:00') OR is_nullable = 'NO')
-          ORDER BY table_name, column_name",
+        "SELECT c.table_name AS tbl, c.column_name AS col, c.data_type AS type
+           FROM information_schema.columns c
+           LEFT JOIN (
+               SELECT k.table_schema, k.table_name, k.column_name
+                 FROM information_schema.key_column_usage k
+                 JOIN information_schema.table_constraints tc
+                      USING (table_schema, table_name, constraint_name)
+                WHERE tc.constraint_type = 'PRIMARY KEY'
+           ) pk USING (table_schema, table_name, column_name)
+          WHERE c.table_schema = :db
+            AND c.data_type IN ('date','datetime','timestamp')
+            AND (c.column_default IN ('0000-00-00','0000-00-00 00:00:00') OR c.is_nullable = 'NO')
+            AND pk.column_name IS NULL
+          ORDER BY c.table_name, c.column_name",
         [':db' => $_db_name]
     );
     $_done = 0; $_fail = 0; $_total_rows = 0;
@@ -161,14 +170,23 @@ while ($r = sql_fetch_array($_charset_rows)) {
     }
 }
 
-// zero-date 컬럼
+// zero-date 컬럼 — PK 에 들어간 컬럼은 NULL 불가하므로 후보에서 제외
 $_zd_rows = sql_pdo_query(
-    "SELECT table_name AS tbl, column_name AS col, data_type AS type, is_nullable AS nullable, column_default AS def
-       FROM information_schema.columns
-      WHERE table_schema = :db
-        AND data_type IN ('date','datetime','timestamp')
-        AND (column_default IN ('0000-00-00','0000-00-00 00:00:00') OR is_nullable = 'NO')
-      ORDER BY table_name, column_name",
+    "SELECT c.table_name AS tbl, c.column_name AS col, c.data_type AS type,
+            c.is_nullable AS nullable, c.column_default AS def
+       FROM information_schema.columns c
+       LEFT JOIN (
+           SELECT k.table_schema, k.table_name, k.column_name
+             FROM information_schema.key_column_usage k
+             JOIN information_schema.table_constraints tc
+                  USING (table_schema, table_name, constraint_name)
+            WHERE tc.constraint_type = 'PRIMARY KEY'
+       ) pk USING (table_schema, table_name, column_name)
+      WHERE c.table_schema = :db
+        AND c.data_type IN ('date','datetime','timestamp')
+        AND (c.column_default IN ('0000-00-00','0000-00-00 00:00:00') OR c.is_nullable = 'NO')
+        AND pk.column_name IS NULL
+      ORDER BY c.table_name, c.column_name",
     [':db' => $_db_name]
 );
 $_zd_pending  = [];
@@ -181,6 +199,18 @@ while ($r = sql_fetch_array($_zd_rows)) {
         $_zd_complete[] = $r;
     }
 }
+// PK 에 들어간 date 컬럼 카운트 (NULL 불가 — 정보용)
+$_pk_r = sql_pdo_fetch(
+    "SELECT COUNT(*) AS c
+       FROM information_schema.columns c
+       JOIN information_schema.key_column_usage k USING (table_schema, table_name, column_name)
+       JOIN information_schema.table_constraints tc USING (table_schema, table_name, constraint_name)
+      WHERE c.table_schema = :db
+        AND c.data_type IN ('date','datetime','timestamp')
+        AND tc.constraint_type = 'PRIMARY KEY'",
+    [':db' => $_db_name]
+);
+$_pk_date_count = (int)($_pk_r['c'] ?? 0);
 
 // 현재 sql_mode
 $_sm = sql_pdo_fetch("SELECT @@sql_mode AS m");
@@ -259,6 +289,9 @@ admin_layout_start($g5['title'], 'core');
         <p class="dbm-desc">
             대기 <strong class="dbm-warn"><?php echo count($_zd_pending); ?></strong>개 컬럼
             (NOT NULL date/datetime 또는 default '0000-00-00...')
+            <?php if ($_pk_date_count > 0) { ?>
+            — PK 컬럼 <strong><?php echo $_pk_date_count; ?></strong>개는 의미상 NULL 불가라 제외 (정상)
+            <?php } ?>
         </p>
 
         <?php if ($_zd_pending) { ?>
