@@ -133,6 +133,7 @@ class Router
         '#^/shop/item/(?P<it_id>[a-zA-Z0-9_-]+)/?$#'                                   => 'shop/item.php',
         '#^/shop/category/(?P<ca_id>[a-zA-Z0-9_-]+)/?$#'                               => 'shop/list.php',
         '#^/shop/listtype/(?P<type>\d+)/?$#'                                           => 'shop/listtype.php',
+        '#^/shop/event/(?P<ev_id>\d+)/?$#'                                             => 'shop/event.php',
         '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
@@ -269,6 +270,17 @@ class Router
             if (!empty($params['ca_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['ca_id'])) {
                 $url = '/shop/category/'.$params['ca_id'];
                 unset($params['ca_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        // 이벤트 — /shop/event.php?ev_id=N → /shop/event/N (잔여 query 보존)
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/event.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['ev_id']) && preg_match('/^\d+$/', $params['ev_id'])) {
+                $url = '/shop/event/'.$params['ev_id'];
+                unset($params['ev_id']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
                 header('Location: '.$url, true, 301);
                 exit;
