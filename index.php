@@ -187,6 +187,9 @@ ob_start(function ($html) {
     // 14) 설문조사: /bbs/poll_(result|update|etc_update|etc_update_mail).php → /poll_*
     $html = preg_replace('#/bbs/(poll_(?:result|update|etc_update_mail|etc_update))\.php(?![a-zA-Z0-9])#', '/$1', $html);
 
+    // 15) admin: /admin/.../*.php → /admin/.../* (clean URL 정규화, hard-coded .php 링크 자동 정리)
+    $html = preg_replace('#(/admin(?:/[a-zA-Z][a-zA-Z0-9_-]*)+)\.php(?![a-zA-Z0-9])#', '$1', $html);
+
     return $html;
 });
 

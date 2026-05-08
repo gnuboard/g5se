@@ -1130,14 +1130,71 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 /* h1, h2 */
 .legacy-admin-content h1,
 .legacy-admin-content .h2_frm {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 700;
-    margin: 1.5rem 0 0.75rem;
+    margin: 1.25rem 0 0.5rem;
     color: var(--slate-900);
 }
+.legacy-admin-content section:first-child > .h2_frm,
+.legacy-admin-content section:first-child > h2 { margin-top: 0; }
 [data-theme="dark"] .legacy-admin-content h1,
 [data-theme="dark"] .legacy-admin-content .h2_frm {
     color: var(--slate-100);
+}
+
+/* compare_wrap — orderform 의 좌/우 2단 비교 layout (결제상세정보 vs 수정 / 주문자 vs 받는이) */
+.legacy-admin-content .compare_wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+.legacy-admin-content .compare_wrap > .compare_left,
+.legacy-admin-content .compare_wrap > .compare_right { min-width: 0; }
+@media (max-width: 1100px) {
+    .legacy-admin-content .compare_wrap { grid-template-columns: 1fr; }
+}
+/* 페이지 anchor 네비 — 작은 칩 list */
+.legacy-admin-content .anchor {
+    display: flex; flex-wrap: wrap;
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    gap: 0.4rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+}
+.legacy-admin-content .anchor li { margin: 0; }
+.legacy-admin-content .anchor a {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 999px;
+    color: var(--slate-600);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.legacy-admin-content .anchor a:hover {
+    background: var(--admin-primary-50);
+    border-color: var(--admin-primary-200);
+    color: var(--admin-primary-700);
+}
+[data-theme="dark"] .legacy-admin-content .anchor {
+    background: var(--slate-800);
+    border-color: var(--slate-700);
+}
+[data-theme="dark"] .legacy-admin-content .anchor a {
+    background: var(--slate-900);
+    border-color: var(--slate-700);
+    color: var(--slate-300);
+}
+[data-theme="dark"] .legacy-admin-content .anchor a:hover {
+    background: var(--slate-800);
+    border-color: var(--admin-primary-700);
+    color: var(--admin-primary-300);
 }
 
 /* 섹션 anchor 네비게이션 (board_form/config_form 의 기본·권한·기능 탭) */
