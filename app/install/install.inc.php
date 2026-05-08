@@ -22,13 +22,15 @@ else if ($_self === 'install_db.php') $_step = 3;
 <title><?php echo $title; ?></title>
 <link rel="stylesheet" href="install.css">
 <script>
-// 다크모드 — body 렌더 전 미리 적용해서 flicker 방지
+// 다크모드 — 메인 사이트와 동일한 localStorage 키 'm-theme' 사용 (상태 공유).
+// 저장 없으면 시스템 prefers-color-scheme 따라 명시 → CSS 단일 selector [data-theme="..."] 만 매칭.
 (function () {
     try {
-        var saved = localStorage.getItem('ins-theme');
-        if (saved === 'dark' || saved === 'light') {
-            document.documentElement.setAttribute('data-theme', saved);
+        var t = localStorage.getItem('m-theme');
+        if (t !== 'dark' && t !== 'light') {
+            t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
         }
+        document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
 })();
 </script>
@@ -42,15 +44,10 @@ else if ($_self === 'install_db.php') $_step = 3;
 <script>
 document.getElementById('ins-theme-toggle').addEventListener('click', function () {
     var html = document.documentElement;
-    var cur = html.getAttribute('data-theme');
-    // 시스템 dark + data-theme 없음 → light 로 토글, dark 명시 → light, light 명시 → dark
-    var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var next;
-    if (cur === 'dark') next = 'light';
-    else if (cur === 'light') next = 'dark';
-    else next = sysDark ? 'light' : 'dark';
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
-    try { localStorage.setItem('ins-theme', next); } catch (e) {}
+    try { localStorage.setItem('m-theme', next); } catch (e) {}
 });
 </script>
 

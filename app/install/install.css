@@ -1,5 +1,5 @@
 @charset "utf-8";
-/* gnu5se: 설치 마법사 — 모던 디자인 + 다크모드 (data-theme 토글 + system 선호 fallback) */
+/* gnu5se: 설치 마법사 — 모던 디자인 + 다크모드 (data-theme 토글, 메인 사이트와 m-theme 키 공유) */
 
 :root {
     --ins-bg:        #f8fafc;
@@ -16,7 +16,7 @@
     --ins-radius:    10px;
     --ins-radius-sm: 6px;
 }
-/* 명시적 다크 (사용자 토글 → data-theme="dark") */
+/* 다크 — JS 가 항상 [data-theme="dark"|"light"] 를 명시 (시스템 pref + localStorage 통합) */
 [data-theme="dark"] {
     --ins-bg:        #0f172a;
     --ins-surface:   #1e293b;
@@ -29,22 +29,6 @@
     --ins-primary-hover: #60a5fa;
     --ins-success:   #34d399;
     --ins-danger:    #f87171;
-}
-/* 시스템 선호 다크 — 사용자가 명시적으로 light 토글 안 한 경우 */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --ins-bg:        #0f172a;
-        --ins-surface:   #1e293b;
-        --ins-surface-2: #0b1220;
-        --ins-text:      #f1f5f9;
-        --ins-text-soft: #cbd5e1;
-        --ins-text-faint:#64748b;
-        --ins-border:    #334155;
-        --ins-primary:   #3b82f6;
-        --ins-primary-hover: #60a5fa;
-        --ins-success:   #34d399;
-        --ins-danger:    #f87171;
-    }
 }
 
 /* 다크모드 토글 버튼 — 우상단 fixed */
@@ -69,10 +53,6 @@
 .ins-theme-toggle .ic-sun  { display: none; }
 [data-theme="dark"] .ins-theme-toggle .ic-moon { display: none; }
 [data-theme="dark"] .ins-theme-toggle .ic-sun  { display: block; }
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .ins-theme-toggle .ic-moon { display: none; }
-    :root:not([data-theme="light"]) .ins-theme-toggle .ic-sun  { display: block; }
-}
 
 * { box-sizing: border-box; }
 body {
@@ -280,13 +260,6 @@ h1 {
 [data-theme="dark"] .ins_frm select:hover,
 [data-theme="dark"] .ins_ta textarea:hover {
     border-color: #64748b;
-}
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .ins_frm input,
-    :root:not([data-theme="light"]) .ins_frm select,
-    :root:not([data-theme="light"]) .ins_ta textarea {
-        border-color: #475569;
-    }
 }
 
 /* 라이센스 textarea */
