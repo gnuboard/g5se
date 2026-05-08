@@ -303,8 +303,7 @@ if($is_kakaopay_use) {
                         <input type="text" name="od_addr2" value="<?php echo get_text($member['mb_addr2']) ?>" id="od_addr2" class="frm_input frm_address" size="60" placeholder="상세주소">
                         <label for="od_addr2" class="sound_only">상세주소</label>
                         <br>
-                        <input type="text" name="od_addr3" value="<?php echo get_text($member['mb_addr3']) ?>" id="od_addr3" class="frm_input frm_address" size="60" readonly="readonly" placeholder="참고항목">
-                        <label for="od_addr3" class="sound_only">참고항목</label><br>
+                        <input type="hidden" name="od_addr3" value="<?php echo get_text($member['mb_addr3']) ?>" id="od_addr3">
                         <input type="hidden" name="od_addr_jibeon" value="<?php echo get_text($member['mb_addr_jibeon']); ?>">
                     </td>
                 </tr>
@@ -424,14 +423,13 @@ if($is_kakaopay_use) {
                         <input type="text" name="od_b_addr2" id="od_b_addr2" class="frm_input frm_address" size="60" placeholder="상세주소">
                         <label for="od_b_addr2" class="sound_only">상세주소</label>
                         <br>
-                        <input type="text" name="od_b_addr3" id="od_b_addr3" readonly="readonly" class="frm_input frm_address" size="60" placeholder="참고항목">
-                        <label for="od_b_addr3" class="sound_only">참고항목</label><br>
+                        <input type="hidden" name="od_b_addr3" id="od_b_addr3">
                         <input type="hidden" name="od_b_addr_jibeon" value="">
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="od_memo">전하실말씀</label></th>
-                    <td><textarea name="od_memo" id="od_memo"></textarea></td>
+                    <td><input type="text" name="od_memo" id="od_memo" class="frm_input" maxlength="255" placeholder="배송 요청사항 등 (선택)"></td>
                 </tr>
                 </tbody>
                 </table>
