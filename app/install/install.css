@@ -221,6 +221,18 @@ h1 {
     text-align: left;
 }
 .ins_frm td { color: var(--ins-text); }
+.ins_frm td input[type="checkbox"] + label,
+.ins_frm td input[type="radio"] + label {
+    margin-left: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+.ins_frm td input[type="checkbox"],
+.ins_frm td input[type="radio"] {
+    accent-color: var(--ins-primary);
+    cursor: pointer;
+    width: auto;
+}
 .ins_frm td span {
     display: block;
     margin: 4px 0 0;
