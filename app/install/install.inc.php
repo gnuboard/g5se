@@ -21,8 +21,38 @@ else if ($_self === 'install_db.php') $_step = 3;
 <meta name="theme-color" content="#2563eb">
 <title><?php echo $title; ?></title>
 <link rel="stylesheet" href="install.css">
+<script>
+// 다크모드 — body 렌더 전 미리 적용해서 flicker 방지
+(function () {
+    try {
+        var saved = localStorage.getItem('ins-theme');
+        if (saved === 'dark' || saved === 'light') {
+            document.documentElement.setAttribute('data-theme', saved);
+        }
+    } catch (e) {}
+})();
+</script>
 </head>
 <body>
+
+<button type="button" class="ins-theme-toggle" id="ins-theme-toggle" aria-label="다크모드 전환" title="다크모드 전환">
+    <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+</button>
+<script>
+document.getElementById('ins-theme-toggle').addEventListener('click', function () {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme');
+    // 시스템 dark + data-theme 없음 → light 로 토글, dark 명시 → light, light 명시 → dark
+    var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next;
+    if (cur === 'dark') next = 'light';
+    else if (cur === 'light') next = 'dark';
+    else next = sysDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    try { localStorage.setItem('ins-theme', next); } catch (e) {}
+});
+</script>
 
 <div id="ins_bar">
     <span id="bar_img">
