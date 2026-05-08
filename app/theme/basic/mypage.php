@@ -222,9 +222,9 @@ a.my-btn-ghost, a.my-btn-ghost:link, a.my-btn-ghost:visited, a.my-btn-ghost:hove
     text-align: left;
 }
 .my-foot-link, .my-foot-link:link, .my-foot-link:visited {
-    color: var(--m-text-faint);
-    font-size: 0.82em; text-decoration: none;
-    padding: 4px 8px;
+    color: var(--m-text-soft);
+    font-size: 0.95em; text-decoration: none;
+    padding: 6px 10px;
     transition: color 0.15s;
 }
 .my-foot-link:hover { color: #ef4444; text-decoration: underline; }
