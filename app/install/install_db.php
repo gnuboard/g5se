@@ -578,8 +578,8 @@ if($g5_shop_install) {
 <?php
 //-------------------------------------------------------------------------------------------------
 
-// DB 설정 파일 생성
-$file = '../'.G5_DATA_DIR.'/'.G5_DBCONFIG_FILE;
+// DB 설정 파일 생성 — data 는 docroot 루트, install.inc.php 에서 절대경로 \$data_path 정의됨
+$file = $data_path.'/'.G5_DBCONFIG_FILE;
 $f = @fopen($file, 'a');
 
 fwrite($f, "<?php\n");

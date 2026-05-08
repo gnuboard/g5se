@@ -1,6 +1,8 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
-$data_path = '../'.G5_DATA_DIR;
+// gnu5se: data 디렉토리는 docroot 루트 (app 밖) — G5_DATA_PATH 가 절대경로로 정의됨.
+// 이전 '../data' 는 app/install/ 기준 = app/data 라 잘못된 위치 검사.
+$data_path = G5_DATA_PATH;
 
 if (! (isset($title) && $title)) $title = "그누보드5SE 설치";
 
