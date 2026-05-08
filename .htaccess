@@ -25,6 +25,11 @@ RewriteRule ^admin/(css|js|img)/(.*)$ app/admin/$1/$2 [END]
 #    shop 정적 자산: /shop/(img|css|js)/... → app/shop/$1/$2
 RewriteRule ^shop/(img|css|js)/(.*)$ app/shop/$1/$2 [END]
 
+#    설치 마법사 — /install/* → app/install/* (front controller 우회 —
+#    install 단계엔 라우팅/세션/DB 가 아직 없음)
+RewriteRule ^install/?$ app/install/index.php [END]
+RewriteRule ^install/(.+)$ app/install/$1 [END]
+
 # 5) 실제 파일/디렉토리는 그대로 (favicon, robots.txt 등)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
