@@ -167,17 +167,22 @@ $_status_map = [
 
 <?php
 // $limit 은 "$from_record, $rows" 형태로 호출자에서 (int) cast 후 보간된 string — PDO 바인딩 불가 (LIMIT 은 prepared 못 받음)
+// orderinquiry.php 가 만든 $sql_common (검색 WHERE 포함) + $inquiry_params 재사용
 $result = sql_pdo_query(
-    " select *
-        from {$g5['g5_shop_order_table']}
-       where mb_id = :mb_id
-       order by od_id desc
-       $limit ",
-    [':mb_id' => $member['mb_id']]
+    " select * $sql_common order by od_id desc $limit ",
+    $inquiry_params
 );
 $_orders = [];
 while ($row = sql_fetch_array($result)) $_orders[] = $row;
 $_total_visible = count($_orders);
+
+// 페이지 합계 — 현재 페이지에 보이는 주문들의 주문금액/미입금액 합
+$_page_sum_total = 0;
+$_page_sum_misu  = 0;
+foreach ($_orders as $r) {
+    $_page_sum_total += (int)$r['od_cart_price'] + (int)$r['od_send_cost'] + (int)$r['od_send_cost2'];
+    $_page_sum_misu  += (int)$r['od_misu'];
+}
 
 // 각 주문의 첫 상품명 + 추가 품목 수 (외 N건) — 한 번의 SQL 로 일괄 조회
 $_order_items = [];
@@ -216,7 +221,131 @@ if ($_total_visible > 0) {
     <span class="m-oq-page-count"><?php echo number_format($_total_visible); ?> 건</span>
     <?php } ?>
 </div>
+
+<form method="get" class="m-oq-search">
+    <label class="m-oq-search-field">
+        <span>주문서번호</span>
+        <input type="text" name="s_od_id" value="<?php echo htmlspecialchars($s_od_id ?? ''); ?>" placeholder="번호 일부 입력" inputmode="numeric" maxlength="20">
+    </label>
+    <label class="m-oq-search-field">
+        <span>주문일자</span>
+        <input type="date" name="s_fr" value="<?php echo htmlspecialchars($s_fr ?? ''); ?>">
+    </label>
+    <label class="m-oq-search-field">
+        <span>~</span>
+        <input type="date" name="s_to" value="<?php echo htmlspecialchars($s_to ?? ''); ?>">
+    </label>
+    <button type="submit" class="m-oq-search-btn">검색</button>
+    <?php if (!empty($has_search)) { ?>
+    <a href="<?php echo G5_SHOP_URL ?>/orderinquiry" class="m-oq-search-clear">초기화</a>
+    <?php } ?>
+</form>
+
 <style>
+.m-oq-search {
+    display: flex; flex-wrap: wrap; align-items: end; gap: 8px;
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+}
+.m-oq-search-field {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: var(--m-text-xs);
+    color: var(--m-text-soft);
+}
+.m-oq-search-field input {
+    padding: 6px 10px;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius-sm);
+    background: var(--m-bg);
+    color: var(--m-text);
+    font-size: var(--m-text-sm);
+}
+.m-oq-search-field input[type="date"] { min-width: 145px; }
+.m-oq-search-field input[type="text"] { min-width: 180px; }
+.m-oq-search-btn, a.m-oq-search-clear, a.m-oq-search-clear:link, a.m-oq-search-clear:visited {
+    display: inline-flex; align-items: center;
+    padding: 7px 16px;
+    border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); font-weight: 600;
+    text-decoration: none; cursor: pointer;
+    border: 1px solid var(--m-primary);
+}
+.m-oq-search-btn {
+    background: var(--m-primary) !important;
+    color: #fff !important;
+}
+.m-oq-search-btn:hover { filter: brightness(0.96); }
+a.m-oq-search-clear {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+    border-color: var(--m-border);
+}
+a.m-oq-search-clear:hover { border-color: var(--m-primary); color: var(--m-primary) !important; }
+@media (max-width: 600px) {
+    .m-oq-search-field input[type="text"], .m-oq-search-field input[type="date"] { min-width: 0; width: 100%; }
+    .m-oq-search-field { flex: 1 1 calc(50% - 8px); }
+    .m-oq-search-btn, a.m-oq-search-clear { flex: 1; justify-content: center; }
+}
+
+.m-oq-page-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-oq-page-title {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0;
+    font-size: 1.3em; font-weight: 700; color: var(--m-text);
+}
+.m-oq-page-title svg { color: var(--m-primary); }
+.m-oq-page-count {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px;
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+    border-radius: 999px;
+    font-size: var(--m-text-sm); font-weight: 600;
+}
+
+/* 페이지 합계 */
+.m-oq-summary {
+    display: grid;
+    grid-template-columns: 180px 1fr 130px 110px 90px;
+    gap: 14px;
+    align-items: center;
+    margin-top: 8px;
+    padding: 12px 16px;
+    background: var(--m-surface-2);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    font-size: var(--m-text-sm);
+    font-weight: 700;
+    color: var(--m-text);
+}
+.m-oq-summary-label { display: flex; align-items: center; gap: 6px; color: var(--m-text-soft); }
+.m-oq-summary-spacer { /* 상품 column placeholder */ }
+.m-oq-summary-amount { text-align: right; font-feature-settings: "tnum"; }
+.m-oq-summary-misu   { text-align: right; font-feature-settings: "tnum"; color: #ef4444; }
+.m-oq-summary-misu.is-zero { color: var(--m-text-faint); font-weight: 500; }
+.m-oq-summary-end { /* 상태 column placeholder */ }
+@media (max-width: 768px) {
+    .m-oq-summary { grid-template-columns: 1fr auto; }
+    .m-oq-summary-spacer, .m-oq-summary-end { display: none; }
+    .m-oq-summary-amount, .m-oq-summary-misu {
+        grid-column: 1 / -1;
+        text-align: left;
+        display: flex; gap: 8px;
+        font-size: var(--m-text-xs);
+        color: var(--m-text-soft);
+        font-weight: 600;
+    }
+    .m-oq-summary-amount strong, .m-oq-summary-misu strong { color: var(--m-text); font-size: var(--m-text-sm); font-weight: 700; }
+    .m-oq-summary-misu strong { color: #ef4444; }
+}</style>
 .m-oq-page-head {
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px; margin: 0 0 16px;
@@ -287,5 +416,14 @@ if ($_total_visible > 0) {
         <span class="m-oq-status is-<?php echo $st['tone']; ?>"><?php echo $st['label']; ?></span>
     </article>
     <?php } ?>
+</div>
+
+<!-- 페이지 합계 -->
+<div class="m-oq-summary">
+    <div class="m-oq-summary-label">이 페이지 합계 (<?php echo $_total_visible; ?>건)</div>
+    <div class="m-oq-summary-spacer"></div>
+    <div class="m-oq-summary-amount"><span class="label">주문금액 </span><strong><?php echo display_price($_page_sum_total); ?></strong></div>
+    <div class="m-oq-summary-misu<?php echo $_page_sum_misu > 0 ? '' : ' is-zero'; ?>"><span class="label">미입금 </span><strong><?php echo display_price($_page_sum_misu); ?></strong></div>
+    <div class="m-oq-summary-end"></div>
 </div>
 <?php } ?>
