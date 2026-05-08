@@ -966,7 +966,6 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     line-height: 1;
 }
 .legacy-admin-content .local_sch03 .btn_submit {
-    margin-left: auto;
     padding: 0.4rem 0.9rem;
     font-size: 0.78rem;
 }
