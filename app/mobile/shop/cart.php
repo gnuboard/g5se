@@ -177,7 +177,7 @@ $cart_count = sql_num_rows($result);
 
         <div id="sod_bsk_act" class="btn_confirm">
             <div class="total">총계 <strong class="total_cnt"><?php echo number_format($tot_price); ?>원</strong></div>
-            <input type="hidden" name="url" value="<?php echo G5_SHOP_URL; ?>/orderform.php">
+            <input type="hidden" name="url" value="<?php echo G5_SHOP_URL; ?>/orderform">
             <input type="hidden" name="act" value="">
             <input type="hidden" name="records" value="<?php echo $i; ?>">
             <button type="button" onclick="return form_check('buy');" class="btn_submit">주문하기</button>

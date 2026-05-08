@@ -38,11 +38,7 @@ if ($od['od_pg'] === 'nicepay' && $od['od_settle_case'] === '가상계좌' && $o
 
 // 결제방법
 $settle_case = $od['od_settle_case'];
-
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/orderinquiryview.php');
-    return;
-}
+
 
 // 테마에 orderinquiryview.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {

@@ -56,4 +56,4 @@ else
     }
 }
 
-goto_url('./wishlist.php');
+goto_url(G5_SHOP_URL.'/wishlist');

@@ -12,6 +12,7 @@ class Router
      */
     private $cleanRoutes = [
         '/'                       => 'index.php',
+        '/mypage'                 => 'mypage.php',
         '/login'                  => 'bbs/login.php',
         '/login_check'            => 'bbs/login_check.php',
         '/logout'                 => 'bbs/logout.php',
@@ -70,6 +71,12 @@ class Router
         '/qa/write_update'        => 'bbs/qawrite_update.php',
         '/qa/delete'              => 'bbs/qadelete.php',
         '/qa/download'            => 'bbs/qadownload.php',
+
+        // 설문조사
+        '/poll_result'            => 'bbs/poll_result.php',
+        '/poll_update'            => 'bbs/poll_update.php',
+        '/poll_etc_update'        => 'bbs/poll_etc_update.php',
+        '/poll_etc_update_mail'   => 'bbs/poll_etc_update_mail.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */
@@ -102,11 +109,32 @@ class Router
         //       internal 파일이 web 으로 노출되지 않도록 차단
         //   - 서브디렉토리 가능 (segment/segment) — 단 모든 segment 가 같은 룰
         '#^/admin/?$#'                                                                       => 'admin/index.php',
+        // 디렉토리 directory-index — /admin/{dir}/ → admin/{dir}/index.php (예: /admin/shop_admin/)
+        '#^/admin/(?P<_admindir>[a-zA-Z][a-zA-Z0-9_-]*)/$#'                                  => 'admin/{_admindir}/index.php',
         // ajax.* 엔드포인트 (점 허용) — /admin/ajax.token, /admin/ajax.use_captcha 등
         // 캡처 이름 _adminpage: 'page' 를 쓰면 페이지네이션 ?page=N 와 충돌해서
         // $_GET['page'] 가 페이지명으로 덮어써짐 → list 페이지 페이징 깨짐.
-        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+)(?:\.php)?/?$#i' => 'admin/{_adminpage}.php',
+        // 주의: [a-z0-9_.]+ 가 greedy 라 trailing .php 까지 잡아먹음 (ajax.foo.php → 캡처에 .php 포함
+        //  → target {_x}.php → ajax.foo.php.php 이중확장자). .php 있는 것/없는 것 두 패턴으로 분리.
+        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+?)\.php/?$#i' => 'admin/{_adminpage}.php',
+        '#^/admin/(?P<_adminpage>ajax\.[a-z0-9_.]+)/?$#i'       => 'admin/{_adminpage}.php',
+        // 서브디렉토리 ajax.* 도 허용 — /admin/shop_admin/ajax.ca_id 등
+        '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*/ajax\.[a-z0-9_.]+?)\.php/?$#i' => 'admin/{_adminpage}.php',
+        '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*/ajax\.[a-z0-9_.]+)/?$#i'       => 'admin/{_adminpage}.php',
         '#^/admin/(?P<_adminpage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'admin/{_adminpage}.php',
+
+        // shop — admin 동일 패턴. 정적 자산 (img/css/js) 은 .htaccess 가 먼저 매핑.
+        // 서브디렉토리 (inicis/lg/nicepay/toss/kakaopay/naverpay/kcp) 도 segment-by-segment 룰로 통과.
+        '#^/shop/?$#'                                                                  => 'shop/index.php',
+        '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+?)\.php/?$#i'                         => 'shop/{_shoppage}.php',
+        '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+)/?$#i'                               => 'shop/{_shoppage}.php',
+        // 자원형 클린 URL — segment catch-all 보다 먼저 매칭되어야 함
+        // (catch-all 이 /shop/item/item0008 도 잡아 shop/item/item0008.php 를 시도하면 404)
+        '#^/shop/item/(?P<it_id>[a-zA-Z0-9_-]+)/?$#'                                   => 'shop/item.php',
+        '#^/shop/category/(?P<ca_id>[a-zA-Z0-9_-]+)/?$#'                               => 'shop/list.php',
+        '#^/shop/listtype/(?P<type>\d+)/?$#'                                           => 'shop/listtype.php',
+        '#^/shop/event/(?P<ev_id>\d+)/?$#'                                             => 'shop/event.php',
+        '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
         '#^/qa/(?P<qa_id>\d+)/?$#'        => 'bbs/qaview.php',
@@ -135,6 +163,13 @@ class Router
     {
         $path   = parse_url($requestUri, PHP_URL_PATH) ?? '/';
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+        // 0) /index.php → / 301 (클린 URL 정규화 — 설치 완료 후 등 직접 진입 케이스)
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/index.php') {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            header('Location: /'.($qs ? '?'.$qs : ''), true, 301);
+            exit;
+        }
 
         // 1) 클린 URL 직접 매칭 (trailing slash 정규화)
         $normalized = ($path !== '/') ? rtrim($path, '/') : '/';
@@ -221,6 +256,108 @@ class Router
                 header('Location: '.$url, true, 301);
                 exit;
             }
+        }
+
+        // 2.5) shop 자원형 레거시 URL → 클린 URL 301 (GET/HEAD)
+        //      /shop/item.php?it_id=X → /shop/item/X
+        //      /shop/list.php?ca_id=X → /shop/category/X
+        //      id 형식 이상하면 통과시켜 legacy 동작 유지 (404 등)
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/item.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['it_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['it_id'])) {
+                $url = '/shop/item/'.$params['it_id'];
+                unset($params['it_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/list.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['ca_id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $params['ca_id'])) {
+                $url = '/shop/category/'.$params['ca_id'];
+                unset($params['ca_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        // 이벤트 — /shop/event.php?ev_id=N → /shop/event/N (잔여 query 보존)
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/event.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['ev_id']) && preg_match('/^\d+$/', $params['ev_id'])) {
+                $url = '/shop/event/'.$params['ev_id'];
+                unset($params['ev_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/listtype.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['type']) && preg_match('/^\d+$/', $params['type'])) {
+                $url = '/shop/listtype/'.$params['type'];
+                unset($params['type']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 301);
+                exit;
+            }
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/wishlist.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/wishlist';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/cart.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/cart';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+        // 주문조회: orderinquiry / orderinquiryview / orderinquirycancel — query 보존 (od_id, uid 등)
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^/shop/(orderinquiry(?:view|cancel)?)\.php$#', $path, $m)) {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/'.$m[1];
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+        // 배송지목록: /shop/orderaddress.php → /shop/orderaddress
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderaddress.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/orderaddress';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+        // 쿠폰: /shop/coupon.php → /shop/coupon
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/coupon.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/coupon';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderform.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            $url = '/shop/orderform';
+            if (!empty($params)) $url .= '?'.http_build_query($params);
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+
+        // /admin/...something.php → /admin/...something (GET/HEAD 만, query 보존)
+        // gnuboard 의 admin 모듈이 hard-code 한 .php URL 들을 클린 URL 로 정규화.
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^(/admin(?:/[a-zA-Z][a-zA-Z0-9_-]*)+)\.php$#', $path, $m)) {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            $url = $m[1].($qs ? '?'.$qs : '');
+            header('Location: '.$url, true, 301);
+            exit;
         }
 
         // 3) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트

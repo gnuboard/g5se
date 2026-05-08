@@ -2,12 +2,7 @@
 include_once('./_common.php');
 
 if (!$is_member)
-    goto_url(G5_BBS_URL."/login.php?url=".urlencode(G5_SHOP_URL.'/wishlist.php'));
-
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/wishlist.php');
-    return;
-}
+    goto_url(G5_BBS_URL."/login.php?url=".urlencode(G5_SHOP_URL.'/wishlist'));
 
 // 테마에 wishlist.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
@@ -26,7 +21,7 @@ include_once('./_head.php');
 <!-- 위시리스트 시작 { -->
 <div id="sod_ws">
 
-    <form name="fwishlist" method="post" action="./cartupdate.php">
+    <form name="fwishlist" method="post" action="<?php echo G5_SHOP_URL; ?>/cartupdate">
     <input type="hidden" name="act" value="multi">
     <input type="hidden" name="sw_direct" value="">
     <input type="hidden" name="prog" value="wish">
@@ -76,7 +71,7 @@ include_once('./_head.php');
                 </div>
                 <a href="<?php echo shop_item_url($row['it_id']); ?>" class="info_link"><?php echo stripslashes($row['it_name']); ?></a>
                 <div class="info_date"><?php echo $row['wi_time']; ?></div>
-                <a href="./wishupdate.php?w=d&amp;wi_id=<?php echo $row['wi_id']; ?>" class="wish_del"><i class="fa fa-trash" aria-hidden="true"></i><span class="sound_only">삭제</span></a>
+                <a href="<?php echo G5_SHOP_URL; ?>/wishupdate?w=d&amp;wi_id=<?php echo $row['wi_id']; ?>" class="wish_del"><i class="fa fa-trash" aria-hidden="true"></i><span class="sound_only">삭제</span></a>
            </div>
         </li>
         <?php

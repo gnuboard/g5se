@@ -17,7 +17,7 @@ $html_title = '게시판그룹';
 $gr_id_attr = '';
 $sound_only = '';
 
-if (!isset($group['gr_id'])) {
+if (!array_key_exists('gr_id', $group)) {
     $group['gr_id'] = '';
     $group['gr_subject'] = '';
     $group['gr_device'] = '';
@@ -36,7 +36,7 @@ if ($w == '') {
     alert('제대로 된 값이 넘어오지 않았습니다.');
 }
 
-if (!isset($group['gr_device'])) {
+if (!array_key_exists('gr_device', $group)) {
     sql_query(" ALTER TABLE `{$g5['group_table']}` ADD `gr_device` ENUM('both','pc','mobile') NOT NULL DEFAULT 'both' AFTER `gr_subject` ", false);
 }
 

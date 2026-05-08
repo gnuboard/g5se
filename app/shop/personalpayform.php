@@ -19,10 +19,8 @@ $pp['pp_name'] = strip_tags($pp['pp_name']);
 
 $g5['title'] = $pp['pp_name'].'님 개인결제';
 
-if(G5_IS_MOBILE)
-    include_once(G5_MSHOP_PATH.'/_head.php');
-else
-    include_once(G5_SHOP_PATH.'/_head.php');
+// gnu5se: 단일 마크업 정책 — 데스크탑 chrome 만 사용
+include_once(G5_SHOP_PATH.'/_head.php');
 
 // 개인결제 체크를 위한 hash
 $hash_data = md5($pp['pp_id'].$pp['pp_price'].$pp['pp_time']);
@@ -46,16 +44,8 @@ $goods = $pp['pp_name'].'님 개인결제';
 if($default['de_pg_service'] == 'inicis')
     set_session('ss_order_inicis_id', $od_id);
 
-// 기기별 결제폼 include
-if($is_mobile_pay) {
-    $order_action_url = G5_HTTPS_MSHOP_URL.'/personalpayformupdate.php';
-    require_once(G5_MSHOP_PATH.'/personalpayform.sub.php');
-} else {
-    $order_action_url = G5_HTTPS_SHOP_URL.'/personalpayformupdate.php';
-    require_once(G5_SHOP_PATH.'/personalpayform.sub.php');
-}
+// gnu5se: 단일 마크업 — desktop sub.php 사용
+$order_action_url = G5_HTTPS_SHOP_URL.'/personalpayformupdate.php';
+require_once(G5_SHOP_PATH.'/personalpayform.sub.php');
 
-if(G5_IS_MOBILE)
-    include_once(G5_MSHOP_PATH.'/_tail.php');
-else
-    include_once(G5_SHOP_PATH.'/_tail.php');
+include_once(G5_SHOP_PATH.'/_tail.php');

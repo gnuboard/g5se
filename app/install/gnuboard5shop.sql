@@ -13,13 +13,13 @@ CREATE TABLE IF NOT EXISTS `g5_shop_banner` (
   `bn_position` varchar(255) NOT NULL DEFAULT '',
   `bn_border` tinyint(4) NOT NULL DEFAULT '0',
   `bn_new_win` tinyint(4) NOT NULL DEFAULT '0',
-  `bn_begin_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `bn_end_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `bn_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `bn_begin_time` datetime NULL DEFAULT NULL,
+  `bn_end_time` datetime NULL DEFAULT NULL,
+  `bn_time` datetime NULL DEFAULT NULL,
   `bn_hit` int(11) NOT NULL DEFAULT '0',
   `bn_order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`bn_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -52,17 +52,17 @@ CREATE TABLE IF NOT EXISTS `g5_shop_cart` (
   `io_id` varchar(255) NOT NULL DEFAULT '',
   `io_type` tinyint(4) NOT NULL DEFAULT '0',
   `io_price` int(11) NOT NULL DEFAULT '0',
-  `ct_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ct_time` datetime NULL DEFAULT NULL,
   `ct_ip` varchar(25) NOT NULL DEFAULT '',
   `ct_send_cost` tinyint(4) NOT NULL DEFAULT '0',
   `ct_direct` tinyint(4) NOT NULL DEFAULT '0',
   `ct_select` tinyint(4) NOT NULL DEFAULT '0',
-  `ct_select_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ct_select_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`ct_id`),
   KEY `od_id` (`od_id`),
   KEY `it_id` (`it_id`),
   KEY `ct_status` (`ct_status`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_category` (
   `ca_10` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`ca_id`),
   KEY `ca_order` (`ca_order`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -140,19 +140,19 @@ CREATE TABLE IF NOT EXISTS `g5_shop_coupon` (
   `cp_target` VARCHAR(255) NOT NULL DEFAULT '',
   `mb_id` VARCHAR(255) NOT NULL DEFAULT '',
   `cz_id` int(11) NOT NULL DEFAULT '0',
-  `cp_start` DATE NOT NULL DEFAULT '0000-00-00',
-  `cp_end` DATE NOT NULL DEFAULT '0000-00-00',
+  `cp_start` date NULL DEFAULT NULL,
+  `cp_end` date NULL DEFAULT NULL,
   `cp_price` INT(11) NOT NULL DEFAULT '0',
   `cp_type` TINYINT(4) NOT NULL DEFAULT '0',
   `cp_trunc` INT(11) NOT NULL DEFAULT '0',
   `cp_minimum` INT(11) NOT NULL DEFAULT '0',
   `cp_maximum` INT(11) NOT NULL DEFAULT '0',
   `od_id` bigint(20) unsigned NOT NULL,
-  `cp_datetime` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `cp_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`cp_no`),
   UNIQUE KEY `cp_id` (`cp_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -167,12 +167,12 @@ CREATE TABLE IF NOT EXISTS `g5_shop_coupon_log` (
   `mb_id` varchar(100) NOT NULL DEFAULT '',
   `od_id` bigint(20) NOT NULL,
   `cp_price` int(11) NOT NULL DEFAULT '0',
-  `cl_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `cl_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`cl_id`),
   UNIQUE KEY `idx_coupon_use` (`cp_id`, `mb_id`),
   KEY `mb_id` (`mb_id`),
   KEY `od_id` (`od_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -185,8 +185,8 @@ CREATE TABLE IF NOT EXISTS `g5_shop_coupon_zone` (
   `cz_id` int(11) NOT NULL AUTO_INCREMENT,
   `cz_type` tinyint(4) NOT NULL DEFAULT '0',
   `cz_subject` varchar(255) NOT NULL DEFAULT '',
-  `cz_start` DATE NOT NULL DEFAULT '0000-00-00',
-  `cz_end` DATE NOT NULL DEFAULT '0000-00-00',
+  `cz_start` date NULL DEFAULT NULL,
+  `cz_end` date NULL DEFAULT NULL,
   `cz_file` varchar(255) NOT NULL DEFAULT '',
   `cz_period` int(11) NOT NULL DEFAULT '0',
   `cz_point` INT(11) NOT NULL DEFAULT '0',
@@ -198,9 +198,9 @@ CREATE TABLE IF NOT EXISTS `g5_shop_coupon_zone` (
   `cp_minimum` INT(11) NOT NULL DEFAULT '0',
   `cp_maximum` INT(11) NOT NULL DEFAULT '0',
   `cz_download` int(11) NOT NULL DEFAULT '0',
-  `cz_datetime` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `cz_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`cz_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -392,7 +392,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_default` (
   `de_member_reg_coupon_price` int(11) NOT NULL DEFAULT '0',
   `de_member_reg_coupon_minimum` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`de_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -419,7 +419,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_event` (
   `ev_tail_html` text NOT NULL,
   `ev_use` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ev_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -433,7 +433,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_event_item` (
   `it_id` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`ev_id`,`it_id`),
   KEY `it_id` (`it_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -491,8 +491,8 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item` (
   `it_mobile_head_html` text NOT NULL,
   `it_mobile_tail_html` text NOT NULL,
   `it_hit` int(11) NOT NULL DEFAULT '0',
-  `it_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `it_update_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `it_time` datetime NULL DEFAULT NULL,
+  `it_update_time` datetime NULL DEFAULT NULL,
   `it_ip` varchar(25) NOT NULL DEFAULT '',
   `it_order` int(11) NOT NULL DEFAULT '0',
   `it_tel_inq` tinyint(4) NOT NULL DEFAULT '0',
@@ -538,7 +538,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item` (
   KEY `it_name` (`it_name`),
   KEY `it_seo_title` (`it_seo_title`),
   KEY `it_order` (`it_order`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -559,7 +559,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item_option` (
   PRIMARY KEY (`io_no`),
   KEY `io_id` (`io_id`),
   KEY `it_id` (`it_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -577,12 +577,12 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item_use` (
   `is_score` tinyint(4) NOT NULL DEFAULT '0',
   `is_subject` varchar(255) NOT NULL DEFAULT '',
   `is_content` text NOT NULL,
-  `is_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `is_time` datetime NULL DEFAULT NULL,
   `is_ip` varchar(25) NOT NULL DEFAULT '',
   `is_confirm` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`is_id`),
   KEY `index1` (`it_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -603,10 +603,10 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item_qa` (
   `iq_subject` varchar(255) NOT NULL DEFAULT '',
   `iq_question` text NOT NULL,
   `iq_answer` text NOT NULL,
-  `iq_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `iq_time` datetime NULL DEFAULT NULL,
   `iq_ip` varchar(25) NOT NULL DEFAULT '',
   PRIMARY KEY (`iq_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -620,7 +620,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item_relation` (
   `it_id2` varchar(20) NOT NULL DEFAULT '',
   `ir_no` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`it_id`,`it_id2`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -664,13 +664,13 @@ CREATE TABLE IF NOT EXISTS `g5_shop_order` (
   `od_receipt_point` int(11) NOT NULL DEFAULT '0',
   `od_refund_price` int(11) NOT NULL DEFAULT '0',
   `od_bank_account` varchar(255) NOT NULL DEFAULT '',
-  `od_receipt_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `od_receipt_time` datetime NULL DEFAULT NULL,
   `od_coupon` int(11) NOT NULL DEFAULT '0',
   `od_misu` int(11) NOT NULL DEFAULT '0',
   `od_shop_memo` text NOT NULL,
   `od_mod_history` text NOT NULL,
   `od_status` varchar(255) NOT NULL DEFAULT '',  
-  `od_hope_date` date NOT NULL DEFAULT '0000-00-00',  
+  `od_hope_date` date NULL DEFAULT NULL,  
   `od_settle_case` varchar(255) NOT NULL DEFAULT '',
   `od_other_pay_type` varchar(100) NOT NULL DEFAULT '',
   `od_test` tinyint(4) NOT NULL DEFAULT '0',
@@ -686,16 +686,16 @@ CREATE TABLE IF NOT EXISTS `g5_shop_order` (
   `od_free_mny` int(11) NOT NULL DEFAULT '0',
   `od_delivery_company` varchar(255) NOT NULL DEFAULT '0',
   `od_invoice` varchar(255) NOT NULL DEFAULT '',
-  `od_invoice_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `od_invoice_time` datetime NULL DEFAULT NULL,
   `od_cash` tinyint(4) NOT NULL,
   `od_cash_no` varchar(255) NOT NULL,
   `od_cash_info` text NOT NULL, 
-  `od_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',  
+  `od_time` datetime NULL DEFAULT NULL,  
   `od_pwd` varchar(255) NOT NULL DEFAULT '',
   `od_ip` varchar(25) NOT NULL DEFAULT '',
   PRIMARY KEY (`od_id`),
   KEY `index2` (`mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -720,7 +720,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_order_address` (
   `ad_jibeon` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`ad_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -735,9 +735,9 @@ CREATE TABLE IF NOT EXISTS `g5_shop_order_data` (
   `mb_id` varchar(20) NOT NULL DEFAULT '',
   `dt_pg` varchar(255) NOT NULL DEFAULT '',
   `dt_data` text NOT NULL,
-  `dt_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `dt_time` datetime NULL DEFAULT NULL,
   KEY `od_id` (`od_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -752,9 +752,9 @@ CREATE TABLE IF NOT EXISTS `g5_shop_order_delete` (
   `de_data` longtext NOT NULL,
   `mb_id` varchar(20) NOT NULL DEFAULT '',
   `de_ip` varchar(255) NOT NULL DEFAULT '',
-  `de_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `de_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`de_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -781,17 +781,17 @@ CREATE TABLE IF NOT EXISTS `g5_shop_personalpay` (
   `pp_settle_case` VARCHAR(255) NOT NULL DEFAULT '',
   `pp_bank_account` VARCHAR(255) NOT NULL DEFAULT '',
   `pp_deposit_name` VARCHAR(255) NOT NULL DEFAULT '',
-  `pp_receipt_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `pp_receipt_time` datetime NULL DEFAULT NULL,
   `pp_receipt_ip` VARCHAR(255) NOT NULL DEFAULT '',
   `pp_shop_memo` TEXT NOT NULL,
   `pp_cash` TINYINT(4) NOT NULL DEFAULT '0',
   `pp_cash_no` varchar(255) NOT NULL DEFAULT '',
   `pp_cash_info` TEXT NOT NULL,
   `pp_ip` VARCHAR(255) NOT NULL DEFAULT '',
-  `pp_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `pp_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`pp_id`),
   KEY `od_id` (`od_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -809,7 +809,7 @@ CREATE TABLE IF NOT EXISTS `g5_shop_sendcost` (
   PRIMARY KEY (`sc_id`),
   KEY `sc_zip1` (`sc_zip1`),
   KEY `sc_zip2` (`sc_zip2`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -822,11 +822,11 @@ CREATE TABLE IF NOT EXISTS `g5_shop_wish` (
   `wi_id` int(11) NOT NULL AUTO_INCREMENT,
   `mb_id` varchar(255) NOT NULL DEFAULT '',
   `it_id` varchar(20) NOT NULL DEFAULT '0',
-  `wi_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `wi_time` datetime NULL DEFAULT NULL,
   `wi_ip` varchar(25) NOT NULL DEFAULT '',
   PRIMARY KEY (`wi_id`),
   KEY `index1` (`mb_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -840,11 +840,11 @@ CREATE TABLE IF NOT EXISTS `g5_shop_item_stocksms` (
   `it_id` varchar(20) NOT NULL DEFAULT '',
   `ss_hp` varchar(255) NOT NULL DEFAULT '',
   `ss_send` tinyint(4) NOT NULL DEFAULT '0',
-  `ss_send_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `ss_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ss_send_time` datetime NULL DEFAULT NULL,
+  `ss_datetime` datetime NULL DEFAULT NULL,
   `ss_ip` varchar(25) NOT NULL DEFAULT '',
   PRIMARY KEY (`ss_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -860,10 +860,10 @@ CREATE TABLE IF NOT EXISTS `g5_shop_order_post_log` (
   `post_data` text NOT NULL,
   `ol_code` varchar(255) NOT NULL DEFAULT '',
   `ol_msg` text NOT NULL,
-  `ol_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ol_datetime` datetime NULL DEFAULT NULL,
   `ol_ip` varchar(25) NOT NULL DEFAULT '',
   PRIMARY KEY (`log_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -887,4 +887,4 @@ CREATE TABLE IF NOT EXISTS `g5_shop_inicis_log` (
   `post_data` text NOT NULL,
   `is_mail_send` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`oid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

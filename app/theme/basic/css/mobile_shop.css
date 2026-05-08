@@ -423,6 +423,171 @@ box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 #sod_fin_cancelfrm .btn_frmline {background:#5e6b6f;color:#fff;border:0;padding:10px;width:55px;cursor:pointer;position:absolute;top:15px;right:15px;height:40px}
 #sod_fin_test {padding:10px}
 
+/* 모바일 주문상세 */
+#sod_fin {
+    color: var(--m-text);
+}
+#sod_fin_no {
+    border: 1px solid var(--m-border);
+    background: var(--m-surface);
+    color: var(--m-text);
+}
+#sod_fin_no strong {
+    color: var(--m-primary);
+}
+#sod_list_inq.sod_list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0 0 16px;
+}
+#sod_list_inq .sod_li {
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    background: var(--m-surface);
+    color: var(--m-text);
+    box-shadow: var(--m-shadow);
+}
+#sod_list_inq .li_name {
+    padding: 14px 14px 0;
+    border: 0;
+    color: var(--m-text);
+    font-size: 17px;
+    line-height: 1.35;
+}
+#sod_list_inq .li_name strong,
+#sod_list_inq .li_name a {
+    color: var(--m-text);
+    font-weight: 800;
+}
+#sod_list_inq .li_op_wr {
+    min-height: 86px;
+    padding: 12px 14px 12px 108px;
+}
+#sod_list_inq .total_img {
+    top: 12px;
+    left: 14px;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: var(--m-radius-sm);
+    background: var(--m-surface-2);
+}
+#sod_list_inq .total_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+#sod_list_inq .sod_opt,
+#sod_list_inq .li_opt {
+    padding: 0;
+    color: var(--m-text);
+}
+#sod_list_inq .sod_opt li,
+#sod_list_inq .li_opt {
+    color: var(--m-text);
+    line-height: 1.45;
+}
+#sod_list_inq .sod_opt li:before,
+#sod_list_inq .sod_opt .opt_name:before {
+    display: none;
+    content: none;
+}
+#sod_list_inq .li_prqty {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0;
+    border-top: 1px solid var(--m-border);
+}
+#sod_list_inq .li_prqty_sp {
+    float: none;
+    width: auto;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 0;
+    border-right: 1px solid var(--m-border);
+    border-bottom: 1px solid var(--m-border);
+    color: var(--m-text);
+    text-align: right;
+}
+#sod_list_inq .li_prqty_sp:nth-child(2n) {
+    border-right: 0;
+}
+#sod_list_inq .li_prqty_sp span {
+    float: left;
+    color: var(--m-text-soft);
+    font-weight: 700;
+}
+#sod_list_inq .total_price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+    padding: 12px 14px;
+    border-top: 1px solid var(--m-border);
+    background: var(--m-surface-2);
+    color: var(--m-text);
+}
+#sod_list_inq .total_price strong {
+    color: var(--m-text);
+    font-size: 18px;
+    font-weight: 900;
+}
+#sod_fin_legend,
+#sod_fin_pay,
+#sod_fin_orderer,
+#sod_fin_receiver,
+#sod_fin_dvr,
+#sod_fin_tot ul,
+#sod_fin_cancelfrm {
+    border-color: var(--m-border);
+    background: var(--m-surface);
+    color: var(--m-text);
+}
+#sod_fin_view h3,
+#sod_fin_pay h3 {
+    border-color: var(--m-border);
+    background: var(--m-surface-2);
+    color: var(--m-text);
+}
+#sod_fin_view table,
+#sod_fin_view table th,
+#sod_fin_view table td,
+#sod_fin_pay li,
+#sod_fin_tot li {
+    border-color: var(--m-border);
+    background: var(--m-surface);
+    color: var(--m-text);
+}
+#sod_fin_tot #alrdy,
+#sod_fin_tot li.sod_fin_tot {
+    border-color: var(--m-border);
+    background: var(--m-surface-2);
+}
+#sod_fin_tot strong {
+    color: var(--m-text);
+}
+
+@media (max-width: 360px) {
+    #sod_list_inq .li_op_wr {
+        padding-left: 96px;
+    }
+    #sod_list_inq .total_img {
+        width: 70px;
+        height: 70px;
+    }
+    #sod_list_inq .li_prqty {
+        grid-template-columns: 1fr;
+    }
+    #sod_list_inq .li_prqty_sp {
+        border-right: 0;
+    }
+}
+
 /* 마이페이지 */
 #smb_my_ov {position:relative;background:#fff;margin-right:20px}
 #smb_my_ov h2 {position:absolute;font-size:0;text-indent:-9999em;line-height:0;overflow:hidden}
@@ -953,6 +1118,100 @@ box-shadow:0 0 8px rgba(65,98,255,0.8)}
 #od_tot_price {background:#e5f0ff;line-height:20px;text-align:right;padding:15px}
 #od_tot_price span {float:left;font-weight:bold}
 #od_tot_price strong {font-size:1.5em;color:#ff006c}
+
+/* 주문서 작성 - 다크모드 */
+[data-theme="dark"] #forderform,
+[data-theme="dark"] #sod_frm {
+    color: var(--m-text);
+}
+[data-theme="dark"] #sod_frm table,
+[data-theme="dark"] #sod_frm tr,
+[data-theme="dark"] #sod_frm th,
+[data-theme="dark"] #sod_frm td {
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sod_frm .tbl_head03 thead th,
+[data-theme="dark"] #sod_frm .tbl_frm01 th,
+[data-theme="dark"] #sod_frm_pay .pay_tbl th,
+[data-theme="dark"] #sod_point h2 {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm .tbl_head03 tbody td,
+[data-theme="dark"] #sod_frm .tbl_frm01 td,
+[data-theme="dark"] #sod_frm_pay .pay_tbl td,
+[data-theme="dark"] #sod_frm .sod_name,
+[data-theme="dark"] #sod_frm .sod_opt {
+    background: var(--m-surface) !important;
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #sod_frm .sod_name b,
+[data-theme="dark"] #sod_frm .sod_name a,
+[data-theme="dark"] #sod_frm .total_price,
+[data-theme="dark"] #sod_frm strong {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm input[type="text"],
+[data-theme="dark"] #sod_frm input[type="password"],
+[data-theme="dark"] #sod_frm input[type="email"],
+[data-theme="dark"] #sod_frm input[type="number"],
+[data-theme="dark"] #sod_frm select,
+[data-theme="dark"] #sod_frm textarea {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+    color-scheme: dark;
+}
+[data-theme="dark"] #sod_frm input::placeholder,
+[data-theme="dark"] #sod_frm textarea::placeholder {
+    color: var(--m-text-muted) !important;
+}
+[data-theme="dark"] #sod_frm_taker .order_choice_place,
+[data-theme="dark"] #forderform .od_pay_buttons_el,
+[data-theme="dark"] #forderform #sod_frm_pt,
+[data-theme="dark"] #sod_frm_pay .sod_frm_point,
+[data-theme="dark"] #sod_frm_pay .sod_frm_point div,
+[data-theme="dark"] #od_tot_price,
+[data-theme="dark"] #sod_point {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #sod_frm #sod_bsk_tot,
+[data-theme="dark"] #forderform .sod_right #sod_bsk_tot {
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sod_frm #sod_bsk_tot li,
+[data-theme="dark"] #sod_frm #sod_bsk_tot .sod_bsk_coupon:before,
+[data-theme="dark"] #sod_frm #sod_bsk_tot .sod_bsk_dvr:before {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm #sod_bsk_tot li span {
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #od_pay_sl .lb_icon,
+[data-theme="dark"] #sod_frm_paysel .bank_icon,
+[data-theme="dark"] #sod_frm_paysel .vbank_icon,
+[data-theme="dark"] #sod_frm_paysel .iche_icon,
+[data-theme="dark"] #sod_frm_paysel .hp_icon,
+[data-theme="dark"] #sod_frm_paysel .card_icon {
+    background-color: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #od_pay_sl input[type="radio"]:checked + .lb_icon {
+    border-color: var(--m-primary) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm .btn_address,
+[data-theme="dark"] #sod_frm .btn_frmline,
+[data-theme="dark"] #sod_frm .cp_btn {
+    background: var(--m-surface-2) !important;
+    border: 1px solid var(--m-border) !important;
+    color: var(--m-text) !important;
+}
 #sod_frm_pay_info {margin:0 0 10px}
 
 #sod_point {clear:both;background:#fff;margin:10px;border:1px solid #e3e5e8}
@@ -1034,6 +1293,337 @@ box-shadow:0 0 8px rgba(65,98,255,0.8)}
 .chk_box input[type="radio"] {position:absolute;top:0;left:0;width:0;height:0;opacity:0;outline:0;z-index:-1;overflow:hidden}
 .chk_box input[type="radio"] + label {position:relative;padding-left:23px;display:inline-block;color:#676e70}
 .chk_box input[type="radio"] + label span {position:absolute;top:0;left:0;width:15px;height:15px;display:block;background:#fff;border:1px solid #cdd6df;border-radius:50%}
+
+/* 주문서 작성 - 다크모드 최종 보정 */
+[data-theme="dark"] #sod_frm_orderer,
+[data-theme="dark"] #sod_frm_taker,
+[data-theme="dark"] #sod_frm_pay,
+[data-theme="dark"] #sod_point,
+[data-theme="dark"] #settle_bank,
+[data-theme="dark"] #display_pay_button,
+[data-theme="dark"] #sod_frm .od_prd_list,
+[data-theme="dark"] #sod_frm .tbl_wrap,
+[data-theme="dark"] #sod_frm .tbl_frm01,
+[data-theme="dark"] #sod_frm .pay_tbl,
+[data-theme="dark"] #sod_frm .od_pay_buttons_el,
+[data-theme="dark"] #m_sod_frm_paysel ul {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm section h2,
+[data-theme="dark"] #sod_frm_pay h2,
+[data-theme="dark"] #sod_point h2,
+[data-theme="dark"] #m_sod_frm_paysel h3 {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm .tbl_head03 thead th,
+[data-theme="dark"] #sod_frm .tbl_frm01 th,
+[data-theme="dark"] #sod_frm_pay .pay_tbl th,
+[data-theme="dark"] #sod_frm .odf_tbl th,
+[data-theme="dark"] #sod_frm .odf_list dt {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm .tbl_head03 td,
+[data-theme="dark"] #sod_frm .tbl_frm01 td,
+[data-theme="dark"] #sod_frm_pay .pay_tbl td,
+[data-theme="dark"] #sod_frm .odf_tbl td,
+[data-theme="dark"] #sod_frm .odf_list dd,
+[data-theme="dark"] #sod_frm .sod_name,
+[data-theme="dark"] #sod_frm .sod_opt,
+[data-theme="dark"] #sod_frm .sod_ta_wr,
+[data-theme="dark"] #sod_frm_pay .sod_frm_point div {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #sod_frm .sod_opt li,
+[data-theme="dark"] #sod_frm .sod_opt .opt_name,
+[data-theme="dark"] #sod_frm .sod_name b,
+[data-theme="dark"] #sod_frm .sod_name a,
+[data-theme="dark"] #sod_frm .td_num,
+[data-theme="dark"] #sod_frm .td_numbig,
+[data-theme="dark"] #sod_frm .td_dvr,
+[data-theme="dark"] #sod_frm label,
+[data-theme="dark"] #sod_frm strong,
+[data-theme="dark"] #sod_frm_pt strong,
+[data-theme="dark"] #sod_frm_pt span {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm input[type="text"],
+[data-theme="dark"] #sod_frm input[type="password"],
+[data-theme="dark"] #sod_frm input[type="email"],
+[data-theme="dark"] #sod_frm input[type="number"],
+[data-theme="dark"] #sod_frm select,
+[data-theme="dark"] #sod_frm textarea,
+[data-theme="dark"] #od_bank_account {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+    box-shadow: none !important;
+    color-scheme: dark;
+}
+[data-theme="dark"] #sod_frm input::placeholder,
+[data-theme="dark"] #sod_frm textarea::placeholder {
+    color: var(--m-text-muted) !important;
+}
+[data-theme="dark"] #sod_frm_taker .order_choice_place,
+[data-theme="dark"] #sod_frm_taker .choice_place,
+[data-theme="dark"] #sod_frm #sod_bsk_tot li,
+[data-theme="dark"] #sod_frm #sod_bsk_tot .sod_bsk_coupon:before,
+[data-theme="dark"] #sod_frm #sod_bsk_tot .sod_bsk_dvr:before,
+[data-theme="dark"] #od_tot_price {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #od_pay_sl .lb_icon,
+[data-theme="dark"] #sod_frm_paysel .lb_icon,
+[data-theme="dark"] #sod_frm .btn_address,
+[data-theme="dark"] #sod_frm .btn_frmline,
+[data-theme="dark"] #sod_frm .cp_btn,
+[data-theme="dark"] #sod_frm .cp_cancel {
+    background-color: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #od_pay_sl input[type="radio"]:checked + .lb_icon,
+[data-theme="dark"] #sod_frm_paysel input[type="radio"]:checked + .lb_icon {
+    border-color: var(--m-primary) !important;
+    color: var(--m-text) !important;
+}
 .chk_box input[type="radio"]:checked + label {color:#305af9}
 .chk_box input[type="radio"]:checked + label span:before {width:7px;height:7px;background:#305af9;content:'';position:absolute;top:3px;left:3px;border-radius:50%}
+
+[data-theme="dark"] #sod_frm .chk_box input[type="checkbox"] + label,
+[data-theme="dark"] #sod_frm .chk_box input[type="radio"] + label,
+[data-theme="dark"] #sod_frm .chk_box input[type="checkbox"]:checked + label,
+[data-theme="dark"] #sod_frm .chk_box input[type="radio"]:checked + label {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm .chk_box input[type="checkbox"] + label span,
+[data-theme="dark"] #sod_frm .chk_box input[type="radio"] + label span {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+}
+
+/* 주문서 오른쪽 레거시 컬럼 배치 */
+#sod_frm .sod_right #sod_bsk_tot,
+#sod_frm .sod_right .pay_tbl,
+#sod_frm .sod_right #od_tot_price,
+#sod_frm .sod_right .od_pay_buttons_el,
+#sod_frm .sod_right #display_pay_button {
+    box-sizing: border-box;
+}
+#sod_frm .sod_right #sod_bsk_tot {margin:0 0 14px}
+#sod_frm .sod_right .pay_tbl {margin:0 0 14px}
+#sod_frm .sod_right #od_tot_price {margin:0 0 24px}
+#sod_frm .sod_right #sod_frm_pay {margin:0}
+#sod_frm .sod_right .od_pay_buttons_el {margin:0;border-bottom:0}
+#sod_frm .sod_right #display_pay_button {border-top:0}
+
+[data-theme="dark"] #sod_frm .sod_right #sod_bsk_tot,
+[data-theme="dark"] #sod_frm .sod_right .pay_tbl,
+[data-theme="dark"] #sod_frm .sod_right #od_tot_price,
+[data-theme="dark"] #sod_frm .sod_right .od_pay_buttons_el,
+[data-theme="dark"] #sod_frm .sod_right #display_pay_button,
+[data-theme="dark"] #sod_frm .sod_right #settle_bank {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sod_frm .sod_right #sod_bsk_tot li,
+[data-theme="dark"] #sod_frm .sod_right #sod_bsk_tot li:before,
+[data-theme="dark"] #sod_frm .sod_right #sod_bsk_tot li:after {
+    background-color: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sod_frm .sod_right .pay_tbl th,
+[data-theme="dark"] #sod_frm .sod_right .pay_tbl td {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sod_frm .sod_right #od_tot_price {
+    background: color-mix(in srgb, var(--m-primary) 12%, var(--m-surface)) !important;
+}
+[data-theme="dark"] #sod_frm .sod_right #od_tot_price strong,
+[data-theme="dark"] #sod_frm .sod_right #sod_bsk_tot .sod_bsk_cnt strong {
+    color: var(--m-primary) !important;
+}
+[data-theme="dark"] #sod_frm .sod_right #display_pay_button .btn_submit {
+    background: var(--m-primary) !important;
+    border-color: var(--m-primary) !important;
+    color: #fff !important;
+}
+[data-theme="dark"] #sod_frm .sod_right #display_pay_button .btn01,
+[data-theme="dark"] #sod_frm .sod_right #display_pay_button .btn_cancel {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+
+/* 모바일 주문서 상품목록 */
+#sod_frm.sod_frm_mobile .sod_list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0 0 16px;
+}
+#sod_frm.sod_frm_mobile .sod_list .sod_li {
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    background: var(--m-surface);
+    color: var(--m-text);
+    box-shadow: var(--m-shadow);
+}
+#sod_frm.sod_frm_mobile .sod_list .li_name {
+    padding: 14px 14px 0;
+    border: 0;
+    color: var(--m-text);
+    font-size: 17px;
+    line-height: 1.35;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_name strong {
+    color: var(--m-text);
+    font-weight: 800;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_op_wr {
+    min-height: 86px;
+    padding: 12px 14px 12px 108px;
+}
+#sod_frm.sod_frm_mobile .sod_list .total_img {
+    top: 12px;
+    left: 14px;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: var(--m-radius-sm);
+    background: var(--m-surface-2);
+}
+#sod_frm.sod_frm_mobile .sod_list .total_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+#sod_frm.sod_frm_mobile .sod_opt {
+    padding: 0;
+    color: var(--m-text);
+}
+#sod_frm.sod_frm_mobile .sod_opt li {
+    color: var(--m-text);
+    line-height: 1.45;
+}
+#sod_frm.sod_frm_mobile .sod_opt li:before,
+#sod_frm.sod_frm_mobile .sod_opt .opt_name:before {
+    display: none;
+    content: none;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_cp .cp_btn {
+    height: 30px;
+    margin-top: 8px;
+    padding: 0 10px;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius-sm);
+    background: var(--m-surface-2);
+    color: var(--m-text);
+    font-weight: 700;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_prqty {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    padding: 0;
+    border-top: 1px solid var(--m-border);
+}
+#sod_frm.sod_frm_mobile .sod_list .li_prqty_sp {
+    float: none;
+    width: auto;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 0;
+    border-right: 1px solid var(--m-border);
+    border-bottom: 1px solid var(--m-border);
+    color: var(--m-text);
+    text-align: right;
+    line-height: 1.3;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_prqty_sp:nth-child(2n) {
+    border-right: 0;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_prqty_sp:nth-last-child(-n+2) {
+    border-bottom: 0;
+}
+#sod_frm.sod_frm_mobile .sod_list .li_prqty_sp span {
+    float: left;
+    color: var(--m-text-soft);
+    font-weight: 700;
+}
+#sod_frm.sod_frm_mobile .sod_list .total_price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+    padding: 12px 14px;
+    border-top: 1px solid var(--m-border);
+    background: var(--m-surface-2);
+    color: var(--m-text);
+}
+#sod_frm.sod_frm_mobile .sod_list .total_price span {
+    float: none;
+    color: var(--m-text-soft);
+    font-weight: 700;
+}
+#sod_frm.sod_frm_mobile .sod_list .total_price strong {
+    color: var(--m-text);
+    font-size: 18px;
+    font-weight: 900;
+}
+#sod_frm.sod_frm_mobile #m_sod_bsk_tot {
+    overflow: hidden;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    background: var(--m-surface);
+    color: var(--m-text);
+    box-shadow: var(--m-shadow);
+}
+#sod_frm.sod_frm_mobile #m_sod_bsk_tot dt,
+#sod_frm.sod_frm_mobile #m_sod_bsk_tot dd {
+    border-bottom: 1px solid var(--m-border);
+    background: var(--m-surface);
+    color: var(--m-text);
+}
+#sod_frm.sod_frm_mobile #m_sod_bsk_tot .sod_bsk_cnt {
+    background: var(--m-surface-2);
+}
+#sod_frm.sod_frm_mobile #m_sod_bsk_tot .sod_bsk_cnt strong {
+    color: var(--m-primary);
+}
+
+@media (max-width: 360px) {
+    #sod_frm.sod_frm_mobile .sod_list .li_op_wr {
+        padding-left: 96px;
+    }
+    #sod_frm.sod_frm_mobile .sod_list .total_img {
+        width: 70px;
+        height: 70px;
+    }
+    #sod_frm.sod_frm_mobile .sod_list .li_prqty {
+        grid-template-columns: 1fr;
+    }
+    #sod_frm.sod_frm_mobile .sod_list .li_prqty_sp {
+        border-right: 0;
+        border-bottom: 1px solid var(--m-border);
+    }
+    #sod_frm.sod_frm_mobile .sod_list .li_prqty_sp:last-child {
+        border-bottom: 0;
+    }
+}
 

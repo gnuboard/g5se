@@ -1,11 +1,6 @@
 <?php
 include_once('./_common.php');
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/orderinquiry.php');
-    return;
-}
-
 define("_ORDERINQUIRY_", true);
 
 $order_info = array();
@@ -14,11 +9,30 @@ $od_pwd = get_encrypt_string($request_pwd);
 $od_id = isset($_POST['od_id']) ? safe_replace_regex($_POST['od_id'], 'od_id') : '';
 
 $inquiry_params = [];
+
+// gnu5se: 회원 전용 검색 (주문서번호 contains + 주문일자 from/to)
+$s_od_id = isset($_GET['s_od_id']) ? preg_replace('/[^0-9]/', '', $_GET['s_od_id']) : '';
+$s_fr    = isset($_GET['s_fr']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['s_fr']) ? $_GET['s_fr'] : '';
+$s_to    = isset($_GET['s_to']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['s_to']) ? $_GET['s_to'] : '';
+$has_search = ($s_od_id !== '' || $s_fr !== '' || $s_to !== '');
+
 // 회원인 경우
 if ($is_member)
 {
     $sql_common = " from {$g5['g5_shop_order_table']} where mb_id = :mb_id ";
     $inquiry_params[':mb_id'] = $member['mb_id'];
+    if ($s_od_id !== '') {
+        $sql_common .= " and od_id LIKE :s_od_id ";
+        $inquiry_params[':s_od_id'] = '%'.$s_od_id.'%';
+    }
+    if ($s_fr !== '') {
+        $sql_common .= " and od_time >= :s_fr ";
+        $inquiry_params[':s_fr'] = $s_fr.' 00:00:00';
+    }
+    if ($s_to !== '') {
+        $sql_common .= " and od_time <= :s_to ";
+        $inquiry_params[':s_to'] = $s_to.' 23:59:59';
+    }
 }
 else if ($od_id && $od_pwd) // 비회원인 경우 주문서번호와 비밀번호가 넘어왔다면
 {
@@ -52,10 +66,15 @@ $total_count = $row['cnt'];
 // 조건에 맞는 주문서가 없다면
 if ($total_count == 0)
 {
-    if ($is_member) // 회원일 경우는 메인으로 이동
-        alert('주문이 존재하지 않습니다.', G5_SHOP_URL);
-    else // 비회원일 경우는 이전 페이지로 이동
+    if ($is_member) {
+        // 검색 조건 있으면 검색 결과 없음으로 페이지 그대로 보여줌 (검색 form + empty state)
+        if (!$has_search) {
+            alert('주문이 존재하지 않습니다.', G5_SHOP_URL);
+        }
+    } else {
+        // 비회원 → 이전 페이지로
         alert('주문이 존재하지 않습니다.');
+    }
 }
 
 $rows = $config['cf_page_rows'];
@@ -79,7 +98,7 @@ if (!$is_member)
     if ($row['od_id']) {
         $uid = function_exists('get_shop_uid') ? get_shop_uid('order', $row['od_id'], $row['od_time'], $row['od_ip']) : md5($row['od_id'].$row['od_time'].$row['od_ip']);
         set_session('ss_orderview_uid', $uid);
-        goto_url(G5_SHOP_URL.'/orderinquiryview.php?od_id='.$row['od_id'].'&amp;uid='.$uid);
+        goto_url(G5_SHOP_URL.'/orderinquiryview?od_id='.$row['od_id'].'&uid='.$uid);
     }
 }
 
@@ -94,7 +113,16 @@ include_once('./_head.php');
     include "./orderinquiry.sub.php";
     ?>
 
-    <?php echo get_paging($config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr&amp;page="); ?>
+    <?php
+    // 검색 파라미터를 페이지 링크에 보존
+    $_search_qs = http_build_query(array_filter([
+        's_od_id' => $s_od_id,
+        's_fr'    => $s_fr,
+        's_to'    => $s_to,
+    ], 'strlen'), '', '&amp;');
+    $_paging_qs = trim($qstr.($qstr && $_search_qs ? '&amp;' : '').$_search_qs, '&');
+    echo get_paging($config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$_paging_qs&amp;page=");
+    ?>
 </div>
 <!-- } 주문 내역 끝 -->
 

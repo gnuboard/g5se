@@ -859,7 +859,7 @@ if ($coupon_duplicate) {
     sql_query(" update {$g5['g5_shop_cart_table']} set od_id = '$tmp_cart_id', ct_status = '쇼핑' where od_id = '$od_id' ", false);
 
     if(function_exists('add_order_post_log')) add_order_post_log('쿠폰 이중사용 감지로 주문 취소');
-    alert('쿠폰이 이미 사용되었습니다. 다시 주문해 주십시오.', G5_SHOP_URL.'/orderform.php');
+    alert('쿠폰이 이미 사용되었습니다. 다시 주문해 주십시오.', G5_SHOP_URL.'/orderform');
 }
 
 

@@ -7,11 +7,6 @@ if (!$is_member)
 // 읽지 않은 쪽지수
 $memo_not_read = isset($member['mb_memo_cnt']) ? (int) $member['mb_memo_cnt'] : 0;
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/mypage.php');
-    return;
-}
-
 // 테마에 mypage.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
     $theme_mypage_file = G5_THEME_SHOP_PATH.'/mypage.php';
@@ -141,7 +136,7 @@ for($k=0; $cp=sql_fetch_array($res); $k++) {
         </div>
 
         <div class="smb_my_more">
-            <a href="./wishlist.php">더보기</a>
+            <a href="<?php echo G5_SHOP_URL; ?>/wishlist">더보기</a>
         </div>
     </section>
     <!-- } 최근 위시리스트 끝 -->
