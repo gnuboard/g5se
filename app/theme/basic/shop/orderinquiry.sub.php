@@ -1,0 +1,185 @@
+<?php
+if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
+if (!defined("_ORDERINQUIRY_")) exit;
+
+// gnu5se: 주문내역 목록 — modern card list (legacy tbl_head03 폐기)
+$_status_map = [
+    '주문' => ['label' => '입금확인중', 'tone' => 'pending'],
+    '입금' => ['label' => '입금완료',   'tone' => 'paid'],
+    '준비' => ['label' => '상품준비중', 'tone' => 'preparing'],
+    '배송' => ['label' => '상품배송',   'tone' => 'shipping'],
+    '완료' => ['label' => '배송완료',   'tone' => 'done'],
+];
+?>
+
+<style>
+.m-oq-list { display: flex; flex-direction: column; gap: 12px; margin: 0 0 20px; }
+.m-oq-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 16px;
+    padding: 16px 18px;
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    transition: border-color 0.15s, transform 0.15s;
+}
+.m-oq-card:hover { border-color: var(--m-primary); transform: translateY(-1px); }
+.m-oq-head {
+    display: flex; align-items: baseline; gap: 10px;
+    flex-wrap: wrap;
+}
+.m-oq-no {
+    font-size: var(--m-text-md);
+    font-weight: 700; color: var(--m-text);
+    text-decoration: none;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.01em;
+}
+.m-oq-no:hover { color: var(--m-primary); }
+.m-oq-time {
+    font-size: var(--m-text-sm);
+    color: var(--m-text-faint);
+}
+.m-oq-status {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: var(--m-text-xs); font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.m-oq-status.is-pending   { background: rgba(245,158,11,0.14); color: #d97706; }
+.m-oq-status.is-paid      { background: rgba(59,130,246,0.14); color: var(--m-primary); }
+.m-oq-status.is-preparing { background: rgba(139,92,246,0.14); color: #7c3aed; }
+.m-oq-status.is-shipping  { background: rgba(20,184,166,0.14); color: #0d9488; }
+.m-oq-status.is-done      { background: rgba(16,185,129,0.14); color: #059669; }
+.m-oq-status.is-cancel    { background: rgba(239,68,68,0.14);  color: #ef4444; }
+[data-theme="dark"] .m-oq-status.is-pending   { color: #fbbf24; }
+[data-theme="dark"] .m-oq-status.is-preparing { color: #a78bfa; }
+[data-theme="dark"] .m-oq-status.is-shipping  { color: #2dd4bf; }
+[data-theme="dark"] .m-oq-status.is-done      { color: #34d399; }
+
+.m-oq-meta {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 4px 18px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--m-border);
+    font-size: var(--m-text-sm);
+}
+.m-oq-meta dt {
+    color: var(--m-text-faint);
+    font-size: var(--m-text-xs);
+    margin: 0;
+}
+.m-oq-meta dd {
+    color: var(--m-text);
+    font-weight: 600;
+    font-feature-settings: "tnum";
+    margin: 0;
+}
+.m-oq-meta .is-misu { color: #ef4444; }
+
+.m-oq-empty {
+    padding: 60px 20px;
+    text-align: center;
+    background: var(--m-surface); border: 1px dashed var(--m-border);
+    border-radius: var(--m-radius);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.m-oq-empty svg { color: var(--m-text-faint); }
+.m-oq-empty p { margin: 0; color: var(--m-text-muted); font-size: var(--m-text-sm); }
+
+.m-oq-count {
+    margin: 0 0 12px;
+    color: var(--m-text-soft);
+    font-size: var(--m-text-sm);
+}
+.m-oq-count strong { color: var(--m-text); font-weight: 700; }
+
+@media (max-width: 600px) {
+    .m-oq-card { padding: 14px 16px; }
+    .m-oq-head { gap: 6px; }
+}
+</style>
+
+<?php
+$sql = " select *
+           from {$g5['g5_shop_order_table']}
+          where mb_id = '{$member['mb_id']}'
+          order by od_id desc
+          $limit ";
+$result = sql_query($sql);
+$_orders = [];
+while ($row = sql_fetch_array($result)) $_orders[] = $row;
+$_total_visible = count($_orders);
+?>
+
+<div class="m-oq-page-head">
+    <h1 class="m-oq-page-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        주문내역
+    </h1>
+    <?php if ($_total_visible > 0) { ?>
+    <span class="m-oq-page-count"><?php echo number_format($_total_visible); ?> 건</span>
+    <?php } ?>
+</div>
+<style>
+.m-oq-page-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-oq-page-title {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0;
+    font-size: 1.3em; font-weight: 700; color: var(--m-text);
+}
+.m-oq-page-title svg { color: var(--m-primary); }
+.m-oq-page-count {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px;
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+    border-radius: 999px;
+    font-size: var(--m-text-sm); font-weight: 600;
+}
+</style>
+
+<?php if ($_total_visible === 0) { ?>
+<div class="m-oq-empty">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+    <p>주문 내역이 없습니다.</p>
+</div>
+<?php } else { ?>
+<div class="m-oq-list">
+    <?php foreach ($_orders as $row) {
+        $uid = function_exists('get_shop_uid') ? get_shop_uid('order', $row['od_id'], $row['od_time'], $row['od_ip']) : md5($row['od_id'].$row['od_time'].$row['od_ip']);
+        $st = $_status_map[$row['od_status']] ?? ['label' => '주문취소', 'tone' => 'cancel'];
+        $od_total = (int)$row['od_cart_price'] + (int)$row['od_send_cost'] + (int)$row['od_send_cost2'];
+        $od_misu  = (int)$row['od_misu'];
+        $od_view_url = G5_SHOP_URL.'/orderinquiryview/'.$row['od_id'].'?uid='.$uid;
+    ?>
+    <article class="m-oq-card">
+        <div class="m-oq-head">
+            <a class="m-oq-no" href="<?php echo $od_view_url; ?>"><?php echo $row['od_id']; ?></a>
+            <span class="m-oq-time"><?php echo substr($row['od_time'], 2, 14); ?> (<?php echo get_yoil($row['od_time']); ?>)</span>
+        </div>
+        <span class="m-oq-status is-<?php echo $st['tone']; ?>"><?php echo $st['label']; ?></span>
+
+        <dl class="m-oq-meta">
+            <div><dt>상품수</dt><dd><?php echo number_format((int)$row['od_cart_count']); ?> 개</dd></div>
+            <div><dt>주문금액</dt><dd><?php echo display_price($od_total); ?></dd></div>
+            <div><dt>입금액</dt><dd><?php echo display_price((int)$row['od_receipt_price']); ?></dd></div>
+            <?php if ($od_misu > 0) { ?>
+            <div><dt>미입금액</dt><dd class="is-misu"><?php echo display_price($od_misu); ?></dd></div>
+            <?php } ?>
+        </dl>
+    </article>
+    <?php } ?>
+</div>
+<?php } ?>
