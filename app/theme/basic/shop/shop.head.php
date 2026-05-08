@@ -807,6 +807,55 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-top: 0 !important;
 }
 
+/* gnu5se: orderform 입력 박스 데스크탑 다듬기 — legacy default_shop.css 의 width:100% + height:45px 무력화 */
+.m-shell #sod_frm .tbl_frm01 .frm_input {
+    height: 40px !important;
+    padding: 8px 12px !important;
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border) !important;
+    color: var(--m-text) !important;
+    border-radius: var(--m-radius-sm) !important;
+    box-sizing: border-box;
+}
+.m-shell #sod_frm .tbl_frm01 .frm_input:focus {
+    outline: 2px solid var(--m-primary);
+    outline-offset: 1px;
+    border-color: var(--m-primary) !important;
+}
+/* 데스크탑: 일반 짧은 input (이름/전화/HP/이메일/비번) — 너무 넓지 않게 360px 캡 */
+.m-shell #sod_frm .tbl_frm01 td input[type="text"]:not(.frm_address):not(#od_zip):not(#od_b_zip),
+.m-shell #sod_frm .tbl_frm01 td input[type="password"],
+.m-shell #sod_frm .tbl_frm01 td input[type="email"],
+.m-shell #sod_frm .tbl_frm01 td input[type="tel"] {
+    width: 100% !important;
+    max-width: 360px !important;
+}
+/* 우편번호 — 좁게 + 검색 버튼과 한 줄 */
+.m-shell #sod_frm .tbl_frm01 td #od_zip,
+.m-shell #sod_frm .tbl_frm01 td #od_b_zip {
+    width: 140px !important;
+    max-width: 140px !important;
+    margin-right: 6px;
+}
+.m-shell #sod_frm .tbl_frm01 td .btn_address {
+    height: 40px !important;
+    line-height: 38px !important;
+    padding: 0 14px !important;
+    vertical-align: middle;
+}
+/* 주소 (기본/상세) — 풀 너비 (단 페이지 max-width 안에서만) */
+.m-shell #sod_frm .tbl_frm01 td .frm_address {
+    width: 100% !important;
+    max-width: 560px !important;
+}
+/* 참고항목 (#od_addr3, #od_b_addr3) — 사용자 요청: 히든 처리 */
+.m-shell #sod_frm .tbl_frm01 td #od_addr3,
+.m-shell #sod_frm .tbl_frm01 td #od_b_addr3,
+.m-shell #sod_frm .tbl_frm01 td label[for="od_addr3"],
+.m-shell #sod_frm .tbl_frm01 td label[for="od_b_addr3"] {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
     .m-shell #sod_fin {
         display: block;
