@@ -175,22 +175,7 @@ ob_start(function ($html) {
     // 10) shop 주문서: /shop/orderform.php → /shop/orderform
     $html = preg_replace('#/shop/orderform\.php(?![a-zA-Z0-9])#', '/shop/orderform', $html);
 
-    // 11a) shop 주문 상세 — /shop/orderinquiryview.php?od_id=X[&uid=Y...] → /shop/orderinquiryview/X[?uid=Y...]
-    //      (?![a-zA-Z0-9]) 로 다른 path 와 충돌 방지. od_id 14~20자리 숫자만 변환.
-    $html = preg_replace_callback(
-        '#/shop/orderinquiryview\.php\?(od_id=\d{14,20}(?:&(?:amp;)?[^"\'<>\s]*)?)#',
-        function ($m) {
-            // od_id 추출 + 잔여 query 보존
-            parse_str(html_entity_decode($m[1]), $qp);
-            $od_id = $qp['od_id'] ?? '';
-            unset($qp['od_id']);
-            $url = '/shop/orderinquiryview/'.$od_id;
-            if (!empty($qp)) $url .= '?'.http_build_query($qp, '', '&amp;');
-            return $url;
-        },
-        $html
-    );
-    // 11b) shop 주문조회 (orderinquiry, orderinquirycancel) — query 보존
+    // 11) shop 주문조회 (orderinquiry, orderinquiryview, orderinquirycancel) — query 보존
     $html = preg_replace('#/shop/(orderinquiry(?:view|cancel)?)\.php(?![a-zA-Z0-9])#', '/shop/$1', $html);
 
     // 12) shop 배송지목록: /shop/orderaddress.php → /shop/orderaddress
