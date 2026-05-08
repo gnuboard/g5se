@@ -371,11 +371,11 @@ else if ($od_settle_case == "가상계좌")
     switch($default['de_pg_service']) {
         case 'lg':
             include G5_SHOP_PATH.'/lg/xpay_result.php';
-            $od_receipt_time = '0000-00-00 00:00:00';
+            $od_receipt_time = null;
             break;
         case 'toss':
             include G5_SHOP_PATH.'/toss/toss_result.php';
-            $od_receipt_time = '0000-00-00 00:00:00';
+            $od_receipt_time = null;
             break;
         case 'inicis':
             include G5_SHOP_PATH.'/inicis/inistdpay_result.php';
@@ -518,7 +518,7 @@ if($od_settle_case == 'KAKAOPAY')
     $od_pg = 'KAKAOPAY';
 
 $tno = isset($tno) ? $tno : '';
-$od_receipt_time = isset($od_receipt_time) ? $od_receipt_time : '';
+$od_receipt_time = isset($od_receipt_time) ? $od_receipt_time : null;
 $od_app_no = isset($od_app_no) ? $od_app_no : '';
 
 // 주문금액과 결제금액이 일치하는지 체크

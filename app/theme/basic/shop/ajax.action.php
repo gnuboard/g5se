@@ -146,7 +146,7 @@ switch ($action) {
 
             // 장바구니에 Insert — bulk VALUES → per-iteration single INSERT
             $ct_select = 0;
-            $ct_select_time = '0000-00-00 00:00:00';
+            $ct_select_time = null;
 
             for($k=0; $k<$opt_count; $k++) {
                 $io_id = isset($_POST['io_id'][$it_id][$k]) ? preg_replace(G5_OPTION_ID_FILTER, '', $_POST['io_id'][$it_id][$k]) : '';

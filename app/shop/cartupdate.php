@@ -274,7 +274,7 @@ else // 장바구니에 담기
             $ct_select_time = G5_TIME_YMDHIS;
         } else {
             $ct_select = 0;
-            $ct_select_time = '0000-00-00 00:00:00';
+            $ct_select_time = null;
         }
 
         // 장바구니에 Insert — bulk VALUES 대신 per-iteration single INSERT (placeholder 충돌 방지)

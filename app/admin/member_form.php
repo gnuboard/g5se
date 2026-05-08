@@ -204,7 +204,7 @@ if (isset($g5['member_cert_history_table']) && !sql_query(" DESC {$g5['member_ce
                     `ch_hp` varchar(255) NOT NULL DEFAULT '',
                     `ch_birth` varchar(255) NOT NULL DEFAULT '',
                     `ch_type` varchar(20) NOT NULL DEFAULT '',
-                    `ch_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+                    `ch_datetime` datetime NULL DEFAULT NULL,
                     PRIMARY KEY (`ch_id`),
                     KEY `mb_id` (`mb_id`)
                 ) ",
@@ -506,7 +506,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                         <tr>
                             <th scope="row">인증일시</th>
                             <td colspan="3">
-                                <?php if ($mb['mb_email_certify'] == '0000-00-00 00:00:00') { ?>
+                                <?php if (empty($mb['mb_email_certify']) || $mb['mb_email_certify'] === '0000-00-00 00:00:00') { ?>
                                     <?php echo help('회원님이 메일을 수신할 수 없는 경우 등에 직접 인증처리를 하실 수 있습니다.') ?>
                                     <input type="checkbox" name="passive_certify" id="passive_certify">
                                     <label for="passive_certify">수동인증</label>
