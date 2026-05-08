@@ -918,10 +918,12 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     margin: 0 0 1rem;
 }
 /* local_sch03 — orderlist 의 다중 필터 (주문상태/결제수단/기타선택/주문일자):
-   각 그룹을 별도 줄로 배치 + 작은 폰트 */
+   각 그룹을 별도 줄로 배치 + 작은 폰트.
+   주의: .local_sch 가 align-items:center 라 column 방향에선 중앙정렬됨 → stretch 로 강제. */
 .legacy-admin-content .local_sch03 {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 0.4rem;
     margin: 0 0 1rem;
     font-size: 0.78rem;
