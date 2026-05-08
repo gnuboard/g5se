@@ -6,7 +6,7 @@ require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
 
-require_once G5_PATH.'/adm/admin.lib.php';
+require_once G5_ADMIN_PATH.'/admin.lib.php';
 
 $sub_menu = '300200';
 auth_check_menu($auth, $sub_menu, 'r');
