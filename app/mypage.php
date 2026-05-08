@@ -29,7 +29,7 @@ $_my_count['scrap'] = (int)($_r['c'] ?? 0);
 $_r = @sql_pdo_fetch("select count(*) c from {$g5['memo_table']} where me_recv_mb_id = :mb_id and me_type = 'recv'", [':mb_id' => $_my['mb_id']]);
 $_my_count['memo'] = (int)($_r['c'] ?? 0);
 
-$_r = @sql_pdo_fetch("select count(*) c from {$g5['memo_table']} where me_recv_mb_id = :mb_id and me_type = 'recv' and me_read_datetime = '0000-00-00 00:00:00'", [':mb_id' => $_my['mb_id']]);
+$_r = @sql_pdo_fetch("select count(*) c from {$g5['memo_table']} where me_recv_mb_id = :mb_id and me_type = 'recv' and (me_read_datetime IS NULL OR me_read_datetime = '0000-00-00 00:00:00')", [':mb_id' => $_my['mb_id']]);
 $_my_count['memo_unread'] = (int)($_r['c'] ?? 0);
 
 if (defined('G5_USE_SHOP') && G5_USE_SHOP) {

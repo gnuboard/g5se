@@ -15,7 +15,7 @@ if ($kind == 'recv')
                         me_read_datetime = :now
                     where (me_id = :me_id or me_send_id = :me_id)
                       and me_recv_mb_id = :mb_id
-                      and me_read_datetime = '0000-00-00 00:00:00' ",
+                      and (me_read_datetime IS NULL OR me_read_datetime = '0000-00-00 00:00:00') ",
                   [':now' => G5_TIME_YMDHIS, ':me_id' => $me_id, ':mb_id' => $member['mb_id']]);
 
     sql_pdo_query(" update `{$g5['member_table']}` set mb_memo_cnt = :cnt where mb_id = :mb_id ",
