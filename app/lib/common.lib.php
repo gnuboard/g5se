@@ -1884,7 +1884,9 @@ function sql_connect($host, $user, $pass, $db=G5_MYSQL_DB)
         ];
         $pdo = new PDO($dsn, $user, $pass, $opts);
     } catch (Exception $e) {
-        die('MySQL Host, User, Password, DB 정보에 오류가 있습니다.');
+        // gnu5se: die() 는 호출자(설치 ajax 등)가 try/catch 로 받을 수 없음 → throw 로 변경.
+        // 일반 페이지에선 호출자가 안 잡으면 PHP fatal 로 출력되어 동일 효과.
+        throw new RuntimeException('MySQL Host, User, Password, DB 정보에 오류가 있습니다.', 0, $e);
     }
     return $pdo;
 }
