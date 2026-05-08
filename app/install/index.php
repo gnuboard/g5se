@@ -15,13 +15,14 @@ if ($exists_data_dir && $write_data_dir) {
     // 필수 모듈 체크
     require_once('./library.check.php');
 
-    // LICENSE.txt — docroot 루트. install/ CWD 기준 ../ 는 app/ 라 잘못 잡힘. 절대경로 사용.
-    $_license_path = dirname(dirname(__DIR__)).'/LICENSE.txt';
+    // LICENSE — docroot 루트 (GitHub 표준 확장자 없는 파일명).
+    // install/ CWD 기준 ../ 는 app/ 라 잘못 잡힘 → 절대경로 사용.
+    $_license_path = dirname(dirname(__DIR__)).'/LICENSE';
     $_license_text = '';
     if (is_file($_license_path)) {
         $_license_text = file_get_contents($_license_path);
     } else {
-        $_license_text = "LICENSE.txt 파일을 찾을 수 없습니다.\n\n예상 경로: $_license_path\n\n설치를 계속하기 전 docroot 루트에 LICENSE.txt 가 있어야 합니다.";
+        $_license_text = "LICENSE 파일을 찾을 수 없습니다.\n\n예상 경로: $_license_path\n\n설치를 계속하기 전 docroot 루트에 LICENSE 파일이 있어야 합니다.";
     }
 ?>
 <form action="./install_config.php" method="post" onsubmit="return frm_submit(this);">
