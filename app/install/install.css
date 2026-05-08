@@ -91,8 +91,8 @@ a { color: var(--ins-primary); }
 
 /* 상단 바 — 그라디언트. 우측 토글 버튼 자리 확보 (~70px) */
 #ins_bar {
-    margin: 0 0 32px;
-    padding: 28px 96px 28px 40px;
+    margin: 0 0 18px;
+    padding: 18px 96px 18px 32px;
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
     color: #fff;
     display: flex;
@@ -122,21 +122,21 @@ a { color: var(--ins-primary); }
 
 /* 컨테이너 */
 h1 {
-    margin: 0 32px 24px;
-    font-size: 1.5em;
+    margin: 0 32px 16px;
+    font-size: 1.35em;
     font-weight: 700;
     color: var(--ins-text);
     letter-spacing: -0.01em;
 }
 .ins_inner {
-    margin: 0 32px 32px;
-    padding: 28px 32px;
+    margin: 0 32px 18px;
+    padding: 18px 24px;
     background: var(--ins-surface);
     border: 1px solid var(--ins-border);
     border-radius: var(--ins-radius);
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
-.ins_inner p { margin: 0 0 12px; color: var(--ins-text-soft); }
+.ins_inner p { margin: 0 0 8px; color: var(--ins-text-soft); font-size: 0.92em; }
 .ins_inner p strong, .ins_inner p .st_strong {
     color: var(--ins-danger);
     font-weight: 700;
@@ -159,13 +159,13 @@ h1 {
 
 /* 버튼 */
 .inner_btn {
-    margin: 24px 0 0;
+    margin: 16px 0 0;
     text-align: right;
     display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
 }
 .inner_btn a, .inner_btn input, .inner_btn button {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 11px 24px;
+    padding: 8px 18px;
     background: var(--ins-primary);
     color: #fff;
     border: 1px solid var(--ins-primary);
@@ -193,23 +193,25 @@ h1 {
 }
 
 .ins_frm {
-    margin: 0 0 28px;
+    margin: 0 0 18px;
     width: 100%;
     border: 0;
     border-collapse: collapse;
+    font-size: 0.92em;
 }
 .ins_frm caption {
-    padding: 0 0 12px;
+    padding: 0 0 8px;
     font-weight: 700;
     text-align: left;
     color: var(--ins-text);
-    font-size: 1.05em;
+    font-size: 1em;
 }
 .ins_frm th, .ins_frm td {
-    padding: 12px 8px;
+    padding: 7px 8px;
     border-top: 1px solid var(--ins-border);
     border-bottom: 1px solid var(--ins-border);
-    vertical-align: top;
+    vertical-align: middle;
+    line-height: 1.4;
 }
 .ins_frm th {
     width: 28%;
@@ -221,9 +223,10 @@ h1 {
 .ins_frm td { color: var(--ins-text); }
 .ins_frm td span {
     display: block;
-    margin: 6px 0 0;
-    font-size: 0.85em;
+    margin: 4px 0 0;
+    font-size: 0.82em;
     color: var(--ins-text-faint);
+    line-height: 1.3;
 }
 
 .ins_frm input[type="text"],
@@ -232,13 +235,13 @@ h1 {
 .ins_frm select,
 .ins_ta textarea {
     width: 100%;
-    padding: 9px 12px;
+    padding: 6px 10px;
     /* 카드 surface(흰색/다크) 와 다른 톤으로 input 영역 분리 — 가시성 ↑ */
     background: var(--ins-surface-2);
     border: 1.5px solid var(--ins-border);
     border-radius: var(--ins-radius-sm);
     color: var(--ins-text);
-    font-size: 0.95em;
+    font-size: 0.92em;
     box-sizing: border-box;
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
@@ -314,15 +317,15 @@ h1 {
 .ins_steps {
     display: flex;
     gap: 0;
-    margin: 0 32px 24px;
+    margin: 0 32px 16px;
 }
 .ins_step {
     flex: 1;
-    padding: 12px 16px;
+    padding: 8px 12px;
     background: var(--ins-surface);
     border: 1px solid var(--ins-border);
     color: var(--ins-text-faint);
-    font-size: 0.88em;
+    font-size: 0.82em;
     text-align: center;
 }
 .ins_step:not(:first-child) { border-left: 0; }
@@ -379,11 +382,11 @@ h1 {
 
 /* 푸터 */
 #ins_ft {
-    margin: 48px 32px 32px;
-    padding: 20px 24px;
+    margin: 24px 32px 16px;
+    padding: 14px 24px;
     border-top: 1px solid var(--ins-border);
     color: var(--ins-text-faint);
-    font-size: 0.85em;
+    font-size: 0.82em;
     text-align: center;
 }
 #ins_ft strong { color: var(--ins-text); font-weight: 700; }
