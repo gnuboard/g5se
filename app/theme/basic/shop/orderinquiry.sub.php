@@ -13,41 +13,40 @@ $_status_map = [
 ?>
 
 <style>
-.m-oq-list { display: flex; flex-direction: column; gap: 12px; margin: 0 0 20px; }
+.m-oq-list { display: flex; flex-direction: column; gap: 8px; margin: 0 0 20px; }
 .m-oq-card {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 4px 16px;
-    padding: 16px 18px;
+    grid-template-columns: 180px 1fr 130px 110px 90px;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 16px;
     background: var(--m-surface);
     border: 1px solid var(--m-border);
     border-radius: var(--m-radius);
-    transition: border-color 0.15s, transform 0.15s;
+    transition: border-color 0.15s;
+    font-size: var(--m-text-sm);
 }
-.m-oq-card:hover { border-color: var(--m-primary); transform: translateY(-1px); }
-.m-oq-head {
-    display: flex; align-items: baseline; gap: 10px;
-    flex-wrap: wrap;
-}
+.m-oq-card:hover { border-color: var(--m-primary); }
+.m-oq-head { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .m-oq-no {
-    font-size: var(--m-text-md);
     font-weight: 700; color: var(--m-text);
     text-decoration: none;
     font-feature-settings: "tnum";
     letter-spacing: -0.01em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .m-oq-no:hover { color: var(--m-primary); }
 .m-oq-time {
-    font-size: var(--m-text-sm);
+    font-size: var(--m-text-xs);
     color: var(--m-text-faint);
 }
 .m-oq-status {
-    display: inline-flex; align-items: center;
+    display: inline-flex; align-items: center; justify-content: center;
     padding: 4px 10px;
     border-radius: 999px;
     font-size: var(--m-text-xs); font-weight: 700;
     line-height: 1;
-    flex-shrink: 0;
+    justify-self: end;
 }
 .m-oq-status.is-pending   { background: rgba(245,158,11,0.14); color: #d97706; }
 .m-oq-status.is-paid      { background: rgba(59,130,246,0.14); color: var(--m-primary); }
@@ -61,16 +60,13 @@ $_status_map = [
 [data-theme="dark"] .m-oq-status.is-done      { color: #34d399; }
 
 .m-oq-product {
-    grid-column: 1 / -1;
-    display: flex; align-items: baseline; gap: 8px;
-    margin-top: 8px;
+    display: flex; align-items: center; gap: 6px;
     color: var(--m-text);
     text-decoration: none;
     min-width: 0;
 }
 .m-oq-product:hover .m-oq-product-name { color: var(--m-primary); }
 .m-oq-product-name {
-    font-size: var(--m-text-md);
     font-weight: 600;
     color: var(--m-text);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -83,33 +79,68 @@ $_status_map = [
     color: var(--m-text-soft);
     background: var(--m-surface-2);
     border: 1px solid var(--m-border);
-    padding: 2px 8px;
+    padding: 1px 7px;
     border-radius: 999px;
     font-weight: 600;
+    line-height: 1.4;
+}
+.m-oq-product-empty { color: var(--m-text-faint); font-size: var(--m-text-sm); }
+
+.m-oq-amount, .m-oq-misu {
+    text-align: right;
+    font-weight: 700;
+    color: var(--m-text);
+    font-feature-settings: "tnum";
+    white-space: nowrap;
+}
+.m-oq-misu { color: #ef4444; font-weight: 600; }
+.m-oq-misu.is-zero { color: var(--m-text-faint); font-weight: 500; }
+.m-oq-misu .label,
+.m-oq-amount .label {
+    display: none; /* 데스크탑: 라벨 숨김 (헤더 행에서 표시) */
 }
 
-.m-oq-meta {
-    grid-column: 1 / -1;
+/* 헤더 행 (테이블 헤더 역할) */
+.m-oq-thead {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 4px 18px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--m-border);
-    font-size: var(--m-text-sm);
-}
-.m-oq-meta dt {
-    color: var(--m-text-faint);
+    grid-template-columns: 180px 1fr 130px 110px 90px;
+    gap: 14px;
+    padding: 0 16px 8px;
     font-size: var(--m-text-xs);
-    margin: 0;
-}
-.m-oq-meta dd {
-    color: var(--m-text);
+    color: var(--m-text-faint);
     font-weight: 600;
-    font-feature-settings: "tnum";
-    margin: 0;
+    text-transform: none;
+    border-bottom: 1px solid var(--m-border);
+    margin-bottom: 8px;
 }
-.m-oq-meta .is-misu { color: #ef4444; }
+.m-oq-thead > span:nth-child(3),
+.m-oq-thead > span:nth-child(4) { text-align: right; }
+.m-oq-thead > span:nth-child(5) { text-align: center; }
+
+@media (max-width: 768px) {
+    /* 모바일: 헤더 숨기고 카드 stacked layout */
+    .m-oq-thead { display: none; }
+    .m-oq-card {
+        grid-template-columns: 1fr auto;
+        gap: 4px 12px;
+        padding: 12px 14px;
+    }
+    .m-oq-head { grid-column: 1; grid-row: 1; }
+    .m-oq-status { grid-column: 2; grid-row: 1; }
+    .m-oq-product { grid-column: 1 / -1; grid-row: 2; margin-top: 4px; }
+    .m-oq-amount, .m-oq-misu {
+        grid-column: 1 / -1; grid-row: auto;
+        text-align: left; font-weight: 600;
+        font-size: var(--m-text-xs);
+        color: var(--m-text-soft);
+        display: flex; gap: 6px;
+    }
+    .m-oq-amount .label, .m-oq-misu .label {
+        display: inline; color: var(--m-text-faint); font-weight: 500;
+    }
+    .m-oq-amount strong { color: var(--m-text); font-weight: 700; font-size: var(--m-text-sm); }
+    .m-oq-misu strong { color: #ef4444; font-weight: 700; font-size: var(--m-text-sm); }
+}
 
 .m-oq-empty {
     padding: 60px 20px;
@@ -211,6 +242,13 @@ if ($_total_visible > 0) {
     <p>주문 내역이 없습니다.</p>
 </div>
 <?php } else { ?>
+<div class="m-oq-thead" aria-hidden="true">
+    <span>주문서번호 / 일시</span>
+    <span>상품</span>
+    <span>주문금액</span>
+    <span>미입금</span>
+    <span>상태</span>
+</div>
 <div class="m-oq-list">
     <?php foreach ($_orders as $row) {
         $uid = function_exists('get_shop_uid') ? get_shop_uid('order', $row['od_id'], $row['od_time'], $row['od_ip']) : md5($row['od_id'].$row['od_time'].$row['od_ip']);
@@ -218,8 +256,7 @@ if ($_total_visible > 0) {
         $od_total = (int)$row['od_cart_price'] + (int)$row['od_send_cost'] + (int)$row['od_send_cost2'];
         $od_misu  = (int)$row['od_misu'];
         $od_view_url = G5_SHOP_URL.'/orderinquiryview?od_id='.$row['od_id'].'&amp;uid='.$uid;
-    ?>
-    <?php
+
         $_oi = $_order_items[$row['od_id']] ?? [];
         $_first_name = isset($_oi['name']) ? get_text($_oi['name']) : '';
         $_item_more  = max(0, (int)($_oi['count'] ?? 0) - 1);
@@ -229,7 +266,6 @@ if ($_total_visible > 0) {
             <a class="m-oq-no" href="<?php echo $od_view_url; ?>"><?php echo $row['od_id']; ?></a>
             <span class="m-oq-time"><?php echo substr($row['od_time'], 2, 14); ?> (<?php echo get_yoil($row['od_time']); ?>)</span>
         </div>
-        <span class="m-oq-status is-<?php echo $st['tone']; ?>"><?php echo $st['label']; ?></span>
 
         <?php if ($_first_name) { ?>
         <a class="m-oq-product" href="<?php echo $od_view_url; ?>">
@@ -238,16 +274,14 @@ if ($_total_visible > 0) {
             <span class="m-oq-product-more">외 <?php echo $_item_more; ?> 건</span>
             <?php } ?>
         </a>
+        <?php } else { ?>
+        <span class="m-oq-product-empty">—</span>
         <?php } ?>
 
-        <dl class="m-oq-meta">
-            <div><dt>상품수</dt><dd><?php echo number_format((int)$row['od_cart_count']); ?> 개</dd></div>
-            <div><dt>주문금액</dt><dd><?php echo display_price($od_total); ?></dd></div>
-            <div><dt>입금액</dt><dd><?php echo display_price((int)$row['od_receipt_price']); ?></dd></div>
-            <?php if ($od_misu > 0) { ?>
-            <div><dt>미입금액</dt><dd class="is-misu"><?php echo display_price($od_misu); ?></dd></div>
-            <?php } ?>
-        </dl>
+        <span class="m-oq-amount"><span class="label">주문금액 </span><strong><?php echo display_price($od_total); ?></strong></span>
+        <span class="m-oq-misu<?php echo $od_misu > 0 ? '' : ' is-zero'; ?>"><span class="label">미입금 </span><strong><?php echo display_price($od_misu); ?></strong></span>
+
+        <span class="m-oq-status is-<?php echo $st['tone']; ?>"><?php echo $st['label']; ?></span>
     </article>
     <?php } ?>
 </div>
