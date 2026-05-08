@@ -619,7 +619,7 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 /* 상점메모 — 주문 상세에서 충분히 크게 (rows=8 의 기본 ~10rem 보다 ↑) */
 .legacy-admin-content textarea#od_shop_memo {
     width: 100%;
-    min-height: 9rem;
+    min-height: 6.5rem;
     resize: vertical;
     line-height: 1.5;
 }
