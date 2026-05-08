@@ -885,6 +885,13 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     width: 100% !important;
     max-width: 560px !important;
 }
+/* 전하실말씀 — 길게 한 줄 입력. legacy textarea 규칙 (min-height:100px) 무력화 */
+.m-shell #sod_frm .tbl_frm01 td #od_memo {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: 40px !important;
+}
 @media (max-width: 768px) {
     .m-shell #sod_fin {
         display: block;
