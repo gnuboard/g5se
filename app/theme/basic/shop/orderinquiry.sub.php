@@ -166,12 +166,15 @@ $_status_map = [
 </style>
 
 <?php
-$sql = " select *
-           from {$g5['g5_shop_order_table']}
-          where mb_id = '{$member['mb_id']}'
-          order by od_id desc
-          $limit ";
-$result = sql_query($sql);
+// $limit 은 "$from_record, $rows" 형태로 호출자에서 (int) cast 후 보간된 string — PDO 바인딩 불가 (LIMIT 은 prepared 못 받음)
+$result = sql_pdo_query(
+    " select *
+        from {$g5['g5_shop_order_table']}
+       where mb_id = :mb_id
+       order by od_id desc
+       $limit ",
+    [':mb_id' => $member['mb_id']]
+);
 $_orders = [];
 while ($row = sql_fetch_array($result)) $_orders[] = $row;
 $_total_visible = count($_orders);
