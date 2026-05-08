@@ -807,6 +807,43 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-top: 0 !important;
 }
 
+/* gnu5se: orderform 섹션 — 무거운 카드 박스 제거, 단순한 heading + 인라인 폼 */
+.m-shell #sod_frm_orderer,
+.m-shell #sod_frm_taker,
+.m-shell #sod_frm_pay,
+.m-shell #sod_frm_dvr {
+    margin: 0 0 24px !important;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+.m-shell #sod_frm section > h2,
+.m-shell #sod_frm_orderer > h2,
+.m-shell #sod_frm_taker > h2,
+.m-shell #sod_frm_pay > h2,
+.m-shell #sod_frm_dvr > h2 {
+    border: 0 !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    background: transparent !important;
+    padding: 0 0 8px !important;
+    margin: 0 0 14px !important;
+    font-size: 1.05em !important;
+    font-weight: 700 !important;
+    color: var(--m-text) !important;
+    line-height: 1.4 !important;
+}
+.m-shell #sod_frm .tbl_frm01 {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.m-shell #sod_frm .tbl_frm01 th {
+    background: transparent !important;
+    color: var(--m-text-soft) !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+}
+
 /* gnu5se: orderform 입력 박스 데스크탑 다듬기 — legacy default_shop.css 의 width:100% + height:45px 무력화 */
 .m-shell #sod_frm .tbl_frm01 .frm_input {
     height: 40px !important;
