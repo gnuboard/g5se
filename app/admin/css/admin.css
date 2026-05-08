@@ -815,6 +815,32 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 .legacy-admin-content .tbl_head01 tbody tr:hover {
     background-color: var(--slate-50);
 }
+/* 매출현황 등 숫자 cell — text-align right + tabular-nums (cell 폭 균일) */
+.legacy-admin-content .tbl_head01 .td_numsum,
+.legacy-admin-content .tbl_head01 .td_numincome,
+.legacy-admin-content .tbl_head01 .td_numcancel1,
+.legacy-admin-content .tbl_head01 .td_numrdy,
+.legacy-admin-content .tbl_head01 .td_numbig,
+.legacy-admin-content .tbl_head01 .td_num_right {
+    text-align: right;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.legacy-admin-content .tbl_head01 .td_alignc { text-align: center; }
+/* tfoot 합계 — body 와 동일 정렬 + 강조 */
+.legacy-admin-content .tbl_head01 tfoot td {
+    background-color: var(--slate-50);
+    font-weight: 700;
+    border-top: 2px solid var(--slate-300);
+    padding: 0.65rem 0.75rem;
+    color: var(--slate-900);
+}
+[data-theme="dark"] .legacy-admin-content .tbl_head01 tfoot td {
+    background-color: var(--slate-800);
+    border-top-color: var(--slate-600);
+    color: var(--slate-100);
+}
 [data-theme="dark"] .legacy-admin-content .tbl_head01 tbody tr:hover {
     background-color: #1a2533;
 }
