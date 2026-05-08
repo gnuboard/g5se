@@ -15,21 +15,24 @@ if ($exists_data_dir && $write_data_dir) {
     // 필수 모듈 체크
     require_once('./library.check.php');
 
+    // LICENSE.txt — docroot 루트. install/ CWD 기준 ../ 는 app/ 라 잘못 잡힘. 절대경로 사용.
+    $_license_path = dirname(dirname(__DIR__)).'/LICENSE.txt';
     $_license_text = '';
-    if (is_file('../LICENSE.txt')) {
-        $_license_text = file_get_contents('../LICENSE.txt');
+    if (is_file($_license_path)) {
+        $_license_text = file_get_contents($_license_path);
     } else {
-        $_license_text = "LICENSE.txt 파일을 찾을 수 없습니다. 설치를 계속하기 전 루트에 LICENSE.txt 가 있어야 합니다.";
+        $_license_text = "LICENSE.txt 파일을 찾을 수 없습니다.\n\n예상 경로: $_license_path\n\n설치를 계속하기 전 docroot 루트에 LICENSE.txt 가 있어야 합니다.";
     }
 ?>
 <form action="./install_config.php" method="post" onsubmit="return frm_submit(this);">
 
 <div class="ins_inner">
-    <p>
-        <strong class="st_strong">라이센스 내용을 확인하시고 동의 후 설치를 진행하세요.</strong>
+    <p style="font-size: 1.1em;">
+        그누보드5SE 는 <strong style="color: var(--ins-primary);">MIT License</strong> 로 배포됩니다.
     </p>
     <p>
-        그누보드5SE 는 <strong>MIT License</strong> 로 배포되며, gnuboard5 (GPL v2) 를 기반으로 합니다.
+        gnuboard5 (GPL v2) 를 기반으로 한 second edition 으로, 본 second edition 자체는 MIT 로 자유롭게 사용·수정·배포 가능합니다.
+        아래 라이센스 본문을 확인하시고 동의 후 설치를 진행하세요.
     </p>
 
     <div class="ins_ta ins_license">
