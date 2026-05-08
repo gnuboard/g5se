@@ -25,7 +25,7 @@ if ($exists_data_dir && $write_data_dir) {
         $_license_text = "LICENSE 파일을 찾을 수 없습니다.\n\n예상 경로: $_license_path\n\n설치를 계속하기 전 docroot 루트에 LICENSE 파일이 있어야 합니다.";
     }
 ?>
-<form action="./install_config.php" method="post" onsubmit="return frm_submit(this);">
+<form action="./install_config" method="post" onsubmit="return frm_submit(this);">
 
 <div class="ins_inner">
     <p style="font-size: 1.1em;">
