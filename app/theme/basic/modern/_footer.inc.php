@@ -73,6 +73,7 @@ $_ft_company = [
                 <?php if ($_ft_company['owner'])   { ?><li><span>대표</span><b><?php echo get_text($_ft_company['owner'])   ?></b></li><?php } ?>
                 <?php if ($_ft_company['saupja'])  { ?><li><span>사업자번호</span><b><?php echo get_text($_ft_company['saupja'])  ?></b></li><?php } ?>
                 <?php if ($_ft_company['tongsin']) { ?><li><span>통신판매</span><b><?php echo get_text($_ft_company['tongsin']) ?></b></li><?php } ?>
+                <?php if ($_ft_company['info'] || $_ft_company['email']) { ?><li class="m-footer-info-break" aria-hidden="true"></li><?php } ?>
                 <?php if ($_ft_company['info'])    { ?><li><span>책임자</span><b><?php echo get_text($_ft_company['info'])    ?></b></li><?php } ?>
                 <?php if ($_ft_company['email'])   { ?><li><span>이메일</span><b><a href="mailto:<?php echo $_ft_company['email'] ?>"><?php echo $_ft_company['email'] ?></a></b></li><?php } ?>
                 <?php if ($_ft_company['tel'] || $_ft_company['fax']) { ?><li class="m-footer-info-break" aria-hidden="true"></li><?php } ?>
