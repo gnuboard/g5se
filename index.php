@@ -190,6 +190,20 @@ ob_start(function ($html) {
     // 15) admin: /admin/.../*.php → /admin/.../* (clean URL 정규화, hard-coded .php 링크 자동 정리)
     $html = preg_replace('#(/admin(?:/[a-zA-Z][a-zA-Z0-9_-]*)+)\.php(?![a-zA-Z0-9])#', '$1', $html);
 
+    // 16) shop 이벤트: /shop/event.php?ev_id=N[&...] → /shop/event/N[?...] (잔여 query 보존)
+    $html = preg_replace_callback(
+        '#/shop/event\.php\?(ev_id=\d+(?:&(?:amp;)?[^"\'<>\s]*)?)#',
+        function ($m) {
+            parse_str(html_entity_decode($m[1]), $qp);
+            $ev_id = $qp['ev_id'] ?? '';
+            unset($qp['ev_id']);
+            $url = '/shop/event/'.$ev_id;
+            if (!empty($qp)) $url .= '?'.http_build_query($qp, '', '&amp;');
+            return $url;
+        },
+        $html
+    );
+
     return $html;
 });
 
