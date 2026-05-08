@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `g5_auth` (
   `au_menu` varchar(50) NOT NULL default '',
   `au_auth` set('r','w','d') NOT NULL default '',
   PRIMARY KEY  (`mb_id`,`au_menu`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `g5_board` (
   `bo_9` varchar(255) NOT NULL DEFAULT '',
   `bo_10` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`bo_table`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -141,9 +141,9 @@ CREATE TABLE IF NOT EXISTS `g5_board_file` (
   `bf_width` int(11) NOT NULL default '0',
   `bf_height` smallint(6) NOT NULL default '0',
   `bf_type` tinyint(4) NOT NULL default '0',
-  `bf_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `bf_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY  (`bo_table`,`wr_id`,`bf_no`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -158,10 +158,10 @@ CREATE TABLE IF NOT EXISTS `g5_board_good` (
   `wr_id` int(11) NOT NULL default '0',
   `mb_id` varchar(20) NOT NULL default '',
   `bg_flag` varchar(255) NOT NULL default '',
-  `bg_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `bg_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY  (`bg_id`),
   UNIQUE KEY `fkey1` (`bo_table`,`wr_id`,`mb_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -175,11 +175,11 @@ CREATE TABLE IF NOT EXISTS `g5_board_new` (
   `bo_table` varchar(20) NOT NULL default '',
   `wr_id` int(11) NOT NULL default '0',
   `wr_parent` int(11) NOT NULL default '0',
-  `bn_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `bn_datetime` datetime NULL DEFAULT NULL,
   `mb_id` varchar(20) NOT NULL default '',
   PRIMARY KEY  (`bn_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS `g5_config` (
   `cf_memo_del` int(11) NOT NULL DEFAULT '0',
   `cf_visit_del` int(11) NOT NULL DEFAULT '0',
   `cf_popular_del` int(11) NOT NULL DEFAULT '0',
-  `cf_optimize_date` date NOT NULL default '0000-00-00',
+  `cf_optimize_date` date NULL DEFAULT NULL,
   `cf_use_member_icon` tinyint(4) NOT NULL DEFAULT '0',
   `cf_member_icon_size` int(11) NOT NULL DEFAULT '0',
   `cf_member_icon_width` int(11) NOT NULL DEFAULT '0',
@@ -350,7 +350,7 @@ CREATE TABLE IF NOT EXISTS `g5_config` (
   `cf_9` varchar(255) NOT NULL DEFAULT '',
   `cf_10` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY  (`cf_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -365,11 +365,11 @@ CREATE TABLE IF NOT EXISTS `g5_cert_history` (
   `cr_company` varchar(255) NOT NULL DEFAULT '',
   `cr_method` varchar(255) NOT NULL DEFAULT '',
   `cr_ip` varchar(255) NOT NULL DEFAULT '',
-  `cr_date` date NOT NULL DEFAULT '0000-00-00',
+  `cr_date` date NULL DEFAULT NULL,
   `cr_time` time NOT NULL DEFAULT '00:00:00',
   PRIMARY KEY (`cr_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -385,10 +385,10 @@ CREATE TABLE IF NOT EXISTS `g5_member_cert_history` (
   `ch_hp` varchar(255) NOT NULL DEFAULT '',
   `ch_birth` varchar(255) NOT NULL DEFAULT '',
   `ch_type` varchar(20) NOT NULL DEFAULT '',
-  `ch_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `ch_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`ch_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -425,7 +425,7 @@ CREATE TABLE IF NOT EXISTS `g5_group` (
   `gr_9` varchar(255) NOT NULL default '',
   `gr_10` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`gr_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -438,11 +438,11 @@ CREATE TABLE IF NOT EXISTS `g5_group_member` (
   `gm_id` int(11) NOT NULL auto_increment,
   `gr_id` varchar(255) NOT NULL default '',
   `mb_id` varchar(20) NOT NULL default '',
-  `gm_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `gm_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY  (`gm_id`),
   KEY `gr_id` (`gr_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -455,12 +455,12 @@ CREATE TABLE IF NOT EXISTS `g5_login` (
   `lo_id` int(11) NOT NULL AUTO_INCREMENT,
   `lo_ip` varchar(100) NOT NULL default '',
   `mb_id` varchar(20) NOT NULL default '',
-  `lo_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `lo_datetime` datetime NULL DEFAULT NULL,
   `lo_location` text NOT NULL,
   `lo_url` text NOT NULL,
   PRIMARY KEY (`lo_id`),
   UNIQUE KEY `lo_ip_unique` (`lo_ip`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -473,11 +473,11 @@ CREATE TABLE IF NOT EXISTS `g5_mail` (
   `ma_id` int(11) NOT NULL auto_increment,
   `ma_subject` varchar(255) NOT NULL default '',
   `ma_content` mediumtext NOT NULL,
-  `ma_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `ma_time` datetime NULL DEFAULT NULL,
   `ma_ip` varchar(255) NOT NULL default '',
   `ma_last_option` text NOT NULL,
   PRIMARY KEY  (`ma_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -492,7 +492,7 @@ CREATE TABLE IF NOT EXISTS `g5_member` (
   `mb_password` varchar(255) NOT NULL default '',
   `mb_name` varchar(255) NOT NULL default '',
   `mb_nick` varchar(255) NOT NULL default '',
-  `mb_nick_date` date NOT NULL default '0000-00-00',
+  `mb_nick_date` date NULL DEFAULT NULL,
   `mb_email` varchar(255) NOT NULL default '',
   `mb_homepage` varchar(255) NOT NULL default '',
   `mb_level` tinyint(4) NOT NULL default '0',
@@ -512,30 +512,30 @@ CREATE TABLE IF NOT EXISTS `g5_member` (
   `mb_signature` text NOT NULL,
   `mb_recommend` varchar(255) NOT NULL default '',
   `mb_point` int(11) NOT NULL default '0',
-  `mb_today_login` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_today_login` datetime NULL DEFAULT NULL,
   `mb_login_ip` varchar(255) NOT NULL default '',
-  `mb_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_datetime` datetime NULL DEFAULT NULL,
   `mb_ip` varchar(255) NOT NULL default '',
   `mb_leave_date` varchar(8) NOT NULL default '',
   `mb_intercept_date` varchar(8) NOT NULL default '',
-  `mb_email_certify` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_email_certify` datetime NULL DEFAULT NULL,
   `mb_email_certify2` varchar(255) NOT NULL default '',
   `mb_memo` text NOT NULL,
   `mb_lost_certify` varchar(255) NOT NULL,
   `mb_mailling` tinyint(4) NOT NULL default '0',
-  `mb_mailling_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_mailling_date` datetime NULL DEFAULT NULL,
   `mb_sms` tinyint(4) NOT NULL default '0',
-  `mb_sms_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_sms_date` datetime NULL DEFAULT NULL,
   `mb_open` tinyint(4) NOT NULL default '0',
-  `mb_open_date` date NOT NULL default '0000-00-00',
+  `mb_open_date` date NULL DEFAULT NULL,
   `mb_profile` text NOT NULL,
   `mb_memo_call` varchar(255) NOT NULL default '',
   `mb_memo_cnt` int(11) NOT NULL DEFAULT '0',
   `mb_scrap_cnt` int(11) NOT NULL default '0',
   `mb_marketing_agree` tinyint(1) NOT NULL default '0',
-  `mb_marketing_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_marketing_date` datetime NULL DEFAULT NULL,
   `mb_thirdparty_agree` tinyint(1) NOT NULL default '0',
-  `mb_thirdparty_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `mb_thirdparty_date` datetime NULL DEFAULT NULL,
   `mb_agree_log` TEXT NOT NULL,
   `mb_1` varchar(255) NOT NULL default '',
   `mb_2` varchar(255) NOT NULL default '',
@@ -551,7 +551,7 @@ CREATE TABLE IF NOT EXISTS `g5_member` (
   UNIQUE KEY `mb_id` (`mb_id`),
   KEY `mb_today_login` (`mb_today_login`),
   KEY `mb_datetime` (`mb_datetime`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- --------------------------------------------------------
 
 --
@@ -573,7 +573,7 @@ CREATE TABLE IF NOT EXISTS `g5_member_auto_login` (
   UNIQUE KEY `al_token` (`al_token`),
   KEY `mb_id` (`mb_id`),
   KEY `al_expire` (`al_expire`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- --------------------------------------------------------
 
 --
@@ -585,15 +585,15 @@ CREATE TABLE IF NOT EXISTS `g5_memo` (
   `me_id` INT(11) NOT NULL AUTO_INCREMENT,
   `me_recv_mb_id` varchar(20) NOT NULL default '',
   `me_send_mb_id` varchar(20) NOT NULL default '',
-  `me_send_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
-  `me_read_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `me_send_datetime` datetime NULL DEFAULT NULL,
+  `me_read_datetime` datetime NULL DEFAULT NULL,
   `me_memo` text NOT NULL,
   `me_send_id` INT(11) NOT NULL DEFAULT '0',
   `me_type` ENUM('send','recv') NOT NULL DEFAULT 'recv',
   `me_send_ip` VARCHAR(100) NOT NULL DEFAULT '',
   PRIMARY KEY  (`me_id`),
   KEY `me_recv_mb_id` (`me_recv_mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -605,12 +605,12 @@ DROP TABLE IF EXISTS `g5_point`;
 CREATE TABLE IF NOT EXISTS `g5_point` (
   `po_id` int(11) NOT NULL auto_increment,
   `mb_id` varchar(20) NOT NULL default '',
-  `po_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `po_datetime` datetime NULL DEFAULT NULL,
   `po_content` varchar(255) NOT NULL default '',
   `po_point` int(11) NOT NULL default '0',
   `po_use_point` int(11) NOT NULL default '0',
   `po_expired` tinyint(4) NOT NULL default '0',
-  `po_expire_date` date NOT NULL default '0000-00-00',
+  `po_expire_date` date NULL DEFAULT NULL,
   `po_mb_point` int(11) NOT NULL default '0',
   `po_rel_table` varchar(20) NOT NULL default '',
   `po_rel_id` varchar(20) NOT NULL default '',
@@ -618,7 +618,7 @@ CREATE TABLE IF NOT EXISTS `g5_point` (
   PRIMARY KEY  (`po_id`),
   KEY `index1` (`mb_id`,`po_rel_table`,`po_rel_id`,`po_rel_action`),
   KEY `index2` (`po_expire_date`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -651,12 +651,12 @@ CREATE TABLE IF NOT EXISTS `g5_poll` (
   `po_etc` varchar(255) NOT NULL default '',
   `po_level` tinyint(4) NOT NULL default '0',
   `po_point` int(11) NOT NULL default '0',
-  `po_date` date NOT NULL default '0000-00-00',
+  `po_date` date NULL DEFAULT NULL,
   `po_ips` mediumtext NOT NULL,
   `mb_ids` text NOT NULL,
   `po_use` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`po_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -671,9 +671,9 @@ CREATE TABLE IF NOT EXISTS `g5_poll_etc` (
   `mb_id` varchar(20) NOT NULL default '',
   `pc_name` varchar(255) NOT NULL default '',
   `pc_idea` varchar(255) NOT NULL default '',
-  `pc_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `pc_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY  (`pc_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -685,11 +685,11 @@ DROP TABLE IF EXISTS `g5_popular`;
 CREATE TABLE IF NOT EXISTS `g5_popular` (
   `pp_id` int(11) NOT NULL auto_increment,
   `pp_word` varchar(50) NOT NULL default '',
-  `pp_date` date NOT NULL default '0000-00-00',
+  `pp_date` date NULL DEFAULT NULL,
   `pp_ip` varchar(50) NOT NULL default '',
   PRIMARY KEY  (`pp_id`),
   UNIQUE KEY `index1` (`pp_date`,`pp_word`,`pp_ip`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -703,10 +703,10 @@ CREATE TABLE IF NOT EXISTS `g5_scrap` (
   `mb_id` varchar(20) NOT NULL default '',
   `bo_table` varchar(20) NOT NULL default '',
   `wr_id` varchar(15) NOT NULL default '',
-  `ms_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `ms_datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY  (`ms_id`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -718,7 +718,7 @@ DROP TABLE IF EXISTS `g5_visit`;
 CREATE TABLE IF NOT EXISTS `g5_visit` (
   `vi_id` int(11) NOT NULL AUTO_INCREMENT,
   `vi_ip` varchar(100) NOT NULL default '',
-  `vi_date` date NOT NULL default '0000-00-00',
+  `vi_date` date NULL DEFAULT NULL,
   `vi_time` time NOT NULL default '00:00:00',
   `vi_referer` text NOT NULL,
   `vi_agent` varchar(200) NOT NULL default '',
@@ -728,7 +728,7 @@ CREATE TABLE IF NOT EXISTS `g5_visit` (
   PRIMARY KEY  (`vi_id`),
   UNIQUE KEY `index1` (`vi_ip`,`vi_date`),
   KEY `index2` (`vi_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -738,11 +738,11 @@ CREATE TABLE IF NOT EXISTS `g5_visit` (
 
 DROP TABLE IF EXISTS `g5_visit_sum`;
 CREATE TABLE IF NOT EXISTS `g5_visit_sum` (
-  `vs_date` date NOT NULL default '0000-00-00',
+  `vs_date` date NOT NULL,
   `vs_count` int(11) NOT NULL default '0',
   PRIMARY KEY  (`vs_date`),
   KEY `index1` (`vs_count`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -755,7 +755,7 @@ CREATE TABLE IF NOT EXISTS `g5_uniqid` (
   `uq_id` bigint(20) unsigned NOT NULL,
   `uq_ip` varchar(255) NOT NULL,
   PRIMARY KEY (`uq_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -774,7 +774,7 @@ CREATE TABLE IF NOT EXISTS `g5_autosave` (
   PRIMARY KEY (`as_id`),
   UNIQUE KEY `as_uid` (`as_uid`),
   KEY `mb_id` (`mb_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -822,7 +822,7 @@ CREATE TABLE IF NOT EXISTS `g5_qa_config` (
   `qa_4` varchar(255) NOT NULL DEFAULT '',
   `qa_5` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`qa_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -853,7 +853,7 @@ CREATE TABLE IF NOT EXISTS `g5_qa_content` (
   `qa_file2` varchar(255) NOT NULL DEFAULT '',
   `qa_source2` varchar(255) NOT NULL DEFAULT '',
   `qa_ip` varchar(255) NOT NULL DEFAULT '',
-  `qa_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `qa_datetime` datetime NULL DEFAULT NULL,
   `qa_1` varchar(255) NOT NULL DEFAULT '',
   `qa_2` varchar(255) NOT NULL DEFAULT '',
   `qa_3` varchar(255) NOT NULL DEFAULT '',
@@ -861,7 +861,7 @@ CREATE TABLE IF NOT EXISTS `g5_qa_content` (
   `qa_5` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`qa_id`),
   KEY `qa_num_parent` (`qa_num`,`qa_parent`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -885,7 +885,7 @@ CREATE TABLE IF NOT EXISTS `g5_content` (
   `co_include_tail` varchar(255) NOT NULL,
   PRIMARY KEY (`co_id`),
   KEY `co_seo_title` (`co_seo_title`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -902,7 +902,7 @@ CREATE TABLE IF NOT EXISTS `g5_faq` (
   `fa_order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`fa_id`),
   KEY `fm_id` (`fm_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -920,7 +920,7 @@ CREATE TABLE IF NOT EXISTS `g5_faq_master` (
   `fm_mobile_tail_html` text NOT NULL,
   `fm_order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`fm_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -939,12 +939,12 @@ CREATE TABLE IF NOT EXISTS `g5_member_social_profiles` (
   `photourl` varchar(255) NOT NULL DEFAULT '',
   `displayname` varchar(150) NOT NULL DEFAULT '',
   `description` varchar(255) NOT NULL DEFAULT '',
-  `mp_register_day` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `mp_latest_day` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `mp_register_day` datetime NULL DEFAULT NULL,
+  `mp_latest_day` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`mp_no`),
   KEY `mb_id` (`mb_id`),
   KEY `provider` (`provider`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -957,8 +957,8 @@ CREATE TABLE IF NOT EXISTS `g5_new_win` (
   `nw_id` int(11) NOT NULL AUTO_INCREMENT,
   `nw_division` varchar(10) NOT NULL DEFAULT 'both',
   `nw_device` varchar(10) NOT NULL DEFAULT 'both',
-  `nw_begin_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `nw_end_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `nw_begin_time` datetime NULL DEFAULT NULL,
+  `nw_end_time` datetime NULL DEFAULT NULL,
   `nw_disable_hours` int(11) NOT NULL DEFAULT '0',
   `nw_left` int(11) NOT NULL DEFAULT '0',
   `nw_top` int(11) NOT NULL DEFAULT '0',
@@ -968,7 +968,7 @@ CREATE TABLE IF NOT EXISTS `g5_new_win` (
   `nw_content` text NOT NULL,
   `nw_content_html` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`nw_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -987,4 +987,4 @@ CREATE TABLE IF NOT EXISTS `g5_menu` (
   `me_use` tinyint(4) NOT NULL DEFAULT '0',
   `me_mobile_use` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`me_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

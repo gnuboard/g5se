@@ -11,11 +11,12 @@ header('Pragma: no-cache'); // HTTP/1.0
 $g5_path['path'] = '..';
 include_once('install_common.php');
 include_once ('../config.php');
-$title = G5_VERSION." 초기환경설정 2/3";
+$title = "그누보드5SE 설치 — 환경설정";
 include_once ('./install.inc.php');
 
 if (!isset($_POST['agree']) || $_POST['agree'] != '동의함') {
-    echo "<div class=\"ins_inner\"><p>라이센스(License) 내용에 동의하셔야 설치를 계속하실 수 있습니다.</p>".PHP_EOL;
+    echo "<h1>라이센스 동의 필요</h1>".PHP_EOL;
+    echo "<div class=\"ins_inner\"><p>라이센스 내용에 동의하셔야 설치를 계속하실 수 있습니다.</p>".PHP_EOL;
     echo "<div class=\"inner_btn\"><a href=\"./\">뒤로가기</a></div></div>".PHP_EOL;
     exit;
 }
@@ -74,7 +75,7 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
         </td>
     </tr>
     <tr>
-        <th scope="row"><label for=""><?php echo G5_VERSION; ?> 재설치</label></th>
+        <th scope="row"><label for="">그누보드5SE 재설치</label></th>
         <td>
             <input name="g5_install" type="checkbox" value="1" id="g5_install">재설치
         </td>
@@ -124,8 +125,8 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
     </table>
 
     <p>
-        <strong class="st_strong">주의! 이미 <?php echo G5_VERSION ?>가 존재한다면 DB 자료가 망실되므로 주의하십시오.</strong><br>
-        주의사항을 이해했으며, 그누보드 설치를 계속 진행하시려면 다음을 누르십시오.
+        <strong class="st_strong">주의! 이미 그누보드5SE 가 설치되어 있다면 DB 자료가 망실될 수 있으니 신중히 진행하세요.</strong><br>
+        DB 는 utf8mb4 (이모지 지원) + InnoDB 로 생성됩니다.
     </p>
 
     <div class="inner_btn">

@@ -4,34 +4,45 @@
 $g5_path['path'] = '..';
 include_once('install_common.php');
 include_once ('../config.php');
-$title = G5_VERSION." 라이센스 확인 1/3";
+$title = "그누보드5SE 설치 — 라이센스 확인";
 include_once ('./install.inc.php');
 ?>
+
+<h1>라이센스 (License)</h1>
 
 <?php
 if ($exists_data_dir && $write_data_dir) {
     // 필수 모듈 체크
     require_once('./library.check.php');
+
+    $_license_text = '';
+    if (is_file('../LICENSE.txt')) {
+        $_license_text = file_get_contents('../LICENSE.txt');
+    } else {
+        $_license_text = "LICENSE.txt 파일을 찾을 수 없습니다. 설치를 계속하기 전 루트에 LICENSE.txt 가 있어야 합니다.";
+    }
 ?>
 <form action="./install_config.php" method="post" onsubmit="return frm_submit(this);">
 
 <div class="ins_inner">
     <p>
-        <strong class="st_strong">라이센스(License) 내용을 반드시 확인하십시오.</strong><br>
-        라이센스에 동의하시는 경우에만 설치가 진행됩니다.
+        <strong class="st_strong">라이센스 내용을 확인하시고 동의 후 설치를 진행하세요.</strong>
+    </p>
+    <p>
+        그누보드5SE 는 <strong>MIT License</strong> 로 배포되며, gnuboard5 (GPL v2) 를 기반으로 합니다.
     </p>
 
     <div class="ins_ta ins_license">
-        <textarea name="textarea" id="ins_license" readonly><?php echo implode('', file('../LICENSE.txt')); ?></textarea>
+        <textarea name="textarea" id="ins_license" readonly><?php echo htmlspecialchars($_license_text, ENT_QUOTES); ?></textarea>
     </div>
 
     <div id="ins_agree">
-        <label for="agree">동의합니다.</label>
         <input type="checkbox" name="agree" value="동의함" id="agree">
+        <label for="agree">위 라이센스 내용에 동의합니다.</label>
     </div>
 
     <div class="inner_btn">
-        <input type="submit" value="다음">
+        <input type="submit" value="다음 단계 →">
     </div>
 </div>
 
