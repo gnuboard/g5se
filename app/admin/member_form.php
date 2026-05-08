@@ -171,22 +171,22 @@ if (isset($mb['mb_adult'])) {
 }
 
 // 지번주소 필드추가
-if (!isset($mb['mb_addr_jibeon'])) {
+if (!array_key_exists('mb_addr_jibeon', $mb)) {
     sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_addr_jibeon` varchar(255) NOT NULL DEFAULT '' AFTER `mb_addr2` ", false);
 }
 
 // 건물명필드추가
-if (!isset($mb['mb_addr3'])) {
+if (!array_key_exists('mb_addr3', $mb)) {
     sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_addr3` varchar(255) NOT NULL DEFAULT '' AFTER `mb_addr2` ", false);
 }
 
 // 중복가입 확인필드 추가
-if (!isset($mb['mb_dupinfo'])) {
+if (!array_key_exists('mb_dupinfo', $mb)) {
     sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_dupinfo` varchar(255) NOT NULL DEFAULT '' AFTER `mb_adult` ", false);
 }
 
 // 이메일인증 체크 필드추가
-if (!isset($mb['mb_email_certify2'])) {
+if (!array_key_exists('mb_email_certify2', $mb)) {
     sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_email_certify2` varchar(255) NOT NULL DEFAULT '' AFTER `mb_email_certify` ", false);
 }
 
