@@ -331,6 +331,16 @@ class Router
             exit;
         }
 
+        // /admin/...something.php → /admin/...something (GET/HEAD 만, query 보존)
+        // gnuboard 의 admin 모듈이 hard-code 한 .php URL 들을 클린 URL 로 정규화.
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^(/admin(?:/[a-zA-Z][a-zA-Z0-9_-]*)+)\.php$#', $path, $m)) {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            $url = $m[1].($qs ? '?'.$qs : '');
+            header('Location: '.$url, true, 301);
+            exit;
+        }
+
         // 3) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트
         //    (단, GET/HEAD 만 — POST 폼이 .php 로 날아오면 데이터 유실 방지 위해 그대로 처리)
         //    (a) /name.php  → /name
