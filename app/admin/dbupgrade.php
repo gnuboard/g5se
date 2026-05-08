@@ -241,7 +241,7 @@ if (
 
 // qa config 테이블 auto id key 추가
 $row = sql_fetch("select * from `{$g5['qa_config_table']}` limit 1");
-if (!isset($row['qa_id'])) {
+if (!array_key_exists('qa_id', $row)) {
     sql_query(" ALTER TABLE `{$g5['qa_config_table']}` ADD COLUMN `qa_id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
                 ADD PRIMARY KEY (`qa_id`); ", true);
 
@@ -259,7 +259,7 @@ if (!isset($config['cf_id'])) {
 
 // login 테이블 auto id key 추가
 $row = sql_fetch("select * from `{$g5['login_table']}` limit 1");
-if (!isset($row['lo_id'])) {
+if (!array_key_exists('lo_id', $row)) {
     sql_query(" ALTER TABLE `{$g5['login_table']}`
                     ADD COLUMN `lo_id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
                     DROP PRIMARY KEY,
