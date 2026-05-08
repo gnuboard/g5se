@@ -133,8 +133,6 @@ class Router
         '#^/shop/item/(?P<it_id>[a-zA-Z0-9_-]+)/?$#'                                   => 'shop/item.php',
         '#^/shop/category/(?P<ca_id>[a-zA-Z0-9_-]+)/?$#'                               => 'shop/list.php',
         '#^/shop/listtype/(?P<type>\d+)/?$#'                                           => 'shop/listtype.php',
-        // 주문 상세 — /shop/orderinquiryview/{od_id} (od_id 는 16자리 숫자, uid 는 query 로 보존)
-        '#^/shop/orderinquiryview/(?P<od_id>\d{14,20})/?$#'                            => 'shop/orderinquiryview.php',
         '#^/shop/(?P<_shoppage>[a-zA-Z][a-zA-Z0-9_-]*(?:/[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\.php)?/?$#' => 'shop/{_shoppage}.php',
 
         // 1:1 문의 단일 보기 — /qa/{qa_id}
@@ -304,16 +302,8 @@ class Router
         if (($method === 'GET' || $method === 'HEAD')
             && preg_match('#^/shop/(orderinquiry(?:view|cancel)?)\.php$#', $path, $m)) {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
-            // orderinquiryview: od_id 를 path segment 로 승격
-            if ($m[1] === 'orderinquiryview' && !empty($params['od_id']) && preg_match('/^\d{14,20}$/', $params['od_id'])) {
-                $od_id = $params['od_id'];
-                unset($params['od_id']);
-                $url = '/shop/orderinquiryview/'.$od_id;
-                if (!empty($params)) $url .= '?'.http_build_query($params);
-            } else {
-                $url = '/shop/'.$m[1];
-                if (!empty($params)) $url .= '?'.http_build_query($params);
-            }
+            $url = '/shop/'.$m[1];
+            if (!empty($params)) $url .= '?'.http_build_query($params);
             header('Location: '.$url, true, 301);
             exit;
         }

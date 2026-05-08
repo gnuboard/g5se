@@ -217,7 +217,7 @@ if ($_total_visible > 0) {
         $st = $_status_map[$row['od_status']] ?? ['label' => '주문취소', 'tone' => 'cancel'];
         $od_total = (int)$row['od_cart_price'] + (int)$row['od_send_cost'] + (int)$row['od_send_cost2'];
         $od_misu  = (int)$row['od_misu'];
-        $od_view_url = G5_SHOP_URL.'/orderinquiryview/'.$row['od_id'].'?uid='.$uid;
+        $od_view_url = G5_SHOP_URL.'/orderinquiryview?od_id='.$row['od_id'].'&amp;uid='.$uid;
     ?>
     <?php
         $_oi = $_order_items[$row['od_id']] ?? [];
