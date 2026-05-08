@@ -60,6 +60,34 @@ $_status_map = [
 [data-theme="dark"] .m-oq-status.is-shipping  { color: #2dd4bf; }
 [data-theme="dark"] .m-oq-status.is-done      { color: #34d399; }
 
+.m-oq-product {
+    grid-column: 1 / -1;
+    display: flex; align-items: baseline; gap: 8px;
+    margin-top: 8px;
+    color: var(--m-text);
+    text-decoration: none;
+    min-width: 0;
+}
+.m-oq-product:hover .m-oq-product-name { color: var(--m-primary); }
+.m-oq-product-name {
+    font-size: var(--m-text-md);
+    font-weight: 600;
+    color: var(--m-text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    flex: 1; min-width: 0;
+    transition: color 0.15s;
+}
+.m-oq-product-more {
+    flex-shrink: 0;
+    font-size: var(--m-text-xs);
+    color: var(--m-text-soft);
+    background: var(--m-surface-2);
+    border: 1px solid var(--m-border);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
 .m-oq-meta {
     grid-column: 1 / -1;
     display: grid;
@@ -116,6 +144,33 @@ $result = sql_query($sql);
 $_orders = [];
 while ($row = sql_fetch_array($result)) $_orders[] = $row;
 $_total_visible = count($_orders);
+
+// 각 주문의 첫 상품명 + 추가 품목 수 (외 N건) — 한 번의 SQL 로 일괄 조회
+$_order_items = [];
+if ($_total_visible > 0) {
+    $_od_ids = array_column($_orders, 'od_id');
+    $_in_ph  = implode(',', array_fill(0, count($_od_ids), '?'));
+    // 주문별 distinct it_id 카운트
+    $_r = sql_pdo_query(" select od_id, count(distinct it_id) as ic
+                            from {$g5['g5_shop_cart_table']}
+                           where od_id IN ($_in_ph)
+                           group by od_id ", $_od_ids);
+    while ($_row = sql_fetch_array($_r)) {
+        $_order_items[$_row['od_id']]['count'] = (int)$_row['ic'];
+    }
+    // 주문별 가장 빠른 ct_id 의 it_name (대표 상품)
+    $_r = sql_pdo_query(" select c.od_id, c.it_name
+                            from {$g5['g5_shop_cart_table']} c
+                            inner join (
+                                select od_id, min(ct_id) as min_ct
+                                  from {$g5['g5_shop_cart_table']}
+                                 where od_id IN ($_in_ph)
+                                 group by od_id
+                            ) m on m.od_id = c.od_id and m.min_ct = c.ct_id ", $_od_ids);
+    while ($_row = sql_fetch_array($_r)) {
+        $_order_items[$_row['od_id']]['name'] = $_row['it_name'];
+    }
+}
 ?>
 
 <div class="m-oq-page-head">
@@ -164,12 +219,26 @@ $_total_visible = count($_orders);
         $od_misu  = (int)$row['od_misu'];
         $od_view_url = G5_SHOP_URL.'/orderinquiryview/'.$row['od_id'].'?uid='.$uid;
     ?>
+    <?php
+        $_oi = $_order_items[$row['od_id']] ?? [];
+        $_first_name = isset($_oi['name']) ? get_text($_oi['name']) : '';
+        $_item_more  = max(0, (int)($_oi['count'] ?? 0) - 1);
+    ?>
     <article class="m-oq-card">
         <div class="m-oq-head">
             <a class="m-oq-no" href="<?php echo $od_view_url; ?>"><?php echo $row['od_id']; ?></a>
             <span class="m-oq-time"><?php echo substr($row['od_time'], 2, 14); ?> (<?php echo get_yoil($row['od_time']); ?>)</span>
         </div>
         <span class="m-oq-status is-<?php echo $st['tone']; ?>"><?php echo $st['label']; ?></span>
+
+        <?php if ($_first_name) { ?>
+        <a class="m-oq-product" href="<?php echo $od_view_url; ?>">
+            <span class="m-oq-product-name"><?php echo $_first_name; ?></span>
+            <?php if ($_item_more > 0) { ?>
+            <span class="m-oq-product-more">외 <?php echo $_item_more; ?> 건</span>
+            <?php } ?>
+        </a>
+        <?php } ?>
 
         <dl class="m-oq-meta">
             <div><dt>상품수</dt><dd><?php echo number_format((int)$row['od_cart_count']); ?> 개</dd></div>
