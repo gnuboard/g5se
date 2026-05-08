@@ -885,14 +885,6 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     width: 100% !important;
     max-width: 560px !important;
 }
-/* 참고항목 (#od_addr3, #od_b_addr3) — 사용자 요청: 히든 처리 */
-.m-shell #sod_frm .tbl_frm01 td #od_addr3,
-.m-shell #sod_frm .tbl_frm01 td #od_b_addr3,
-.m-shell #sod_frm .tbl_frm01 td label[for="od_addr3"],
-.m-shell #sod_frm .tbl_frm01 td label[for="od_b_addr3"] {
-    display: none !important;
-}
-
 @media (max-width: 768px) {
     .m-shell #sod_fin {
         display: block;
