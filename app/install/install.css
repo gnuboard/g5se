@@ -89,10 +89,10 @@ body {
 input, img, select, button { font: inherit; vertical-align: middle; }
 a { color: var(--ins-primary); }
 
-/* 상단 바 — 그라디언트 */
+/* 상단 바 — 그라디언트. 우측 토글 버튼 자리 확보 (~70px) */
 #ins_bar {
     margin: 0 0 32px;
-    padding: 28px 40px;
+    padding: 28px 96px 28px 40px;
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
     color: #fff;
     display: flex;
@@ -370,7 +370,8 @@ h1 {
 /* 모바일 */
 @media (max-width: 720px) {
     body { font-size: 14px; }
-    #ins_bar { padding: 22px 20px; }
+    #ins_bar { padding: 22px 76px 22px 20px; }
+    .ins-theme-toggle { top: 14px; right: 14px; width: 36px; height: 36px; }
     h1 { margin: 0 16px 16px; font-size: 1.3em; }
     .ins_inner { margin: 0 16px 24px; padding: 20px; }
     .ins_steps { margin: 0 16px 20px; }
