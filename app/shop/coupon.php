@@ -21,13 +21,15 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 
-$sql = " select cp_id, cp_subject, cp_method, cp_target, cp_start, cp_end, cp_type, cp_price
-            from {$g5['g5_shop_coupon_table']}
-            where mb_id IN ( '{$member['mb_id']}', '전체회원' )
-              and cp_start <= '".G5_TIME_YMD."'
-              and cp_end >= '".G5_TIME_YMD."'
-            order by cp_no ";
-$result = sql_query($sql);
+$result = sql_pdo_query(
+    " select cp_id, cp_subject, cp_method, cp_target, cp_start, cp_end, cp_type, cp_price
+        from {$g5['g5_shop_coupon_table']}
+       where mb_id IN (:mb_id, '전체회원')
+         and cp_start <= :today
+         and cp_end >= :today
+       order by cp_no ",
+    [':mb_id' => $member['mb_id'], ':today' => G5_TIME_YMD]
+);
 
 // 사용 가능 쿠폰만 미리 모음 (사용된 것 제외)
 $_coupons = [];
@@ -35,7 +37,10 @@ while ($row = sql_fetch_array($result)) {
     if (is_used_coupon($member['mb_id'], $row['cp_id'])) continue;
 
     if ($row['cp_method'] == 1) {
-        $ca = sql_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$row['cp_target']}' ");
+        $ca = sql_pdo_fetch(
+            " select ca_name from {$g5['g5_shop_category_table']} where ca_id = :ca_id ",
+            [':ca_id' => $row['cp_target']]
+        );
         $row['_target_label'] = ($ca['ca_name'] ?: '카테고리').' 상품할인';
     } else if ($row['cp_method'] == 2) {
         $row['_target_label'] = '결제금액 할인';
