@@ -70,6 +70,71 @@ if ($_action === 'zerodate_column' && !empty($_POST['table']) && !empty($_POST['
         }
     }
 }
+// 일괄: utf8mb3 → utf8mb4 (모든 utf8mb4 가 아닌 테이블)
+if ($_action === 'charset_all') {
+    @set_time_limit(0);
+    $_db_row = sql_pdo_fetch("SELECT DATABASE() AS db");
+    $_db_name = $_db_row['db'] ?? '';
+    $_rs = sql_pdo_query(
+        "SELECT table_name AS tbl FROM information_schema.tables
+          WHERE table_schema = :db AND table_collation NOT LIKE 'utf8mb4%'
+          ORDER BY table_name",
+        [':db' => $_db_name]
+    );
+    $_done = 0; $_fail = 0;
+    while ($r = sql_fetch_array($_rs)) {
+        $_t = preg_replace('/[^a-zA-Z0-9_]/', '', $r['tbl']);
+        if (!$_t) continue;
+        try {
+            sql_pdo_query("ALTER TABLE `$_t` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            $_log[] = ['ok', "✓ `$_t` → utf8mb4"];
+            $_done++;
+        } catch (Throwable $e) {
+            $_log[] = ['err', "✗ `$_t` 실패: ".$e->getMessage()];
+            $_fail++;
+        }
+    }
+    $_log[] = ['ok', "── 일괄 완료: 성공 $_done / 실패 $_fail"];
+}
+// 일괄: zero-date 컬럼 모두 NULL 허용 + 기존 0000 → NULL
+if ($_action === 'zerodate_all') {
+    @set_time_limit(0);
+    $_db_row = sql_pdo_fetch("SELECT DATABASE() AS db");
+    $_db_name = $_db_row['db'] ?? '';
+    $_rs = sql_pdo_query(
+        "SELECT table_name AS tbl, column_name AS col, data_type AS type
+           FROM information_schema.columns
+          WHERE table_schema = :db
+            AND data_type IN ('date','datetime','timestamp')
+            AND (column_default IN ('0000-00-00','0000-00-00 00:00:00') OR is_nullable = 'NO')
+          ORDER BY table_name, column_name",
+        [':db' => $_db_name]
+    );
+    $_done = 0; $_fail = 0; $_total_rows = 0;
+    while ($r = sql_fetch_array($_rs)) {
+        $_t = preg_replace('/[^a-zA-Z0-9_]/', '', $r['tbl']);
+        $_c = preg_replace('/[^a-zA-Z0-9_]/', '', $r['col']);
+        $_type = strtoupper(preg_replace('/[^A-Za-z]/', '', $r['type']));
+        if (!in_array($_type, ['DATE', 'DATETIME', 'TIMESTAMP'], true)) continue;
+        if (!$_t || !$_c) continue;
+        $_zero = ($_type === 'DATE') ? '0000-00-00' : '0000-00-00 00:00:00';
+        try {
+            sql_pdo_query("ALTER TABLE `$_t` MODIFY `$_c` $_type NULL DEFAULT NULL");
+            $stmt = sql_pdo_query(
+                "UPDATE `$_t` SET `$_c` = NULL WHERE `$_c` = :z",
+                [':z' => $_zero]
+            );
+            $affected = $stmt instanceof PDOStatement ? $stmt->rowCount() : 0;
+            $_total_rows += $affected;
+            $_log[] = ['ok', "✓ `$_t`.`$_c` ($affected 행)"];
+            $_done++;
+        } catch (Throwable $e) {
+            $_log[] = ['err', "✗ `$_t`.`$_c` 실패: ".$e->getMessage()];
+            $_fail++;
+        }
+    }
+    $_log[] = ['ok', "── 일괄 완료: 컬럼 $_done 성공 / $_fail 실패, 총 $_total_rows 행 0000→NULL"];
+}
 
 // 새 토큰 발급 (한번 쓰고 폐기)
 if ($_action) {
@@ -151,6 +216,16 @@ admin_layout_start($g5['title'], 'core');
         </p>
 
         <?php if ($_tables_utf8mb3) { ?>
+        <div class="dbm-bulk">
+            <form method="post" class="dbm-action" onsubmit="return confirm('utf8mb3 테이블 <?php echo count($_tables_utf8mb3); ?>개를 모두 utf8mb4 로 변환합니다.\n\n주의: 행 수가 많은 테이블은 변환 중 락이 걸려 서비스 영향이 있을 수 있습니다.\n트래픽 적은 시간에 실행 권장.\n\n계속하시겠습니까?');">
+                <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+                <input type="hidden" name="action" value="charset_all">
+                <button type="submit" class="btn_submit dbm-btn dbm-btn-bulk">⚡ 전체 일괄 변환 (<?php echo count($_tables_utf8mb3); ?>개)</button>
+            </form>
+        </div>
+        <?php } ?>
+
+        <?php if ($_tables_utf8mb3) { ?>
         <div class="tbl_head01 tbl_wrap">
             <table>
                 <thead><tr><th>테이블</th><th>현재 collation</th><th>예상 행수</th><th>액션</th></tr></thead>
@@ -185,6 +260,16 @@ admin_layout_start($g5['title'], 'core');
             대기 <strong class="dbm-warn"><?php echo count($_zd_pending); ?></strong>개 컬럼
             (NOT NULL date/datetime 또는 default '0000-00-00...')
         </p>
+
+        <?php if ($_zd_pending) { ?>
+        <div class="dbm-bulk">
+            <form method="post" class="dbm-action" onsubmit="return confirm('zero-date 컬럼 <?php echo count($_zd_pending); ?>개를 모두 NULL 허용 + 기존 0000 값 NULL 변환합니다.\n\n주의: 행 수 많은 테이블은 락 영향 있음.\n\n계속하시겠습니까?');">
+                <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+                <input type="hidden" name="action" value="zerodate_all">
+                <button type="submit" class="btn_submit dbm-btn dbm-btn-bulk">⚡ 전체 일괄 변환 (<?php echo count($_zd_pending); ?>개)</button>
+            </form>
+        </div>
+        <?php } ?>
 
         <?php if ($_zd_pending) { ?>
         <div class="tbl_head01 tbl_wrap">
@@ -239,6 +324,15 @@ admin_layout_start($g5['title'], 'core');
 .dbm-ok { color: #059669; font-weight: 600; padding: 0.75rem 1rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 0.5rem; }
 .dbm-action { display: inline; margin: 0; }
 .dbm-btn { padding: 0.3rem 0.8rem; font-size: 0.78rem; }
+.dbm-bulk { margin: 0 0 0.85rem; }
+.dbm-btn-bulk {
+    padding: 0.55rem 1.1rem !important;
+    font-size: 0.875rem !important;
+    background: #ef4444 !important; color: #fff !important;
+    border-color: #ef4444 !important;
+    font-weight: 700;
+}
+.dbm-btn-bulk:hover { background: #dc2626 !important; border-color: #dc2626 !important; }
 .dbm-log { padding: 1rem; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.5rem; }
 .dbm-log ul { list-style: none; margin: 0; padding: 0; font-family: ui-monospace, monospace; font-size: 0.82rem; line-height: 1.6; }
 .dbm-log-ok { color: #059669; }
