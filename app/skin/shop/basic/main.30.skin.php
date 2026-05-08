@@ -18,6 +18,9 @@ foreach((array) $list as $row){
 
     $item_link_href = shop_item_url($row['it_id']);
     $star_score = $row['it_use_avg'] ? (int) get_star($row['it_use_avg']) : '';
+    $is_wished = is_wishlist_item($row['it_id']);
+    $wish_class = $is_wished ? ' is_active' : '';
+    $wish_icon = $is_wished ? 'fa-heart' : 'fa-heart-o';
 
     if ($list_mod >= 2) { // 1줄 이미지 : 2개 이상
         if ($i%$list_mod == 0) $sct_last = ' sct_last'; // 줄 마지막
@@ -111,7 +114,7 @@ foreach((array) $list as $row){
 	
 	// 위시리스트 + 공유 버튼 시작 {
 	echo "<div class=\"sct_op_btn\">\n";
-	echo "<button type=\"button\" class=\"btn_wish\" data-it_id=\"{$row['it_id']}\"><span class=\"sound_only\">위시리스트</span><i class=\"fa fa-heart-o\" aria-hidden=\"true\"></i></button>\n";
+	echo "<button type=\"button\" class=\"btn_wish{$wish_class}\" data-it_id=\"{$row['it_id']}\"><span class=\"sound_only\">위시리스트</span><i class=\"fa {$wish_icon}\" aria-hidden=\"true\"></i></button>\n";
     if ($this->view_sns) {
 	    echo "<button type=\"button\" class=\"btn_share\"><span class=\"sound_only\">공유하기</span><i class=\"fa fa-share-alt\" aria-hidden=\"true\"></i></button>\n";
 	}
@@ -158,4 +161,3 @@ $(function (){
 	});
 });			
 </script>
-

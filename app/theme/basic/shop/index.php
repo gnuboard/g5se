@@ -1,10 +1,7 @@
 <?php
 include_once('./_common.php');
 
-if (G5_IS_MOBILE) {
-    include_once(G5_THEME_MSHOP_PATH.'/index.php');
-    return;
-}
+// gnu5se: 단일 마크업 정책 — 모바일 분기 제거.
 
 if(! defined('_INDEX_')) define('_INDEX_', TRUE);
 

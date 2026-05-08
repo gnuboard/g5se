@@ -254,8 +254,9 @@ function member_export_build_where($params)
                     $emailDateCond = "mb_mailling_date <= '{$date_end} 23:59:59'";
                     $smsDateCond   = "mb_sms_date <= '{$date_end} 23:59:59'";
                 } else {
-                    $emailDateCond = "mb_mailling_date <> '0000-00-00 00:00:00'";
-                    $smsDateCond   = "mb_sms_date <> '0000-00-00 00:00:00'";
+                    // "보낸 적 있음" — NULL 도 NOT 보낸것으로 처리 (NULL <> '0000' 은 NULL → falsy)
+                    $emailDateCond = "(mb_mailling_date IS NOT NULL AND mb_mailling_date <> '0000-00-00 00:00:00')";
+                    $smsDateCond   = "(mb_sms_date IS NOT NULL AND mb_sms_date <> '0000-00-00 00:00:00')";
                 }
             }
             

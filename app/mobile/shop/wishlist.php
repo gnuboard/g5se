@@ -17,7 +17,7 @@ include_once(G5_MSHOP_PATH.'/_head.php');
 
 <div id="sod_ws">
 
-    <form name="fwishlist" method="post" action="./cartupdate.php">
+    <form name="fwishlist" method="post" action="<?php echo G5_SHOP_URL; ?>/cartupdate">
     <input type="hidden" name="act"       value="multi">
     <input type="hidden" name="sw_direct" value="">
     <input type="hidden" name="prog"      value="wish">
@@ -65,7 +65,7 @@ include_once(G5_MSHOP_PATH.'/_head.php');
                     <input type="hidden" name="io_value[<?php echo $row['it_id']; ?>][0]" value="<?php echo $row['it_name']; ?>">
                     <input type="hidden" name="ct_qty[<?php echo $row['it_id']; ?>][0]" value="1">
                 </div>
-                <span class="wish_del"><a href="<?php echo G5_SHOP_URL; ?>/wishupdate.php?w=d&amp;wi_id=<?php echo $row['wi_id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i><span class="sound_only">삭제</span></a></span>
+                <span class="wish_del"><a href="<?php echo G5_SHOP_URL; ?>/wishupdate?w=d&amp;wi_id=<?php echo $row['wi_id']; ?>"><i class="fa fa-trash" aria-hidden="true"></i><span class="sound_only">삭제</span></a></span>
             </div>
 
         </li>

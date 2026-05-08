@@ -19,7 +19,7 @@ require_once __DIR__.'/admin.lib.php';   // help(), get_member_id_select(), get_
 $sql = " select * from {$g5['config_table']} limit 1";
 $config = sql_fetch($sql);
 
-if (!isset($config['cf_add_script'])) {
+if (!array_key_exists('cf_add_script', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_add_script` TEXT NOT NULL AFTER `cf_admin_email_name` ",
@@ -27,7 +27,7 @@ if (!isset($config['cf_add_script'])) {
     );
 }
 
-if (!isset($config['cf_mobile_new_skin'])) {
+if (!array_key_exists('cf_mobile_new_skin', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_mobile_new_skin` VARCHAR(255) NOT NULL AFTER `cf_memo_send_point`,
@@ -44,7 +44,7 @@ if (isset($config['cf_gcaptcha_mp3'])) {
                     CHANGE `cf_gcaptcha_mp3` `cf_captcha_mp3` VARCHAR(255) NOT NULL DEFAULT '' ",
         true
     );
-} elseif (!isset($config['cf_captcha_mp3'])) {
+} elseif (!array_key_exists('cf_captcha_mp3', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_captcha_mp3` VARCHAR(255) NOT NULL DEFAULT '' AFTER `cf_mobile_member_skin` ",
@@ -52,7 +52,7 @@ if (isset($config['cf_gcaptcha_mp3'])) {
     );
 }
 
-if (!isset($config['cf_editor'])) {
+if (!array_key_exists('cf_editor', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_editor` VARCHAR(255) NOT NULL DEFAULT '' AFTER `cf_captcha_mp3` ",
@@ -60,7 +60,7 @@ if (!isset($config['cf_editor'])) {
     );
 }
 
-if (!isset($config['cf_googl_shorturl_apikey'])) {
+if (!array_key_exists('cf_googl_shorturl_apikey', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_googl_shorturl_apikey` VARCHAR(255) NOT NULL DEFAULT '' AFTER `cf_captcha_mp3` ",
@@ -68,7 +68,7 @@ if (!isset($config['cf_googl_shorturl_apikey'])) {
     );
 }
 
-if (!isset($config['cf_mobile_pages'])) {
+if (!array_key_exists('cf_mobile_pages', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_mobile_pages` INT(11) NOT NULL DEFAULT '0' AFTER `cf_write_pages` ",
@@ -77,7 +77,7 @@ if (!isset($config['cf_mobile_pages'])) {
     sql_query(" UPDATE `{$g5['config_table']}` SET cf_mobile_pages = '5' ", true);
 }
 
-if (!isset($config['cf_facebook_appid'])) {
+if (!array_key_exists('cf_facebook_appid', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_facebook_appid` VARCHAR(255) NOT NULL AFTER `cf_googl_shorturl_apikey`,
@@ -122,7 +122,7 @@ if (!sql_query(" DESC {$g5['autosave_table']} ", false)) {
     );
 }
 
-if (!isset($config['cf_admin_email'])) {
+if (!array_key_exists('cf_admin_email', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_admin_email` VARCHAR(255) NOT NULL AFTER `cf_admin` ",
@@ -130,7 +130,7 @@ if (!isset($config['cf_admin_email'])) {
     );
 }
 
-if (!isset($config['cf_admin_email_name'])) {
+if (!array_key_exists('cf_admin_email_name', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_admin_email_name` VARCHAR(255) NOT NULL AFTER `cf_admin_email` ",
@@ -138,7 +138,7 @@ if (!isset($config['cf_admin_email_name'])) {
     );
 }
 
-if (!isset($config['cf_cert_use'])) {
+if (!array_key_exists('cf_cert_use', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_cert_use` TINYINT(4) NOT NULL DEFAULT '0' AFTER `cf_editor`,
@@ -163,7 +163,7 @@ if (!isset($config['cf_cert_use'])) {
                   `cr_company` varchar(255) NOT NULL DEFAULT '',
                   `cr_method` varchar(255) NOT NULL DEFAULT '',
                   `cr_ip` varchar(255) NOT NULL DEFAULT '',
-                  `cr_date` date NOT NULL DEFAULT '0000-00-00',
+                  `cr_date` date NULL DEFAULT NULL,
                   `cr_time` time NOT NULL DEFAULT '00:00:00',
                   PRIMARY KEY (`cr_id`),
                   KEY `mb_id` (`mb_id`)
@@ -172,7 +172,7 @@ if (!isset($config['cf_cert_use'])) {
     );
 }
 
-if (!isset($config['cf_analytics'])) {
+if (!array_key_exists('cf_analytics', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_analytics` TEXT NOT NULL AFTER `cf_intercept_ip` ",
@@ -180,7 +180,7 @@ if (!isset($config['cf_analytics'])) {
     );
 }
 
-if (!isset($config['cf_add_meta'])) {
+if (!array_key_exists('cf_add_meta', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_add_meta` TEXT NOT NULL AFTER `cf_analytics` ",
@@ -188,7 +188,7 @@ if (!isset($config['cf_add_meta'])) {
     );
 }
 
-if (!isset($config['cf_syndi_token'])) {
+if (!array_key_exists('cf_syndi_token', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_syndi_token` VARCHAR(255) NOT NULL AFTER `cf_add_meta` ",
@@ -196,7 +196,7 @@ if (!isset($config['cf_syndi_token'])) {
     );
 }
 
-if (!isset($config['cf_syndi_except'])) {
+if (!array_key_exists('cf_syndi_except', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_syndi_except` TEXT NOT NULL AFTER `cf_syndi_token` ",
@@ -204,7 +204,7 @@ if (!isset($config['cf_syndi_except'])) {
     );
 }
 
-if (!isset($config['cf_sms_use'])) {
+if (!array_key_exists('cf_sms_use', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_sms_use` varchar(255) NOT NULL DEFAULT '' AFTER `cf_cert_limit`,
@@ -216,7 +216,7 @@ if (!isset($config['cf_sms_use'])) {
     );
 }
 
-if (!isset($config['cf_mobile_page_rows'])) {
+if (!array_key_exists('cf_mobile_page_rows', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_mobile_page_rows` int(11) NOT NULL DEFAULT '0' AFTER `cf_page_rows` ",
@@ -224,7 +224,7 @@ if (!isset($config['cf_mobile_page_rows'])) {
     );
 }
 
-if (!isset($config['cf_cert_req'])) {
+if (!array_key_exists('cf_cert_req', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_cert_req` tinyint(4) NOT NULL DEFAULT '0' AFTER `cf_cert_limit` ",
@@ -232,7 +232,7 @@ if (!isset($config['cf_cert_req'])) {
     );
 }
 
-if (!isset($config['cf_faq_skin'])) {
+if (!array_key_exists('cf_faq_skin', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_faq_skin` varchar(255) NOT NULL DEFAULT '' AFTER `cf_connect_skin`,
@@ -242,7 +242,7 @@ if (!isset($config['cf_faq_skin'])) {
 }
 
 // LG유플러스 본인확인 필드 추가
-if (!isset($config['cf_lg_mid'])) {
+if (!array_key_exists('cf_lg_mid', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_lg_mid` varchar(255) NOT NULL DEFAULT '' AFTER `cf_cert_kcp_cd`,
@@ -251,16 +251,16 @@ if (!isset($config['cf_lg_mid'])) {
     );
 }
 
-if (!isset($config['cf_optimize_date'])) {
+if (!array_key_exists('cf_optimize_date', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
-                    ADD `cf_optimize_date` date NOT NULL default '0000-00-00' AFTER `cf_popular_del` ",
+                    ADD `cf_optimize_date` date NULL DEFAULT NULL AFTER `cf_popular_del` ",
         true
     );
 }
 
 // 카카오톡링크 api 키
-if (!isset($config['cf_kakao_js_apikey'])) {
+if (!array_key_exists('cf_kakao_js_apikey', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_kakao_js_apikey` varchar(255) NOT NULL DEFAULT '' AFTER `cf_googl_shorturl_apikey` ",
@@ -269,7 +269,7 @@ if (!isset($config['cf_kakao_js_apikey'])) {
 }
 
 // SMS 전송유형 필드 추가
-if (!isset($config['cf_sms_type'])) {
+if (!array_key_exists('cf_sms_type', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_sms_type` varchar(10) NOT NULL DEFAULT '' AFTER `cf_sms_use` ",
@@ -289,7 +289,7 @@ if (!sql_query(" select vi_browser from {$g5['visit_table']} limit 1 ")) {
 }
 
 //소셜 로그인 관련 필드 및 구글 리챕챠 필드 추가
-if (!isset($config['cf_social_login_use'])) {
+if (!array_key_exists('cf_social_login_use', $config)) {
     sql_query(
         "ALTER TABLE `{$g5['config_table']}`
                 ADD `cf_social_login_use` tinyint(4) NOT NULL DEFAULT '0' AFTER `cf_googl_shorturl_apikey`,
@@ -310,7 +310,7 @@ if (!isset($config['cf_social_login_use'])) {
 }
 
 //소셜 로그인 관련 필드 카카오 클라이언트 시크릿 추가
-if (!isset($config['cf_kakao_client_secret'])) {
+if (!array_key_exists('cf_kakao_client_secret', $config)) {
     sql_query(
         "ALTER TABLE `{$g5['config_table']}`
                 ADD `cf_kakao_client_secret` varchar(100) NOT NULL DEFAULT '' AFTER `cf_kakao_rest_key`
@@ -320,7 +320,7 @@ if (!isset($config['cf_kakao_client_secret'])) {
 }
 
 // 회원 이미지 관련 필드 추가
-if (!isset($config['cf_member_img_size'])) {
+if (!array_key_exists('cf_member_img_size', $config)) {
     sql_query(
         "ALTER TABLE `{$g5['config_table']}`
                 ADD `cf_member_img_size` int(11) NOT NULL DEFAULT '0' AFTER `cf_member_icon_height`,
@@ -351,8 +351,8 @@ if (!sql_query(" DESC {$g5['social_profile_table']} ", false)) {
                   `photourl` varchar(255) NOT NULL DEFAULT '',
                   `displayname` varchar(150) NOT NULL DEFAULT '',
                   `description` varchar(255) NOT NULL DEFAULT '',
-                  `mp_register_day` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-                  `mp_latest_day` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+                  `mp_register_day` datetime NULL DEFAULT NULL,
+                  `mp_latest_day` datetime NULL DEFAULT NULL,
                   UNIQUE KEY `mp_no` (`mp_no`),
                   KEY `mb_id` (`mb_id`),
                   KEY `provider` (`provider`)
@@ -362,7 +362,7 @@ if (!sql_query(" DESC {$g5['social_profile_table']} ", false)) {
 }
 
 // 짧은 URL 주소를 사용 여부 필드 추가
-if (!isset($config['cf_bbs_rewrite'])) {
+if (!array_key_exists('cf_bbs_rewrite', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
                     ADD `cf_bbs_rewrite` tinyint(4) NOT NULL DEFAULT '0' AFTER `cf_link_target` ",
@@ -389,39 +389,39 @@ if (!isset($member['mb_scrap_cnt'])) {
 }
 
 // 아이코드 토큰키 추가
-if (!isset($config['cf_icode_token_key'])) {
+if (!array_key_exists('cf_icode_token_key', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}` 
             ADD COLUMN `cf_icode_token_key` VARCHAR(100) NOT NULL DEFAULT '' AFTER `cf_icode_server_port`; ";
     sql_query($sql, false);
 }
 // 아이디/비밀번호 찾기에 본인확인 사용 여부 필드 추가
-if (!isset($config['cf_cert_find'])) {
+if (!array_key_exists('cf_cert_find', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}` 
             ADD COLUMN `cf_cert_find` TINYINT(4) NOT NULL DEFAULT '0' AFTER `cf_cert_use`; ";
     sql_query($sql, false);
 }
 // 간편인증 필드 추가
-if (!isset($config['cf_cert_simple'])) {
+if (!array_key_exists('cf_cert_simple', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}` 
             ADD COLUMN `cf_cert_simple` VARCHAR(255) NOT NULL DEFAULT '' AFTER `cf_cert_hp`; ";
     sql_query($sql, false);
 }
-if (!isset($config['cf_cert_kg_cd'])) {
+if (!array_key_exists('cf_cert_kg_cd', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}`
             ADD COLUMN `cf_cert_kg_cd` VARCHAR(255) NOT NULL DEFAULT '' AFTER `cf_cert_simple`; ";
     sql_query($sql, false);
 }
-if (!isset($config['cf_cert_kg_mid'])) {
+if (!array_key_exists('cf_cert_kg_mid', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}`
             ADD COLUMN `cf_cert_kg_mid` VARCHAR(255) NOT NULL DEFAULT '' AFTER `cf_cert_kg_cd`; ";
     sql_query($sql, false);
 }
-if (!isset($config['cf_cert_use_seed'])) {
+if (!array_key_exists('cf_cert_use_seed', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}` 
             ADD COLUMN `cf_cert_use_seed` TINYINT(4) NOT NULL DEFAULT '1' AFTER `cf_cert_kg_mid`; ";
     sql_query($sql, false);
 }
-if (!isset($config['cf_cert_kcp_enckey'])) {
+if (!array_key_exists('cf_cert_kcp_enckey', $config)) {
     $sql = "ALTER TABLE `{$g5['config_table']}` 
             ADD COLUMN `cf_cert_kcp_enckey` VARCHAR(100) NOT NULL DEFAULT '' AFTER `cf_cert_kcp_cd`; ";
     sql_query($sql, false);
@@ -430,7 +430,7 @@ if (!isset($config['cf_cert_kcp_enckey'])) {
 }
 
 // 광고성 정보 수신 동의 사용 필드 추가
-if (!isset($config['cf_use_promotion'])) {
+if (!array_key_exists('cf_use_promotion', $config)) {
     sql_query(
         " ALTER TABLE `{$g5['config_table']}`
             ADD `cf_use_promotion` tinyint(1) NOT NULL DEFAULT '0' AFTER `cf_privacy` ",
@@ -443,12 +443,12 @@ if (!isset($member['mb_marketing_agree'])) {
     sql_query(
         " ALTER TABLE `{$g5['member_table']}`
                 ADD `mb_marketing_agree` tinyint(1) NOT NULL DEFAULT '0' AFTER  `mb_scrap_cnt`,
-                ADD `mb_marketing_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `mb_marketing_agree`,
+                ADD `mb_marketing_date` datetime NULL DEFAULT NULL AFTER `mb_marketing_agree`,
                 ADD `mb_thirdparty_agree` tinyint(1) NOT NULL DEFAULT '0' AFTER  `mb_marketing_date`,
-                ADD `mb_thirdparty_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `mb_thirdparty_agree`,
+                ADD `mb_thirdparty_date` datetime NULL DEFAULT NULL AFTER `mb_thirdparty_agree`,
                 ADD `mb_agree_log` TEXT NOT NULL AFTER `mb_thirdparty_date`,
-                ADD `mb_mailling_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `mb_mailling`,
-                ADD `mb_sms_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `mb_sms` ",
+                ADD `mb_mailling_date` datetime NULL DEFAULT NULL AFTER `mb_mailling`,
+                ADD `mb_sms_date` datetime NULL DEFAULT NULL AFTER `mb_sms` ",
         true
     );
 }

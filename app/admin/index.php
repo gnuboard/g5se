@@ -60,16 +60,17 @@ admin_layout_start('대시보드', 'home');
             ['label' => '오늘 가입',     'value' => number_format($stat_member_today),  'sub' => date('Y-m-d'),                                'tone' => 'violet'],
             ['label' => '오늘 게시물',   'value' => number_format($stat_post_today),    'sub' => date('Y-m-d'),                                'tone' => 'rose'],
         ];
+        // 그라디언트 폐기 — 좌측 accent border + 단색 배경
         $tone_classes = [
-            'primary' => 'from-admin-primary-50 to-white text-admin-primary-700 dark:from-admin-primary-950 dark:to-slate-900 dark:text-admin-primary-200',
-            'green'   => 'from-emerald-50 to-white text-emerald-700 dark:from-emerald-950 dark:to-slate-900 dark:text-emerald-200',
-            'amber'   => 'from-amber-50 to-white text-amber-700 dark:from-amber-950 dark:to-slate-900 dark:text-amber-200',
-            'sky'     => 'from-sky-50 to-white text-sky-700 dark:from-sky-950 dark:to-slate-900 dark:text-sky-200',
-            'violet'  => 'from-violet-50 to-white text-violet-700 dark:from-violet-950 dark:to-slate-900 dark:text-violet-200',
-            'rose'    => 'from-rose-50 to-white text-rose-700 dark:from-rose-950 dark:to-slate-900 dark:text-rose-200',
+            'primary' => 'border-l-admin-primary-500 text-admin-primary-700 dark:text-admin-primary-300',
+            'green'   => 'border-l-emerald-500 text-emerald-700 dark:text-emerald-300',
+            'amber'   => 'border-l-amber-500 text-amber-700 dark:text-amber-300',
+            'sky'     => 'border-l-sky-500 text-sky-700 dark:text-sky-300',
+            'violet'  => 'border-l-violet-500 text-violet-700 dark:text-violet-300',
+            'rose'    => 'border-l-rose-500 text-rose-700 dark:text-rose-300',
         ];
         foreach ($cards as $c) { ?>
-        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br <?php echo $tone_classes[$c['tone']] ?> p-4 shadow-sm">
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 bg-white dark:bg-slate-900 <?php echo $tone_classes[$c['tone']] ?> p-4 shadow-sm">
             <div class="text-xs font-medium opacity-70"><?php echo $c['label'] ?></div>
             <div class="mt-1 text-2xl font-bold tabular-nums"><?php echo $c['value'] ?></div>
             <div class="mt-1 text-[11px] opacity-70"><?php echo $c['sub'] ?></div>

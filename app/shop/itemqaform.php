@@ -5,11 +5,7 @@ $w     = isset($_REQUEST['w']) ? preg_replace('/[^0-9a-z]/i', '', trim($_REQUEST
 $it_id = isset($_REQUEST['it_id']) ? get_search_string(trim($_REQUEST['it_id'])) : '';
 $iq_id = isset($_REQUEST['iq_id']) ? preg_replace('/[^0-9]/', '', trim($_REQUEST['iq_id'])) : 0;
 $qa = array('iq_subject'=>'', 'iq_question'=>'');
-
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/itemqaform.php');
-    return;
-}
+
 
 include_once(G5_EDITOR_LIB);
 

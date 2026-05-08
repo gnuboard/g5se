@@ -107,6 +107,103 @@ ob_start(function ($html) {
         $html
     );
 
+    // 5) shop 상품 상세: /shop/item.php?it_id=X[&...] → /shop/item/X[?...]
+    //    it_id 외 query 는 보존, &amp; 인코딩 유지
+    $html = preg_replace_callback(
+        '#/shop/item\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['it_id']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $params['it_id'])) {
+                return $m[0];
+            }
+            $url = '/shop/item/'.$params['it_id'];
+            unset($params['it_id']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
+    // 6) shop 카테고리 리스트: /shop/list.php?ca_id=X[&...] → /shop/category/X[?...]
+    $html = preg_replace_callback(
+        '#/shop/list\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['ca_id']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $params['ca_id'])) {
+                return $m[0];
+            }
+            $url = '/shop/category/'.$params['ca_id'];
+            unset($params['ca_id']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
+    // 7) shop 리스트 타입: /shop/listtype.php?type=N[&...] → /shop/listtype/N[?...]
+    //    type 1~5 외 값은 listtype.php 의 alert 분기로 떨어지므로 router 단에선 \d+ 만 검증
+    $html = preg_replace_callback(
+        '#/shop/listtype\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['type']) || !preg_match('/^\d+$/', $params['type'])) {
+                return $m[0];
+            }
+            $url = '/shop/listtype/'.$params['type'];
+            unset($params['type']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
+    // 8) shop 위시리스트: /shop/wishlist.php → /shop/wishlist
+    $html = preg_replace('#/shop/wishlist\.php(?![a-zA-Z0-9])#', '/shop/wishlist', $html);
+
+    // 9) shop 장바구니: /shop/cart.php → /shop/cart (query 없음, 세션 기반)
+    $html = preg_replace('#/shop/cart\.php(?![a-zA-Z0-9])#', '/shop/cart', $html);
+
+    // 10) shop 주문서: /shop/orderform.php → /shop/orderform
+    $html = preg_replace('#/shop/orderform\.php(?![a-zA-Z0-9])#', '/shop/orderform', $html);
+
+    // 11) shop 주문조회 (orderinquiry, orderinquiryview, orderinquirycancel) — query 보존
+    $html = preg_replace('#/shop/(orderinquiry(?:view|cancel)?)\.php(?![a-zA-Z0-9])#', '/shop/$1', $html);
+
+    // 12) shop 배송지목록: /shop/orderaddress.php → /shop/orderaddress
+    $html = preg_replace('#/shop/orderaddress\.php(?![a-zA-Z0-9])#', '/shop/orderaddress', $html);
+
+    // 13) shop 쿠폰: /shop/coupon.php → /shop/coupon
+    $html = preg_replace('#/shop/coupon\.php(?![a-zA-Z0-9])#', '/shop/coupon', $html);
+
+    // 14) 설문조사: /bbs/poll_(result|update|etc_update|etc_update_mail).php → /poll_*
+    $html = preg_replace('#/bbs/(poll_(?:result|update|etc_update_mail|etc_update))\.php(?![a-zA-Z0-9])#', '/$1', $html);
+
+    // 15) admin: /admin/.../*.php → /admin/.../* (clean URL 정규화, hard-coded .php 링크 자동 정리)
+    $html = preg_replace('#(/admin(?:/[a-zA-Z][a-zA-Z0-9_-]*)+)\.php(?![a-zA-Z0-9])#', '$1', $html);
+
+    // 16) shop 이벤트: /shop/event.php?ev_id=N[&...] → /shop/event/N[?...] (잔여 query 보존)
+    $html = preg_replace_callback(
+        '#/shop/event\.php\?(ev_id=\d+(?:&(?:amp;)?[^"\'<>\s]*)?)#',
+        function ($m) {
+            parse_str(html_entity_decode($m[1]), $qp);
+            $ev_id = $qp['ev_id'] ?? '';
+            unset($qp['ev_id']);
+            $url = '/shop/event/'.$ev_id;
+            if (!empty($qp)) $url .= '?'.http_build_query($qp, '', '&amp;');
+            return $url;
+        },
+        $html
+    );
+
     return $html;
 });
 
@@ -127,6 +224,13 @@ if (!is_file($_route_full)) {
 
 // gnuboard 의 './_common.php' 같은 상대 include 가 동작하도록 CWD 를 맞춘다.
 chdir(dirname($_route_full));
+
+// gnuboard legacy 코드가 self-URL (페이지네이션, 폼 action 등) 을 만들 때
+// $_SERVER['SCRIPT_NAME'] 을 사용. front controller 에선 항상 '/index.php'
+// 라서 listtype.php?type=4 페이지네이션 클릭이 /index.php?... 로 빠지는
+// 문제 발생 → resolved target 으로 덮어써서 마치 직접 실행된 것처럼 보이게.
+$_SERVER['SCRIPT_NAME'] = '/'.$_route_target;
+$_SERVER['PHP_SELF']    = '/'.$_route_target;
 
 // 글로벌 스코프 require (반드시!)
 require $_route_full;

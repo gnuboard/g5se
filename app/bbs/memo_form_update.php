@@ -81,7 +81,7 @@ for ($i=0; $i<$member_list_cnt; $i++) {
                         me_memo, me_read_datetime, me_type, me_send_ip
                     ) values (
                         :recv_mb_id, :send_mb_id, :send_datetime,
-                        :me_memo, '0000-00-00 00:00:00', 'recv', :send_ip
+                        :me_memo, NULL, 'recv', :send_ip
                     ) ",
                   [':recv_mb_id' => $recv_mb_id, ':send_mb_id' => $member['mb_id'],
                    ':send_datetime' => G5_TIME_YMDHIS, ':me_memo' => stripslashes($me_memo),
@@ -95,7 +95,7 @@ for ($i=0; $i<$member_list_cnt; $i++) {
                             me_memo, me_read_datetime, me_send_id, me_type, me_send_ip
                         ) values (
                             :recv_mb_id, :send_mb_id, :send_datetime,
-                            :me_memo, '0000-00-00 00:00:00', :send_id, 'send', :send_ip
+                            :me_memo, NULL, :send_id, 'send', :send_ip
                         ) ",
                       [':recv_mb_id' => $recv_mb_id, ':send_mb_id' => $member['mb_id'],
                        ':send_datetime' => G5_TIME_YMDHIS, ':me_memo' => stripslashes($me_memo),

@@ -22,6 +22,20 @@ RewriteRule ^(theme|skin|img|js|css|mobile|plugin)/(.*)$ app/$1/$2 [END]
 #    (.php 컨트롤러는 front controller 가 처리해야 하므로 정적 자산만 매핑)
 RewriteRule ^admin/(css|js|img)/(.*)$ app/admin/$1/$2 [END]
 
+#    shop 정적 자산: /shop/(img|css|js)/... → app/shop/$1/$2
+RewriteRule ^shop/(img|css|js)/(.*)$ app/shop/$1/$2 [END]
+
+#    설치 마법사 — /install/* → app/install/* (front controller 우회 —
+#    install 단계엔 라우팅/세션/DB 가 아직 없음)
+RewriteRule ^install/?$ app/install/index.php [END]
+# .php 명시적 (legacy form submit 등) — 그대로 매핑
+RewriteRule ^install/([a-zA-Z][a-zA-Z0-9_]*)\.php$ app/install/$1.php [END]
+# 클린 URL — 실제 .php 파일 있으면 매핑 (예: /install/install_config → install_config.php)
+RewriteCond %{DOCUMENT_ROOT}/app/install/$1.php -f
+RewriteRule ^install/([a-zA-Z][a-zA-Z0-9_]*)/?$ app/install/$1.php [END]
+# 정적 자산 (img/, .css 등)
+RewriteRule ^install/(.+)$ app/install/$1 [END]
+
 # 5) 실제 파일/디렉토리는 그대로 (favicon, robots.txt 등)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d

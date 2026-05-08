@@ -105,9 +105,9 @@ if($act == "buy")
     }
 
     if ($is_member) // 회원인 경우
-        goto_url(G5_SHOP_URL.'/orderform.php');
+        goto_url(G5_SHOP_URL.'/orderform');
     else
-        goto_url(G5_BBS_URL.'/login.php?url='.urlencode(G5_SHOP_URL.'/orderform.php'));
+        goto_url(G5_BBS_URL.'/login.php?url='.urlencode(G5_SHOP_URL.'/orderform'));
 }
 else if ($act == "alldelete") // 모두 삭제이면
 {
@@ -274,7 +274,7 @@ else // 장바구니에 담기
             $ct_select_time = G5_TIME_YMDHIS;
         } else {
             $ct_select = 0;
-            $ct_select_time = '0000-00-00 00:00:00';
+            $ct_select_time = null;
         }
 
         // 장바구니에 Insert — bulk VALUES 대신 per-iteration single INSERT (placeholder 충돌 방지)
@@ -394,14 +394,14 @@ if ($sw_direct)
 {
     if ($is_member)
     {
-    	goto_url(G5_SHOP_URL."/orderform.php?sw_direct=$sw_direct");
+    	goto_url(G5_SHOP_URL."/orderform?sw_direct=$sw_direct");
     }
     else
     {
-    	goto_url(G5_BBS_URL."/login.php?url=".urlencode(G5_SHOP_URL."/orderform.php?sw_direct=$sw_direct"));
+    	goto_url(G5_BBS_URL."/login.php?url=".urlencode(G5_SHOP_URL."/orderform?sw_direct=$sw_direct"));
     }
 }
 else
 {
-    goto_url(G5_SHOP_URL.'/cart.php');
+    goto_url(G5_SHOP_URL.'/cart');
 }

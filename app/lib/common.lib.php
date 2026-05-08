@@ -1879,11 +1879,14 @@ function sql_connect($host, $user, $pass, $db=G5_MYSQL_DB)
             PDO::ATTR_ERRMODE              => PDO::ERRMODE_SILENT,   // gnuboard 가 직접 에러 핸들 (Exception 던지면 안 됨)
             PDO::ATTR_DEFAULT_FETCH_MODE   => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES     => true,                  // prepared 도 동일하게 동작
+            PDO::ATTR_STRINGIFY_FETCHES    => true,                  // PHP 8.1+ default false → BIGINT 가 int 로 변환되어 gnuboard 의 === 비교 (예: orderformupdate.php 의 od_id) 깨짐. 강제 string.
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,              // rowCount() / 재 iterate 가능하도록
         ];
         $pdo = new PDO($dsn, $user, $pass, $opts);
     } catch (Exception $e) {
-        die('MySQL Host, User, Password, DB 정보에 오류가 있습니다.');
+        // gnu5se: die() 는 호출자(설치 ajax 등)가 try/catch 로 받을 수 없음 → throw 로 변경.
+        // 일반 페이지에선 호출자가 안 잡으면 PHP fatal 로 출력되어 동일 효과.
+        throw new RuntimeException('MySQL Host, User, Password, DB 정보에 오류가 있습니다.', 0, $e);
     }
     return $pdo;
 }
@@ -3453,7 +3456,7 @@ function insert_member_cert_history($mb_id, $name, $hp, $birth, $type)
                         `ch_hp` varchar(255) NOT NULL DEFAULT '',
                         `ch_birth` varchar(255) NOT NULL DEFAULT '',
                         `ch_type` varchar(20) NOT NULL DEFAULT '',
-                        `ch_datetime` datetime NOT NULL default '0000-00-00 00:00:00',
+                        `ch_datetime` datetime NULL DEFAULT NULL,
                         PRIMARY KEY (`ch_id`),
                         KEY `mb_id` (`mb_id`)
                     ) ", [], true);

@@ -13,6 +13,7 @@ $g5_path['path'] = '..';
 include_once('install_common.php');
 include_once('../config.php');
 include_once('../lib/common.lib.php');
+include_once('../lib/sql_pdo.lib.php');    // sql_pdo_query / sql_pdo_fetch 등 PDO 헬퍼
 include_once('./install.function.php');    // 인스톨 과정 함수 모음
 
 include_once('../lib/hook.lib.php');    // hook 함수 파일
@@ -20,7 +21,7 @@ include_once('../lib/get_data.lib.php');
 include_once('../lib/uri.lib.php');    // URL 함수 파일
 include_once('../lib/cache.lib.php');
 
-$title = G5_VERSION." 설치 완료 3/3";
+$title = "그누보드5SE 설치 — 완료";
 include_once('./install.inc.php');
 
 $tmp_bo_table   = array ("notice", "qa", "free", "gallery");
@@ -90,7 +91,7 @@ unset($row);
 ?>
 
 <div class="ins_inner">
-    <h2><?php echo G5_VERSION ?> 설치가 시작되었습니다.</h2>
+    <h2>그누보드5SE 설치가 시작되었습니다.</h2>
 
     <ol>
 <?php
@@ -578,8 +579,8 @@ if($g5_shop_install) {
 <?php
 //-------------------------------------------------------------------------------------------------
 
-// DB 설정 파일 생성
-$file = '../'.G5_DATA_DIR.'/'.G5_DBCONFIG_FILE;
+// DB 설정 파일 생성 — data 는 docroot 루트, install.inc.php 에서 절대경로 \$data_path 정의됨
+$file = $data_path.'/'.G5_DBCONFIG_FILE;
 $f = @fopen($file, 'a');
 
 fwrite($f, "<?php\n");
@@ -686,7 +687,10 @@ if($g5_shop_install) {
 ?>
     </ol>
 
-    <p>축하합니다. <?php echo G5_VERSION ?> 설치가 완료되었습니다.</p>
+    <div class="ins_msg ok">
+        <strong>축하합니다!</strong> 그누보드5SE 설치가 완료되었습니다.<br>
+        DB 는 utf8mb4 (이모지 지원) + InnoDB + nullable date/datetime 으로 생성되었습니다.
+    </div>
 
 </div>
 

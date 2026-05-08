@@ -24,7 +24,7 @@ if($od['od_pg'] == 'lg') {
         $st_count1 = $st_count2 = 0;
         $custom_cancel = false;
 
-        $sql = " select it_id, it_name, ct_send_cost, it_sc_type
+        $sql = " select it_id, it_name, ct_price, ct_send_cost, it_sc_type
                     from {$g5['g5_shop_cart_table']}
                     where od_id = '$od_id'
                     group by it_id
@@ -48,23 +48,17 @@ if($od['od_pg'] == 'lg') {
 	            <tbody>
 	            <?php
 	            for($i=0; $row=sql_fetch_array($result); $i++) {
-	                $image = get_it_image($row['it_id'], 55, 55);
-	
-	                $sql = " select ct_id, it_name, ct_option, ct_qty, ct_price, ct_point, ct_status, io_type, io_price
-	                            from {$g5['g5_shop_cart_table']}
-	                            where od_id = '$od_id'
-	                              and it_id = '{$row['it_id']}'
-	                            order by io_type asc, ct_id asc ";
-	                $res = sql_query($sql);
-	                $rowspan = sql_num_rows($res) + 1;
+	                $image = get_it_image($row['it_id'], 160, 160);
 	
 	                // 합계금액 계산
 	                $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
+	                                SUM(ct_point * ct_qty) as point,
 	                                SUM(ct_qty) as qty
 	                            from {$g5['g5_shop_cart_table']}
 	                            where it_id = '{$row['it_id']}'
 	                              and od_id = '$od_id' ";
 	                $sum = sql_fetch($sql);
+	                $it_options = print_item_options($row['it_id'], $od_id);
 	
 	                // 배송비
 	                switch($row['ct_send_cost'])
@@ -87,43 +81,45 @@ if($od['od_pg'] == 'lg') {
 	                    if($sendcost == 0)
 	                        $ct_send_cost = '무료';
 	                }
-	
-	                for($k=0; $opt=sql_fetch_array($res); $k++) {
-	                    if($opt['io_type'])
-	                        $opt_price = $opt['io_price'];
-	                    else
-	                        $opt_price = $opt['ct_price'] + $opt['io_price'];
-	
-	                    $sell_price = $opt_price * $opt['ct_qty'];
-	                    $point = $opt['ct_point'] * $opt['ct_qty'];
-	
-	                    if($k == 0) {
+
+	                $status_items = array();
+	                $status_sql = " select ct_status
+	                                from {$g5['g5_shop_cart_table']}
+	                                where od_id = '$od_id'
+	                                  and it_id = '{$row['it_id']}'
+	                                order by io_type asc, ct_id asc ";
+	                $status_result = sql_query($status_sql);
+	                while($status = sql_fetch_array($status_result)) {
+	                    $st_count1++;
+	                    if($status['ct_status'] == '주문')
+	                        $st_count2++;
+	                    $status_items[] = $status['ct_status'];
+	                }
+	                $status_items = array_values(array_unique($status_items));
+	                $ct_status = count($status_items) ? implode('/', $status_items) : '';
 	            ?>
-	            <?php } ?>
 	            <tr>
-	                <td headers="th_itopt" class="td_prd">
+	                <td headers="th_itname" class="td_prd">
 	                	<div class="sod_img"><?php echo $image; ?></div>
 	                	<div class="sod_name">
 		                	<a href="<?php echo shop_item_url($row['it_id']); ?>"><?php echo $row['it_name']; ?></a><br>
-		                	<div class="sod_opt"><?php echo get_text($opt['ct_option']); ?></div>
+                            <?php if($it_options) { ?>
+		                	<div class="sod_opt"><?php echo $it_options; ?></div>
+                            <?php } ?>
 	                	</div>
 	                </td>
-	                <td headers="th_itqty" class="td_mngsmall"><?php echo number_format($opt['ct_qty']); ?></td>
-	                <td headers="th_itprice" class="td_numbig text_right"><?php echo number_format($opt_price); ?></td>
-	                <td headers="th_itpt" class="td_numbig text_right"><?php echo number_format($point); ?></td>
+	                <td headers="th_itqty" class="td_mngsmall"><?php echo number_format($sum['qty']); ?></td>
+	                <td headers="th_itprice" class="td_numbig text_right"><?php echo number_format($row['ct_price']); ?></td>
+	                <td headers="th_itpt" class="td_numbig text_right"><?php echo number_format($sum['point']); ?></td>
 	                <td headers="th_itsd" class="td_dvr"><?php echo $ct_send_cost; ?></td>
-	                <td headers="th_itsum" class="td_numbig text_right"><?php echo number_format($sell_price); ?></td>
-	                <td headers="th_itst" class="td_mngsmall"><?php echo $opt['ct_status']; ?></td>
+	                <td headers="th_itsum" class="td_numbig text_right"><?php echo number_format($sum['price']); ?></td>
+	                <td headers="th_itst" class="td_mngsmall"><?php echo $ct_status; ?></td>
 	            </tr>
 	            <?php
-	                    $tot_point       += $point;
+	                $tot_point       += $sum['point'];
 	
-	                    $st_count1++;
-	                    if($opt['ct_status'] == '주문')
-	                        $st_count2++;
-	                }
 	            }
-	
+
 	            // 주문 상품의 상태가 모두 주문이면 고객 취소 가능
 	            if($st_count1 > 0 && $st_count1 == $st_count2)
 	                $custom_cancel = true;

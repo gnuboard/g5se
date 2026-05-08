@@ -10,11 +10,6 @@ if( isset($sort) && ! in_array($sort, array('it_name', 'it_sum_qty', 'it_price',
     $sort='';
 }
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/event.php');
-    return;
-}
-
 $sql = " select * from {$g5['g5_shop_event_table']}
           where ev_id = '$ev_id'
             and ev_use = 1 ";

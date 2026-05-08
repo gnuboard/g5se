@@ -414,7 +414,13 @@ class item_list
             include($file);
             $content = ob_get_contents();
             ob_end_clean();
-            return $content;
+            // gnu5se: 레거시 skin 의 fixed-width float 가 list_mod (1줄당 개수) 설정을 반영
+            // 못 하므로, 결과를 CSS Grid 래퍼로 감싸 --m-list-cols (최대 컬럼) 와
+            // --m-img-width (최소 cell 폭) 를 주입한다. CSS 는 theme/basic/shop/shop.head.php
+            // 의 .m-shop-grid 규칙 참고.
+            $cols = max(1, (int) $this->list_mod);
+            $imgw = max(1, (int) $this->img_width);
+            return "<div class=\"m-shop-grid\" style=\"--m-list-cols: {$cols}; --m-img-width: {$imgw}px\">{$content}</div>";
         }
     }
 }
@@ -510,7 +516,8 @@ function get_it_image($it_id, $width, $height=0, $anchor=false, $img_id='', $img
     }
 
     if($thumb) {
-        $file_url = str_replace(G5_PATH, G5_URL, $filepath.'/'.$thumb);
+        // gnu5se: data/ 가 app/ 밖에 있으므로 G5_DATA_PATH→G5_DATA_URL 로 치환해야 한다.
+        $file_url = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath.'/'.$thumb);
         $img = '<img src="'.$file_url.'" width="'.$width.'" height="'.$height.'" alt="'.$img_alt.'"';
     } else {
         $img = '<img src="'.G5_SHOP_URL.'/img/no_image.gif" width="'.$width.'"';
@@ -560,7 +567,7 @@ function get_it_thumbnail($img, $width, $height=0, $id='', $is_crop=false)
     $thumb = thumbnail($filename, $filepath, $filepath, $width, $height, false, $is_crop, 'center', false, $um_value='80/0.5/3');
 
     if($thumb) {
-        $file_url = str_replace(G5_PATH, G5_URL, $filepath.'/'.$thumb);
+        $file_url = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath.'/'.$thumb);
         $str = '<img src="'.$file_url.'" width="'.$width.'" height="'.$height.'"';
         if($id)
             $str .= ' id="'.$id.'"';
@@ -594,7 +601,7 @@ function get_it_imageurl($it_id)
     }
 
     if($filepath)
-        $str = str_replace(G5_PATH, G5_URL, $filepath);
+        $str = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath);
     else
         $str = G5_SHOP_URL.'/img/no_image.gif';
 
@@ -2354,6 +2361,24 @@ function get_wishlist_datas_count($mb_id='')
     return is_array($wishlist_datas) ? count($wishlist_datas) : 0;
 }
 
+//회원이 해당 상품을 위시리스트에 담았는지 확인
+function is_wishlist_item($it_id='', $mb_id='')
+{
+    global $member;
+
+    if( !$it_id ) return false;
+
+    if( !$mb_id ){
+        $mb_id = isset($member['mb_id']) ? $member['mb_id'] : '';
+
+        if( !$mb_id ) return false;
+    }
+
+    $wishlist_datas = get_wishlist_datas($mb_id, true);
+
+    return is_array($wishlist_datas) && isset($wishlist_datas[$it_id]);
+}
+
 //각 상품에 대한 위시리스트 담은 갯수 출력
 function get_wishlist_count_by_item($it_id='')
 {
@@ -2807,7 +2832,7 @@ function add_order_post_log($msg='', $code='error'){
                           `post_data` text NOT NULL,
                           `ol_code` varchar(255) NOT NULL DEFAULT '',
                           `ol_msg` text NOT NULL,
-                          `ol_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+                          `ol_datetime` datetime NULL DEFAULT NULL,
                           `ol_ip` varchar(25) NOT NULL DEFAULT '',
                           PRIMARY KEY (`log_id`)
                         ) ENGINE=MyISAM DEFAULT CHARSET=utf8; ", false);

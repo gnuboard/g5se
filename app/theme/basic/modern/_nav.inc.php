@@ -61,11 +61,35 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             </a>
 
             <nav class="m-nav-utility" aria-label="유틸 메뉴">
-                <a href="/faq"     class="m-nav-utility-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
-                <a href="/qa"      class="m-nav-utility-link<?php echo strpos($_cur_path, '/qa') === 0 ? ' is-active' : '' ?>">Q&amp;A</a>
-                <a href="/new"     class="m-nav-utility-link<?php echo strpos($_cur_path, '/new') === 0 ? ' is-active' : '' ?>">새글</a>
-                <a href="/connect" class="m-nav-utility-link<?php echo strpos($_cur_path, '/connect') === 0 ? ' is-active' : '' ?>">접속자</a>
+                <a href="/faq" class="m-nav-utility-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
+                <a href="/qa"  class="m-nav-utility-link<?php echo strpos($_cur_path, '/qa') === 0 ? ' is-active' : '' ?>">Q&amp;A</a>
+                <?php /* 새글 / 접속자 는 footer 로 이동 (m-footer 의 사이트/접속자 통계 컬럼) */ ?>
             </nav>
+
+            <?php /* 장바구니 아이콘 — shop 활성 시 항상 노출, 아이템 수 badge */
+            if (defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
+            <a href="<?php echo G5_SHOP_URL ?>/cart" class="m-nav-cart-link" aria-label="장바구니" title="장바구니">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <?php
+                // 카트 아이템 수 (세션에 저장된 ss_cart_id 의 ct 카운트)
+                $_nav_cart_count = 0;
+                $_nav_cart_id = function_exists('get_session') ? get_session('ss_cart_id') : '';
+                if ($_nav_cart_id && function_exists('sql_pdo_fetch')) {
+                    $_r = @sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_cart_table']} where od_id = :od_id ", [':od_id' => $_nav_cart_id]);
+                    $_nav_cart_count = (int)($_r['cnt'] ?? 0);
+                }
+                if ($_nav_cart_count > 0) { ?>
+                <span class="m-nav-cart-badge"><?php echo $_nav_cart_count > 99 ? '99+' : $_nav_cart_count ?></span>
+                <?php } ?>
+            </a>
+            <?php } ?>
+
+            <?php /* 마이페이지 사람 아이콘 — 로그인 상태일 때만 노출. 통합 mypage hub */
+            if (!empty($is_member)) { ?>
+            <a href="/mypage" class="m-nav-cart-link m-nav-mypage-link" aria-label="마이페이지" title="마이페이지">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+            <?php } ?>
 
             <div class="m-nav-actions">
                 <?php if ($is_member) { ?>
@@ -295,7 +319,8 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     transition: background 0.15s, color 0.15s;
 }
 .m-nav-segment-item.is-active {
-    background: var(--m-surface); color: var(--m-primary);
+    /* primary tint 로 통일 — dark 에서 surface 가 surface-2 보다 어두워 invert 되는 문제 회피 */
+    background: var(--m-primary-soft); color: var(--m-primary);
     box-shadow: var(--m-shadow);
 }
 
@@ -329,6 +354,41 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 .m-nav-utility-link:hover { background: var(--m-surface-2); color: var(--m-text); }
 .m-nav-utility-link.is-active { color: var(--m-primary); }
 
+/* 장바구니 아이콘 (top nav) — badge 포함, shop 진입 여부와 무관하게 노출 */
+.m-nav-cart-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    color: var(--m-text-soft);
+    background: transparent;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.m-nav-cart-link:hover {
+    background: var(--m-surface-2);
+    color: var(--m-text);
+    border-color: var(--m-border-hover);
+}
+.m-nav-cart-link svg { display: block; }
+.m-nav-cart-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    min-width: 18px; height: 18px;
+    padding: 0 5px;
+    background: var(--m-primary);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
 .m-nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
 .m-nav-mobile-toggle {
@@ -345,7 +405,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     .m-nav-segment { display: none; }     /* 커뮤니티/쇼핑몰 토글도 드로어로 */
     .m-nav-utility { display: none; }     /* FAQ/Q&A/새글/접속자 도 드로어로 */
     .m-nav-search-icon-btn { margin-left: auto; }
-    .m-nav-actions { display: none; }
+    .m-nav-actions { display: none; }  /* 로그인/회원가입 버튼은 드로어로 흡수, 다크모드 토글은 우하단 .m-float-actions 로 이동 */
     .m-nav-mobile-toggle { display: inline-flex; }
     /* 사이드바(outlogin) 도 모바일에선 숨김 — 동일 정보를 드로어가 노출 */
     .m-side-col { display: none !important; }
@@ -448,7 +508,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     color: var(--m-text-soft); text-decoration: none;
 }
 .m-nav-drawer-segment-item.is-active {
-    background: var(--m-surface); color: var(--m-primary);
+    background: var(--m-primary-soft); color: var(--m-primary);
     box-shadow: var(--m-shadow);
 }
 

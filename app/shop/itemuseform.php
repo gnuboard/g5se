@@ -5,11 +5,7 @@ $w     = isset($_REQUEST['w']) ? preg_replace('/[^0-9a-z]/i', '', trim($_REQUEST
 $it_id = isset($_REQUEST['it_id']) ? get_search_string(trim($_REQUEST['it_id'])) : '';
 $is_id = isset($_REQUEST['is_id']) ? preg_replace('/[^0-9]/', '', trim($_REQUEST['is_id'])) : 0;
 $use = array('is_subject'=>'', 'is_content'=>'');
-
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/itemuseform.php');
-    return;
-}
+
 
 include_once(G5_EDITOR_LIB);
 

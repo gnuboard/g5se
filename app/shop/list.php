@@ -12,11 +12,6 @@ if( !isset($sortodr) || !in_array(strtolower($sortodr), array('asc', 'desc')) ){
     $sortodr='';
 }
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MSHOP_PATH.'/list.php');
-    return;
-}
-
 // 테마에 list.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
     $theme_list_file = G5_THEME_SHOP_PATH.'/list.php';

@@ -178,30 +178,140 @@ if (file_exists($dbconfig_file)) {
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>오류! <?php echo G5_VERSION ?> 설치하기</title>
-<link rel="stylesheet" href="install/install.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2563eb">
+<title>그누보드5SE 설치가 필요합니다</title>
+<style>
+/* 인라인 — 라우팅/static 처리 영향 안 받도록 critical CSS 자체 포함 */
+:root {
+    --bg: #f8fafc; --surface: #fff; --surface-2: #f1f5f9;
+    --text: #0f172a; --text-soft: #475569; --text-faint: #94a3b8;
+    --border: #e2e8f0; --primary: #2563eb; --primary-hover: #1d4ed8;
+    --danger: #dc2626;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f172a; --surface: #1e293b; --surface-2: #0b1220;
+        --text: #f1f5f9; --text-soft: #cbd5e1; --text-faint: #64748b;
+        --border: #334155; --primary: #3b82f6; --primary-hover: #60a5fa;
+    }
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0; padding: 0; min-height: 100vh;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", system-ui, sans-serif;
+    font-size: 15px; line-height: 1.6;
+    display: flex; flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+.msg-bar {
+    padding: 28px 40px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+    color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+}
+.msg-bar .brand {
+    font-size: 1.5em; font-weight: 800; letter-spacing: -0.02em;
+}
+.msg-bar .brand .sub {
+    display: block; font-size: 0.55em; font-weight: 500;
+    letter-spacing: 0.08em; opacity: 0.85; margin-top: 2px;
+}
+.msg-bar .tag { font-size: 0.92em; opacity: 0.85; }
+main {
+    flex: 1; max-width: 720px; width: 100%;
+    margin: 32px auto; padding: 0 24px;
+}
+h1 {
+    margin: 0 0 16px; font-size: 1.6em; font-weight: 700;
+    color: var(--text); letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 12px;
+}
+h1 .ic {
+    flex-shrink: 0; width: 36px; height: 36px;
+    background: rgba(220,38,38,0.12); color: var(--danger);
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.card {
+    padding: 28px 32px; margin: 0 0 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.card p { margin: 0 0 12px; color: var(--text-soft); }
+.card p:last-child { margin-bottom: 0; }
+.code-block {
+    margin: 14px 0; padding: 12px 16px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.92em; color: var(--text);
+    word-break: break-all;
+}
+.code-block strong { color: var(--danger); font-weight: 700; }
+.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    background: var(--primary); color: #fff !important;
+    border: 1px solid var(--primary); border-radius: 6px;
+    font-weight: 600; text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+}
+.btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn svg { width: 16px; height: 16px; }
+footer {
+    margin-top: auto; padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    text-align: center; color: var(--text-faint); font-size: 0.85em;
+}
+footer strong { color: var(--text); font-weight: 700; }
+@media (max-width: 600px) {
+    .msg-bar { padding: 22px 20px; }
+    main { padding: 0 16px; margin: 24px auto; }
+    .card { padding: 22px 20px; }
+    h1 { font-size: 1.3em; }
+}
+</style>
 </head>
 <body>
 
-<div id="ins_bar">
-    <span id="bar_img">GNUBOARD5</span>
-    <span id="bar_txt">Message</span>
+<div class="msg-bar">
+    <span class="brand">
+        그누보드5SE
+        <span class="sub">GNUBOARD5 SECOND EDITION</span>
+    </span>
+    <span class="tag">설치 안내</span>
 </div>
-<h1>그누보드5를 먼저 설치해주십시오.</h1>
-<div class="ins_inner">
-    <p>다음 파일을 찾을 수 없습니다.</p>
-    <ul>
-        <li><strong><?php echo G5_DATA_DIR.'/'.G5_DBCONFIG_FILE ?></strong></li>
-    </ul>
-    <p>그누보드 설치 후 다시 실행하시기 바랍니다.</p>
-    <div class="inner_btn">
-        <a href="<?php echo G5_URL; ?>/install/"><?php echo G5_VERSION ?> 설치하기</a>
+
+<main>
+    <h1>
+        <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        설치가 필요합니다
+    </h1>
+
+    <div class="card">
+        <p>그누보드5SE 가 아직 설치되지 않았습니다. 다음 파일이 없어서 사이트를 열 수 없습니다.</p>
+        <div class="code-block">
+            <strong><?php echo G5_DATA_DIR.'/'.G5_DBCONFIG_FILE ?></strong>
+        </div>
+        <p>아래 버튼을 눌러 설치를 시작하세요.</p>
+        <p style="margin-top: 20px;">
+            <a class="btn" href="<?php echo G5_URL; ?>/install/">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                설치 시작
+            </a>
+        </p>
     </div>
-</div>
-<div id="ins_ft">
-    <strong>GNUBOARD5</strong>
-    <p>GPL! OPEN SOURCE GNUBOARD</p>
-</div>
+</main>
+
+<footer>
+    <p><strong>그누보드5SE</strong> · GNUBOARD5 SECOND EDITION · MIT License</p>
+</footer>
 
 </body>
 </html>

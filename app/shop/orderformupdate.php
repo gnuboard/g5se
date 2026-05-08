@@ -371,11 +371,11 @@ else if ($od_settle_case == "가상계좌")
     switch($default['de_pg_service']) {
         case 'lg':
             include G5_SHOP_PATH.'/lg/xpay_result.php';
-            $od_receipt_time = '0000-00-00 00:00:00';
+            $od_receipt_time = null;
             break;
         case 'toss':
             include G5_SHOP_PATH.'/toss/toss_result.php';
-            $od_receipt_time = '0000-00-00 00:00:00';
+            $od_receipt_time = null;
             break;
         case 'inicis':
             include G5_SHOP_PATH.'/inicis/inistdpay_result.php';
@@ -518,7 +518,7 @@ if($od_settle_case == 'KAKAOPAY')
     $od_pg = 'KAKAOPAY';
 
 $tno = isset($tno) ? $tno : '';
-$od_receipt_time = isset($od_receipt_time) ? $od_receipt_time : '';
+$od_receipt_time = isset($od_receipt_time) ? $od_receipt_time : null;
 $od_app_no = isset($od_app_no) ? $od_app_no : '';
 
 // 주문금액과 결제금액이 일치하는지 체크
@@ -656,12 +656,27 @@ $order_params = [
 ];
 $result = sql_pdo_query($order_sql, $order_params, false);
 
+// gnu5se: silent fail 추적용 임시 로그 (sql_pdo_query 3번째 false 라 에러가 안 찍힘)
+if (!$result) {
+    $info = $g5['connect_db']->errorInfo();
+    @error_log("[gnu5se orderformupdate] INSERT failed | errorInfo=".json_encode($info)
+              ." | sql=".$order_sql
+              ." | params=".json_encode($order_params, JSON_UNESCAPED_UNICODE));
+}
+
 // 정말로 insert 가 되었는지 한번더 체크한다.
 $exists_order = sql_pdo_fetch(" select od_id, od_tno, od_ip from {$g5['g5_shop_order_table']} where od_id = :od_id ",
                              [':od_id' => $od_id]);
 
 // 주문정보 입력 오류시 결제 취소
 if(! $result || ! (isset($exists_order['od_id']) && $od_id && $exists_order['od_id'] === $od_id)) {
+    // gnu5se: 어느 분기가 fail 인지 + 진단 컨텍스트 로깅
+    @error_log("[gnu5se orderformupdate] order check failed"
+              ." | result=".var_export($result, true)
+              ." | od_id=".var_export($od_id, true)
+              ." | exists_order=".json_encode($exists_order, JSON_UNESCAPED_UNICODE)
+              ." | tno=".var_export($tno, true)
+              ." | mb_id=".var_export($member['mb_id'] ?? null, true));
     if($tno) {
         $cancel_msg = '주문정보 입력 오류 : '.$order_sql;
         include G5_SHOP_PATH.'/cancel_pg.inc.php';
@@ -671,7 +686,7 @@ if(! $result || ! (isset($exists_order['od_id']) && $od_id && $exists_order['od_
     $error = 'order';
     include G5_SHOP_PATH.'/ordererrormail.php';
 
-    if(function_exists('add_order_post_log')) add_order_post_log($cancel_msg);
+    if(function_exists('add_order_post_log')) add_order_post_log($cancel_msg ?? '');
     die('<p>고객님의 주문 정보를 처리하는 중 오류가 발생해서 주문이 완료되지 않았습니다.</p><p>'.strtoupper($od_pg).'를 이용한 전자결제(신용카드, 계좌이체, 가상계좌 등)은 자동 취소되었습니다.');
 }
 
@@ -830,7 +845,7 @@ if ($coupon_duplicate) {
                   [':tmp_cart_id' => $tmp_cart_id, ':od_id' => $od_id], false);
 
     if(function_exists('add_order_post_log')) add_order_post_log('쿠폰 이중사용 감지로 주문 취소');
-    alert('쿠폰이 이미 사용되었습니다. 다시 주문해 주십시오.', G5_SHOP_URL.'/orderform.php');
+    alert('쿠폰이 이미 사용되었습니다. 다시 주문해 주십시오.', G5_SHOP_URL.'/orderform');
 }
 
 

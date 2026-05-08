@@ -19,7 +19,7 @@ if (!$row['cnt']) {
 
 $html_title = '게시판';
 
-if (!isset($board['bo_device'])) {
+if (!array_key_exists('bo_device', $board)) {
     // 게시판 사용 필드 추가
     // both : pc, mobile 둘다 사용
     // pc : pc 전용 사용
@@ -28,31 +28,31 @@ if (!isset($board['bo_device'])) {
     sql_query(" ALTER TABLE  `{$g5['board_table']}` ADD  `bo_device` ENUM(  'both',  'pc',  'mobile' ) NOT NULL DEFAULT  'both' AFTER  `bo_subject` ", false);
 }
 
-if (!isset($board['bo_mobile_skin'])) {
+if (!array_key_exists('bo_mobile_skin', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_mobile_skin` VARCHAR(255) NOT NULL DEFAULT '' AFTER `bo_skin` ", false);
 }
 
-if (!isset($board['bo_gallery_width'])) {
+if (!array_key_exists('bo_gallery_width', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_gallery_width` INT NOT NULL AFTER `bo_gallery_cols`,  ADD `bo_gallery_height` INT NOT NULL DEFAULT '0' AFTER `bo_gallery_width`,  ADD `bo_mobile_gallery_width` INT NOT NULL DEFAULT '0' AFTER `bo_gallery_height`,  ADD `bo_mobile_gallery_height` INT NOT NULL DEFAULT '0' AFTER `bo_mobile_gallery_width` ", false);
 }
 
-if (!isset($board['bo_mobile_subject_len'])) {
+if (!array_key_exists('bo_mobile_subject_len', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_mobile_subject_len` INT(11) NOT NULL DEFAULT '0' AFTER `bo_subject_len` ", false);
 }
 
-if (!isset($board['bo_mobile_page_rows'])) {
+if (!array_key_exists('bo_mobile_page_rows', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_mobile_page_rows` INT(11) NOT NULL DEFAULT '0' AFTER `bo_page_rows` ", false);
 }
 
-if (!isset($board['bo_mobile_content_head'])) {
+if (!array_key_exists('bo_mobile_content_head', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_mobile_content_head` TEXT NOT NULL AFTER `bo_content_head`, ADD `bo_mobile_content_tail` TEXT NOT NULL AFTER `bo_content_tail`", false);
 }
 
-if (!isset($board['bo_use_cert'])) {
+if (!array_key_exists('bo_use_cert', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_cert` ENUM('','cert','adult') NOT NULL DEFAULT '' AFTER `bo_use_email` ", false);
 }
 
-if (!isset($board['bo_use_sns'])) {
+if (!array_key_exists('bo_use_sns', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_sns` TINYINT NOT NULL DEFAULT '0' AFTER `bo_use_cert` ", false);
 
     $result = sql_query(" select bo_table from `{$g5['board_table']}` ");
@@ -71,7 +71,7 @@ if (strpos($row['Type'], 'hp-') === false) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` CHANGE `bo_use_cert` `bo_use_cert` ENUM('','cert','adult','hp-cert','hp-adult') NOT NULL DEFAULT '' ", false);
 }
 
-if (!isset($board['bo_use_list_file'])) {
+if (!array_key_exists('bo_use_list_file', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_list_file` TINYINT NOT NULL DEFAULT '0' AFTER `bo_use_list_view` ", false);
 
     $result = sql_query(" select bo_table from `{$g5['board_table']}` ");
@@ -83,15 +83,15 @@ if (!isset($board['bo_use_list_file'])) {
     }
 }
 
-if (!isset($board['bo_mobile_subject'])) {
+if (!array_key_exists('bo_mobile_subject', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_mobile_subject` VARCHAR(255) NOT NULL DEFAULT '' AFTER `bo_subject` ", false);
 }
 
-if (!isset($board['bo_use_captcha'])) {
+if (!array_key_exists('bo_use_captcha', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_captcha` TINYINT NOT NULL DEFAULT '0' AFTER `bo_use_sns` ", false);
 }
 
-if (!isset($board['bo_select_editor'])) {
+if (!array_key_exists('bo_select_editor', $board)) {
     sql_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_select_editor` VARCHAR(50) NOT NULL DEFAULT '' AFTER `bo_use_dhtml_editor` ", false);
 }
 

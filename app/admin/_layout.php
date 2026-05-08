@@ -124,6 +124,84 @@ function admin_layout_start(string $title, string $active_key = ''): void
     </script>
     <style>
         html, body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
+        /* shop_admin/configform 결제 영역 — JS 가 토글하는 hide 클래스가 CSS 누락이라
+           모든 PG 의 카드/팁이 동시에 노출됐던 문제. 표준 gnuboard 룰 추가. */
+        .scf_cardtest_hide { display: none !important; }
+        .scf_cardtest_tip { display: none; }
+        .scf_cardtest_tip_adm_hide { display: none !important; }
+        .scf_cardtest_tip.scf_cardtest_tip_show { display: block; }
+        .scf_cardtest { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; }
+        .scf_cardtest .btn_frmline { margin: 0; }
+
+        /* 테스트결제 팁 카드 — 섹션 시각 분리 + dl/dt/dd grid 정렬 */
+        #scf_cardtest_tip {
+            margin-top: 12px;
+            padding: 18px 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            line-height: 1.6;
+        }
+        .dark #scf_cardtest_tip,
+        [data-theme="dark"] #scf_cardtest_tip {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.12);
+        }
+        #scf_cardtest_tip > strong {
+            display: block;
+            margin: 18px 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1c70e9;
+        }
+        .dark #scf_cardtest_tip > strong,
+        [data-theme="dark"] #scf_cardtest_tip > strong {
+            color: #60a5fa;
+            border-bottom-color: rgba(255,255,255,0.08);
+        }
+        #scf_cardtest_tip > strong:first-child { margin-top: 0; }
+        #scf_cardtest_tip > br { display: none; }
+        #scf_cardtest_tip dl {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 8px 16px;
+            margin: 0 0 4px;
+        }
+        #scf_cardtest_tip dt {
+            font-weight: 600;
+            color: #4b5563;
+        }
+        .dark #scf_cardtest_tip dt,
+        [data-theme="dark"] #scf_cardtest_tip dt {
+            color: #cbd5e1;
+        }
+        #scf_cardtest_tip dd {
+            margin: 0;
+            color: #374151;
+        }
+        .dark #scf_cardtest_tip dd,
+        [data-theme="dark"] #scf_cardtest_tip dd {
+            color: #e5e7eb;
+        }
+        #scf_cardtest_tip ul {
+            margin: 12px 0 0;
+            padding: 12px 16px;
+            list-style: none;
+            background: rgba(28, 112, 233, 0.06);
+            border-left: 3px solid #1c70e9;
+            border-radius: 4px;
+        }
+        .dark #scf_cardtest_tip ul,
+        [data-theme="dark"] #scf_cardtest_tip ul {
+            background: rgba(96, 165, 250, 0.08);
+            border-left-color: #60a5fa;
+        }
+        #scf_cardtest_tip ul li {
+            margin: 4px 0;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body class="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -270,8 +348,18 @@ if ($_admin_form_token === '' && function_exists('get_admin_token')) {
     document.addEventListener('submit', function (e) {
         var f = e.target;
         if (!f || f.tagName !== 'FORM') return;
+        // POST form 에 한해 token 자동 보장 — token field 가 없으면 생성, 비어 있으면 채움.
+        // (shop_admin/categoryform 등 일부 form 이 hidden token 을 안 박는 케이스 방어막.)
+        var method = (f.method || '').toLowerCase();
+        if (method && method !== 'post') return;
         var t = f.querySelector('input[name="token"]');
-        if (t && !t.value) t.value = ADMIN_TOKEN;
+        if (!t) {
+            t = document.createElement('input');
+            t.type = 'hidden';
+            t.name = 'token';
+            f.appendChild(t);
+        }
+        if (!t.value) t.value = ADMIN_TOKEN;
     }, true);
 })();
 
