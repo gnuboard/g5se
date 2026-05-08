@@ -192,18 +192,6 @@ h1 {
     border-color: var(--ins-text-faint);
 }
 
-/* 입력 폼 — 좌우 2단 (MySQL info | Admin info) */
-.ins_grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px 28px;
-    margin: 0 0 24px;
-}
-.ins_grid .ins_frm { margin: 0; }
-@media (max-width: 880px) {
-    .ins_grid { grid-template-columns: 1fr; gap: 16px; }
-}
-
 .ins_frm {
     margin: 0 0 28px;
     width: 100%;
@@ -245,20 +233,45 @@ h1 {
 .ins_ta textarea {
     width: 100%;
     padding: 9px 12px;
-    background: var(--ins-surface);
-    border: 1px solid var(--ins-border);
+    /* 카드 surface(흰색/다크) 와 다른 톤으로 input 영역 분리 — 가시성 ↑ */
+    background: var(--ins-surface-2);
+    border: 1.5px solid var(--ins-border);
     border-radius: var(--ins-radius-sm);
     color: var(--ins-text);
     font-size: 0.95em;
     box-sizing: border-box;
     outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.ins_frm input:hover,
+.ins_frm select:hover,
+.ins_ta textarea:hover {
+    border-color: var(--ins-text-faint);
 }
 .ins_frm input:focus,
 .ins_frm select:focus,
 .ins_ta textarea:focus {
+    background: var(--ins-surface);
     border-color: var(--ins-primary);
     box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+}
+/* 다크모드에서 border 더 진하게 (slate-700 → slate-500 톤) */
+[data-theme="dark"] .ins_frm input,
+[data-theme="dark"] .ins_frm select,
+[data-theme="dark"] .ins_ta textarea {
+    border-color: #475569;
+}
+[data-theme="dark"] .ins_frm input:hover,
+[data-theme="dark"] .ins_frm select:hover,
+[data-theme="dark"] .ins_ta textarea:hover {
+    border-color: #64748b;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .ins_frm input,
+    :root:not([data-theme="light"]) .ins_frm select,
+    :root:not([data-theme="light"]) .ins_ta textarea {
+        border-color: #475569;
+    }
 }
 
 /* 라이센스 textarea */

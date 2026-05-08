@@ -29,7 +29,6 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
 <form id="frm_install" method="post" action="./install_db" autocomplete="off" onsubmit="return frm_install_submit(this)">
 
 <div class="ins_inner">
-    <div class="ins_grid">
     <table class="ins_frm">
     <caption>MySQL 정보입력</caption>
     <colgroup>
@@ -124,7 +123,6 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
     </tr>
     </tbody>
     </table>
-    </div><!-- /.ins_grid -->
 
     <p>
         <strong class="st_strong">주의! 이미 그누보드5SE 가 설치되어 있다면 DB 자료가 망실될 수 있으니 신중히 진행하세요.</strong><br>
