@@ -685,3 +685,59 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 | 추천 | `app/shop/itemrecommend.php` | ✗ |
 | 재고 SMS | `app/shop/itemstocksms.php` | ✗ |
 
+---
+
+## 2026-05-08 — 설치 마법사 + DB 마이그레이션 + zerodate cleanup 통합
+
+### 1) DB 스키마 모더나이즈
+
+**환경**: MariaDB 12.1.2 (utf8mb4 native, ROW_FORMAT=DYNAMIC default)
+**문제**: 기존 DB 가 utf8mb3 (이모지 ✗) + zero-date 기본값 (`'0000-00-00 00:00:00'`, MySQL 8.0+ strict mode 비호환)
+
+**작업**:
+- 새 admin 페이지 `/admin/db_migrate` (super admin 전용) — 환경설정 메뉴에서 진입
+  - **문자셋**: utf8mb3 → utf8mb4_unicode_ci 테이블 단위 ALTER + 일괄 변환
+  - **zero-date**: `NOT NULL date/datetime` + `DEFAULT '0000-...'` 컬럼 → `NULL DEFAULT NULL` ALTER + 기존 0000 값 → NULL UPDATE. 일괄 변환. PK 컬럼은 자동 제외 (NULL 불가)
+  - sql_mode 안내 표시 (마이그레이션 후 `NO_ZERO_DATE,NO_ZERO_IN_DATE` 추가 권장)
+- install SQL (`gnuboard5.sql`, `gnuboard5shop.sql`) — 신규 설치도 처음부터 InnoDB + utf8mb4 + nullable date 로 생성
+
+### 2) PHP 코드 zero-date NULL 호환
+
+마이그레이션 진행 중에도, 완료 후에도 둘 다 작동하도록 backward-compat:
+- **읽기 비교** (5개): `WHERE col = '0000-...'` → `WHERE (col IS NULL OR col = '0000-...')`
+- **쓰기 할당** (5개): PHP `$var = '0000-...'` → `null`, SQL INSERT VALUES `'0000-...'` → `NULL`
+- **DDL** (11개): `NOT NULL DEFAULT '0000-...'` → `NULL DEFAULT NULL` (신규 설치/upgrade 시점)
+- **`!isset($row['col'])` 스키마 가드** (54개) → `!array_key_exists('col', $row)` — `isset()` 이 NULL 도 false 처리해서 컬럼이 NULL 값일 때 ALTER 중복 ADD 시도하던 버그 fix
+
+### 3) 설치 마법사 모더나이즈
+
+- 브랜드: **그누보드5SE / GNUBOARD5 SECOND EDITION**, MIT License (`LICENSE` 파일)
+- 진행 단계 표시 (1 라이센스 → 2 환경설정 → 3 설치 완료)
+- 모던 디자인 토큰 + 다크모드 토글 (메인 사이트와 `m-theme` localStorage 키 공유)
+- 클린 URL: `/install/install_config`, `/install/install_db` 등 .php 없는 형태도 동작
+- `data/` 절대경로 (`dirname(dirname(__DIR__))`) 사용 — apache CWD 의존 버그 fix
+- `LICENSE` 파일 절대경로 로드, MIT 본문 textarea 표시
+- `sql_connect()` `die()` → `throw RuntimeException()` — ajax 가 try/catch 로 정상 처리
+- 누락된 `app/admin/sql_write.sql` git history 에서 복원 (legacy `/adm` 폐기 시 유실됨)
+
+### 4) 라우팅 / 클린 URL 보강
+
+- `/admin/...*.php` → `/admin/...*` 일괄 301 + ob_start rewrite
+- `/shop/event/{ev_id}` 자원형 추가
+- `/shop/orderinquiryview` 검색 (주문번호/주문일자) + 페이지 합계
+- `/index.php` → `/` 301
+- `.htaccess` install 매핑 — `/install/{name}` → `app/install/{name}.php` (RewriteCond -f 검사)
+
+### 5) UI 정리
+
+- admin 대시보드 카운트 카드 6개 — `bg-gradient-to-br` → 단색 + 좌측 4px accent border
+- shop 페이지들 (cart/wishlist/coupon/orderaddress/orderinquiry/mypage 등) modern card list 로 재구성
+- 통합 `/mypage` hub (커뮤니티 + 쇼핑 통합)
+- footer 통일 (community + shop 동일)
+- 다크모드 통합 (`data-theme` 단일 attribute, `m-theme` localStorage)
+
+### 결과
+
+- 모든 작업 브랜치 (`feat/install-modernize`, `feat/db-migration`, `feat/shop-admin`, `feat/shop-ui` 등) `main` 통합 + GitHub push
+- README.md 신규 작성 — MIT License 자동 인식 (GitHub 사이드바 뱃지)
+
