@@ -2,20 +2,43 @@
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 $data_path = '../'.G5_DATA_DIR;
 
-if (! (isset($title) && $title)) $title = G5_VERSION." 설치";
+if (! (isset($title) && $title)) $title = "그누보드5SE 설치";
+
+// 진행 단계 — index.php=1, install_config.php=2, install_db.php=3
+$_step = 1;
+$_self = basename($_SERVER['SCRIPT_NAME'] ?? '');
+if ($_self === 'install_config.php') $_step = 2;
+else if ($_self === 'install_db.php') $_step = 3;
 ?>
 <!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2563eb">
 <title><?php echo $title; ?></title>
 <link rel="stylesheet" href="install.css">
 </head>
 <body>
 
 <div id="ins_bar">
-    <span id="bar_img">GNUBOARD5</span>
-    <span id="bar_txt">INSTALLATION</span>
+    <span id="bar_img">
+        그누보드5SE
+        <span class="bar_sub">GNUBOARD5 SECOND EDITION</span>
+    </span>
+    <span id="bar_txt">설치 마법사</span>
+</div>
+
+<div class="ins_steps" aria-label="설치 단계">
+    <div class="ins_step <?php echo $_step === 1 ? 'is-active' : ($_step > 1 ? 'is-done' : ''); ?>">
+        <span class="step_no">1</span>라이센스
+    </div>
+    <div class="ins_step <?php echo $_step === 2 ? 'is-active' : ($_step > 2 ? 'is-done' : ''); ?>">
+        <span class="step_no">2</span>환경설정
+    </div>
+    <div class="ins_step <?php echo $_step === 3 ? 'is-active' : ''; ?>">
+        <span class="step_no">3</span>설치 완료
+    </div>
 </div>
 
 <?php

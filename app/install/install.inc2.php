@@ -1,6 +1,6 @@
 <div id="ins_ft">
-    <strong>GNUBOARD5</strong>
-    <p>GPL! OPEN SOURCE GNUBOARD</p>
+    <p><strong>그누보드5SE</strong> · GNUBOARD5 SECOND EDITION</p>
+    <p>MIT License · gnuboard5 (GPL v2) 기반</p>
 </div>
 
 </body>
