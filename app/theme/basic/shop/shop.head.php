@@ -859,13 +859,13 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     outline-offset: 1px;
     border-color: var(--m-primary) !important;
 }
-/* 데스크탑: 일반 짧은 input (이름/전화/HP/이메일/비번) — 너무 넓지 않게 360px 캡 */
+/* 데스크탑: 일반 input — td 풀 너비 (max-width 캡 제거) */
 .m-shell #sod_frm .tbl_frm01 td input[type="text"]:not(.frm_address):not(#od_zip):not(#od_b_zip),
 .m-shell #sod_frm .tbl_frm01 td input[type="password"],
 .m-shell #sod_frm .tbl_frm01 td input[type="email"],
 .m-shell #sod_frm .tbl_frm01 td input[type="tel"] {
     width: 100% !important;
-    max-width: 360px !important;
+    max-width: 100% !important;
 }
 /* 우편번호 — 좁게 + 검색 버튼과 한 줄 */
 .m-shell #sod_frm .tbl_frm01 td #od_zip,
@@ -880,10 +880,10 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     padding: 0 14px !important;
     vertical-align: middle;
 }
-/* 주소 (기본/상세) — 풀 너비 (단 페이지 max-width 안에서만) */
+/* 주소 (기본/상세) — 풀 너비 */
 .m-shell #sod_frm .tbl_frm01 td .frm_address {
     width: 100% !important;
-    max-width: 560px !important;
+    max-width: 100% !important;
 }
 /* 전하실말씀 — 길게 한 줄 입력. legacy textarea 규칙 (min-height:100px) 무력화 */
 .m-shell #sod_frm .tbl_frm01 td #od_memo {
