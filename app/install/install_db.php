@@ -13,6 +13,7 @@ $g5_path['path'] = '..';
 include_once('install_common.php');
 include_once('../config.php');
 include_once('../lib/common.lib.php');
+include_once('../lib/sql_pdo.lib.php');    // sql_pdo_query / sql_pdo_fetch 등 PDO 헬퍼
 include_once('./install.function.php');    // 인스톨 과정 함수 모음
 
 include_once('../lib/hook.lib.php');    // hook 함수 파일
