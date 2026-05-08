@@ -164,6 +164,13 @@ class Router
         $path   = parse_url($requestUri, PHP_URL_PATH) ?? '/';
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+        // 0) /index.php → / 301 (클린 URL 정규화 — 설치 완료 후 등 직접 진입 케이스)
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/index.php') {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            header('Location: /'.($qs ? '?'.$qs : ''), true, 301);
+            exit;
+        }
+
         // 1) 클린 URL 직접 매칭 (trailing slash 정규화)
         $normalized = ($path !== '/') ? rtrim($path, '/') : '/';
         if (isset($this->cleanRoutes[$normalized])) {
