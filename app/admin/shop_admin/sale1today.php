@@ -96,7 +96,7 @@ $result = sql_query($sql);
         }
     ?>
         <tr>
-            <td class="td_alignc"><a href="./orderform.php?od_id=<?php echo $row['od_id']; ?>"><?php echo $row['od_id']; ?></a></td>
+            <td><a href="./orderform.php?od_id=<?php echo $row['od_id']; ?>"><?php echo $row['od_id']; ?></a></td>
             <td class="td_name"><?php echo $href; ?><?php echo $row['od_name']; ?></a></td>
             <td class="td_numsum"><?php echo number_format($row['orderprice']); ?></td>
             <td class="td_numincome"><?php echo number_format($row['couponprice']); ?></td>
