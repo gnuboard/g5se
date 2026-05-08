@@ -26,7 +26,7 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
 ?>
 
 
-<form id="frm_install" method="post" action="./install_db.php" autocomplete="off" onsubmit="return frm_install_submit(this)">
+<form id="frm_install" method="post" action="./install_db" autocomplete="off" onsubmit="return frm_install_submit(this)">
 
 <div class="ins_inner">
     <table class="ins_frm">
