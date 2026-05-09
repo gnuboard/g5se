@@ -4,11 +4,11 @@
 
 ## 특징
 
+- **파일 하나로 반응형 + 다크모드** — PC/모바일 마크업 분리 없이 단일 파일, `@media` 와 CSS variable + `data-theme` 으로 처리
 - PHP 8.x 호환 (PDO named placeholder)
 - utf8mb4 + InnoDB (이모지 지원, MySQL strict mode 호환)
 - nullable date/datetime (`0000-00-00` 폐기)
 - 클린 URL 라우팅 (`/board/{table}/{wr_id}`, `/shop/item/{it_id}` 등)
-- 모던 디자인 + 다크모드 + 반응형 (단일 마크업)
 - 설치 마법사 모더나이즈 (진행 단계, 다크모드)
 - DB 마이그레이션 도구 — `/admin/db_migrate` 에서 utf8mb3 → utf8mb4, zero-date → NULL 일괄 변환
 

@@ -665,6 +665,37 @@ fclose($f);
         <li>DB설정 파일 생성 완료 (<?php echo $file ?>)</li>
 
 <?php
+// gnu5se: 사용자 환경 설정 파일 생성 (data/user_config.php) — 처음 설치는 default 값.
+//        사용자 변경은 이 파일에서, app/config.php 는 자동 업데이트 시 덮어씀.
+$user_config_file = $data_path.'/user_config.php';
+if (!is_file($user_config_file)) {
+    $uc = "<?php\n";
+    $uc .= "/*\n";
+    $uc .= " * 사용자 환경 설정 — 사이트별로 다른 값 (자동 업데이트 시 보존됨).\n";
+    $uc .= " * app/config.php 의 framework 상수는 절대 수정하지 마세요.\n";
+    $uc .= " * 값을 바꾸려면 아래 define() 의 두 번째 인자를 직접 수정하세요.\n";
+    $uc .= " * PHP constant 는 한번 정의되면 못 바꾸므로 같은 이름으로 또 define 해도 적용 안 됩니다.\n";
+    $uc .= " */\n";
+    $uc .= "if (!defined('_GNUBOARD_')) exit;\n\n";
+    $uc .= "// 보안서버 도메인 (https). 비워두면 일반 G5_URL 사용.\n";
+    $uc .= "define('G5_DOMAIN',        '');\n";
+    $uc .= "define('G5_HTTPS_DOMAIN',  '');\n\n";
+    $uc .= "// 쿠키 도메인 — 서브도메인 간 로그인 공유. '.example.com' 식.\n";
+    $uc .= "define('G5_COOKIE_DOMAIN', '');\n\n";
+    $uc .= "// 디버그 — 운영 시 false\n";
+    $uc .= "define('G5_DEBUG',         false);\n";
+    $uc .= "define('G5_COLLECT_QUERY', false);\n\n";
+    $uc .= "// DB 기본 storage engine — '' (DB 기본값) / 'InnoDB' / 'MyISAM'\n";
+    $uc .= "define('G5_DB_ENGINE',     '');\n\n";
+    $uc .= "// DB 기본 charset — 'utf8' / 'utf8mb4' (이모지 지원, MySQL/MariaDB 5.5+)\n";
+    $uc .= "define('G5_DB_CHARSET',    'utf8mb4');\n";
+    file_put_contents($user_config_file, $uc);
+    @chmod($user_config_file, G5_FILE_PERMISSION);
+    echo '        <li>사용자 설정 파일 생성 완료 ('.htmlspecialchars($user_config_file).')</li>'.PHP_EOL;
+}
+?>
+
+<?php
 // data 디렉토리 및 하위 디렉토리에서는 .htaccess .htpasswd .php .phtml .html .htm .inc .cgi .pl .phar 파일을 실행할수 없게함.
 $f = fopen($data_path.'/.htaccess', 'w');
 $str = <<<EOD
