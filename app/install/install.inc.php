@@ -79,9 +79,12 @@ if (file_exists($dbconfig_file)) {
 <h1><?php echo G5_VERSION; ?> 프로그램이 이미 설치되어 있습니다.</h1>
 
 <div class="ins_inner">
-    <p>프로그램이 이미 설치되어 있습니다.<br />새로 설치하시려면 다음 파일을 삭제 하신 후 새로고침 하십시오.</p>
+    <p>
+        프로그램이 이미 설치되어 있습니다.<br>
+        새로 설치하려면 기존 설치 설정 파일을 삭제한 뒤 이 페이지를 새로고침하십시오.
+    </p>
     <ul>
-        <li><?php echo $dbconfig_file ?></li>
+        <li><?php echo G5_DATA_DIR.'/'.G5_DBCONFIG_FILE ?></li>
     </ul>
 </div>
 <?php
