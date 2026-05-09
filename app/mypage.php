@@ -1,5 +1,5 @@
 <?php
-// gnu5se: 통합 마이페이지 entry. 커뮤니티/쇼핑 모두 같은 hub 사용.
+// g5se: 통합 마이페이지 entry. 커뮤니티/쇼핑 모두 같은 hub 사용.
 include_once('./_common.php');
 
 if (!$is_member)

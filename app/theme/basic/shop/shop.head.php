@@ -3,7 +3,7 @@ if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 
 $q = isset($_GET['q']) ? clean_xss_tags($_GET['q'], 1, 1) : '';
 
-// gnu5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 chrome + @media query 만 사용.
+// g5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 chrome + @media query 만 사용.
 // (G5_THEME_MSHOP_PATH 의 mobile 전용 chrome 은 미사용)
 
 include_once(G5_THEME_PATH.'/head.sub.php');
@@ -807,7 +807,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-top: 0 !important;
 }
 
-/* gnu5se: orderform 섹션 — 무거운 카드 박스 제거, 단순한 heading + 인라인 폼 */
+/* g5se: orderform 섹션 — 무거운 카드 박스 제거, 단순한 heading + 인라인 폼 */
 .m-shell #sod_frm_orderer,
 .m-shell #sod_frm_taker,
 .m-shell #sod_frm_pay,
@@ -847,7 +847,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     min-width: 100px;
 }
 
-/* gnu5se: orderform 입력 박스 데스크탑 다듬기 — legacy default_shop.css 의 width:100% + height:45px 무력화 */
+/* g5se: orderform 입력 박스 데스크탑 다듬기 — legacy default_shop.css 의 width:100% + height:45px 무력화 */
 .m-shell #sod_frm .tbl_frm01 .frm_input {
     height: 40px !important;
     padding: 8px 12px !important;

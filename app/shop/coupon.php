@@ -16,7 +16,7 @@ if ($is_guest)
 
 $g5['title'] = $member['mb_nick'].' 님의 쿠폰 내역';
 include_once(G5_PATH.'/head.sub.php');
-// gnu5se: modern 토큰 + .m-popup 컴포넌트 로드
+// g5se: modern 토큰 + .m-popup 컴포넌트 로드
 if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }

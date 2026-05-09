@@ -3,7 +3,7 @@ include_once('./_common.php');
 
 header('Content-Type: text/plain; charset=utf-8');
 
-echo "=== gnu5se debug ===\n";
+echo "=== g5se debug ===\n";
 echo "G5_PATH       : ".G5_PATH."\n";
 echo "G5_URL        : ".G5_URL."\n";
 echo "G5_BBS_URL    : ".G5_BBS_URL."\n";

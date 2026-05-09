@@ -665,7 +665,7 @@ fclose($f);
         <li>DB설정 파일 생성 완료 (<?php echo $file ?>)</li>
 
 <?php
-// gnu5se: 사용자 환경 설정 파일 생성 (data/user_config.php) — 처음 설치는 default 값.
+// g5se: 사용자 환경 설정 파일 생성 (data/user_config.php) — 처음 설치는 default 값.
 //        사용자 변경은 이 파일에서, app/config.php 는 자동 업데이트 시 덮어씀.
 $user_config_file = $data_path.'/user_config.php';
 if (!is_file($user_config_file)) {

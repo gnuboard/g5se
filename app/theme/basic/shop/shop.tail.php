@@ -1,7 +1,7 @@
 <?php
 if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 
-// gnu5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거.
+// g5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거.
 
 $admin = get_admin("super");
 $is_index = defined('_INDEX_') && _INDEX_;
@@ -50,10 +50,10 @@ $is_index = defined('_INDEX_') && _INDEX_;
         <?php } ?>
     </main>
 
-    <!-- gnu5se: 통합 footer — community 와 shop 동일 (_footer.inc.php). 사이트 정보 + 공지 + 접속자 (현재/오늘/어제/최대/전체) -->
+    <!-- g5se: 통합 footer — community 와 shop 동일 (_footer.inc.php). 사이트 정보 + 공지 + 접속자 (현재/오늘/어제/최대/전체) -->
     <?php require_once(G5_THEME_PATH.'/modern/_footer.inc.php'); ?>
 
-    <?php /* gnu5se: shop 전용 floating quick action (장바구니/위시/최근본/위로) 제거 — top nav 의 카트 + 마이페이지 아이콘 + 통합 /mypage hub 로 대체 */ ?>
+    <?php /* g5se: shop 전용 floating quick action (장바구니/위시/최근본/위로) 제거 — top nav 의 카트 + 마이페이지 아이콘 + 통합 /mypage hub 로 대체 */ ?>
 
 </div><!-- } .m-shell 끝 -->
 

@@ -3,7 +3,7 @@ include_once('./_common.php');
 include_once(G5_CAPTCHA_PATH.'/captcha.lib.php');
 include_once(G5_LIB_PATH.'/mailer.lib.php');
 
-// gnu5se 수정: alert_close → alert 로 변경해 처리 후 명시적 redirect URL 부여.
+// g5se 수정: alert_close → alert 로 변경해 처리 후 명시적 redirect URL 부여.
 //   원본은 history.back() 이라 사용자가 다시 폼으로 돌아와 무제한 재전송 가능했음.
 $lost_form_url = G5_BBS_URL.'/password_lost.php';
 $login_url     = G5_BBS_URL.'/login.php';

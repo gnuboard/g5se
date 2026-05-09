@@ -29,7 +29,7 @@ $_addr_empty = !sql_num_rows($result);
 
 $order_action_url = G5_HTTPS_SHOP_URL.'/orderaddressupdate.php';
 
-// gnu5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 markup + 미디어쿼리만 사용.
+// g5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 markup + 미디어쿼리만 사용.
 
 // 테마에 orderaddress.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {
@@ -43,13 +43,13 @@ if(defined('G5_THEME_SHOP_PATH')) {
 
 $g5['title'] = '배송지 목록';
 include_once(G5_PATH.'/head.sub.php');
-// gnu5se: modern 토큰 + .m-popup 컴포넌트 로드
+// g5se: modern 토큰 + .m-popup 컴포넌트 로드
 if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 ?>
 <style>
-/* gnu5se: 배송지 목록 popup — coupon 과 동일한 .m-popup shell + 카드 list */
+/* g5se: 배송지 목록 popup — coupon 과 동일한 .m-popup shell + 카드 list */
 
 /* 카드 list */
 .adr-list {

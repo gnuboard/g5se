@@ -1,6 +1,6 @@
 <?php
 /*
- * /plugin/editor/ckeditor4/upload.php — gnu5se 용 CKEditor 4 이미지 업로드.
+ * /plugin/editor/ckeditor4/upload.php — g5se 용 CKEditor 4 이미지 업로드.
  * 원본 (Laravel 기반 EditorImage 의존) 을 gnuboard 표준 패턴으로 재작성.
  *
  * 응답 형식:

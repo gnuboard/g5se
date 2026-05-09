@@ -52,14 +52,14 @@ function m_Completepayment( FormOrJson, closeEvent )
 /* Payplus Plug-in 실행 */
 function jsf__pay( form )
 {
-    console.log('[gnu5se] jsf__pay entered. KCP_Pay_Execute typeof:', typeof KCP_Pay_Execute);
+    console.log('[g5se] jsf__pay entered. KCP_Pay_Execute typeof:', typeof KCP_Pay_Execute);
 
-    // gnu5se 진단 — KCP 가 DOM 에 무엇을 inject 하는지 추적
+    // g5se 진단 — KCP 가 DOM 에 무엇을 inject 하는지 추적
     var __kcpObserver = new MutationObserver(function(muts) {
         muts.forEach(function(m) {
             m.addedNodes.forEach(function(n) {
                 if (n.nodeType === 1) {
-                    console.log('[gnu5se] DOM added:', n.tagName, n.id ? '#'+n.id : '', n.className ? '.'+n.className : '', 'parent:', n.parentNode && n.parentNode.tagName);
+                    console.log('[g5se] DOM added:', n.tagName, n.id ? '#'+n.id : '', n.className ? '.'+n.className : '', 'parent:', n.parentNode && n.parentNode.tagName);
                 }
             });
         });
@@ -70,24 +70,24 @@ function jsf__pay( form )
     try
     {
         if (typeof KCP_Pay_Execute === 'undefined') {
-            console.error('[gnu5se] KCP_Pay_Execute is undefined — payplus_web.jsp 가 로드 안 됨 (cross-origin document.write 차단 등). 페이지 새로고침 또는 결제대행 스크립트 로드 확인.');
+            console.error('[g5se] KCP_Pay_Execute is undefined — payplus_web.jsp 가 로드 안 됨 (cross-origin document.write 차단 등). 페이지 새로고침 또는 결제대행 스크립트 로드 확인.');
             alert('결제 모듈 로드에 실패했습니다. 페이지를 새로고침 후 다시 시도해 주세요.');
             return;
         }
-        console.log('[gnu5se] calling KCP_Pay_Execute...');
+        console.log('[g5se] calling KCP_Pay_Execute...');
         KCP_Pay_Execute( form );
-        console.log('[gnu5se] KCP_Pay_Execute returned (popup should now be open)');
+        console.log('[g5se] KCP_Pay_Execute returned (popup should now be open)');
         // body position:fixed 가 KCP modal 에 영향 줄 수 있음 — 일단 주석 처리하고 동작 확인
         // $("body").css({"position":"fixed","width":"100%","top":"0"});
     }
     catch (e)
     {
-        console.warn('[gnu5se] jsf__pay caught exception (might be normal IE flow):', e);
+        console.warn('[g5se] jsf__pay caught exception (might be normal IE flow):', e);
         if (e && e.message && e.message.indexOf('정상종료') === -1) {
-            console.error('[gnu5se] KCP_Pay_Execute 실패:', e);
+            console.error('[g5se] KCP_Pay_Execute 실패:', e);
         }
     }
-    console.log('[gnu5se] jsf__pay exiting');
+    console.log('[g5se] jsf__pay exiting');
 }
 </script>
 <?php }

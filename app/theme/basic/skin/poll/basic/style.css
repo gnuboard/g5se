@@ -6,7 +6,7 @@
 
 /* ### 기본 스타일 커스터마이징 끝 ### */
 
-/* 설문조사 스킨 — gnu5se: var(--m-*) 토큰화 (다크모드 자동 대응) */
+/* 설문조사 스킨 — g5se: var(--m-*) 토큰화 (다크모드 자동 대응) */
 #poll {border:1px solid var(--m-border);background:var(--m-surface);position:relative;border-radius:var(--m-radius);margin-bottom:15px}
 #poll header {position:relative;border-bottom:1px solid var(--m-border);padding:15px}
 #poll header:after {display:block;visibility:hidden;clear:both;content:""}

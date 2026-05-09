@@ -9,13 +9,13 @@ if ((int) $total_po_cnt > 0){
     }
 }
 
-// gnu5se: modern 토큰 (var(--m-*)) 로드 — popup 창 단독 페이지 (.m-popup 컴포넌트 + 다크모드)
+// g5se: modern 토큰 (var(--m-*)) 로드 — popup 창 단독 페이지 (.m-popup 컴포넌트 + 다크모드)
 if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
     require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 ?>
 <style>
-/* gnu5se: 설문조사 결과 popup — modern token 기반 + 다크모드 */
+/* g5se: 설문조사 결과 popup — modern token 기반 + 다크모드 */
 #poll_result {
     background: var(--m-bg);
     color: var(--m-text);

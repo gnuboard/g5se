@@ -1,5 +1,5 @@
 <?php
-// Front controller — gnu5se
+// Front controller — g5se
 // 모든 요청을 받아 라우터로 위임한다.
 // 주의: gnuboard 의 require 는 반드시 *글로벌 스코프* 에서 호출해야 한다.
 //       (메서드/함수 안에서 require 하면 $g5 등 전역 변수가 로컬에 갇혀 DB 연결을 잃는다.)

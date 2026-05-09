@@ -1,7 +1,7 @@
 <?php
 if (!defined('_GNUBOARD_')) exit;
 
-define('G5SE_UPDATE_REPOSITORY', defined('G5_GITHUB_UPDATE_REPOSITORY') ? G5_GITHUB_UPDATE_REPOSITORY : 'kagla/gnu5se');
+define('G5SE_UPDATE_REPOSITORY', defined('G5_GITHUB_UPDATE_REPOSITORY') ? G5_GITHUB_UPDATE_REPOSITORY : 'gnuboard/g5se');
 $g5se_update_token = defined('G5_GITHUB_UPDATE_TOKEN') ? G5_GITHUB_UPDATE_TOKEN : getenv('G5_GITHUB_UPDATE_TOKEN');
 define('G5SE_UPDATE_TOKEN', $g5se_update_token ? $g5se_update_token : '');
 unset($g5se_update_token);
@@ -47,7 +47,7 @@ function g5se_update_http_request($url, $headers = array(), $download_path = '')
     $ch = curl_init($url);
     $default_headers = array(
         'Accept: application/vnd.github+json',
-        'User-Agent: gnu5se-release-updater',
+        'User-Agent: g5se-release-updater',
         'X-GitHub-Api-Version: 2022-11-28',
     );
     if (G5SE_UPDATE_TOKEN) {
@@ -278,7 +278,7 @@ function g5se_update_check_writable($source, $target)
 
 function g5se_update_create_backup($target)
 {
-    $backup = g5se_update_data_path() . '/backups/gnu5se-backup-' . date('Ymd-His') . '.zip';
+    $backup = g5se_update_data_path() . '/backups/g5se-backup-' . date('Ymd-His') . '.zip';
     $zip = new ZipArchive();
 
     if ($zip->open($backup, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {

@@ -2,7 +2,7 @@
 if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 if (!defined("_ORDERINQUIRY_")) exit;
 
-// gnu5se: 주문내역 목록 — modern card list (legacy tbl_head03 폐기)
+// g5se: 주문내역 목록 — modern card list (legacy tbl_head03 폐기)
 $_status_map = [
     '주문' => ['label' => '입금확인중', 'tone' => 'pending'],
     '입금' => ['label' => '입금완료',   'tone' => 'paid'],
