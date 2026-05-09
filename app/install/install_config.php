@@ -200,7 +200,7 @@ function frm_install_submit(f)
     
     if (window.jQuery) {
 
-        var jqxhr = jQuery.post( "ajax.install.check.php", $(f).serialize(), function(data) {
+        var jqxhr = jQuery.post( "/install/ajax.install.check.php", $(f).serialize(), function(data) {
             
             if( data.error ){
                 alert(data.error);
