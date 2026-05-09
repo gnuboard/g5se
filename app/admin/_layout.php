@@ -97,7 +97,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
          해당 큐를 flush 하지 않아 admin 에서 win_zip 호출 시 ReferenceError 가 발생. -->
     <script>var g5_is_mobile = false, g5_url = "<?php echo G5_URL ?>", g5_bbs_url = "<?php echo G5_BBS_URL ?>";</script>
     <script src="<?php echo G5_JS_URL ?>/common.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>"></script>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <?php echo G5_POSTCODE_JS; ?>
     <!-- admin 전용 JS — PopupManager, CommonUI 등 (legacy admin.tail.php 가 로드하던 것).
          .htaccess 규칙상 /admin/js/* 만 정적 매핑이라 /admin/admin.js 가 아닌 /admin/js/admin.js. -->
     <script src="<?php echo G5_ADMIN_URL ?>/js/admin.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>" defer></script>
