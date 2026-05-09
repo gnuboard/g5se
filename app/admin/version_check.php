@@ -17,18 +17,16 @@ require_once G5_LIB_PATH.'/github_release_update.lib.php';
 
 $g5['title'] = '버전 확인';
 $releases = array();
-$error = '';
+$api_error = '';
 
 try {
     $releases = g5se_update_recent_releases(5);
 } catch (Throwable $e) {
-    $error = $e->getMessage();
+    $api_error = $e->getMessage();
 }
 
 $latest_release = isset($releases[0]) ? $releases[0] : null;
-if (!$error && !$latest_release) {
-    $error = 'GitHub Releases에 게시된 릴리스가 없습니다.';
-}
+$has_releases = (bool) $latest_release;
 
 admin_layout_start($g5['title'], 'version_check');
 ?>
@@ -44,63 +42,86 @@ admin_layout_start($g5['title'], 'version_check');
     <p>비공개 저장소를 사용한다면 <strong>G5_GITHUB_UPDATE_TOKEN</strong> 환경변수 또는 상수에 GitHub fine-grained token을 설정해야 합니다.</p>
 </div>
 
-<?php if ($error) { ?>
+<section class="tbl_frm01 tbl_wrap">
+    <table>
+    <caption>버전 확인 정보</caption>
+    <tbody>
+    <tr>
+        <th scope="row">저장소</th>
+        <td>
+            <a href="<?php echo get_text(g5se_update_repository_url()) ?>" target="_blank" rel="noopener">
+                <?php echo get_text(G5SE_UPDATE_REPOSITORY) ?>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">GitHub 토큰</th>
+        <td><?php echo g5se_update_token_is_configured() ? '설정됨' : '미설정' ?></td>
+    </tr>
+    <tr>
+        <th scope="row">현재 버전</th>
+        <td><?php echo get_text(g5se_update_current_version()) ?></td>
+    </tr>
+    <?php if ($has_releases) { ?>
+    <tr>
+        <th scope="row">최신 릴리스</th>
+        <td>
+            <?php echo get_text($latest_release['latest_version']) ?>
+            <?php if ($latest_release['latest_name']) { ?>
+                <span class="text-gray-500 dark:text-gray-400">/ <?php echo get_text($latest_release['latest_name']) ?></span>
+            <?php } ?>
+            <?php if ($latest_release['html_url']) { ?>
+                <a href="<?php echo get_text($latest_release['html_url']) ?>" target="_blank" rel="noopener" class="btn_frmline">GitHub에서 보기</a>
+            <?php } ?>
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">게시일</th>
+        <td><?php echo get_text($latest_release['published_at']) ?></td>
+    </tr>
+    <tr>
+        <th scope="row">상태</th>
+        <td>
+            <?php if ($latest_release['has_update']) { ?>
+                <strong class="text-admin-primary-700 dark:text-admin-primary-300">새 버전이 있습니다.</strong>
+            <?php } else { ?>
+                최신 버전입니다.
+            <?php } ?>
+        </td>
+    </tr>
+    <?php } else { ?>
+    <tr>
+        <th scope="row">최신 릴리스</th>
+        <td>게시된 GitHub Release가 없습니다.</td>
+    </tr>
+    <tr>
+        <th scope="row">상태</th>
+        <td>
+            <?php if ($api_error) { ?>
+                GitHub Releases API 확인 실패
+            <?php } else { ?>
+                저장소 접근은 가능하지만 Published Release가 없습니다.
+            <?php } ?>
+        </td>
+    </tr>
+    <?php } ?>
+    </tbody>
+    </table>
+</section>
+
+<?php if ($api_error) { ?>
     <div class="local_desc01 local_desc">
         <p><strong>버전 정보를 확인할 수 없습니다.</strong></p>
-        <p><?php echo get_text($error) ?></p>
-        <p>저장소에 published Release가 없거나, 비공개 저장소인데 토큰이 설정되지 않은 경우에도 이 오류가 발생합니다.</p>
+        <p><?php echo get_text($api_error) ?></p>
+        <p>비공개 저장소인데 토큰 권한이 부족하거나 저장소 이름이 잘못된 경우에도 이 오류가 발생합니다.</p>
+    </div>
+<?php } elseif (!$has_releases) { ?>
+    <div class="local_desc01 local_desc">
+        <p><strong>아직 게시된 릴리스가 없습니다.</strong></p>
+        <p>토큰으로 저장소에는 접근했지만 GitHub Releases에 published Release가 없어 표시할 변경 내용이 없습니다.</p>
+        <p>GitHub 저장소에서 새 Release를 게시하면 이 화면에 최신 버전과 변경 내용이 표시됩니다.</p>
     </div>
 <?php } else { ?>
-    <section class="tbl_frm01 tbl_wrap">
-        <table>
-        <caption>버전 확인 정보</caption>
-        <tbody>
-        <tr>
-            <th scope="row">저장소</th>
-            <td>
-                <a href="<?php echo get_text(g5se_update_repository_url()) ?>" target="_blank" rel="noopener">
-                    <?php echo get_text(G5SE_UPDATE_REPOSITORY) ?>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">GitHub 토큰</th>
-            <td><?php echo g5se_update_token_is_configured() ? '설정됨' : '미설정' ?></td>
-        </tr>
-        <tr>
-            <th scope="row">현재 버전</th>
-            <td><?php echo get_text(g5se_update_current_version()) ?></td>
-        </tr>
-        <tr>
-            <th scope="row">최신 릴리스</th>
-            <td>
-                <?php echo get_text($latest_release['latest_version']) ?>
-                <?php if ($latest_release['latest_name']) { ?>
-                    <span class="text-gray-500 dark:text-gray-400">/ <?php echo get_text($latest_release['latest_name']) ?></span>
-                <?php } ?>
-                <?php if ($latest_release['html_url']) { ?>
-                    <a href="<?php echo get_text($latest_release['html_url']) ?>" target="_blank" rel="noopener" class="btn_frmline">GitHub에서 보기</a>
-                <?php } ?>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">게시일</th>
-            <td><?php echo get_text($latest_release['published_at']) ?></td>
-        </tr>
-        <tr>
-            <th scope="row">상태</th>
-            <td>
-                <?php if ($latest_release['has_update']) { ?>
-                    <strong class="text-admin-primary-700 dark:text-admin-primary-300">새 버전이 있습니다.</strong>
-                <?php } else { ?>
-                    최신 버전입니다.
-                <?php } ?>
-            </td>
-        </tr>
-        </tbody>
-        </table>
-    </section>
-
     <section class="tbl_frm01 tbl_wrap">
         <table>
         <caption>최근 릴리스 변경 내용</caption>
