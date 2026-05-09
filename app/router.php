@@ -12,6 +12,9 @@ class Router
      */
     private $cleanRoutes = [
         '/'                       => 'index.php',
+        '/install'                => 'install/index.php',
+        '/install/install_config' => 'install/install_config.php',
+        '/install/install_db'     => 'install/install_db.php',
         '/mypage'                 => 'mypage.php',
         '/login'                  => 'bbs/login.php',
         '/login_check'            => 'bbs/login_check.php',
@@ -82,6 +85,11 @@ class Router
     /** 디버그/유틸 라우트 (정규식 기반) */
     private $extraRoutes = [
         '#^/_debug/?$#' => '_debug.php',
+
+        // 설치 마법사 — Apache rewrite 없이 PHP 내장 서버로 실행해도 동작하도록 통과
+        '#^/install/?$#' => 'install/index.php',
+        '#^/install/(install_config|install_db|ajax\.install\.check)\.php$#i' => 'install/{1}.php',
+        '#^/install/(install_config|install_db)/?$#i' => 'install/{1}.php',
 
         // AJAX 엔드포인트 일괄 매핑 — bbs/ajax.* 파일들이 직접 URL 로 호출됨
         // (jquery.register_form.js 등이 g5_bbs_url+"/ajax.mb_id.php" 형태로 요청)
