@@ -76,12 +76,12 @@ admin_layout_start($g5['title'], 'version_check');
         </td>
     </tr>
     <tr>
-        <th scope="row">GitHub 토큰</th>
-        <td><?php echo g5se_update_token_is_configured() ? '설정됨' : '미설정' ?></td>
+        <th scope="row">현재 SE 버전</th>
+        <td><?php echo get_text(g5se_update_current_version()) ?></td>
     </tr>
     <tr>
-        <th scope="row">현재 버전</th>
-        <td><?php echo get_text(g5se_update_current_version()) ?></td>
+        <th scope="row">기반 그누보드 버전</th>
+        <td><?php echo get_text(g5se_update_core_version()) ?></td>
     </tr>
     <?php if ($has_releases) { ?>
     <tr>

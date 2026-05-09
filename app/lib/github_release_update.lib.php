@@ -18,6 +18,15 @@ function g5se_update_data_path()
 
 function g5se_update_current_version()
 {
+    if (defined('G5SE_VERSION')) {
+        return G5SE_VERSION;
+    }
+
+    return defined('G5_GNUBOARD_VER') ? G5_GNUBOARD_VER : '';
+}
+
+function g5se_update_core_version()
+{
     return defined('G5_GNUBOARD_VER') ? G5_GNUBOARD_VER : '';
 }
 
