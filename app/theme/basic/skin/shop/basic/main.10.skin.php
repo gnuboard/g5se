@@ -1,7 +1,7 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
-// gnu5se: main.10 — 메인 페이지 carousel (owl-carousel 사용).
+// g5se: main.10 — 메인 페이지 carousel (owl-carousel 사용).
 //   <li> 카드는 list.10 modern 패턴과 동일 (rounded card, hover lift).
 ?>
 

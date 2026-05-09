@@ -440,7 +440,7 @@ if ($w == '') {
 }
 
 
-// gnu5se: chk_grp_* / chk_all_* 동일 옵션 적용을 placeholder/params 로 빌드.
+// g5se: chk_grp_* / chk_all_* 동일 옵션 적용을 placeholder/params 로 빌드.
 // $scope = 'grp' | 'all' — 양쪽 동일 매핑이므로 한 helper 로 처리.
 $build_scope = function($scope) use (
     $bo_device, $bo_admin, $bo_list_level, $bo_read_level, $bo_write_level, $bo_reply_level,

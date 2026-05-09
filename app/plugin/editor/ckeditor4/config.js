@@ -3,10 +3,10 @@
  * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
  */
 
-// gnu5se: ckeditor4 자산 베이스 (laravel 의 /assets/editors/ckeditor4 가 아닌 plugin 경로 사용)
+// g5se: ckeditor4 자산 베이스 (laravel 의 /assets/editors/ckeditor4 가 아닌 plugin 경로 사용)
 window.G5_CKEDITOR4_URL = (typeof g5_editor_url !== 'undefined') ? g5_editor_url : '/plugin/editor/ckeditor4';
 
-// gnu5se: 페이지(parent) 의 다크모드 감지 — html.dark 또는 [data-theme=dark]
+// g5se: 페이지(parent) 의 다크모드 감지 — html.dark 또는 [data-theme=dark]
 window.G5_CKEDITOR4_IS_DARK = function () {
     var de = document.documentElement;
     return de.classList.contains('dark') || de.getAttribute('data-theme') === 'dark';
@@ -53,7 +53,7 @@ CKEDITOR.editorConfig = function( config ) {
         ? [ window.G5_CKEDITOR4_URL + '/contents.css', window.G5_CKEDITOR4_URL + '/darkmode.css' ]
         : window.G5_CKEDITOR4_URL + '/contents.css';
 
-    // gnu5se: 이미지 / 파일 업로드 — plugin 안의 upload.php 사용 (gnuboard 표준 경로).
+    // g5se: 이미지 / 파일 업로드 — plugin 안의 upload.php 사용 (gnuboard 표준 경로).
     // class 자동치환(.ckeditor) 으로 만들어진 인스턴스 전체에 적용.
     config.filebrowserUploadUrl  = window.G5_CKEDITOR4_URL + '/upload.php';
     config.filebrowserImageUploadUrl = window.G5_CKEDITOR4_URL + '/upload.php?type=image';
@@ -81,7 +81,7 @@ CKEDITOR.editorConfig = function( config ) {
     config.allowedContent = true;
 };
 
-// gnu5se: 클래스 자동 치환(.ckeditor)으로 만들어지는 인스턴스에도 다크모드 적용.
+// g5se: 클래스 자동 치환(.ckeditor)으로 만들어지는 인스턴스에도 다크모드 적용.
 // initializeCKEditor() 헬퍼를 거치지 않으므로 글로벌 instanceReady 핸들러 한번 더 바인딩.
 CKEDITOR.on('instanceReady', function (evt) {
     if (typeof window.applyCKEditorDarkMode === 'function') {

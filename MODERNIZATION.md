@@ -1,4 +1,4 @@
-# gnu5se 모던화 작업 기록
+# g5se 모던화 작업 기록
 
 > gnuboard5 위에 모던 디자인 시스템을 점진적으로 얹는 샌드박스. 이 문서는 지금까지 한 일과 새 페이지를 같은 패턴으로 모던화하는 방법을 정리한다.
 
@@ -7,7 +7,7 @@
 ## 1. 전체 구조
 
 ```
-/home/kagla/gnu5se/                    Apache DocumentRoot (vhost: gnu5se.gnuboard.net)
+/home/kagla/g5se/                    Apache DocumentRoot (vhost: g5se.gnuboard.net)
 ├── .htaccess                          라우팅 + 보안
 ├── index.php                          프런트 컨트롤러
 ├── app/                               gnuboard 본체 (URL 직접접근 차단)
@@ -32,7 +32,7 @@
 브라우저 → /login
     │
     ▼
-/home/kagla/gnu5se/.htaccess
+/home/kagla/g5se/.htaccess
     │ 1. 정적자산 폴더 안의 .php 차단
     │ 2. /app/* 직접접근 전면 차단
     │ 3. /data/ 안 PHP 실행 차단
@@ -62,7 +62,7 @@ ob_start 필터가 HTML 안의 .php URL → 클린 URL 치환
 
 ## 2. 핵심 파일별 역할
 
-### `/home/kagla/gnu5se/.htaccess`
+### `/home/kagla/g5se/.htaccess`
 
 ```apache
 RewriteEngine On
@@ -191,11 +191,11 @@ define('G5_DATA_PATH', dirname(G5_PATH).'/'.G5_DATA_DIR);
 
 ## 3. 데이터 디렉토리 권한
 
-`cp -a` 로 gnuboard5 → gnu5se 복사 시 owner 가 `kagla:kagla` 가 됨. Apache(`www-data`) 가 쓰기 못해 세션 생성 / 회원가입 / 캡차 모두 실패.
+`cp -a` 로 gnuboard5 → g5se 복사 시 owner 가 `kagla:kagla` 가 됨. Apache(`www-data`) 가 쓰기 못해 세션 생성 / 회원가입 / 캡차 모두 실패.
 
 ```bash
-sudo chown -R www-data:www-data /home/kagla/gnu5se/data
-sudo chmod 711 /home/kagla/gnu5se/data
+sudo chown -R www-data:www-data /home/kagla/g5se/data
+sudo chmod 711 /home/kagla/g5se/data
 ```
 
 원본 gnuboard5 와 동일한 소유권 체계로 맞춤. `data/` 자체는 711 (소유자 only entry), 하위는 755 (www-data 가 owner).
@@ -350,7 +350,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 <div class="m-shell">
     <header class="m-nav">
         <div class="m-nav-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand">gnu5se</a>
+            <a href="<?php echo G5_URL ?>" class="m-brand">g5se</a>
             <nav class="m-nav-actions">
                 <?php if ($is_member) { ?>
                     <a href="<?php echo G5_BBS_URL ?>/logout.php" class="m-btn m-btn-ghost">로그아웃</a>
@@ -489,7 +489,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 - `/app/_debug.php` — 디버그용 상태 출력
 - `/app/theme/basic/modern/_head.inc.php` — ★ 디자인 시스템 핵심
 
-### 스킨 교체 (gnu5se 고유 디자인)
+### 스킨 교체 (g5se 고유 디자인)
 
 - `/app/theme/basic/index.php`
 - `/app/theme/basic/skin/member/basic/login.skin.php`
@@ -499,7 +499,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
 ### 권한 변경
 
-- `sudo chown -R www-data:www-data /home/kagla/gnu5se/data`
+- `sudo chown -R www-data:www-data /home/kagla/g5se/data`
 
 ---
 
@@ -539,7 +539,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 - **임시저장 글 목록** popup 정렬 (write.skin)
 - **클린 URL 라우트** — `/memo`, `/memo_form`, `/memo_form_update`, `/memo_view`, `/memo_delete`, `/formmail`, `/formmail_send`, `/profile`, `/point`, `/scrap`, `/scrap_delete`, `/scrap_popin`, `/scrap_popin_update`, `/search`, `/new`, `/faq`, `/content`, `/group`, `/write_token.php`. `/bbs/{name}.php` 도 clean URL 로 301
 - **출력 필터 강화** (`index.php`) — `/board.php?bo_table=X` 패턴이 추가 쿼리(page/sca/sfl 등) 를 보존하도록 `parse_str` 기반으로 재작성
-- **시드** — 50명 회원 + 50건 게시물 (free 게시판) — `/tmp/seed_gnu5se.php`. FAQ 13건. 콘텐츠 3건
+- **시드** — 50명 회원 + 50건 게시물 (free 게시판) — `/tmp/seed_g5se.php`. FAQ 13건. 콘텐츠 3건
 
 ### 직접 수정한 gnuboard 코어 파일 (이 라운드)
 - `app/theme/basic/head.sub.php` — viewport meta 무조건 출력
@@ -553,7 +553,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 - `g5_board`: 모든 게시판 `bo_skin='theme/basic'`, free 의 `bo_use_search=1`
 - `g5_content`: 3건 `co_skin='theme/basic'` + 실 콘텐츠 시드
 - `g5_faq_master`/`g5_faq`: 카테고리 3 + Q&A 13 시드
-- `data/dbconfig.php`: DB credentials 를 `gnu5se/gnu5se/gnu5se` 로 (이전 `gnuboard5/...` 에서 dump → import)
+- `data/dbconfig.php`: DB credentials 를 `g5se/g5se/g5se` 로 (이전 `gnuboard5/...` 에서 dump → import)
 
 ---
 

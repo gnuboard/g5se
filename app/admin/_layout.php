@@ -58,7 +58,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
     /** @var array $_admin_nav */
 
     $g5_title = $title.' · 관리자';
-    $cf_title = isset($config['cf_title']) && $config['cf_title'] ? $config['cf_title'] : 'gnu5se';
+    $cf_title = isset($config['cf_title']) && $config['cf_title'] ? $config['cf_title'] : 'g5se';
 
     // 기본 통계 (헤더의 빠른 카운트용 — _common.php 가 이미 로드되어 $g5 사용 가능)
     $admin_nick = isset($member['mb_nick']) ? get_text($member['mb_nick']) : 'admin';

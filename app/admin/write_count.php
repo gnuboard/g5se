@@ -1,7 +1,7 @@
 <?php
 /*
  * /admin/write_count — 글/댓글 현황 (Chart.js 그래프).
- * gnu5se: 원본 jqplot → Chart.js 4.x (admin shell 에 이미 로드돼 있음).
+ * g5se: 원본 jqplot → Chart.js 4.x (admin shell 에 이미 로드돼 있음).
  */
 $sub_menu = '300820';
 require_once __DIR__.'/_common.php';

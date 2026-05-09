@@ -39,7 +39,7 @@ $tot_price = 0;
 
 $g5['title'] = '주문서 작성';
 
-// gnu5se: 단일 마크업 정책 — 모바일/데스크탑 분기 없음. 반응형 CSS + 다크모드 한 코드에서.
+// g5se: 단일 마크업 정책 — 모바일/데스크탑 분기 없음. 반응형 CSS + 다크모드 한 코드에서.
 // 결제(PG) 도 desktop 모듈 단일 사용. (KCP popup 이 모바일에서 호환 이슈 있으면
 //  modern KCP API 로 마이그레이션 필요 — 별개 작업)
 include_once(G5_SHOP_PATH.'/_head.php');

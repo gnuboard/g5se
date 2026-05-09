@@ -73,7 +73,7 @@
                         html += '<h4 style="margin:10px 0 5px;padding:5px;background:#f0f0f0;font-size:12px;">' + groupName + '</h4>';
                         html += '<div class="cke_emoji_list" style="display:flex;flex-wrap:wrap;gap:5px;">';
                         
-                        // gnu5se: emoji PNG base 통일 (config.js 의 G5_CKEDITOR4_URL 사용)
+                        // g5se: emoji PNG base 통일 (config.js 의 G5_CKEDITOR4_URL 사용)
                         var _emojiBase = (window.G5_CKEDITOR4_URL || '/plugin/editor/ckeditor4') + '/plugins/emoji/img';
                         groups[groupName].forEach(function(emoji) {
                             var emojiHtml = '<img src="' + _emojiBase + '/' + emoji.symbol + '" class="sir-emoji ' + emoji.group + '">';

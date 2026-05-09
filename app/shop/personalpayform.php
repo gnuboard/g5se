@@ -19,7 +19,7 @@ $pp['pp_name'] = strip_tags($pp['pp_name']);
 
 $g5['title'] = $pp['pp_name'].'님 개인결제';
 
-// gnu5se: 단일 마크업 정책 — 데스크탑 chrome 만 사용
+// g5se: 단일 마크업 정책 — 데스크탑 chrome 만 사용
 include_once(G5_SHOP_PATH.'/_head.php');
 
 // 개인결제 체크를 위한 hash
@@ -44,7 +44,7 @@ $goods = $pp['pp_name'].'님 개인결제';
 if($default['de_pg_service'] == 'inicis')
     set_session('ss_order_inicis_id', $od_id);
 
-// gnu5se: 단일 마크업 — desktop sub.php 사용
+// g5se: 단일 마크업 — desktop sub.php 사용
 $order_action_url = G5_HTTPS_SHOP_URL.'/personalpayformupdate.php';
 require_once(G5_SHOP_PATH.'/personalpayform.sub.php');
 

@@ -10,7 +10,7 @@ $od_id = isset($_POST['od_id']) ? safe_replace_regex($_POST['od_id'], 'od_id') :
 
 $inquiry_params = [];
 
-// gnu5se: 회원 전용 검색 (주문서번호 contains + 주문일자 from/to)
+// g5se: 회원 전용 검색 (주문서번호 contains + 주문일자 from/to)
 $s_od_id = isset($_GET['s_od_id']) ? preg_replace('/[^0-9]/', '', $_GET['s_od_id']) : '';
 $s_fr    = isset($_GET['s_fr']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['s_fr']) ? $_GET['s_fr'] : '';
 $s_to    = isset($_GET['s_to']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['s_to']) ? $_GET['s_to'] : '';

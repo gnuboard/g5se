@@ -45,7 +45,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     <!-- Row 1: 브랜드 + 검색 + (커뮤니티/쇼핑몰 segment) + 로그인 액션 + 햄버거 -->
     <div class="m-nav-row m-nav-row-top">
         <div class="m-nav-row-inner">
-            <a href="<?php echo G5_URL ?>" class="m-brand"><?php echo isset($config['cf_title']) && $config['cf_title'] ? get_text($config['cf_title']) : 'gnu5se' ?></a>
+            <a href="<?php echo G5_URL ?>" class="m-brand"><?php echo isset($config['cf_title']) && $config['cf_title'] ? get_text($config['cf_title']) : 'g5se' ?></a>
 
             <?php if (defined('G5_COMMUNITY_USE') && G5_COMMUNITY_USE && defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
             <nav class="m-nav-segment" aria-label="섹션 전환">

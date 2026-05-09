@@ -71,7 +71,7 @@ define('G5_THEME_DIR',      'theme');
 define('G5_GROUP_DIR',      'group');
 define('G5_CONTENT_DIR',    'content');
 
-// gnu5se 구조 보정: 프런트 컨트롤러를 거치지 않는 직접접근 진입점
+// g5se 구조 보정: 프런트 컨트롤러를 거치지 않는 직접접근 진입점
 // (예: plugin/kcaptcha/kcaptcha_mp3.php) 에서도 G5_URL 이 도메인 root 로 잡히도록 강제.
 // 자동탐지(g5_path)는 SCRIPT_NAME 이 /www/app/plugin/... 으로 잡혀 잘못된 base URL 을
 // 만들어내므로 HTTP_HOST 기반으로 미리 박는다. 프런트 컨트롤러에서 이미 define 했다면 no-op.
@@ -117,7 +117,7 @@ define('G5_MOBILE_URL',     G5_URL.'/'.G5_MOBILE_DIR);
 // PATH 는 서버상에서의 절대경로
 define('G5_ADMIN_PATH',     G5_PATH.'/'.G5_ADMIN_DIR);
 define('G5_BBS_PATH',       G5_PATH.'/'.G5_BBS_DIR);
-// gnu5se 구조: data/ 가 app/ 밖(docroot 직속)에 있음. 프런트 컨트롤러를 거치지 않는 진입점
+// g5se 구조: data/ 가 app/ 밖(docroot 직속)에 있음. 프런트 컨트롤러를 거치지 않는 진입점
 // (예: plugin/kcaptcha/kcaptcha_image.php) 에서도 올바른 경로가 잡히도록 dirname(G5_PATH) 기준.
 define('G5_DATA_PATH',      dirname(G5_PATH).'/'.G5_DATA_DIR);
 define('G5_EXTEND_PATH',    G5_PATH.'/'.G5_EXTEND_DIR);

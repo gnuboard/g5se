@@ -1,7 +1,7 @@
 <?php
 include_once('./_common.php');
 
-// gnu5se: 단일 마크업 정책 — 모바일 분기 제거.
+// g5se: 단일 마크업 정책 — 모바일 분기 제거.
 
 if(! defined('_INDEX_')) define('_INDEX_', TRUE);
 

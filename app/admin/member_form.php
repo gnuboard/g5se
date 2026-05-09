@@ -268,7 +268,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                         <input type="password" name="mb_password" id="mb_password" <?php echo $required_mb_password ?> class="frm_input <?php echo $required_mb_password ?>" size="15" maxlength="20" autocomplete="new-password">
                         </div>
                         <?php
-                        // 회원관리에서는 캡챠 사용 안 함 (gnu5se 정책). 변수만 빈 값으로
+                        // 회원관리에서는 캡챠 사용 안 함 (g5se 정책). 변수만 빈 값으로
                         // 채워둬서 form 하단의 echo \$captcha_js 가 noop 되게 함.
                         $captcha_js = '';
                         ?>
@@ -667,7 +667,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
         return true;
     }
 
-    // gnu5se: 회원관리 캡챠 사용 안 함 → mb_password keyup 시 wrap/툴팁 띄우는
+    // g5se: 회원관리 캡챠 사용 안 함 → mb_password keyup 시 wrap/툴팁 띄우는
     // 코드 전체 제거. (#captcha_key 도 마크업 자체가 없어 required 처리 불필요.)
 </script>
 <?php

@@ -30,7 +30,7 @@ $mb_zip         = isset($_POST['mb_zip']) ? preg_replace('/[^0-9a-z_]/i', '', $_
 $mb_marketing_agree  = isset($_POST['mb_marketing_agree'])  ? clean_xss_tags(stripslashes($_POST['mb_marketing_agree']),  1, 1) : '0';
 $mb_thirdparty_agree = isset($_POST['mb_thirdparty_agree']) ? clean_xss_tags(stripslashes($_POST['mb_thirdparty_agree']), 1, 1) : '0';
 
-// gnu5se: 회원관리에서는 캡챠 검증을 사용하지 않음 (관리자 흐름에 불필요한 마찰).
+// g5se: 회원관리에서는 캡챠 검증을 사용하지 않음 (관리자 흐름에 불필요한 마찰).
 // (원본은 mb_password 가 있을 때 chk_captcha 호출.)
 
 // 휴대폰번호 체크

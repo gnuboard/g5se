@@ -21,10 +21,10 @@
 ## 설치
 
 ```bash
-git clone https://github.com/kagla/gnu5se.git
-cd gnu5se
+git clone https://github.com/gnuboard/g5se.git
+cd g5se
 mkdir -p data && chmod 707 data
-mysql -u root -e "CREATE DATABASE gnu5se CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+mysql -u root -e "CREATE DATABASE g5se CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 ```
 
 브라우저로 `/install/` 접근 → 마법사 따라 진행.

@@ -31,7 +31,7 @@ function mailer($fname, $fmail, $to, $subject, $content, $type=0, $file="", $cc=
             $mail->Host = G5_SMTP; // SMTP server
             if(defined('G5_SMTP_PORT') && G5_SMTP_PORT)
                 $mail->Port = G5_SMTP_PORT;
-            // gnu5se 패치: PHPMailer 5.2.10+ 부터 SMTPAutoTLS=true 가 디폴트라
+            // g5se 패치: PHPMailer 5.2.10+ 부터 SMTPAutoTLS=true 가 디폴트라
             // STARTTLS 를 광고하는 로컬 postfix(self-signed cert) 와 TLS handshake 가 실패하면
             // 전체 SMTP connect() 가 실패함. 로컬 relay 는 TLS 불필요하므로 자동 TLS 끔.
             $mail->SMTPAutoTLS = false;

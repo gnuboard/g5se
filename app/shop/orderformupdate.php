@@ -45,7 +45,7 @@ $sql = "select * from {$g5['g5_shop_order_table']} limit 1";
 $check_tmp = sql_fetch($sql);
 
 if(!isset($check_tmp['od_other_pay_type'])){
-    $sql = "ALTER TABLE `{$g5['g5_shop_order_table']}` 
+    $sql = "ALTER TABLE `{$g5['g5_shop_order_table']}`
             ADD COLUMN `od_other_pay_type` VARCHAR(100) NOT NULL DEFAULT '' AFTER `od_settle_case`; ";
     sql_query($sql, false);
 }
@@ -656,10 +656,10 @@ $order_params = [
 ];
 $result = sql_pdo_query($order_sql, $order_params, false);
 
-// gnu5se: silent fail 추적용 임시 로그 (sql_pdo_query 3번째 false 라 에러가 안 찍힘)
+// g5se: silent fail 추적용 임시 로그 (sql_pdo_query 3번째 false 라 에러가 안 찍힘)
 if (!$result) {
     $info = $g5['connect_db']->errorInfo();
-    @error_log("[gnu5se orderformupdate] INSERT failed | errorInfo=".json_encode($info)
+    @error_log("[g5se orderformupdate] INSERT failed | errorInfo=".json_encode($info)
               ." | sql=".$order_sql
               ." | params=".json_encode($order_params, JSON_UNESCAPED_UNICODE));
 }
@@ -670,8 +670,8 @@ $exists_order = sql_pdo_fetch(" select od_id, od_tno, od_ip from {$g5['g5_shop_o
 
 // 주문정보 입력 오류시 결제 취소
 if(! $result || ! (isset($exists_order['od_id']) && $od_id && $exists_order['od_id'] === $od_id)) {
-    // gnu5se: 어느 분기가 fail 인지 + 진단 컨텍스트 로깅
-    @error_log("[gnu5se orderformupdate] order check failed"
+    // g5se: 어느 분기가 fail 인지 + 진단 컨텍스트 로깅
+    @error_log("[g5se orderformupdate] order check failed"
               ." | result=".var_export($result, true)
               ." | od_id=".var_export($od_id, true)
               ." | exists_order=".json_encode($exists_order, JSON_UNESCAPED_UNICODE)
@@ -719,7 +719,7 @@ if(!$result) {
     // 관리자에게 오류 알림 메일발송
     $error = 'status';
     include G5_SHOP_PATH.'/ordererrormail.php';
-    
+
     if(function_exists('add_order_post_log')) add_order_post_log($cancel_msg);
     // 주문삭제
     sql_pdo_query(" delete from {$g5['g5_shop_order_table']} where od_id = :od_id ", [':od_id' => $od_id]);
@@ -908,7 +908,7 @@ if($config['cf_sms_use'] && ($default['de_sms_use2'] || $default['de_sms_use3'])
                 if($port_setting !== false) {
                     $SMS = new LMS;
                     $SMS->SMS_con($config['cf_icode_server_ip'], $config['cf_icode_id'], $config['cf_icode_pw'], $port_setting);
-                    
+
                     for($s=0; $s<count($sms_messages); $s++) {
                         $strDest     = array();
                         $strDest[]   = $sms_messages[$s]['recv'];

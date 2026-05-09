@@ -414,7 +414,7 @@ class item_list
             include($file);
             $content = ob_get_contents();
             ob_end_clean();
-            // gnu5se: 레거시 skin 의 fixed-width float 가 list_mod (1줄당 개수) 설정을 반영
+            // g5se: 레거시 skin 의 fixed-width float 가 list_mod (1줄당 개수) 설정을 반영
             // 못 하므로, 결과를 CSS Grid 래퍼로 감싸 --m-list-cols (최대 컬럼) 와
             // --m-img-width (최소 cell 폭) 를 주입한다. CSS 는 theme/basic/shop/shop.head.php
             // 의 .m-shop-grid 규칙 참고.
@@ -516,7 +516,7 @@ function get_it_image($it_id, $width, $height=0, $anchor=false, $img_id='', $img
     }
 
     if($thumb) {
-        // gnu5se: data/ 가 app/ 밖에 있으므로 G5_DATA_PATH→G5_DATA_URL 로 치환해야 한다.
+        // g5se: data/ 가 app/ 밖에 있으므로 G5_DATA_PATH→G5_DATA_URL 로 치환해야 한다.
         $file_url = str_replace(G5_DATA_PATH, G5_DATA_URL, $filepath.'/'.$thumb);
         $img = '<img src="'.$file_url.'" width="'.$width.'" height="'.$height.'" alt="'.$img_alt.'"';
     } else {
@@ -1343,7 +1343,7 @@ function get_goods($cart_id)
     $row = sql_pdo_fetch(" select a.it_id, b.it_name from {$g5['g5_shop_cart_table']} a, {$g5['g5_shop_item_table']} b
                             where a.it_id = b.it_id and a.od_id = :cart_id order by ct_id limit 1 ",
                         [':cart_id' => $cart_id]);
-    // gnu5se: full_name 은 SQL 안 들어감 (preg_replace 후 PG 결제 protocol 용 텍스트). addslashes 유지.
+    // g5se: full_name 은 SQL 안 들어감 (preg_replace 후 PG 결제 protocol 용 텍스트). addslashes 유지.
     $goods['it_id'] = $row['it_id'];
     $goods['full_name']= $goods['name'] = addslashes($row['it_name']);
     // 특수문자제거
@@ -2682,7 +2682,7 @@ function before_check_cart_price($s_cart_id, $is_ct_select_condition=false, $is_
             $params = [':it_id' => $it['it_id'], ':s_cart_id' => $s_cart_id, ':ct_id' => $row['ct_id']];
 
             foreach ($update_querys as $column => $value) {
-                // gnu5se: column 이름은 update_querys 의 키 (코드에서만 결정), placeholder 키는 prefix 로 충돌 회피
+                // g5se: column 이름은 update_querys 의 키 (코드에서만 결정), placeholder 키는 prefix 로 충돌 회피
                 if (!preg_match('/^[a-z0-9_]+$/i', $column)) continue;
                 $set_parts[] = "`{$column}` = :v_{$column}";
                 $params[':v_'.$column] = $value;
