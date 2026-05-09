@@ -322,7 +322,7 @@ function get_db_create_replace($sql_str){
     }
 
     if( G5_DB_CHARSET !== 'utf8' ){
-        $sql_str = preg_replace('/CHARSET=utf8/', 'CHARACTER SET '.get_db_charset(G5_DB_CHARSET), $sql_str);
+        $sql_str = preg_replace('/CHARSET=utf8\b/', 'CHARACTER SET '.get_db_charset(G5_DB_CHARSET), $sql_str);
     }
 
     return $sql_str;
