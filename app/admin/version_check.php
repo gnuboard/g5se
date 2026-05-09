@@ -49,8 +49,15 @@ admin_layout_start($g5['title'], 'version_check');
     <tr>
         <th scope="row">저장소</th>
         <td>
-            <a href="<?php echo get_text(g5se_update_repository_url()) ?>" target="_blank" rel="noopener">
-                <?php echo get_text(G5SE_UPDATE_REPOSITORY) ?>
+            <a href="<?php echo get_text(g5se_update_repository_url()) ?>" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 font-medium text-admin-primary-700 dark:text-admin-primary-300">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="h-4 w-4 fill-current">
+                    <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.11.79-.25.79-.56v-2.01c-3.2.7-3.87-1.38-3.87-1.38-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .98-.31 3.18 1.18A11.1 11.1 0 0 1 12 6.2c.98 0 1.96.13 2.89.38 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.13v3.15c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+                </svg>
+                <span><?php echo get_text(G5SE_UPDATE_REPOSITORY) ?></span>
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="h-3.5 w-3.5">
+                    <path fill="currentColor" d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"/>
+                    <path fill="currentColor" d="M5 5h6v2H7v10h10v-4h2v6H5V5z"/>
+                </svg>
             </a>
         </td>
     </tr>
