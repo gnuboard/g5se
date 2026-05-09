@@ -57,8 +57,7 @@ admin_layout_start($g5['title'], 'version_check');
 
 <div class="local_desc02 local_desc">
     <p>GitHub Releases 기준으로 현재 설치 버전과 공식 저장소의 최신 릴리스 정보를 확인합니다.</p>
-    <p>서버 환경마다 업데이트 방식이 다를 수 있으므로 이 화면에서는 자동 적용을 제공하지 않고, 새 버전 여부와 변경 내용을 안내합니다.</p>
-    <p>비공개 저장소를 사용한다면 <strong>G5_GITHUB_UPDATE_TOKEN</strong> 환경변수 또는 상수에 GitHub fine-grained token을 설정해야 합니다.</p>
+    <p>버전 확인 후 운영 중인 사이트 환경에 맞는 방법으로 업데이트를 진행하십시오.</p>
 </div>
 
 <section class="tbl_frm01 tbl_wrap">
