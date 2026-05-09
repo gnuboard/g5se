@@ -673,7 +673,8 @@ if (!is_file($user_config_file)) {
     $uc .= "/*\n";
     $uc .= " * 사용자 환경 설정 — 사이트별로 다른 값 (자동 업데이트 시 보존됨).\n";
     $uc .= " * app/config.php 의 framework 상수는 절대 수정하지 마세요.\n";
-    $uc .= " * 변경할 값이 있으면 이 파일에 동일 이름으로 define 만 추가/수정.\n";
+    $uc .= " * 값을 바꾸려면 아래 define() 의 두 번째 인자를 직접 수정하세요.\n";
+    $uc .= " * PHP constant 는 한번 정의되면 못 바꾸므로 같은 이름으로 또 define 해도 적용 안 됩니다.\n";
     $uc .= " */\n";
     $uc .= "if (!defined('_GNUBOARD_')) exit;\n\n";
     $uc .= "// 보안서버 도메인 (https). 비워두면 일반 G5_URL 사용.\n";
