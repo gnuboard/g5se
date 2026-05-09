@@ -13,6 +13,8 @@ class Router
     private $cleanRoutes = [
         '/'                       => 'index.php',
         '/install'                => 'install/index.php',
+        '/install_config'         => 'install/install_config.php',
+        '/install_db'             => 'install/install_db.php',
         '/install/install_config' => 'install/install_config.php',
         '/install/install_db'     => 'install/install_db.php',
         '/mypage'                 => 'mypage.php',
@@ -88,6 +90,7 @@ class Router
 
         // 설치 마법사 — Apache rewrite 없이 PHP 내장 서버로 실행해도 동작하도록 통과
         '#^/install/?$#' => 'install/index.php',
+        '#^/(install_config|install_db)(?:\.php)?/?$#i' => 'install/{1}.php',
         '#^/install/(install_config|install_db|ajax\.install\.check)\.php$#i' => 'install/{1}.php',
         '#^/install/(install_config|install_db)/?$#i' => 'install/{1}.php',
 
