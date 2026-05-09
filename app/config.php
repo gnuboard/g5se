@@ -17,10 +17,10 @@ date_default_timezone_set("Asia/Seoul");
 ********************/
 
 /*
- * 사용자 환경 설정 (G5_DOMAIN, G5_DEBUG, G5_DB_CHARSET 등) 은 data/user-config.php 로 분리.
- * 여기는 user-config.php 가 정의 안 한 경우의 framework default 만. defined() 가드로 보호.
+ * 사용자 환경 설정 (G5_DOMAIN, G5_DEBUG, G5_DB_CHARSET 등) 은 data/user_config.php 로 분리.
+ * 여기는 user_config.php 가 정의 안 한 경우의 framework default 만. defined() 가드로 보호.
  *
- *   사용자 변경 → data/user-config.php 에서 수정 (자동 업데이트 시 보존됨)
+ *   사용자 변경 → data/user_config.php 에서 수정 (자동 업데이트 시 보존됨)
  *   여기 (app/config.php) 는 절대 수정 X — 자동 업데이트 시 덮어써짐
  */
 
