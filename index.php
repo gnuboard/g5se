@@ -22,9 +22,12 @@ define('G5_DATA_URL',       G5_URL.'/data');
 
 require G5_PATH.'/router.php';
 
+$_g5se_request_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
 // 출력버퍼 필터: 모던화 완료된 엔드포인트의 `.php` 접미사를 자동 제거 + 게시판 URL 정리.
 // gnuboard 내부 코드가 G5_BBS_URL.'/login_check.php' 형태로 URL 을 조립하므로,
 // 최종 HTML 송출 직전에 일괄 치환해서 클린 URL 로 노출한다.
+if ($_g5se_request_path !== '/install/install_db') {
 ob_start(function ($html) {
     static $clean_endpoints = [
         'login', 'login_check', 'logout',
@@ -206,6 +209,7 @@ ob_start(function ($html) {
 
     return $html;
 });
+}
 
 $_route_target = (new Router())->resolve($_SERVER['REQUEST_URI']);
 

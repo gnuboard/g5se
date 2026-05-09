@@ -8,6 +8,21 @@ header('Cache-Control: pre-check=0, post-check=0, max-age=0'); // HTTP/1.1
 header('Pragma: no-cache'); // HTTP/1.0
 @header('Content-Type: text/html; charset=utf-8');
 @header('X-Robots-Tag: noindex');
+@header('X-Accel-Buffering: no');
+
+function install_flush($html = '')
+{
+    if ($html !== '') {
+        echo $html;
+    }
+
+    echo str_repeat(' ', 4096);
+
+    if (function_exists('ob_flush')) {
+        @ob_flush();
+    }
+    @flush();
+}
 
 $g5_path['path'] = '..';
 include_once('install_common.php');
@@ -95,6 +110,7 @@ unset($row);
 
     <ol>
 <?php
+install_flush();
 // $table_prefix 는 위에서 [^0-9a-z_] 검사 거침 — 식별자 보간 안전
 // 기존: sql_query()->num_rows (mysqli 잔재) → PDOStatement 호환 sql_num_rows() 사용
 $check_stmt = sql_pdo_query("SHOW TABLES LIKE '{$table_prefix}config'", [], false, $dblink);
@@ -138,7 +154,7 @@ if($g5_shop_install) {
 // 테이블 생성 ------------------------------------
 ?>
 
-        <li>전체 테이블 생성 완료</li>
+<?php install_flush("        <li>전체 테이블 생성 완료</li>\n"); ?>
 
 <?php
 $read_point = 0;
@@ -528,7 +544,7 @@ if($g5_shop_install) {
 }
 ?>
 
-        <li>DB설정 완료</li>
+<?php install_flush("        <li>DB설정 완료</li>\n"); ?>
 
 <?php
 //-------------------------------------------------------------------------------------------------
@@ -574,7 +590,7 @@ if($g5_shop_install) {
 }
 ?>
 
-        <li>데이터 디렉토리 생성 완료</li>
+<?php install_flush("        <li>데이터 디렉토리 생성 완료</li>\n"); ?>
 
 <?php
 //-------------------------------------------------------------------------------------------------
@@ -662,7 +678,7 @@ fclose($f);
 @chmod($file, G5_FILE_PERMISSION);
 ?>
 
-        <li>DB설정 파일 생성 완료 (<?php echo $file ?>)</li>
+<?php install_flush('        <li>DB설정 파일 생성 완료 ('.htmlspecialchars($file, ENT_QUOTES, 'UTF-8').")</li>\n"); ?>
 
 <?php
 // g5se: 사용자 환경 설정 파일 생성 (data/user_config.php) — 처음 설치는 default 값.
@@ -691,7 +707,7 @@ if (!is_file($user_config_file)) {
     $uc .= "define('G5_DB_CHARSET',    'utf8mb4');\n";
     file_put_contents($user_config_file, $uc);
     @chmod($user_config_file, G5_FILE_PERMISSION);
-    echo '        <li>사용자 설정 파일 생성 완료 ('.htmlspecialchars($user_config_file).')</li>'.PHP_EOL;
+    install_flush('        <li>사용자 설정 파일 생성 완료 ('.htmlspecialchars($user_config_file, ENT_QUOTES, 'UTF-8').')</li>'.PHP_EOL);
 }
 ?>
 
