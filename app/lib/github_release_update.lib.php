@@ -104,22 +104,65 @@ function g5se_update_latest_release()
         throw new RuntimeException('GitHub Releases 정보를 해석할 수 없습니다.');
     }
 
+    return g5se_update_release_from_api($release);
+}
+
+function g5se_update_release_from_api(array $release)
+{
     $current = g5se_update_current_version();
     $current_norm = g5se_update_normalize_version($current);
-    $latest_norm = g5se_update_normalize_version($release['tag_name']);
-    $has_update = $current_norm && $latest_norm ? version_compare($latest_norm, $current_norm, '>') : ($release['tag_name'] !== $current);
+    $latest_norm = g5se_update_normalize_version(isset($release['tag_name']) ? $release['tag_name'] : '');
+    $tag = isset($release['tag_name']) ? (string) $release['tag_name'] : '';
+    $has_update = $current_norm && $latest_norm ? version_compare($latest_norm, $current_norm, '>') : ($tag !== $current);
 
     return array(
         'repository' => G5SE_UPDATE_REPOSITORY,
         'current_version' => $current,
-        'latest_version' => $release['tag_name'],
-        'latest_name' => isset($release['name']) ? $release['name'] : '',
-        'published_at' => isset($release['published_at']) ? $release['published_at'] : '',
-        'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
-        'zipball_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
-        'body' => isset($release['body']) ? $release['body'] : '',
+        'latest_version' => $tag,
+        'latest_name' => isset($release['name']) ? (string) $release['name'] : '',
+        'published_at' => isset($release['published_at']) ? (string) $release['published_at'] : '',
+        'html_url' => isset($release['html_url']) ? (string) $release['html_url'] : '',
+        'zipball_url' => isset($release['zipball_url']) ? (string) $release['zipball_url'] : '',
+        'body' => isset($release['body']) ? (string) $release['body'] : '',
+        'prerelease' => !empty($release['prerelease']),
+        'draft' => !empty($release['draft']),
         'has_update' => $has_update,
     );
+}
+
+function g5se_update_recent_releases($limit = 5)
+{
+    $limit = max(1, min(20, (int) $limit));
+    $url = 'https://api.github.com/repos/' . G5SE_UPDATE_REPOSITORY . '/releases?per_page=' . $limit;
+    $body = g5se_update_http_request($url);
+    $releases = json_decode($body, true);
+
+    if (!is_array($releases)) {
+        throw new RuntimeException('GitHub Releases 목록을 해석할 수 없습니다.');
+    }
+
+    $items = array();
+    foreach ($releases as $release) {
+        if (!is_array($release) || empty($release['tag_name'])) {
+            continue;
+        }
+        if (!empty($release['draft'])) {
+            continue;
+        }
+        $items[] = g5se_update_release_from_api($release);
+    }
+
+    return $items;
+}
+
+function g5se_update_repository_url()
+{
+    return 'https://github.com/' . G5SE_UPDATE_REPOSITORY;
+}
+
+function g5se_update_token_is_configured()
+{
+    return G5SE_UPDATE_TOKEN !== '';
 }
 
 function g5se_update_prepare_directories()
