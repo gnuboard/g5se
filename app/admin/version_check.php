@@ -28,6 +28,25 @@ try {
 $latest_release = isset($releases[0]) ? $releases[0] : null;
 $has_releases = (bool) $latest_release;
 
+function g5se_version_check_format_datetime($datetime)
+{
+    if (!$datetime) {
+        return '';
+    }
+
+    try {
+        $date = new DateTime($datetime);
+        $date->setTimezone(new DateTimeZone('Asia/Seoul'));
+    } catch (Exception $e) {
+        return (string) $datetime;
+    }
+
+    $weekdays = array('일', '월', '화', '수', '목', '금', '토');
+    $weekday = $weekdays[(int) $date->format('w')];
+
+    return $date->format('Y-m-d') . ' (' . $weekday . ') ' . $date->format('H:i');
+}
+
 admin_layout_start($g5['title'], 'version_check');
 ?>
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
@@ -80,7 +99,7 @@ admin_layout_start($g5['title'], 'version_check');
     </tr>
     <tr>
         <th scope="row">게시일</th>
-        <td><?php echo get_text($latest_release['published_at']) ?></td>
+        <td><?php echo get_text(g5se_version_check_format_datetime($latest_release['published_at'])) ?></td>
     </tr>
     <tr>
         <th scope="row">상태</th>
@@ -141,7 +160,7 @@ admin_layout_start($g5['title'], 'version_check');
                 <div class="mb-2">
                     <strong><?php echo get_text($item['latest_name'] ?: $item['latest_version']) ?></strong>
                     <?php if ($item['published_at']) { ?>
-                        <span class="text-gray-500 dark:text-gray-400"><?php echo get_text($item['published_at']) ?></span>
+                        <span class="text-gray-500 dark:text-gray-400"><?php echo get_text(g5se_version_check_format_datetime($item['published_at'])) ?></span>
                     <?php } ?>
                     <?php if ($item['html_url']) { ?>
                         <a href="<?php echo get_text($item['html_url']) ?>" target="_blank" rel="noopener" class="btn_frmline">보기</a>
