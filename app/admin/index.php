@@ -49,6 +49,13 @@ admin_layout_start('대시보드', 'home');
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
+    <header class="flex flex-wrap items-center gap-3 mb-5">
+        <div>
+            <h2 class="text-xl font-bold tracking-tight">대시보드</h2>
+            <p class="text-xs text-slate-500 mt-0.5">사이트 전체 현황 한눈에 보기 · <?php echo date('Y-m-d') ?></p>
+        </div>
+    </header>
+
     <!-- 카운트 카드 6개 -->
     <section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-6">
         <?php
