@@ -291,7 +291,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
             <button type="button" id="adm-mobile-toggle" class="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" aria-label="메뉴 열기">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
-            <h1 class="font-semibold text-slate-900 dark:text-slate-100 truncate"><?php echo get_text($title) ?></h1>
+            <!-- 헤더 좌측 슬롯 — 본문 페이지의 h2 와 중복돼서 페이지 제목은 비워둠. 추후 breadcrumb/검색 등 다른 용도로 사용 예정. -->
             <div class="ml-auto flex items-center gap-2">
                 <button type="button" id="adm-theme-toggle" class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300" aria-label="테마 전환">
                     <svg class="block dark:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
