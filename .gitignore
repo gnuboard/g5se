@@ -10,3 +10,8 @@
 # 에디터/IDE
 .vscode/
 .idea/
+
+# AI 보조 도구 가이드 (내부)
+CLAUDE.md
+AGENTS.md
+.claude/
