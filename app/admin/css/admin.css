@@ -2079,11 +2079,17 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 .ui-datepicker .ui-datepicker-next:hover {
     background: #e2e8f0 !important; border: 0 !important;
 }
-.ui-datepicker .ui-datepicker-title { line-height: 22px; }
+.ui-datepicker .ui-datepicker-title { line-height: 22px; white-space: nowrap; }
 .ui-datepicker .ui-datepicker-title select {
     height: 24px; padding: 0 4px; margin: 0 2px;
     border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #1e293b;
     font-size: 12px;
+}
+/* 1.14.x base 가 month/year select 에 width:45% 강제 → year+suffix+month 가 wrap.
+   auto 로 풀어 같은 라인에 정렬. */
+.ui-datepicker select.ui-datepicker-month,
+.ui-datepicker select.ui-datepicker-year {
+    width: auto !important;
 }
 .ui-datepicker table {
     width: 100%; margin: 0; border-collapse: collapse;
