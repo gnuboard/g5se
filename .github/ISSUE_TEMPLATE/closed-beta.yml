@@ -79,5 +79,5 @@ body:
           required: true
         - label: 민감한 개인정보나 접속 정보를 Issue에 작성하지 않겠습니다.
           required: true
-        - label: 다 같이 만들어가는 솔루션입니다. 구경만 하시거나 불평만 늘어 놓는 분은 정중히 사절합니다.
+        - label: 다 같이 만들어가는 솔루션입니다. 구경만 하시거나 불평을 하시는 분은 정중히 사절합니다.
           required: true
