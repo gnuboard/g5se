@@ -88,7 +88,7 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <script>window.__unocss = { theme: { colors: { 'admin-primary': { 50:'#f0f7ff', 100:'#dceaff', 200:'#bdd6ff', 300:'#8fb6ff', 400:'#5d8eff', 500:'#3464f5', 600:'#2649d5', 700:'#1f3aac', 800:'#1d3187', 900:'#1c2c6e', 950:'#162050' } } } };</script>
     <script src="<?php echo G5_ADMIN_URL ?>/js/uno.global.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" defer></script>
     <!-- Alpine.js — 작은 reactive (~15KB). x-data / x-show / x-on / x-text 으로 선언적 인터랙션.
          defer 로 로드 → DOMContentLoaded 시 자동 init. 기존 jQuery 와 충돌 없이 공존. -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -104,9 +104,9 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- jQuery UI datepicker — admin 의 popular_rank / visit_search / visit.sub 등에서 사용.
          원본은 plugin/jquery-ui/datepicker.php 가 add_stylesheet/javascript 큐로 등록하지만
          modern admin shell 은 큐 flush 안 함. 한 번만 직접 로드. -->
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.2/dist/themes/base/jquery-ui.min.css">
     <link rel="stylesheet" href="<?php echo G5_PLUGIN_URL ?>/jquery-ui/style.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.2/dist/jquery-ui.min.js"></script>
     <script>
     jQuery(function($){
         $.datepicker.regional["ko"] = {
