@@ -35,8 +35,6 @@ return [
          'icon' => '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'],
         ['key' => 'dbupgrade', 'code' => '100410', 'label' => 'DB업그레이드',       'url' => '/admin/dbupgrade',             'level' => 'super',
          'icon' => '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>'],
-        ['key' => 'version_check', 'code' => '100415', 'label' => '버전 확인', 'url' => '/admin/version_check', 'level' => 'super',
-         'icon' => '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/>'],
         ['key' => 'dbmigrate', 'code' => '100420', 'label' => 'DB 마이그레이션',     'url' => '/admin/db_migrate',            'level' => 'super',
          'icon' => '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/><polyline points="9 11 12 14 15 11"/>'],
         ['key' => 'service',   'code' => '100400', 'label' => '부가서비스',         'url' => '/admin/service',               'level' => 'super',
