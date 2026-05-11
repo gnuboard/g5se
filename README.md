@@ -32,7 +32,6 @@ mysql -u root -e "CREATE DATABASE g5se CHARACTER SET utf8mb4 COLLATE utf8mb4_uni
 ## 라이센스
 
 MIT License — `LICENSE` 파일 참조.
-gnuboard5 (GPL v2) 기반.
 
 ## 문서
 
