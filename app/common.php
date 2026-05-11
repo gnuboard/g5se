@@ -187,7 +187,7 @@ if (file_exists($dbconfig_file)) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
-<title>그누보드5SE 설치가 필요합니다</title>
+<title>그누보드5 SE 설치가 필요합니다</title>
 <style>
 /* 인라인 — 라우팅/static 처리 영향 안 받도록 critical CSS 자체 포함 */
 :root {
@@ -287,7 +287,7 @@ footer strong { color: var(--text); font-weight: 700; }
 
 <div class="msg-bar">
     <span class="brand">
-        그누보드5SE
+        그누보드5 SE
         <span class="sub">GNUBOARD5 SECOND EDITION</span>
     </span>
     <span class="tag">설치 안내</span>
@@ -302,7 +302,7 @@ footer strong { color: var(--text); font-weight: 700; }
     </h1>
 
     <div class="card">
-        <p>그누보드5SE 가 아직 설치되지 않았습니다. 다음 파일이 없어서 사이트를 열 수 없습니다.</p>
+        <p>그누보드5 SE 가 아직 설치되지 않았습니다. 다음 파일이 없어서 사이트를 열 수 없습니다.</p>
         <div class="code-block">
             <strong><?php echo G5_DATA_DIR.'/'.G5_DBCONFIG_FILE ?></strong>
         </div>
@@ -317,7 +317,7 @@ footer strong { color: var(--text); font-weight: 700; }
 </main>
 
 <footer>
-    <p><strong>그누보드5SE</strong> · GNUBOARD5 SECOND EDITION · MIT License</p>
+    <p><strong>그누보드5 SE</strong> · GNUBOARD5 SECOND EDITION · MIT License</p>
 </footer>
 
 </body>

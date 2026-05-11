@@ -5,7 +5,7 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 // CWD 의존 — install 단계에선 CWD 가 install/ 일 수 있어 부정확.
 $data_path = dirname(dirname(__DIR__)).'/'.G5_DATA_DIR;
 
-if (! (isset($title) && $title)) $title = "그누보드5SE 설치";
+if (! (isset($title) && $title)) $title = "그누보드5 SE 설치";
 
 // 진행 단계 — index.php=1, install_config.php=2, install_db.php=3
 $_step = 1;
@@ -53,7 +53,7 @@ document.getElementById('ins-theme-toggle').addEventListener('click', function (
 
 <div id="ins_bar">
     <span id="bar_img">
-        그누보드5SE
+        그누보드5 SE
         <span class="bar_sub">GNUBOARD5 SECOND EDITION</span>
     </span>
     <span id="bar_txt">설치 마법사</span>

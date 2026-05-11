@@ -1,4 +1,4 @@
-# 그누보드5SE
+# 그누보드5 SE
 
 **GNUBOARD5 Second Edition** — gnuboard5 기반 second edition.
 

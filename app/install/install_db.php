@@ -36,7 +36,7 @@ include_once('../lib/get_data.lib.php');
 include_once('../lib/uri.lib.php');    // URL 함수 파일
 include_once('../lib/cache.lib.php');
 
-$title = "그누보드5SE 설치 — 완료";
+$title = "그누보드5 SE 설치 — 완료";
 include_once('./install.inc.php');
 
 $tmp_bo_table   = array ("notice", "qa", "free", "gallery");
@@ -106,7 +106,7 @@ unset($row);
 ?>
 
 <div class="ins_inner">
-    <h2>그누보드5SE 설치가 시작되었습니다.</h2>
+    <h2>그누보드5 SE 설치가 시작되었습니다.</h2>
 
     <ol>
 <?php
@@ -735,7 +735,7 @@ if($g5_shop_install) {
     </ol>
 
     <div class="ins_msg ok">
-        <strong>축하합니다!</strong> 그누보드5SE 설치가 완료되었습니다.<br>
+        <strong>축하합니다!</strong> 그누보드5 SE 설치가 완료되었습니다.<br>
         DB 는 utf8mb4 (이모지 지원) + InnoDB + nullable date/datetime 으로 생성되었습니다.
     </div>
 

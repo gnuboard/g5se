@@ -711,7 +711,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
 ### 3) 설치 마법사 모더나이즈
 
-- 브랜드: **그누보드5SE / GNUBOARD5 SECOND EDITION**, MIT License (`LICENSE` 파일)
+- 브랜드: **그누보드5 SE / GNUBOARD5 SECOND EDITION**, MIT License (`LICENSE` 파일)
 - 진행 단계 표시 (1 라이센스 → 2 환경설정 → 3 설치 완료)
 - 모던 디자인 토큰 + 다크모드 토글 (메인 사이트와 `m-theme` localStorage 키 공유)
 - 클린 URL: `/install/install_config`, `/install/install_db` 등 .php 없는 형태도 동작

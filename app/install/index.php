@@ -4,7 +4,7 @@
 $g5_path['path'] = '..';
 include_once('install_common.php');
 include_once ('../config.php');
-$title = "그누보드5SE 설치 — 라이센스 확인";
+$title = "그누보드5 SE 설치 — 라이센스 확인";
 include_once ('./install.inc.php');
 ?>
 
@@ -29,7 +29,7 @@ if ($exists_data_dir && $write_data_dir) {
 
 <div class="ins_inner">
     <p style="font-size: 1.1em;">
-        그누보드5SE 는 <strong style="color: var(--ins-primary);">MIT License</strong> 로 배포됩니다.
+        그누보드5 SE 는 <strong style="color: var(--ins-primary);">MIT License</strong> 로 배포됩니다.
     </p>
     <p>
         gnuboard5 (GPL v2) 를 기반으로 한 second edition 으로, 본 second edition 자체는 MIT 로 자유롭게 사용·수정·배포 가능합니다.

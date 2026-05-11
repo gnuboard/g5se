@@ -11,7 +11,7 @@ header('Pragma: no-cache'); // HTTP/1.0
 $g5_path['path'] = '..';
 include_once('install_common.php');
 include_once ('../config.php');
-$title = "그누보드5SE 설치 — 환경설정";
+$title = "그누보드5 SE 설치 — 환경설정";
 include_once ('./install.inc.php');
 
 if (!isset($_POST['agree']) || $_POST['agree'] != '동의함') {
@@ -75,7 +75,7 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
         </td>
     </tr>
     <tr>
-        <th scope="row">그누보드5SE 재설치</th>
+        <th scope="row">그누보드5 SE 재설치</th>
         <td>
             <input name="g5_install" type="checkbox" value="1" id="g5_install">
             <label for="g5_install">재설치</label>
@@ -127,7 +127,7 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
     </table>
 
     <p>
-        <strong class="st_strong">주의! 이미 그누보드5SE 가 설치되어 있다면 DB 자료가 망실될 수 있으니 신중히 진행하세요.</strong><br>
+        <strong class="st_strong">주의! 이미 그누보드5 SE 가 설치되어 있다면 DB 자료가 망실될 수 있으니 신중히 진행하세요.</strong><br>
         DB 는 utf8mb4 (이모지 지원) + InnoDB 로 생성됩니다.
     </p>
 
