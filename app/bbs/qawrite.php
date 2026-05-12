@@ -10,7 +10,7 @@ $qa_id = isset($_REQUEST['qa_id']) ? (int) $_REQUEST['qa_id'] : 0;
 $write = array('qa_email_recv'=>'', 'qa_subject'=>'', 'qa_category'=>'');
 
 if($is_guest)
-    alert('회원이시라면 로그인 후 이용해 보십시오.', './login.php?url='.urlencode(G5_BBS_URL.'/qalist.php'));
+    alert('회원이시라면 로그인 후 이용해 보십시오.', './login.php?url='.urlencode(G5_BBS_URL.'/qa'));
 
 $qaconfig = get_qa_config();
 $token = _token();
@@ -138,7 +138,7 @@ if(is_file($skin_file)) {
             $is_hp = false;
     }
 
-    $list_href = G5_BBS_URL.'/qalist.php'.preg_replace('/^&amp;/', '?', $qstr);
+    $list_href = G5_BBS_URL.'/qa'.preg_replace('/^&amp;/', '?', $qstr);
 
     // 클린 URL — 라우터에 /qa/write_update 가 등록돼 있어 POST 가 그대로 bbs/qawrite_update.php 로 전달됨
     $action_url = '/qa/write_update';

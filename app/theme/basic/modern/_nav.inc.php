@@ -411,6 +411,11 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     .m-side-col { display: none !important; }
 }
 
+@media (max-width: 560px) {
+    .m-nav-row-inner { gap: 10px; padding: 12px 14px; }
+    .m-nav-cart-link { display: none; }
+}
+
 /* 모바일 드로어 — 우측 슬라이드 인 패널 */
 .m-nav-drawer {
     position: fixed; inset: 0; z-index: 10000;

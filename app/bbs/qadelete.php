@@ -97,4 +97,4 @@ for($i=0; $i<$count; $i++) {
  */
 run_event('qa_delete', $tmp_array, $deleted);
 
-goto_url(G5_BBS_URL.'/qalist.php'.preg_replace('/^&amp;/', '?', $qstr));
+goto_url(G5_BBS_URL.'/qa'.preg_replace('/^&amp;/', '?', $qstr));

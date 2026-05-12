@@ -99,13 +99,13 @@ $_ft_company = [
 
     <!-- 사이트 메뉴 — 맨 아래 한 줄 -->
     <nav class="m-footer-menu" aria-label="사이트 메뉴">
-        <a href="<?php echo G5_BBS_URL ?>/content.php?co_id=company">회사소개</a>
+        <a href="<?php echo G5_BBS_URL ?>/content/company">회사소개</a>
         <span class="m-footer-menu-sep">·</span>
-        <a href="<?php echo G5_BBS_URL ?>/content.php?co_id=privacy">개인정보처리방침</a>
+        <a href="<?php echo G5_BBS_URL ?>/content/privacy">개인정보처리방침</a>
         <span class="m-footer-menu-sep">·</span>
-        <a href="<?php echo G5_BBS_URL ?>/content.php?co_id=provision">서비스이용약관</a>
+        <a href="<?php echo G5_BBS_URL ?>/content/provision">서비스이용약관</a>
         <span class="m-footer-menu-sep">·</span>
-        <a href="<?php echo G5_BBS_URL ?>/new.php">새글</a>
+        <a href="<?php echo G5_BBS_URL ?>/new">새글</a>
     </nav>
 
 </footer>
@@ -146,6 +146,7 @@ $_ft_company = [
     gap: 6px;
     align-items: center;
     line-height: 1.4;
+    min-width: 0;
 }
 .m-footer-info-row li.m-footer-info-addr { flex-basis: 100%; }
 /* flex line-break — 전화/팩스 줄을 주소 바로 위에 따로 배치 */
@@ -161,6 +162,8 @@ $_ft_company = [
 .m-footer-info-row b {
     color: var(--m-text);
     font-weight: 500;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 .m-footer-info-row a { color: inherit; text-decoration: none; }
 .m-footer-info-row a:hover { color: var(--m-primary); }
@@ -187,5 +190,30 @@ $_ft_company = [
 .m-footer-menu a { color: var(--m-text-soft); text-decoration: none; padding: 2px 4px; }
 .m-footer-menu a:hover { color: var(--m-primary); }
 .m-footer-menu-sep { color: var(--m-text-faint); }
+
+@media (max-width: 560px) {
+    .m-footer-col-stats {
+        display: none;
+    }
+    .m-footer-info-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    .m-footer-info-row li,
+    .m-footer-info-row li.m-footer-info-addr {
+        display: grid;
+        grid-template-columns: 68px minmax(0, 1fr);
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
+    }
+    .m-footer-info-row li.m-footer-info-break {
+        display: none;
+    }
+    .m-footer-stats {
+        max-width: 180px;
+    }
+}
 </style>
 <?php } ?>

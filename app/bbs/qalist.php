@@ -2,7 +2,7 @@
 include_once('./_common.php');
 
 if($is_guest)
-    alert('회원이시라면 로그인 후 이용해 보십시오.', './login.php?url='.urlencode(G5_BBS_URL.'/qalist.php'));
+    alert('회원이시라면 로그인 후 이용해 보십시오.', './login.php?url='.urlencode(G5_BBS_URL.'/qa'));
 
 $qaconfig = get_qa_config();
 
@@ -21,7 +21,7 @@ $is_auth = $is_admin ? true : false;
 $category_option = '';
 
 if ($qaconfig['qa_category']) {
-    $category_href = G5_BBS_URL.'/qalist.php';
+    $category_href = G5_BBS_URL.'/qa';
 
     $category_option .= '<li><a href="'.$category_href.'"';
     if ($sca=='')
@@ -130,10 +130,10 @@ if(is_file($skin_file)) {
         $admin_href = G5_ADMIN_URL.'/qa_config.php';
     }
 
-    $list_href = G5_BBS_URL.'/qalist.php';
+    $list_href = G5_BBS_URL.'/qa';
     $write_href = G5_BBS_URL.'/qawrite.php';
 
-    $list_pages = preg_replace('/(\.php)(&amp;|&)/i', '$1?', get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, './qalist.php'.$qstr.'&amp;page='));
+    $list_pages = preg_replace('/(\.php)(&amp;|&)/i', '$1?', get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, './qa'.$qstr.'&amp;page='));
 
     $stx = get_text(stripslashes($stx));
     include_once($skin_file);

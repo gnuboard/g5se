@@ -36,10 +36,34 @@ ob_start(function ($html) {
         'password', 'password_check',
         'password_lost', 'password_lost_certify', 'password_lost2',
         'password_reset', 'password_reset_update',
+        'search', 'new', 'faq', 'connect', 'board_list_update', 'move',
     ];
-    // 1) 회원/인증 엔드포인트 .php 제거: (/login).php → /login
+    // 0) 내용관리 URL 정리: /content.php?co_id=X[&...] → /content/X[?...]
+    $html = preg_replace_callback(
+        '#/content\.php\?([^"\'\s<>]+)#',
+        function ($m) {
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['co_id']) || !preg_match('/^[a-zA-Z0-9_-]+$/', $params['co_id'])) {
+                return $m[0];
+            }
+            $url = '/content/'.$params['co_id'];
+            unset($params['co_id']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+            return $url;
+        },
+        $html
+    );
+
+    // 1) 모던 엔드포인트 .php 제거: (/login).php → /login
     $pattern = '#(/(?:'.implode('|', $clean_endpoints).'))\.php(?![a-zA-Z0-9])#';
     $html = preg_replace($pattern, '$1', $html);
+
+    // 1.5) 이름이 다른 레거시 엔드포인트 정리
+    $html = preg_replace('#/qalist\.php(?![a-zA-Z0-9])#', '/qa', $html);
+    $html = preg_replace('#/current_connect\.php(?![a-zA-Z0-9])#', '/connect', $html);
 
     // 2) 게시판 URL 정리: /board.php?bo_table=X[&wr_id=N][&page=Y&...] → /board/X[/N][?page=Y&...]
     //    매개변수 순서 무관하게 bo_table, wr_id 추출 후 나머지 query string 은 보존.

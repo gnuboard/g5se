@@ -8,7 +8,7 @@ $w == u : 수정
 ==========================*/
 
 if($is_guest)
-    alert('회원이시라면 로그인 후 이용해 보십시오.', './login.php?url='.urlencode(G5_BBS_URL.'/qalist.php'));
+    alert('회원이시라면 로그인 후 이용해 보십시오.', './login.php?url='.urlencode(G5_BBS_URL.'/qa'));
 
 $msg = array();
 
@@ -501,7 +501,7 @@ if($w == 'a')
 else if($w == 'u' && $write['qa_type'])
     $result_url = G5_BBS_URL.'/qaview.php?qa_id='.$write['qa_parent'].$qstr;
 else
-    $result_url = G5_BBS_URL.'/qalist.php'.preg_replace('/^&amp;/', '?', $qstr);
+    $result_url = G5_BBS_URL.'/qa'.preg_replace('/^&amp;/', '?', $qstr);
 
 if ($file_upload_msg)
     alert($file_upload_msg, $result_url);

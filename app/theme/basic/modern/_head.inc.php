@@ -115,6 +115,13 @@ html, body {
     -webkit-font-smoothing: antialiased;
 }
 
+.m-shell,
+.m-shell *,
+.m-shell *::before,
+.m-shell *::after {
+    box-sizing: border-box;
+}
+
 /* ──────────────────────────────────────────────
    Shell — fixed 오버레이로 gnuboard chrome 위에 덮어씌움
    (m-shell 이 DOM 어느 깊이에 있든 viewport 전체를 차지)

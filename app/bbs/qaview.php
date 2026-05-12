@@ -103,7 +103,7 @@ if(is_file($skin_file)) {
     $delete_href = '';
     $write_href = G5_BBS_URL.'/qawrite.php';
     $rewrite_href = G5_BBS_URL.'/qawrite.php?w=r&amp;qa_id='.$view['qa_id'];
-    $list_href = G5_BBS_URL.'/qalist.php'.preg_replace('/^&amp;/', '?', $qstr);
+    $list_href = G5_BBS_URL.'/qa'.preg_replace('/^&amp;/', '?', $qstr);
 
     /*
     if($view['qa_type']) {

@@ -46,6 +46,8 @@ class Router
         '/content'                => 'bbs/content.php',
         '/group'                  => 'bbs/group.php',
         '/connect'                => 'bbs/current_connect.php',
+        '/board_list_update'      => 'bbs/board_list_update.php',
+        '/move'                   => 'bbs/move.php',
 
         // 쪽지 (popup)
         '/memo'                   => 'bbs/memo.php',

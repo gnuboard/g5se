@@ -441,7 +441,7 @@ include_once(G5_PATH.'/head.sub.php');
 @include_once ($board_skin_path.'/write.head.skin.php');
 include_once('./board_head.php');
 
-$action_url = https_url(G5_BBS_DIR)."/write_update.php";
+$action_url = G5_BBS_URL.'/board/'.$bo_table.'/write_update';
 
 echo '<!-- skin : '.(G5_IS_MOBILE ? $board['bo_mobile_skin'] : $board['bo_skin']).' -->';
 include_once ($board_skin_path.'/write.skin.php');
