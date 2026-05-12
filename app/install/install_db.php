@@ -291,7 +291,7 @@ if ($g5_install || $is_install === false) {
         $bo_skin = ($tmp_bo_table[$i] === 'gallery') ? 'theme/gallery' : 'theme/basic';
 
         if (in_array($tmp_bo_table[$i], array('gallery', 'qa'))) {
-            $read_bo_point = -1;
+            $read_bo_point = ($tmp_bo_table[$i] === 'qa') ? 1 : 0;
             $write_bo_point = 5;
             $comment_bo_point = 1;
             $download_bo_point = -20;
@@ -693,11 +693,27 @@ if (!is_file($user_config_file)) {
     $uc .= " * PHP constant 는 한번 정의되면 못 바꾸므로 같은 이름으로 또 define 해도 적용 안 됩니다.\n";
     $uc .= " */\n";
     $uc .= "if (!defined('_GNUBOARD_')) exit;\n\n";
+    $uc .= "// 기본 시간대 — https://www.php.net/manual/timezones.php 값 사용.\n";
+    $uc .= "define('G5_TIMEZONE',      'Asia/Seoul');\n\n";
+    $uc .= "// 서버 시간 보정 초. 일반적으로 0, 6시간 빠르게는 3600 * 6, 느리게는 -3600 * 6.\n";
+    $uc .= "define('G5_SERVER_TIME_OFFSET', 0);\n\n";
     $uc .= "// 보안서버 도메인 (https). 비워두면 일반 G5_URL 사용.\n";
     $uc .= "define('G5_DOMAIN',        '');\n";
     $uc .= "define('G5_HTTPS_DOMAIN',  '');\n\n";
     $uc .= "// 쿠키 도메인 — 서브도메인 간 로그인 공유. '.example.com' 식.\n";
     $uc .= "define('G5_COOKIE_DOMAIN', '');\n\n";
+    $uc .= "// 사용기기 설정 — pc / mobile / both. G5_USE_MOBILE=false 이면 both 여도 레거시 모바일 화면은 사용하지 않음.\n";
+    $uc .= "define('G5_SET_DEVICE',    'both');\n";
+    $uc .= "define('G5_USE_MOBILE',    false);\n";
+    $uc .= "define('G5_USE_CACHE',     true);\n\n";
+    $uc .= "// SMTP — G5_SMTP 가 빈 문자열이면 PHP mail() 기본 전송 사용.\n";
+    $uc .= "define('G5_SMTP',          '127.0.0.1');\n";
+    $uc .= "define('G5_SMTP_PORT',     '25');\n";
+    $uc .= "define('G5_SMTP_SECURE',   ''); // '' / 'tls' / 'ssl'\n";
+    $uc .= "define('G5_SMTP_AUTH',     false);\n";
+    $uc .= "define('G5_SMTP_USER',     '');\n";
+    $uc .= "define('G5_SMTP_PASS',     '');\n";
+    $uc .= "define('G5_SMTP_AUTO_TLS', false);\n\n";
     $uc .= "// 디버그 — 운영 시 false\n";
     $uc .= "define('G5_DEBUG',         false);\n";
     $uc .= "define('G5_COLLECT_QUERY', false);\n\n";

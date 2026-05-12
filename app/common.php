@@ -57,13 +57,6 @@ function g5_path()
 
 $g5_path = g5_path();
 
-// g5se: 사용자 환경 설정 (data/user_config.php) 을 framework config 보다 먼저 load.
-// user_config 가 G5_DOMAIN / G5_DEBUG / G5_DB_CHARSET 등을 define 하면, app/config.php 의
-// defined() 가드가 이를 우선 적용 (덮어쓰지 않음). 자동 업데이트 시 사용자 값 보존.
-$_user_config = dirname($g5_path['path']).'/data/user_config.php';
-if (is_file($_user_config)) include_once($_user_config);
-unset($_user_config);
-
 include_once($g5_path['path'].'/config.php');   // framework 설정 (default)
 
 unset($g5_path);

@@ -5,24 +5,28 @@
 ********************/
 
 // 이 상수가 정의되지 않으면 각각의 개별 페이지는 별도로 실행될 수 없음
-define('_GNUBOARD_', true);
-
-include_once($g5_path['path'].'/version.php');   // 설정 파일
-
-// 기본 시간대 설정
-date_default_timezone_set("Asia/Seoul");
-
-/********************
-    경로 상수
-********************/
+if (!defined('_GNUBOARD_')) define('_GNUBOARD_', true);
 
 /*
- * 사용자 환경 설정 (G5_DOMAIN, G5_DEBUG, G5_DB_CHARSET 등) 은 data/user_config.php 로 분리.
+ * 사용자 환경 설정 (G5_DOMAIN, G5_TIMEZONE, G5_SMTP, G5_DEBUG, G5_DB_CHARSET 등) 은 data/user_config.php 로 분리.
  * 여기는 user_config.php 가 정의 안 한 경우의 framework default 만. defined() 가드로 보호.
  *
  *   사용자 변경 → data/user_config.php 에서 수정 (자동 업데이트 시 보존됨)
  *   여기 (app/config.php) 는 절대 수정 X — 자동 업데이트 시 덮어써짐
  */
+$_user_config = dirname($g5_path['path']).'/data/user_config.php';
+if (is_file($_user_config)) include_once($_user_config);
+unset($_user_config);
+
+include_once($g5_path['path'].'/version.php');   // 설정 파일
+
+// 기본 시간대 설정
+if (!defined('G5_TIMEZONE'))       define('G5_TIMEZONE',      'Asia/Seoul');
+date_default_timezone_set(G5_TIMEZONE);
+
+/********************
+    경로 상수
+********************/
 
 // 보안서버 도메인 (https 시작, 회원가입/글쓰기 등에서 사용). '' 면 일반 G5_URL 사용.
 //   예: 'https://www.domain.com:443/gnuboard5' (뒤 / 없음)
@@ -41,6 +45,20 @@ if (!defined('G5_DB_CHARSET'))     define('G5_DB_CHARSET',    'utf8mb4');
 
 // 쿠키 도메인 — 서브도메인 간 로그인 공유. '.example.com' 식. '' 면 정확한 도메인만.
 if (!defined('G5_COOKIE_DOMAIN'))  define('G5_COOKIE_DOMAIN', '');
+
+// 사용기기 설정 — pc / mobile / both. G5_USE_MOBILE=false 이면 both 여도 레거시 모바일 화면은 사용하지 않음.
+if (!defined('G5_SET_DEVICE'))     define('G5_SET_DEVICE',    'both');
+if (!defined('G5_USE_MOBILE'))     define('G5_USE_MOBILE',    false);
+if (!defined('G5_USE_CACHE'))      define('G5_USE_CACHE',     true);
+
+// SMTP — lib/mailer.lib.php 에서 사용. G5_SMTP 가 빈 문자열이면 PHP mail() 기본 전송 사용.
+if (!defined('G5_SMTP'))           define('G5_SMTP',          '127.0.0.1');
+if (!defined('G5_SMTP_PORT'))      define('G5_SMTP_PORT',     '25');
+if (!defined('G5_SMTP_SECURE'))    define('G5_SMTP_SECURE',   '');
+if (!defined('G5_SMTP_AUTH'))      define('G5_SMTP_AUTH',     false);
+if (!defined('G5_SMTP_USER'))      define('G5_SMTP_USER',     '');
+if (!defined('G5_SMTP_PASS'))      define('G5_SMTP_PASS',     '');
+if (!defined('G5_SMTP_AUTO_TLS'))  define('G5_SMTP_AUTO_TLS', false);
 
 define('G5_DBCONFIG_FILE',  'dbconfig.php');
 
@@ -139,18 +157,6 @@ define('G5_PHPMAILER_PATH', G5_PLUGIN_PATH.'/'.G5_PHPMAILER_DIR);
 //==============================================================================
 
 
-//==============================================================================
-// 사용기기 설정
-// pc 설정 시 모바일 기기에서도 PC화면 보여짐
-// mobile 설정 시 PC에서도 모바일화면 보여짐
-// both 설정 시 접속 기기에 따른 화면 보여짐
-//------------------------------------------------------------------------------
-define('G5_SET_DEVICE', 'both');
-
-define('G5_USE_MOBILE', true); // 모바일 홈페이지를 사용하지 않을 경우 false 로 설정
-define('G5_USE_CACHE',  true); // 최신글등에 cache 기능 사용 여부
-
-
 /********************
     시간 상수
 ********************/
@@ -158,7 +164,8 @@ define('G5_USE_CACHE',  true); // 최신글등에 cache 기능 사용 여부
 // 하루는 86400 초입니다. 1시간은 3600초
 // 6시간이 빠른 경우 time() + (3600 * 6);
 // 6시간이 느린 경우 time() - (3600 * 6);
-define('G5_SERVER_TIME',    time());
+if (!defined('G5_SERVER_TIME_OFFSET')) define('G5_SERVER_TIME_OFFSET', 0);
+if (!defined('G5_SERVER_TIME')) define('G5_SERVER_TIME', time() + G5_SERVER_TIME_OFFSET);
 define('G5_TIME_YMDHIS',    date('Y-m-d H:i:s', G5_SERVER_TIME));
 define('G5_TIME_YMD',       substr(G5_TIME_YMDHIS, 0, 10));
 define('G5_TIME_HIS',       substr(G5_TIME_YMDHIS, 11, 8));
@@ -181,12 +188,6 @@ define('G5_FILE_PERMISSION', 0644); // 파일 생성시 퍼미션
 
 // 모바일 인지 결정 $_SERVER['HTTP_USER_AGENT']
 define('G5_MOBILE_AGENT',   'phone|samsung.*mobile|lgtel|mobile|[^A]skt|nokia|blackberry|BB10|android|sony');
-
-// SMTP
-// lib/mailer.lib.php 에서 사용
-define('G5_SMTP',      '127.0.0.1');
-define('G5_SMTP_PORT', '25');
-
 
 /********************
     기타 상수
