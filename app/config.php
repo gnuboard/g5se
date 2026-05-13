@@ -111,16 +111,16 @@ if (!defined('G5_URL')) {
     }
 }
 
-if (isset($g5_path['path'])) {
+if (!defined('G5_PATH') && isset($g5_path['path'])) {
     define('G5_PATH', $g5_path['path']);
-} else {
+} else if (!defined('G5_PATH')) {
     define('G5_PATH', '');
 }
 
 define('G5_ADMIN_URL',      G5_URL.'/'.G5_ADMIN_DIR);
-define('G5_BBS_URL',        G5_URL.'/'.G5_BBS_DIR);
+if (!defined('G5_BBS_URL')) define('G5_BBS_URL', G5_URL.'/'.G5_BBS_DIR);
 define('G5_CSS_URL',        G5_URL.'/'.G5_CSS_DIR);
-define('G5_DATA_URL',       G5_URL.'/'.G5_DATA_DIR);
+if (!defined('G5_DATA_URL')) define('G5_DATA_URL', G5_URL.'/'.G5_DATA_DIR);
 define('G5_IMG_URL',        G5_URL.'/'.G5_IMG_DIR);
 define('G5_JS_URL',         G5_URL.'/'.G5_JS_DIR);
 define('G5_SKIN_URL',       G5_URL.'/'.G5_SKIN_DIR);
@@ -139,7 +139,7 @@ define('G5_ADMIN_PATH',     G5_PATH.'/'.G5_ADMIN_DIR);
 define('G5_BBS_PATH',       G5_PATH.'/'.G5_BBS_DIR);
 // g5se 구조: data/ 가 app/ 밖(docroot 직속)에 있음. 프런트 컨트롤러를 거치지 않는 진입점
 // (예: plugin/kcaptcha/kcaptcha_image.php) 에서도 올바른 경로가 잡히도록 dirname(G5_PATH) 기준.
-define('G5_DATA_PATH',      dirname(G5_PATH).'/'.G5_DATA_DIR);
+if (!defined('G5_DATA_PATH')) define('G5_DATA_PATH', dirname(G5_PATH).'/'.G5_DATA_DIR);
 define('G5_EXTEND_PATH',    G5_PATH.'/'.G5_EXTEND_DIR);
 define('G5_LIB_PATH',       G5_PATH.'/'.G5_LIB_DIR);
 define('G5_PLUGIN_PATH',    G5_PATH.'/'.G5_PLUGIN_DIR);

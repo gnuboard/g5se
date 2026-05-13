@@ -516,8 +516,8 @@ if( $config['cf_cert_use'] || (defined('G5_YOUNGCART_VER') && G5_YOUNGCART_VER) 
 }
 //==============================================================================
 
-define('G5_HTTP_BBS_URL',  https_url(G5_BBS_DIR, false));
-define('G5_HTTPS_BBS_URL', https_url(G5_BBS_DIR, true));
+if (!defined('G5_HTTP_BBS_URL')) define('G5_HTTP_BBS_URL', https_url(G5_BBS_DIR, false));
+if (!defined('G5_HTTPS_BBS_URL')) define('G5_HTTPS_BBS_URL', https_url(G5_BBS_DIR, true));
 
 define('G5_CAPTCHA_DIR',    !empty($config['cf_captcha']) ? $config['cf_captcha'] : 'kcaptcha');
 define('G5_CAPTCHA_URL',    G5_PLUGIN_URL.'/'.G5_CAPTCHA_DIR);
