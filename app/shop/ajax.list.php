@@ -31,7 +31,8 @@ if($ca['ca_mobile_skin_dir']) {
     }
 }
 
-$skin_file = $skin_dir.'/'.$ca['ca_mobile_skin'];
+$ca_mobile_skin_file = $ca['ca_mobile_skin'] ? $skin_dir.'/'.$ca['ca_mobile_skin'] : '';
+$skin_file = ($ca_mobile_skin_file && is_file($ca_mobile_skin_file)) ? $ca_mobile_skin_file : $skin_dir.'/list.10.skin.php';
 
 // 상품 출력순서가 있다면
 if ($sort != "")

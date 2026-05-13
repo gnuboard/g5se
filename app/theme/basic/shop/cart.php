@@ -162,9 +162,13 @@ a.m-cart-btn-primary:hover, button.m-cart-btn-primary:hover { filter: brightness
 .m-cart-summary-row dt { font-weight: 700; }
 .m-cart-summary-row dd { margin: 0; white-space: nowrap; }
 .m-cart-summary-row strong { color: var(--m-text); font-size: 20px; font-weight: 900; }
-.m-cart-summary-total { background: var(--m-text); color: var(--m-bg); border-right: 0; }
-.m-cart-summary-total strong { color: #fff; font-size: 24px; }
-[data-theme="dark"] .m-cart-summary-total { background: var(--m-bg); color: var(--m-text); }
+.m-cart-summary-total { background: #eff6ff; color: #0f172a; border-right: 0; }
+.m-cart-summary-total strong { color: #1d4ed8; font-size: 24px; }
+[data-theme="dark"] .m-cart-summary-total {
+    background: rgba(37, 99, 235, 0.16); color: #dbeafe;
+    box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.2);
+}
+[data-theme="dark"] .m-cart-summary-total strong { color: #bfdbfe; }
 .m-cart-actions {
     display: flex; justify-content: center; align-items: center; gap: 8px;
     padding-top: 20px;

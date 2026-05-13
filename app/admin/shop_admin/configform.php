@@ -19,9 +19,9 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 $g5['title'] = '쇼핑몰설정';
 admin_layout_start($g5["title"], "shop");
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="shop-config-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
-    <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5["title"]) ?></h2>
+    <h2 class="page-title text-xl font-bold tracking-tight"><?php echo get_text($g5["title"]) ?></h2>
 </header>
 <div class="legacy-admin-content space-y-4">
 <?php
@@ -244,6 +244,10 @@ if(!$default['de_kakaopay_cancelpwd']){
 
 <form name="fconfig" action="./configformupdate.php" onsubmit="return fconfig_check(this)" method="post" enctype="MULTIPART/FORM-DATA">
 <input type="hidden" name="token" value="">
+<div class="admin-floating-actions" aria-label="쇼핑몰 설정 저장">
+    <a href="<?php echo G5_SHOP_URL; ?>" class="btn btn_02">쇼핑몰</a>
+    <input type="submit" value="확인" class="btn_submit btn" accesskey="s">
+</div>
 <section id="anc_scf_info">
     <h2 class="h2_frm">사업자정보</h2>
     <?php echo $pg_anchor; ?>
@@ -868,14 +872,14 @@ if(!$default['de_kakaopay_cancelpwd']){
         <tr class="pg_info_fld lg_info_fld_v2">
             <th scope="row"><label for="cf_toss_client_key">토스페이먼츠 API Client Key</label></th>
             <td>
-                <?php echo help("토스페이먼츠 API 클라이언트 키는 상점관리자 -> 개발자센터 -> API키 -> 클라이언트 키에서 확인하실 수 있습니다. 예) live_ck_tosspayment\n실결제용 [라이브] 키와 테스트용 [테스트] 키는 서로 다르므로, <b>테스트로 결제시에는 [테스트] 키</b>로 변경하여 사용해주시기 바랍니다. 예) 테스트 키: test_ck_tosspayment"); ?>
+                <?php echo help("토스페이먼츠 API 클라이언트 키는 상점관리자 -> 개발자센터 -> API키 -> 클라이언트 키에서 확인하실 수 있습니다. 예) live_ck_...\n실결제용 [라이브] 키와 테스트용 [테스트] 키는 서로 다르므로, <b>테스트로 결제시에는 [테스트] 키</b>로 변경하여 사용해주시기 바랍니다.\ntest_ck_tosspayment 같은 값은 형식 예시이며 실제 결제에 사용할 수 없습니다."); ?>
                 <input type="text" name="cf_toss_client_key" value="<?php echo get_sanitize_input($config['cf_toss_client_key']); ?>" id="cf_toss_client_key" class="frm_input " size="40" maxlength="50">
             </td>
         </tr>
         <tr class="pg_info_fld lg_info_fld_v2">
             <th scope="row"><label for="cf_toss_secret_key">토스페이먼츠 API Secret Key</label></th>
             <td>
-                <?php echo help("토스페이먼츠 API 시크릿 키는 상점관리자 -> 개발자센터 -> API키 -> 시크릿 키에서 확인하실 수 있습니다. 예) live_sk_tosspayment\n실결제용 [라이브] 키와 테스트용 [테스트] 키는 서로 다르므로, <b>테스트로 결제시에는 [테스트] 키</b>로 변경하여 사용해주시기 바랍니다. 예) 테스트 키: test_sk_tosspayment"); ?>
+                <?php echo help("토스페이먼츠 API 시크릿 키는 상점관리자 -> 개발자센터 -> API키 -> 시크릿 키에서 확인하실 수 있습니다. 예) live_sk_...\n실결제용 [라이브] 키와 테스트용 [테스트] 키는 서로 다르므로, <b>테스트로 결제시에는 [테스트] 키</b>로 변경하여 사용해주시기 바랍니다.\ntest_sk_tosspayment 같은 값은 형식 예시이며 실제 결제에 사용할 수 없습니다."); ?>
                 <input type="text" name="cf_toss_secret_key" value="<?php echo get_sanitize_input($config['cf_toss_secret_key']); ?>" id="cf_toss_secret_key" class="frm_input " size="40" maxlength="50">
             </td>
         </tr>

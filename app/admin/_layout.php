@@ -95,7 +95,13 @@ function admin_layout_start(string $title, string $active_key = ''): void
     <!-- gnuboard 공용 헬퍼 (win_zip, set_cookie 등) + Kakao 우편번호 SDK.
          원래 head.sub.php 의 add_javascript 큐로 들어가지만 modern admin shell 은
          해당 큐를 flush 하지 않아 admin 에서 win_zip 호출 시 ReferenceError 가 발생. -->
-    <script>var g5_is_mobile = false, g5_url = "<?php echo G5_URL ?>", g5_bbs_url = "<?php echo G5_BBS_URL ?>";</script>
+    <script>
+    var g5_is_mobile = false,
+        g5_url = "<?php echo G5_URL ?>",
+        g5_bbs_url = "<?php echo G5_BBS_URL ?>",
+        g5_admin_url = "<?php echo G5_ADMIN_URL ?>",
+        g5_admin_csrf_token_key = "<?php echo function_exists('admin_csrf_token_key') ? admin_csrf_token_key() : '' ?>";
+    </script>
     <script src="<?php echo G5_JS_URL ?>/common.js?ver=<?php echo defined('G5_JS_VER') ? G5_JS_VER : '1' ?>"></script>
     <?php echo G5_POSTCODE_JS; ?>
     <!-- admin 전용 JS — PopupManager, CommonUI 등 (legacy admin.tail.php 가 로드하던 것).

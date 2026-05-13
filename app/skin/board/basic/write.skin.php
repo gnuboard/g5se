@@ -21,6 +21,7 @@ add_stylesheet('<link rel="stylesheet" href="'.$board_skin_url.'/style.css">', 0
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="page" value="<?php echo $page ?>">
+    <input type="hidden" name="token" value="<?php echo get_write_token($bo_table); ?>">
     <?php
     $option = '';
     $option_hidden = '';

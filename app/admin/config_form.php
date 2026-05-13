@@ -463,9 +463,9 @@ if (!$config['cf_mobile_faq_skin']) {
 $g5['title'] = '환경설정';
 admin_layout_start($g5['title'], 'config');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="config-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
-    <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
+    <h2 class="text-xl font-normal tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
 <div class="legacy-admin-content space-y-4">
 <?php
@@ -502,6 +502,9 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 
 <form name="fconfigform" id="fconfigform" method="post" action="<?php echo G5_ADMIN_URL; ?>/config_form_update" onsubmit="return fconfigform_submit(this);">
     <input type="hidden" name="token" value="<?php echo get_admin_token() ?>" id="token">
+    <div class="admin-floating-actions" aria-label="설정 저장">
+        <input type="submit" value="확인" class="btn_submit btn" accesskey="s">
+    </div>
 
     <section id="anc_cf_basic">
         <h2 class="h2_frm">홈페이지 기본환경 설정</h2>

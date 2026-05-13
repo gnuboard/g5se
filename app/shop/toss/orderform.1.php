@@ -35,6 +35,13 @@ async function launchCrossPlatform(frm) {
         return;
     }
 
+    const customerMobilePhone = (frm.customerMobilePhone.value || '').replace(/[^0-9]/g, '');
+
+    if (!/^[0-9]{10,11}$/.test(customerMobilePhone)) {
+        alert('전화번호 형식에 맞지 않습니다. 전화번호는 숫자만 남겼을 때 10~11자리여야 합니다.');
+        return;
+    }
+
     // 기본 결제 옵션
     const paymentOptions = {
         method: frm.method.value,
@@ -49,7 +56,7 @@ async function launchCrossPlatform(frm) {
         failUrl: "<?php echo G5_SHOP_URL;?>/toss/returnurl.php?mode=fail", // 결제 요청이 실패하면 리다이렉트되는 URL
         customerEmail: frm.customerEmail.value,
         customerName: frm.customerName.value,
-        customerMobilePhone: frm.customerMobilePhone.value,
+        customerMobilePhone: customerMobilePhone,
     };
 
     // escrowProducts 추가 함수
@@ -99,7 +106,12 @@ async function launchCrossPlatform(frm) {
         addEscrowProducts(paymentOptions.transfer);
     }
 
-    await payment.requestPayment(paymentOptions);
+    try {
+        await payment.requestPayment(paymentOptions);
+    } catch (error) {
+        alert(error && error.message ? error.message : '결제창 호출 중 오류가 발생했습니다.');
+        return;
+    }
 }
 /*
 * FORM 명만  수정 가능

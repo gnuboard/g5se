@@ -510,19 +510,19 @@
 
 /* 상품 상세보기 - 개요 */
 #sit_ov_from {background:#fff;border-bottom:1px solid #e3e3e3;clear:both}
-#sit_ov_wrap {width:1200px;margin:0 auto;padding:45px;border-top:1px solid #e3e3e3}
+#sit_ov_wrap {display:grid;grid-template-columns:minmax(0,1fr) 448px;gap:56px;width:auto;max-width:1200px;box-sizing:border-box;margin:0 auto;padding:45px 24px;border-top:1px solid #e3e3e3}
 #sit_ov_wrap:after {display:block;visibility:hidden;clear:both;content:""}
 
 /* 상품 상세보기 - 이미지 미리보기 */
-#sit_pvi {float:left;position:relative}
-#sit_pvi_big {float:right;text-align:center}
+#sit_pvi {float:none;display:flex;flex-direction:column;align-items:center;position:relative;min-width:0}
+#sit_pvi_big {float:none;position:relative;min-width:0;text-align:center}
 #sit_pvi_big a {display:none}
 #sit_pvi_big a.visible {display:block}
 #sit_pvi_big #popup_item_image {display:inline-block;position:absolute;bottom:0;right:0;width:43px;height:43px;line-height:43px;background:#fff;color:#8c9195;border:1px solid #e0e0e0;font-size:1.4em}
-#sit_pvi_big img {width:500px;height:auto}
-#sit_pvi_thumb {float:left;margin:0;padding:0;list-style:none;text-align:center}
+#sit_pvi_big img {width:100%;max-width:500px;height:auto}
+#sit_pvi_thumb {display:flex;justify-content:center;gap:8px;float:none;width:auto;margin:14px 0 0;padding:0;list-style:none;text-align:center}
 #sit_pvi_thumb:after {display:block;visibility:hidden;clear:both;content:""}
-#sit_pvi_thumb li {margin:0 15px 15px 0}
+#sit_pvi_thumb li {margin:0}
 #sit_pvi_thumb img {border:1px solid #dbdbdb}
 #sit_pvi_thumb img:hover {border:1px solid #010101}
 
@@ -535,14 +535,14 @@
 #sit_pvi_nw li img {width:60px;height:60px}
 
 /* 상품 상세보기 - 간략정보 및 구매기능 */
-#sit_ov {position:relative;float:right;width:448px;height:auto !important;height:355px;min-height:355px;padding-bottom:20px}
+#sit_ov {position:relative;float:none;width:auto;min-width:0;height:auto !important;height:355px;min-height:355px;padding-bottom:20px}
 #sit_ov h3 {margin:0 0 10px}
 
 #sit_title {margin:0 0 10px;font-size:2.4em}
 #sit_desc {margin:0 0 10px;padding:0;color:#474747;font-size:1.167em}
 #sit_opt_info {position:absolute;font-size:0;text-indent:-9999em;line-height:0;overflow:hidden}
 
-#sit_star_sns {position:relative}
+#sit_star_sns {position:relative;padding-right:90px;min-height:30px}
 #sit_star_sns span {display:inline-block;margin:0 5px 0 0;color:#666;letter-spacing:0}
 #sit_star_sns .sit_star {position:relative;top:-2px;margin:0 5px 0 0}
 
@@ -558,7 +558,7 @@
 #sit_star_sns .sns_area .share-facebook {background:#415b92}
 #sit_star_sns .sns_area .share-twitter {background:#35b3dc}
 
-#sit_btn_opt {position:absolute;right:0;bottom:0}
+#sit_btn_opt {display:flex;align-items:center;gap:6px;position:absolute;right:0;top:0;bottom:auto}
 #btn_wish {float:left;position:relative;display:inline-block;padding-right:5px;color:#4b5259;width:35px;height:25px;text-align:center;font-size:1.25em;font-weight:bold}
 #btn_wish i {font-size:1.6em;font-weight:bold}
 #btn_wish .btn_wish_num {position:absolute;right:0;bottom:-2px;margin:0;padding:0 2px;height:17px;line-height:15px;border-radius:30px;background:#fff;color:#4b5259;font-size:0.75em}
@@ -594,22 +594,38 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
 
 #sit_sel_option h3 {position:absolute;font-size:0;line-height:0;overflow:hidden}
 
-#sit_tot_price {font-size:1.167em;line-height:45px;font-weight:bold;text-align:right}
+#sit_tot_price {display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:1.167em;line-height:45px;font-weight:bold;text-align:right}
 #sit_tot_price:after {display:block;visibility:hidden;clear:both;content:""}
-#sit_tot_price span {float:left}
+#sit_tot_price span {float:none}
 #sit_tot_price strong {font-size:1.5em;margin-left:15px}
 
 #sit_ov_soldout {padding:20px 0;margin:10px 0;color:#ff3061;background:#fff6f6;font-weight:bold;text-align:center}
 
+#sit_ov_btn {display:flex;gap:8px;align-items:stretch}
 #sit_ov_btn:after {display:block;visibility:hidden;clear:both;content:""}
-#sit_ov_btn button {width:186px;float:left;margin-right:5px;height:50px;margin-bottom:10px;font-weight:bold;font-size:1.25em}
+#sit_ov_btn button {flex:1 1 0;width:auto;min-width:0;float:none;margin:0 0 10px;height:50px;font-weight:bold;font-size:1.25em}
 .sit_btn_buy {background:#3a8afd;border-radius:3px;border:1px solid #1c70e9;color:#fff}
 .sit_btn_buy:hover {background:#2176f1}
 .sit_btn_cart {background:#fff;border-radius:3px;border:1px solid #98a3b3;color:#000}
 .sit_btn_cart:hover {background:#f3f3f3}
 #sit_btn_alm {float:left;display:inline-block;width:186px;height:50px;margin-left:5px;line-height:50px;margin-bottom:10px;font-weight:bold;font-size:1.25em;background:#d50c0c;border-radius:3px;color:#fff;border:0;text-align:center}
-.sit_btn_wish {float:left;display:inline-block;width:65px;height:50px;margin-bottom:10px;line-height:50px;color:#8c9195;font-size:1.6em;border:1px solid #98a3b3;text-align:center;border-radius:3px;font-weight:bold}
+.sit_btn_wish {flex:0 0 65px;float:none;display:inline-block;width:65px;height:50px;margin-bottom:10px;line-height:50px;color:#8c9195;font-size:1.6em;border:1px solid #98a3b3;text-align:center;border-radius:3px;font-weight:bold}
 .sit_btn_wish:hover {color:red}
+
+@media (max-width: 1100px) {
+    #sit_ov_wrap {grid-template-columns:1fr;gap:32px;padding:32px 20px}
+    #sit_ov {min-height:0}
+}
+
+@media (max-width: 640px) {
+    #sit_ov_wrap {padding:24px 16px}
+    #sit_pvi_thumb {justify-content:flex-start;max-width:100%;overflow-x:auto}
+    #sit_pvi_thumb li {flex:0 0 auto;margin:0}
+    #sit_title {font-size:2em}
+    #sit_ov_btn {flex-wrap:wrap}
+    #sit_ov_btn button {flex-basis:calc(50% - 4px)}
+    .sit_btn_wish {flex:1 0 100%;width:auto}
+}
 
 /* 상품 상세보기 - 다른 상품 보기 */
 #sit_siblings {clear:both;width:100%;border-top:1px solid #f1f3f6;background:#fff;text-align:center;position:relative}
@@ -622,21 +638,22 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
 #sit_siblings a#siblings_next:after {content:"";background:url('img/sit_siblings.jpg') -14px 0px no-repeat;position:absolute;right:0;top:10px;width:10px;height:15px;display:inline-block}
 #sit_siblings a span {position:absolute;font-size:0;text-indent:-9999em;line-height:0;overflow:hidden}
 
-#sit_info {display:inline-flex;position:relative;width:100%;min-height:600px;margin-top:20px;margin-bottom:30px;border:1px solid #e8e8e8;background:#fff}
+#sit_info {display:block;position:relative;width:100%;min-height:0;margin-top:20px;margin-bottom:30px;border:1px solid #e8e8e8;background:#fff}
 #sit_info:after {display:block;visibility:hidden;clear:both;content:""}
 
-#sit_tab {width:928px;display:table-cell}
+#sit_tab {width:100%;display:block}
 #sit_tab:after {display:block;visibility:hidden;clear:both;content:""}
 #sit_tab .tab_tit {border-bottom:1px solid #e8e8e8;background:#fff;padding:0 10px}
 #sit_tab .tab_tit:after {display:block;visibility:hidden;clear:both;content:""}
 #sit_tab .tab_tit li {display:inline-block;float:left}
 #sit_tab .tab_tit li button {display:block;width:100%;position:relative;font-size:1.2em;padding:10px 15px;border:0;color:#666;background:#fff;line-height:38px;text-align:center;z-index:1}
+#sit_tab .tab_tit li button:focus {outline:0}
 #sit_tab .tab_tit li .selected {background:#fff;z-index:2;border-bottom-color:#fff;color:#000;font-weight:bold}
 #sit_tab .tab_tit li .selected:after {content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;background:#3a8afd;display:inline-block}
 #sit_tab .tab_con {background:#fff;padding:15px}
 #sit_tab .item_use_count, #sit_tab .item_qa_count {display:inline-block;min-width:20px;height:20px;font-size:0.75em;line-height:20px;padding:0 5px;background:#eee;border-radius:10px;color:#777}
 
-#sit_buy {display:table-cell;width:270px;border-left:1px solid #e8e8e8;vertical-align:top}
+#sit_buy {display:none}
 .sit_buy_inner {position:relative;top:0 !important;vertical-align:top}
 .sit_side_option {padding:15px 15px 10px;border-bottom:1px solid #ebeff3}
 .sit_side_option h3 {margin-bottom:10px}
@@ -696,14 +713,24 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
 #sit_use h2 {position:absolute;font-size:0;line-height:0;content:""}
 #sit_use h3 {position:absolute;font-size:0;line-height:0;content:""}
 
-.sit_use_top {position:relative;background:#fff;border:2px solid #efeff1;margin:0 0 15px;padding:15px;min-height:90px;vertical-align:middle}
+.sit_use_top,
+#sit_qa_wbtn {display:flex;align-items:center;justify-content:flex-end;gap:5px;position:relative;background:#fff;border:0;margin:0 0 15px;padding:20px 30px 10px;min-height:70px;vertical-align:middle}
 .sit_use_top h4 {font-size:1.2em;margin-bottom:10px}
 .sit_use_top h4 span {color:#aaa;font-size:0.85em;font-weight:normal}
 .sit_use_top .sit_star {height:20px}
 .sit_use_top .st_bg {background:#666}
 
-#sit_use_wbtn {position:absolute;top:20px;right:30px}
-#sit_use_wbtn a {padding:0 20px;line-height:45px;font-weight:bold;font-size:1.167em}
+#sit_use_wbtn {display:flex;gap:5px;margin-left:auto}
+#sit_use_wbtn a,
+#sit_qa_wbtn a {display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 22px;border-radius:3px;text-decoration:none;font-weight:bold;font-size:1.25em;line-height:50px}
+#sit_use_wbtn a.itemuse_form,
+#sit_qa_wbtn a.itemqa_form {min-width:145px;border:1px solid #1c70e9;background:#3a8afd;color:#fff}
+#sit_use_wbtn a.itemuse_form:hover,
+#sit_qa_wbtn a.itemqa_form:hover {background:#2176f1;color:#fff}
+#sit_use_wbtn a.itemuse_list,
+#sit_qa_wbtn a#itemqa_list {min-width:90px;border:1px solid #b8c2d0;background:#fff;color:#000}
+#sit_use_wbtn a.itemuse_list:hover,
+#sit_qa_wbtn a#itemqa_list:hover {background:#f3f7ff;border-color:#98a3b3;color:#000}
 
 #sit_use_ol {margin:0 0 5px;padding:0;border-top:1px solid #e0e0e0;list-style:none}
 .sit_use_li {position:relative;padding:10px 0;padding-left:110px;min-height:120px;border-bottom:1px solid #e0e0e0}
@@ -733,7 +760,7 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
 #sit_use_write_star li img {width:100px}
 
 /* 상품 상세보기 - 상품문의 */
-#sit_qa {margin:20px 0}
+#sit_qa {margin:0}
 #sit_qa h2 {position:absolute;font-size:0;line-height:0;content:""}
 #sit_qa h3 {position:absolute;font-size:0;line-height:0;content:""}
 
@@ -760,8 +787,7 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
 .sit_qa_pw {display:none;position:absolute;top:30px;left:175px;padding:10px;width:348px;border:1px solid #000;background:#fff;text-align:center}
 .sit_qa_pw span {display:block;margin:0 0 5px}
 
-#sit_qa_wbtn {text-align:right;margin:0 0 20px}
-#sit_qa_wbtn a {padding:0 20px;line-height:45px;font-weight:bold;font-size:1.167em}
+#sit_qa_wbtn {text-align:right}
 
 #sit_qa_write {}
 #sit_qa_write #iq_subject {width:100%}

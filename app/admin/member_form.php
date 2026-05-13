@@ -226,7 +226,7 @@ if ($mb['mb_intercept_date']) {
 $g5['title'] .= '회원 ' . $html_title;
 admin_layout_start($g5['title'], 'member');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="member-form-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -245,6 +245,10 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="token" value="">
+    <div class="admin-floating-actions" aria-label="회원 저장">
+        <a href="<?php echo G5_ADMIN_URL ?>/member_list?<?php echo $qstr ?>" class="btn btn_02">목록</a>
+        <input type="submit" value="확인" class="btn_submit btn" accesskey='s'>
+    </div>
 
     <div class="tbl_frm01 tbl_wrap">
         <table>

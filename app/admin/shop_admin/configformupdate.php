@@ -264,6 +264,12 @@ if($de_pg_service == 'kcp' && ! $de_card_test && ($de_iche_use || $de_vbank_use 
         alert('NHN KCP SITE KEY를 입력해 주십시오.');
 }
 
+if($de_pg_service == 'toss' && ($de_iche_use || $de_vbank_use || $de_hp_use || $de_card_use || $de_easy_pay_use)) {
+    if($cf_toss_client_key === 'test_ck_tosspayment' || $cf_toss_secret_key === 'test_sk_tosspayment') {
+        alert('토스페이먼츠 API 키 예시값은 실제 결제에 사용할 수 없습니다. 개발자센터의 실제 테스트 키를 입력해 주십시오.');
+    }
+}
+
 if( $de_kakaopay_enckey && ($de_pg_service === 'inicis' || $de_inicis_lpay_use || $de_inicis_kakaopay_use) ){
     
     $warning_msg = 'KG 이니시스 결제 또는 L.pay 또는 KG이니시스 카카오페이를 사용시 결제모듈 중복문제로 카카오페이를 활성화 할수 없습니다. \\n\\n카카오페이 사용을 비활성화 합니다.';

@@ -249,6 +249,23 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     margin-bottom: 0 !important;
     background: transparent !important;
 }
+#gnb .gnb_1da {
+    color: var(--m-text) !important;
+}
+#gnb .gnb_2da {
+    color: var(--m-text-soft) !important;
+}
+#gnb .gnb_1dli_on .gnb_1da {
+    background-color: var(--m-surface-2) !important;
+    color: var(--m-primary) !important;
+}
+#gnb .gnb_1dli_on .gnb_2da {
+    color: var(--m-text) !important;
+}
+#gnb .gnb_2da:focus,
+#gnb .gnb_2da:hover {
+    color: var(--m-primary) !important;
+}
 [data-theme="dark"] #gnb {
     background: transparent !important;
 }

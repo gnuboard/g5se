@@ -4,8 +4,6 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 require_once __DIR__.'/admin.lib.php';
 
-set_session('ss_admin_token', '');
-
 $admin_csrf_token_key = isset($_POST['admin_csrf_token_key']) ? $_POST['admin_csrf_token_key'] : '';
 
 if(function_exists('admin_csrf_token_key') && $admin_csrf_token_key !== admin_csrf_token_key(1)){

@@ -1425,6 +1425,22 @@ box-shadow:0 0 8px rgba(65,98,255,0.8)}
 #sod_frm .sod_right #sod_frm_pay {margin:0}
 #sod_frm .sod_right .od_pay_buttons_el {margin:0;border-bottom:0}
 #sod_frm .sod_right #display_pay_button {border-top:0}
+#sod_frm .sod_right #display_pay_button .btn_submit {
+    background: var(--m-primary) !important;
+    border-color: var(--m-primary) !important;
+    color: #fff !important;
+}
+#sod_frm .sod_right #display_pay_button .btn_submit:hover {
+    background: var(--m-primary-hover) !important;
+    border-color: var(--m-primary-hover) !important;
+    color: #fff !important;
+}
+#sod_frm .sod_right #display_pay_button .btn01,
+#sod_frm .sod_right #display_pay_button .btn_cancel {
+    background: #fff !important;
+    border-color: var(--m-border-strong, #cbd5e1) !important;
+    color: var(--m-text) !important;
+}
 
 [data-theme="dark"] #sod_frm .sod_right #sod_bsk_tot,
 [data-theme="dark"] #sod_frm .sod_right .pay_tbl,

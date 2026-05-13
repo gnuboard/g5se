@@ -30,6 +30,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 <input type="hidden" name="sst"      value="<?php echo $sst ?>">
                 <input type="hidden" name="sod"      value="<?php echo $sod ?>">
                 <input type="hidden" name="page"     value="<?php echo $page ?>">
+                <input type="hidden" name="token"    value="<?php echo get_write_token($bo_table); ?>">
                 <?php
                 // 옵션 체크박스 (공지/html/비밀글/답변메일)
                 $option = '';

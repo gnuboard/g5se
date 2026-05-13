@@ -345,27 +345,6 @@ a.m-oq-search-clear:hover { border-color: var(--m-primary); color: var(--m-prima
     }
     .m-oq-summary-amount strong, .m-oq-summary-misu strong { color: var(--m-text); font-size: var(--m-text-sm); font-weight: 700; }
     .m-oq-summary-misu strong { color: #ef4444; }
-}</style>
-.m-oq-page-head {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; margin: 0 0 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--m-border);
-}
-.m-oq-page-title {
-    display: flex; align-items: center; gap: 8px;
-    margin: 0;
-    font-size: 1.3em; font-weight: 700; color: var(--m-text);
-}
-.m-oq-page-title svg { color: var(--m-primary); }
-.m-oq-page-count {
-    display: inline-flex; align-items: center;
-    padding: 4px 10px;
-    background: var(--m-primary-soft);
-    color: var(--m-primary);
-    border-radius: 999px;
-    font-size: var(--m-text-sm); font-weight: 600;
-}
 </style>
 
 <?php if ($_total_visible === 0) { ?>

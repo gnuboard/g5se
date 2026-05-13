@@ -1708,9 +1708,20 @@ function forderform_check(f)
 
         f.customerName.value = f.od_name.value;
         f.customerEmail.value = f.od_email.value;
-        f.customerMobilePhone.value = f.od_hp.value.replace(/[^0-9]/g, '');
-        if (f.customerMobilePhone.value == '') {
-            f.customerMobilePhone.value = f.od_tel.value.replace(/[^0-9]/g, '');
+        var toss_customer_phone_source = f.od_hp.value ? f.od_hp : f.od_tel;
+        var toss_customer_phone = toss_customer_phone_source.value;
+
+        if (/[^0-9\s().-]/.test(toss_customer_phone)) {
+            alert('전화번호 형식에 맞지 않습니다. 전화번호에는 숫자, 하이픈, 공백, 괄호만 입력해 주세요.');
+            toss_customer_phone_source.focus();
+            return false;
+        }
+
+        f.customerMobilePhone.value = toss_customer_phone.replace(/[^0-9]/g, '');
+        if (!/^[0-9]{10,11}$/.test(f.customerMobilePhone.value)) {
+            alert('전화번호 형식에 맞지 않습니다. 주문자 휴대폰번호 또는 전화번호는 숫자만 남겼을 때 10~11자리여야 합니다.');
+            toss_customer_phone_source.focus();
+            return false;
         }
 
         f.cardUseCardPoint.value = false;

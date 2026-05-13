@@ -387,10 +387,40 @@ function order_select($fld, $sel = '')
 }
 
 // 불법접근을 막도록 토큰을 생성하면서 토큰값을 리턴
+function get_admin_token_pool()
+{
+    $tokens = get_session('ss_admin_tokens');
+
+    if (!is_array($tokens)) {
+        $tokens = array();
+    }
+
+    return array_values(array_filter($tokens, 'is_string'));
+}
+
+function set_admin_token_pool($tokens)
+{
+    if (!is_array($tokens)) {
+        $tokens = array();
+    }
+
+    $tokens = array_values(array_unique(array_filter($tokens, 'is_string')));
+
+    if (count($tokens) > 20) {
+        $tokens = array_slice($tokens, -20);
+    }
+
+    set_session('ss_admin_tokens', $tokens);
+}
+
 function get_admin_token()
 {
     $token = get_random_token_string(16);
     set_session('ss_admin_token', $token);
+
+    $tokens = get_admin_token_pool();
+    $tokens[] = $token;
+    set_admin_token_pool($tokens);
 
     return $token;
 }
@@ -481,11 +511,28 @@ function check_log_folder($log_path, $is_delete = true)
 // POST로 넘어온 토큰과 세션에 저장된 토큰 비교
 function check_admin_token()
 {
-    $token = get_session('ss_admin_token');
-    set_session('ss_admin_token', '');
+    $request_token = isset($_REQUEST['token']) ? (string) $_REQUEST['token'] : '';
+    $session_token = (string) get_session('ss_admin_token');
+    $tokens = get_admin_token_pool();
+    $token_index = array_search($request_token, $tokens, true);
 
-    if (!$token || !$_REQUEST['token'] || $token != $_REQUEST['token']) {
+    if ($request_token !== '' && $session_token !== '' && function_exists('hash_equals')) {
+        $valid_legacy_token = hash_equals($session_token, $request_token);
+    } else {
+        $valid_legacy_token = $request_token !== '' && $session_token !== '' && $session_token === $request_token;
+    }
+
+    if (!$valid_legacy_token && $token_index === false) {
         alert('올바른 방법으로 이용해 주십시오.', G5_URL);
+    }
+
+    if ($valid_legacy_token) {
+        set_session('ss_admin_token', '');
+    }
+
+    if ($token_index !== false) {
+        unset($tokens[$token_index]);
+        set_admin_token_pool($tokens);
     }
 
     return true;
