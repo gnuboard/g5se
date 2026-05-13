@@ -100,13 +100,15 @@ if (!defined('G5_URL') && isset($_SERVER['HTTP_HOST'])) {
 }
 
 // URL 은 브라우저상에서의 경로 (도메인으로 부터)
-if (G5_DOMAIN) {
-    define('G5_URL', G5_DOMAIN);
-} else {
-    if (isset($g5_path['url']))
-        define('G5_URL', $g5_path['url']);
-    else
-        define('G5_URL', '');
+if (!defined('G5_URL')) {
+    if (G5_DOMAIN) {
+        define('G5_URL', G5_DOMAIN);
+    } else {
+        if (isset($g5_path['url']))
+            define('G5_URL', $g5_path['url']);
+        else
+            define('G5_URL', '');
+    }
 }
 
 if (isset($g5_path['path'])) {
