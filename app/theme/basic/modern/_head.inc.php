@@ -130,14 +130,15 @@ html, body {
     position: fixed; inset: 0;
     background: var(--m-bg);
     z-index: 9999;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: clip;
     display: flex; flex-direction: column;
     min-height: 100vh;
 }
 /* sticky footer 패턴: m-shell 직속 main 이 남는 공간을 차지해 footer 가 viewport 하단에 붙도록 */
 .m-shell > main { flex: 1 0 auto; }
 .m-shell > .m-footer { flex-shrink: 0; }
-.m-container { width: 100%; max-width: var(--m-max-7xl); margin: 0 auto; padding: 0 20px; }
+.m-container { width: 100%; max-width: var(--m-max-7xl); min-width: 0; margin: 0 auto; padding: 0 20px; }
 .m-center { display: grid; place-items: center; flex: 1; padding: 48px 16px; }
 
 /* 메인+사이드 2-column 레이아웃 — 게시판 list, 메인, 추후 마이페이지 등에서 공통 사용 */
@@ -166,6 +167,10 @@ html, body {
     box-shadow: var(--m-shadow);
 }
 .m-card-narrow { max-width: 400px; padding: 36px 32px; width: 100%; }
+@media (max-width: 560px) {
+    .m-container { padding-left: 14px; padding-right: 14px; }
+    .m-card { padding: 20px; }
+}
 
 /* ──────────────────────────────────────────────
    Input / Label
@@ -419,7 +424,7 @@ html, body {
 
 /* gnuboard 페이지네이션 (.pg_*) — get_paging() 출력을 토큰 기반으로 재스타일.
    default.css 가 .pg_start/.pg_prev/.pg_next/.pg_end 에 sprite GIF 배경 + text-indent:-999px 를
-   걸어놔서 화살표 라벨이 보이지 않으므로 같이 리셋. 모든 스킨에서 <?= $write_pages ?> 만 출력하면 적용됨. */
+   걸어놔서 화살표 라벨이 보이지 않으므로 같이 리셋. 모든 스킨에서 write_pages 만 출력하면 적용됨. */
 .m-pagination { margin-top: 24px; display: flex; justify-content: center; }
 .pg_wrap { display: inline-flex; gap: 4px; flex-wrap: wrap; }
 .pg_wrap .pg { display: inline-flex; gap: 4px; flex-wrap: wrap; }

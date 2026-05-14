@@ -19,6 +19,8 @@ function editor_html($id, $content, $is_dhtml_editor=true)
     $editor_url = G5_EDITOR_URL.'/'.$config['cf_editor'];
 
     $html = "";
+    $editor_height = 350;
+    $editor_taDisplay = "";
     $html .= "<span class=\"sound_only\">웹에디터 시작</span>";
     if (!$is_mobile && $is_dhtml_editor) {
         $html .= '<script>document.write("<div class=\'cke_sc\'><!--<button type=\'button\' class=\'btn_cke_sc\'>단축키 일람</button>--></div>");</script>';

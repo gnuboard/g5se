@@ -262,11 +262,20 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 .m-nav { background: var(--m-bg); border-bottom: 1px solid var(--m-border); }
 .m-nav-row-inner {
     display: flex; align-items: center; gap: 16px;
+    width: 100%; min-width: 0;
     padding: 12px 20px; max-width: var(--m-max-7xl); margin: 0 auto;
 }
 .m-nav-row-top { border-bottom: 1px solid var(--m-border); }
 .m-nav-row-links { background: var(--m-surface); }
-.m-brand { flex-shrink: 0; font-weight: 700; }
+.m-brand {
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 700;
+}
 
 .m-nav-primary {
     flex-wrap: wrap; gap: 2px;
@@ -324,7 +333,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     box-shadow: var(--m-shadow);
 }
 
-.m-nav-spacer { flex: 1; }
+.m-nav-spacer { flex: 1; min-width: 0; }
 
 .m-nav-search-icon-btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -413,6 +422,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
 @media (max-width: 560px) {
     .m-nav-row-inner { gap: 10px; padding: 12px 14px; }
+    .m-brand { max-width: calc(100vw - 128px); }
     .m-nav-cart-link { display: none; }
 }
 
