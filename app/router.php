@@ -169,6 +169,15 @@ class Router
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/view_image/(?P<wr_id>\d+)/(?P<no>\d+)/?$#' => 'bbs/view_image.php',
     ];
 
+    /** 사용자 확장 라우트 — app/routes/*.php 에서 로드 */
+    private $userCleanRoutes = [];
+    private $userExtraRoutes = [];
+
+    public function __construct()
+    {
+        $this->loadUserRoutes();
+    }
+
     /**
      * @return string|null G5_PATH 기준 상대경로, 매칭 안되면 null
      */
@@ -206,6 +215,11 @@ class Router
                 }
             }
             return $this->cleanRoutes[$normalized];
+        }
+
+        // 1.1) 사용자 정의 클린 URL 직접 매칭
+        if (isset($this->userCleanRoutes[$normalized])) {
+            return $this->userCleanRoutes[$normalized];
         }
 
         // 1.5) 1:1 문의 (qa) 레거시 URL → 클린 URL 301
@@ -394,11 +408,72 @@ class Router
         }
 
         // 4) 정규식 기반 라우트 (디버그/AJAX 등)
-        foreach ($this->extraRoutes as $pattern => $target) {
+        $resolved = $this->matchExtraRoutes($this->extraRoutes, $path);
+        if ($resolved !== null) {
+            return $resolved;
+        }
+
+        // 4.1) 사용자 정의 정규식 라우트
+        $resolved = $this->matchExtraRoutes($this->userExtraRoutes, $path);
+        if ($resolved !== null) {
+            return $resolved;
+        }
+
+        return null;
+    }
+
+    private function loadUserRoutes()
+    {
+        $dir = G5_PATH.'/routes';
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $files = glob($dir.'/*.php') ?: [];
+        sort($files, SORT_STRING);
+
+        foreach ($files as $file) {
+            $routes = include $file;
+            if (!is_array($routes)) {
+                continue;
+            }
+
+            $cleanRoutes = $routes['cleanRoutes'] ?? $routes['clean'] ?? [];
+            $extraRoutes = $routes['extraRoutes'] ?? $routes['regex'] ?? [];
+
+            if (is_array($cleanRoutes)) {
+                foreach ($cleanRoutes as $path => $target) {
+                    $path = $this->normalizeUserPath($path);
+                    $target = $this->normalizeUserTarget($target);
+                    if ($path !== null && $target !== null) {
+                        $this->userCleanRoutes[$path] = $target;
+                    }
+                }
+            }
+
+            if (is_array($extraRoutes)) {
+                foreach ($extraRoutes as $pattern => $target) {
+                    $target = $this->normalizeUserTarget($target, true);
+                    if (is_string($pattern) && $pattern !== '' && $target !== null) {
+                        $this->userExtraRoutes[$pattern] = $target;
+                    }
+                }
+            }
+        }
+    }
+
+    private function matchExtraRoutes(array $routes, $path)
+    {
+        foreach ($routes as $pattern => $target) {
             if (preg_match($pattern, $path, $m)) {
                 // target 이 'bbs/foo.php?key=val&k2=v2' 형태면 ? 뒤를 $_GET 에 주입
                 if (strpos($target, '?') !== false) {
                     list($target, $injectQs) = explode('?', $target, 2);
+                    $injectQs = preg_replace_callback('/\{(\w+)\}/', function ($ph) use ($m) {
+                        $key = $ph[1];
+                        if (ctype_digit($key)) $key = (int)$key;
+                        return isset($m[$key]) ? $m[$key] : '';
+                    }, $injectQs);
                     parse_str($injectQs, $injectParams);
                     foreach ($injectParams as $k => $v) {
                         $_GET[$k] = $v;
@@ -426,5 +501,42 @@ class Router
         }
 
         return null;
+    }
+
+    private function normalizeUserPath($path)
+    {
+        if (!is_string($path) || $path === '') {
+            return null;
+        }
+
+        $path = '/'.trim($path, '/');
+        if (!preg_match('#^/[a-zA-Z0-9_/-]*$#', $path)) {
+            return null;
+        }
+
+        return $path !== '/' ? rtrim($path, '/') : '/';
+    }
+
+    private function normalizeUserTarget($target, $allowQuery = false)
+    {
+        if (!is_string($target) || $target === '') {
+            return null;
+        }
+
+        $target = ltrim($target, '/');
+        $path = $target;
+        $query = '';
+        if (strpos($target, '?') !== false) {
+            list($path, $query) = explode('?', $target, 2);
+            if (!$allowQuery) {
+                return null;
+            }
+        }
+
+        if (strpos($path, '..') !== false || !preg_match('#^[a-zA-Z0-9_./-]+\.php$#', $path)) {
+            return null;
+        }
+
+        return $query !== '' ? $path.'?'.$query : $path;
     }
 }
