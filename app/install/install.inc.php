@@ -20,7 +20,7 @@ else if ($_self === 'install_db.php') $_step = 3;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
 <title><?php echo $title; ?></title>
-<link rel="stylesheet" href="/install/install.css">
+<link rel="stylesheet" href="install.css">
 <script>
 // 다크모드 — 메인 사이트와 동일한 localStorage 키 'm-theme' 사용 (상태 공유).
 // 저장 없으면 시스템 prefers-color-scheme 따라 명시 → CSS 단일 selector [data-theme="..."] 만 매칭.
@@ -117,7 +117,7 @@ if (!is_dir($data_path))
 <?php
 $write_data_dir = true;
 // data 디렉토리에 파일 생성 가능한지 검사.
-if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+if ($exists_data_dir && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
     $sapi_type = php_sapi_name();
     if (substr($sapi_type, 0, 3) == 'cgi') {
         if (!(is_readable($data_path) && is_executable($data_path)))
