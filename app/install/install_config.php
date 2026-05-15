@@ -132,7 +132,7 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
     </p>
 
     <div class="inner_btn">
-        <input type="submit" value="다음">
+        <input type="submit" value="다음" id="install_submit">
     </div>
 </div>
 
@@ -140,6 +140,10 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
 <script>
 function frm_install_submit(f)
 {
+    if (f.getAttribute('data-submitting') === '1') {
+        return false;
+    }
+
     if (f.mysql_host.value == '')
     {
         alert('MySQL Host 를 입력하십시오.'); f.mysql_host.focus(); return false;
@@ -200,28 +204,62 @@ function frm_install_submit(f)
     
     if (window.jQuery) {
 
-        var jqxhr = jQuery.post( "/install/ajax.install.check.php", $(f).serialize(), function(data) {
+        install_submit_lock(f, '확인 중...');
+
+        var jqxhr = jQuery.post( "./ajax.install.check.php", $(f).serialize(), function(data) {
             
             if( data.error ){
+                install_submit_unlock(f);
                 alert(data.error);
             } else if( data.exists ) {
                 if( confirm(data.exists) ){
+                    install_submit_lock(f);
                     f.submit();
+                } else {
+                    install_submit_unlock(f);
                 }
             } else if( data.success ) {
+                install_submit_lock(f);
                 f.submit();
+            } else {
+                install_submit_unlock(f);
+                alert('설치 정보를 확인할 수 없습니다.');
             }
 
         }, "json");
 
         jqxhr.fail(function(xhr) {
+            install_submit_unlock(f);
             alert( xhr.responseText );
         });
 
         return false;
     }
 
+    install_submit_lock(f);
     return true;
+}
+
+function install_submit_lock(f, label)
+{
+    f.setAttribute('data-submitting', '1');
+    var btn = document.getElementById('install_submit');
+    if (btn) {
+        btn.value = label || '설치 중...';
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+    }
+}
+
+function install_submit_unlock(f)
+{
+    f.removeAttribute('data-submitting');
+    var btn = document.getElementById('install_submit');
+    if (btn) {
+        btn.value = '다음';
+        btn.disabled = false;
+        btn.removeAttribute('aria-disabled');
+    }
 }
 </script>
 

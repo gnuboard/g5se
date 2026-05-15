@@ -14,6 +14,29 @@ function get_pretty_url($folder, $no='', $query_string='', $action='')
         return $url;
     }
 
+    if (defined('G5SE_BASE_PATH') && isset($config['cf_bbs_rewrite']) && $config['cf_bbs_rewrite']) {
+        if ($folder === 'content' && $no) {
+            $url = G5_URL.'/content/'.urlencode($no);
+        } else if (in_array($folder, $boards)) {
+            $url = G5_URL.'/board/'.urlencode($folder);
+            if ($no) {
+                $url .= '/'.urlencode($no);
+            } else if ($action) {
+                $url .= '/'.urlencode($action);
+            }
+        }
+
+        if ($url) {
+            if ($query_string) {
+                $url .= (substr($query_string, 0, 1) == '&')
+                    ? preg_replace("/\&amp;/", "?", $query_string, 1)
+                    : '?'.$query_string;
+            }
+
+            return $url;
+        }
+    }
+
     // use shortten url
     if($config['cf_bbs_rewrite']) {
 
@@ -162,6 +185,21 @@ function short_url_clean($string_url, $add_qry=''){
             $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on') ? 'https://' : 'http://';
             $port = (isset($url['port']) && ($url['port']!==80 || $url['port']!==443)) ? ':'.$url['port'] : '';
             $host = $http.$url['host'].$port.str_replace($array_file_paths, '', $str_path);
+
+            if (defined('G5SE_BASE_PATH') && G5SE_BASE_PATH !== '') {
+                $g5_url = @parse_url(G5_URL);
+                if (!empty($g5_url['host']) && strcasecmp($url['host'], $g5_url['host']) === 0) {
+                    $base_path = G5SE_BASE_PATH;
+                    $clean_base = preg_replace('#/(?:'.G5_BBS_DIR.'/)?(?:board|write|content)\.php$#', '', $str_path);
+                    if ($clean_base === '' || $clean_base === '/') {
+                        $clean_base = $base_path;
+                    }
+                    if (strpos($clean_base, $base_path) !== 0) {
+                        $clean_base = $base_path.rtrim($clean_base, '/');
+                    }
+                    $host = $http.$url['host'].$port.rtrim($clean_base, '/');
+                }
+            }
         }
 
         $add_param = '';
@@ -172,6 +210,26 @@ function short_url_clean($string_url, $add_qry=''){
 
         if( $add_qry ){
             $add_param .= $add_param ? '&amp;'.$add_qry : '?'.$add_qry;
+        }
+
+        if (defined('G5SE_BASE_PATH')) {
+            if ($page_name === 'board' && !empty($s['bo_table'])) {
+                $return_url = '/board/'.$s['bo_table'];
+                if (!empty($s['wr_id'])) {
+                    $return_url .= '/'.$s['wr_id'];
+                }
+                return G5_URL.$return_url.$add_param.$fragment;
+            }
+
+            if ($page_name === 'write' && !empty($s['bo_table'])) {
+                $return_url = '/board/'.$s['bo_table'].'/write';
+                return G5_URL.$return_url.$add_param.$fragment;
+            }
+
+            if ($page_name === 'content' && !empty($s['co_id'])) {
+                $return_url = '/content/'.$s['co_id'];
+                return G5_URL.$return_url.$add_param.$fragment;
+            }
         }
 
         foreach($s as $k => $v) { $return_url .= '/'.$v; }

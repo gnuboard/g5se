@@ -17,7 +17,7 @@ jQuery(function ($) {
 
     // Change this to the location of your server-side upload handler:
     var gnu = {
-        url: './php/?_nonce=' + ed_nonce,
+        url: './php/index.php?_nonce=' + ed_nonce,
         container_el: 'body',
         dreg_area: '#drag_area',
         dreg_area_list: '#drag_area > ul',

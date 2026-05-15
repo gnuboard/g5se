@@ -3,8 +3,10 @@ include_once('./_common.php');
 
 include_once(G5_PATH.'/head.sub.php');
 
+$scrap_url = G5_URL.'/scrap';
+
 if ($is_guest) {
-    $href = './login.php?'.$qstr.'&amp;url='.urlencode(get_pretty_url($bo_table, $wr_id));
+    $href = G5_URL.'/login?'.$qstr.'&amp;url='.urlencode(get_pretty_url($bo_table, $wr_id));
     $href2 = str_replace('&amp;', '&', $href);
     echo <<<HEREDOC
     <script>
@@ -44,13 +46,13 @@ if ($row['cnt']) {
     echo <<<HEREDOC
     <script>
     if (confirm('이미 스크랩하신 글 입니다.\\n\\n지금 스크랩을 확인하시겠습니까?'))
-        document.location.href = './scrap.php';
+        document.location.href = '{$scrap_url}';
     else
         window.close();
     </script>
     <noscript>
     <p>이미 스크랩하신 글 입니다.</p>
-    <a href="./scrap.php">스크랩 확인하기</a>
+    <a href="{$scrap_url}">스크랩 확인하기</a>
     <a href="{$back_url}">돌아가기</a>
     </noscript>
 HEREDOC;

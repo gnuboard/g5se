@@ -47,7 +47,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     </ul>
 
     <div class="m-pagination">
-        <?php echo get_paging($config['cf_write_pages'], $page, $total_page, '/scrap?'.$qstr.'&amp;page='); ?>
+        <?php echo get_paging($config['cf_write_pages'], $page, $total_page, G5_URL.'/scrap?'.$qstr.'&amp;page='); ?>
     </div>
 
     <div class="m-popup-actions">

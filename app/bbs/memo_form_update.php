@@ -119,7 +119,7 @@ for ($i=0; $i<$member_list_cnt; $i++) {
 
 if ($member_list) {
 
-    $redirect_url = G5_HTTP_BBS_URL."/memo.php?kind=send";
+    $redirect_url = G5_URL."/memo?kind=send";
     $str_nick_list = implode(',', $member_list['nick']);
 
     run_event('memo_form_update_after', $member_list, $str_nick_list, $redirect_url, $_POST['me_memo']);
@@ -127,7 +127,7 @@ if ($member_list) {
     alert($str_nick_list." 님께 쪽지를 전달하였습니다.", $redirect_url, false);
 } else {
 
-    $redirect_url = G5_HTTP_BBS_URL."/memo_form.php";
+    $redirect_url = G5_URL."/memo_form";
     
     run_event('memo_form_update_failed', $member_list, $redirect_url, $_POST['me_memo']);
 

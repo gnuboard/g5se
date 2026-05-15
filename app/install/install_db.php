@@ -597,7 +597,7 @@ if($g5_shop_install) {
 
 // DB 설정 파일 생성 — data 는 docroot 루트, install.inc.php 에서 절대경로 \$data_path 정의됨
 $file = $data_path.'/'.G5_DBCONFIG_FILE;
-$f = @fopen($file, 'a');
+$f = @fopen($file, 'w');
 
 fwrite($f, "<?php\n");
 fwrite($f, "if (!defined('_GNUBOARD_')) exit;\n");

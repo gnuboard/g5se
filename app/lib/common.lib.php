@@ -107,6 +107,31 @@ function goto_url($url)
     }
 
     $url = str_replace("&amp;", "&", $url);
+
+    if (defined('G5SE_BASE_PATH') && G5SE_BASE_PATH !== '') {
+        $base_path = G5SE_BASE_PATH;
+        $internal_prefixes = 'admin|login|login_check|logout|register|member_confirm|member_leave|password|search|new|faq|qa|connect|content|group|mypage|board|write|write_update|delete|good|nogood|download|view_image|shop|memo|memo_form|formmail|profile|point|scrap|poll_';
+
+        if (isset($url[0]) && $url[0] === '/' && substr($url, 0, 2) !== '//' && strpos($url, $base_path.'/') !== 0) {
+            if (preg_match('#^/(?:'.$internal_prefixes.')#', $url)) {
+                $url = $base_path.$url;
+            }
+        } else {
+            $parsed_url = @parse_url($url);
+            $parsed_g5_url = @parse_url(G5_URL);
+            if (!empty($parsed_url['host']) && !empty($parsed_g5_url['host']) && strcasecmp($parsed_url['host'], $parsed_g5_url['host']) === 0) {
+                $path = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+                if ($path !== '' && strpos($path, $base_path.'/') !== 0 && preg_match('#^/(?:'.$internal_prefixes.')#', $path)) {
+                    $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
+                    $host = $parsed_url['host'];
+                    $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
+                    $query = isset($parsed_url['query']) ? '?'.$parsed_url['query'] : '';
+                    $fragment = isset($parsed_url['fragment']) ? '#'.$parsed_url['fragment'] : '';
+                    $url = $scheme.$host.$port.$base_path.$path.$query.$fragment;
+                }
+            }
+        }
+    }
     //echo "<script> location.replace('$url'); </script>";
 
     if (!headers_sent())

@@ -12,4 +12,4 @@ sql_pdo_query(" delete from {$g5['scrap_table']} where mb_id = :mb_id and ms_id 
 sql_pdo_query(" update `{$g5['member_table']}` set mb_scrap_cnt = :cnt where mb_id = :mb_id ",
               [':cnt' => get_scrap_totals($member['mb_id']), ':mb_id' => $member['mb_id']]);
 
-goto_url('./scrap.php?page='.$page);
+goto_url(G5_URL.'/scrap?page='.$page);

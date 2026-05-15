@@ -9,7 +9,10 @@ define('G5_PATH', __DIR__.'/app');
 
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host   = preg_replace('/[^a-zA-Z0-9\.\-:]/', '', $_SERVER['HTTP_HOST'] ?? 'localhost');
-define('G5_URL', $scheme.'://'.$host);
+$_g5se_base_path = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+if ($_g5se_base_path === '/' || $_g5se_base_path === '.') $_g5se_base_path = '';
+define('G5SE_BASE_PATH', $_g5se_base_path);
+define('G5_URL', $scheme.'://'.$host.G5SE_BASE_PATH);
 
 // gnuboard 의 *_BBS_URL 들이 자동으로 '/bbs' 를 붙이지 못하도록 미리 박는다.
 define('G5_BBS_URL',        G5_URL);
@@ -23,6 +26,11 @@ define('G5_DATA_URL',       G5_URL.'/data');
 require G5_PATH.'/router.php';
 
 $_g5se_request_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+if (G5SE_BASE_PATH !== '' && str_starts_with($_g5se_request_path, G5SE_BASE_PATH.'/')) {
+    $_g5se_request_path = substr($_g5se_request_path, strlen(G5SE_BASE_PATH));
+} else if (G5SE_BASE_PATH !== '' && $_g5se_request_path === G5SE_BASE_PATH) {
+    $_g5se_request_path = '/';
+}
 
 // 출력버퍼 필터: 모던화 완료된 엔드포인트의 `.php` 접미사를 자동 제거 + 게시판 URL 정리.
 // gnuboard 내부 코드가 G5_BBS_URL.'/login_check.php' 형태로 URL 을 조립하므로,
@@ -36,7 +44,11 @@ ob_start(function ($html) {
         'password', 'password_check',
         'password_lost', 'password_lost_certify', 'password_lost2',
         'password_reset', 'password_reset_update',
-        'search', 'new', 'faq', 'connect', 'board_list_update', 'move',
+        'search', 'new', 'faq', 'connect', 'board_list_update', 'move', 'move_update',
+        'memo', 'memo_form', 'memo_form_update', 'memo_view', 'memo_delete',
+        'formmail', 'formmail_send', 'profile', 'point',
+        'scrap', 'scrap_delete', 'scrap_popin', 'scrap_popin_update',
+        'poll_result', 'poll_update', 'poll_etc_update', 'poll_etc_update_mail',
     ];
     // 0) 내용관리 URL 정리: /content.php?co_id=X[&...] → /content/X[?...]
     $html = preg_replace_callback(
@@ -127,9 +139,25 @@ ob_start(function ($html) {
         $html
     );
     $html = preg_replace_callback(
-        '#/delete_comment\.php\?(?:[^"\']*?(?:&|&amp;)?bo_table=([a-zA-Z0-9_]+))(?:[^"\']*?(?:&|&amp;)comment_id=(\d+))?#',
+        '#/delete_comment\.php\?([^"\'\s<>]+)#',
         function ($m) {
-            return '/board/'.$m[1].'/comment/delete'.(isset($m[2]) && $m[2] !== '' ? '/'.$m[2] : '');
+            $qs = str_replace('&amp;', '&', $m[1]);
+            parse_str($qs, $params);
+            if (empty($params['bo_table']) || !preg_match('/^[a-zA-Z0-9_]+$/', $params['bo_table'])) {
+                return $m[0];
+            }
+
+            $url = '/board/'.$params['bo_table'].'/comment/delete';
+            if (!empty($params['comment_id']) && preg_match('/^\d+$/', $params['comment_id'])) {
+                $url .= '/'.$params['comment_id'];
+                unset($params['comment_id']);
+            }
+            unset($params['bo_table']);
+            if (!empty($params)) {
+                $url .= '?' . http_build_query($params, '', '&amp;');
+            }
+
+            return $url;
         },
         $html
     );
@@ -230,6 +258,72 @@ ob_start(function ($html) {
         },
         $html
     );
+
+    // 하위 디렉토리 배포(/g5se 등)에서는 테마/관리자 화면에 남아 있는
+    // 루트 상대 링크(/search, /admin 등)를 설치 기준 경로 아래로 보정한다.
+    if (defined('G5SE_BASE_PATH') && G5SE_BASE_PATH !== '') {
+        $base_segment = preg_quote(ltrim(G5SE_BASE_PATH, '/'), '#');
+
+        // HTML attributes. 팝업/관리자/쇼핑 화면은 data-url, formaction 같은 속성도 사용한다.
+        $base_boundary = '(?:/|\\?|\\#|["\']|$)';
+
+        $html = preg_replace_callback(
+            '#\b(href|src|action|formaction|poster|data-(?:url|href|action|src))=(["\'])/(?!/|'.$base_segment.$base_boundary.')#i',
+            function ($m) {
+                return $m[1].'='.$m[2].G5SE_BASE_PATH.'/';
+            },
+            $html
+        );
+
+        // Same-origin absolute URLs may be stored in editor content, e.g.
+        // https://example.com/data/editor/... from a root install. Keep them
+        // inside the current subdirectory install as well.
+        $host_pattern = preg_quote($_SERVER['HTTP_HOST'] ?? '', '#');
+        if ($host_pattern !== '') {
+            $html = preg_replace_callback(
+                '#\b(href|src|action|formaction|poster|data-(?:url|href|action|src))=(["\'])https?://'.$host_pattern.'/(?!'.$base_segment.$base_boundary.')#i',
+                function ($m) {
+                    return $m[1].'='.$m[2].G5_URL.'/';
+                },
+                $html
+            );
+        }
+
+        // Inline JavaScript locations and popup opens.
+        $html = preg_replace_callback(
+            '#((?:window\.)?(?:location(?:\.href)?|location\.(?:replace|assign)|document\.location(?:\.href)?|top\.location(?:\.href)?|opener\.location(?:\.href)?)\s*(?:=|\()\s*(["\']))/(?!/|'.$base_segment.$base_boundary.')#i',
+            function ($m) {
+                return $m[1].G5SE_BASE_PATH.'/';
+            },
+            $html
+        );
+
+        $html = preg_replace_callback(
+            '#(window\.open\(\s*(["\']))/(?!/|'.$base_segment.$base_boundary.')#i',
+            function ($m) {
+                return $m[1].G5SE_BASE_PATH.'/';
+            },
+            $html
+        );
+
+        // jQuery.ajax({ url: "/..." }) style values.
+        $html = preg_replace_callback(
+            '#(\burl\s*:\s*(["\']))/(?!/|'.$base_segment.$base_boundary.')#i',
+            function ($m) {
+                return $m[1].G5SE_BASE_PATH.'/';
+            },
+            $html
+        );
+
+        // Meta refresh fallback: content="0;url=/..."
+        $html = preg_replace_callback(
+            '#(\bcontent=(["\'])[^"\']*?;\s*url=)/(?!/|'.$base_segment.$base_boundary.')#i',
+            function ($m) {
+                return $m[1].G5SE_BASE_PATH.'/';
+            },
+            $html
+        );
+    }
 
     return $html;
 });

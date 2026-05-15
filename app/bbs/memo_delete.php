@@ -32,4 +32,4 @@ if (!$row['me_read_datetime'][0]) // 메모 받기전이면
 
 run_event('memo_delete', $me_id, $row);
 
-goto_url('./memo.php?kind='.$kind);
+goto_url(G5_URL.'/memo?kind='.$kind);

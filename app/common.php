@@ -181,6 +181,17 @@ if (file_exists($dbconfig_file)) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2563eb">
 <title>그누보드5 SE 설치가 필요합니다</title>
+<script>
+(function () {
+    try {
+        var t = localStorage.getItem('m-theme');
+        if (t !== 'dark' && t !== 'light') {
+            t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+})();
+</script>
 <style>
 /* 인라인 — 라우팅/static 처리 영향 안 받도록 critical CSS 자체 포함 */
 :root {
@@ -189,12 +200,10 @@ if (file_exists($dbconfig_file)) {
     --border: #e2e8f0; --primary: #2563eb; --primary-hover: #1d4ed8;
     --danger: #dc2626;
 }
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #0f172a; --surface: #1e293b; --surface-2: #0b1220;
-        --text: #f1f5f9; --text-soft: #cbd5e1; --text-faint: #64748b;
-        --border: #334155; --primary: #3b82f6; --primary-hover: #60a5fa;
-    }
+[data-theme="dark"] {
+    --bg: #0f172a; --surface: #1e293b; --surface-2: #0b1220;
+    --text: #f1f5f9; --text-soft: #cbd5e1; --text-faint: #64748b;
+    --border: #334155; --primary: #3b82f6; --primary-hover: #60a5fa;
 }
 * { box-sizing: border-box; }
 body {
@@ -220,6 +229,27 @@ body {
     letter-spacing: 0.08em; opacity: 0.85; margin-top: 2px;
 }
 .msg-bar .tag { font-size: 0.92em; opacity: 0.85; }
+.msg-theme-toggle {
+    position: fixed;
+    top: 18px; right: 18px;
+    z-index: 100;
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.msg-theme-toggle:hover { background: rgba(255,255,255,0.28); }
+.msg-theme-toggle svg { width: 18px; height: 18px; }
+.msg-theme-toggle .ic-moon { display: block; }
+.msg-theme-toggle .ic-sun { display: none; }
+[data-theme="dark"] .msg-theme-toggle .ic-moon { display: none; }
+[data-theme="dark"] .msg-theme-toggle .ic-sun { display: block; }
 main {
     flex: 1; max-width: 720px; width: 100%;
     margin: 32px auto; padding: 0 24px;
@@ -270,6 +300,7 @@ footer {
 footer strong { color: var(--text); font-weight: 700; }
 @media (max-width: 600px) {
     .msg-bar { padding: 22px 20px; }
+    .msg-theme-toggle { top: 14px; right: 14px; width: 36px; height: 36px; }
     main { padding: 0 16px; margin: 24px auto; }
     .card { padding: 22px 20px; }
     h1 { font-size: 1.3em; }
@@ -277,6 +308,20 @@ footer strong { color: var(--text); font-weight: 700; }
 </style>
 </head>
 <body>
+
+<button type="button" class="msg-theme-toggle" id="msg-theme-toggle" aria-label="다크모드 전환" title="다크모드 전환">
+    <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+</button>
+<script>
+document.getElementById('msg-theme-toggle').addEventListener('click', function () {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    try { localStorage.setItem('m-theme', next); } catch (e) {}
+});
+</script>
 
 <div class="msg-bar">
     <span class="brand">

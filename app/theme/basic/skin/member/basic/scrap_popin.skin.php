@@ -13,7 +13,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
         </h1>
     </header>
 
-    <form name="f_scrap_popin" action="/scrap_popin_update" method="post" class="m-scrap-form">
+    <form name="f_scrap_popin" action="<?php echo G5_URL ?>/scrap_popin_update" method="post" class="m-scrap-form">
         <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
         <input type="hidden" name="wr_id" value="<?php echo $wr_id ?>">
 

@@ -90,13 +90,20 @@ define('G5_GROUP_DIR',      'group');
 define('G5_CONTENT_DIR',    'content');
 
 // g5se 구조 보정: 프런트 컨트롤러를 거치지 않는 직접접근 진입점
-// (예: plugin/kcaptcha/kcaptcha_mp3.php) 에서도 G5_URL 이 도메인 root 로 잡히도록 강제.
-// 자동탐지(g5_path)는 SCRIPT_NAME 이 /www/app/plugin/... 으로 잡혀 잘못된 base URL 을
-// 만들어내므로 HTTP_HOST 기반으로 미리 박는다. 프런트 컨트롤러에서 이미 define 했다면 no-op.
+// (예: plugin/editor 업로드, kcaptcha 등) 에서도 하위 설치 경로(/g5se 등)를 보존한다.
+// 자동탐지(g5_path)는 내부 rewrite 경로(app/plugin/...)를 볼 수 있어 REQUEST_URI 기준으로 계산한다.
 if (!defined('G5_URL') && isset($_SERVER['HTTP_HOST'])) {
     $_g5se_scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    define('G5_URL', $_g5se_scheme.'://'.preg_replace('/[^a-zA-Z0-9\.\-:]/', '', $_SERVER['HTTP_HOST']));
-    unset($_g5se_scheme);
+    $_g5se_host = preg_replace('/[^a-zA-Z0-9\.\-:]/', '', $_SERVER['HTTP_HOST']);
+    $_g5se_request_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $_g5se_base_path = '';
+    if (preg_match('#^(.+?)/(?:plugin|theme|skin|img|js|css|mobile|shop|admin|install|data)(?:/|$)#', $_g5se_request_path, $_g5se_match)) {
+        $_g5se_base_path = rtrim($_g5se_match[1], '/');
+    }
+    if ($_g5se_base_path === '/') $_g5se_base_path = '';
+    if (!defined('G5SE_BASE_PATH')) define('G5SE_BASE_PATH', $_g5se_base_path);
+    define('G5_URL', $_g5se_scheme.'://'.$_g5se_host.$_g5se_base_path);
+    unset($_g5se_scheme, $_g5se_host, $_g5se_request_path, $_g5se_base_path, $_g5se_match);
 }
 
 // URL 은 브라우저상에서의 경로 (도메인으로 부터)

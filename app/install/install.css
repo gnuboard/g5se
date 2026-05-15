@@ -162,6 +162,23 @@ h1 {
 .inner_btn a:active, .inner_btn input:active, .inner_btn button:active {
     transform: translateY(1px);
 }
+.inner_btn input:disabled,
+.inner_btn button:disabled,
+.inner_btn input[aria-disabled="true"],
+.inner_btn button[aria-disabled="true"] {
+    background: var(--ins-text-faint);
+    border-color: var(--ins-text-faint);
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.72;
+    pointer-events: none;
+}
+.inner_btn input:disabled:active,
+.inner_btn button:disabled:active,
+.inner_btn input[aria-disabled="true"]:active,
+.inner_btn button[aria-disabled="true"]:active {
+    transform: none;
+}
 .inner_btn .btn-secondary {
     background: var(--ins-surface-2);
     color: var(--ins-text);

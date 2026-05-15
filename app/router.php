@@ -48,6 +48,7 @@ class Router
         '/connect'                => 'bbs/current_connect.php',
         '/board_list_update'      => 'bbs/board_list_update.php',
         '/move'                   => 'bbs/move.php',
+        '/move_update'            => 'bbs/move_update.php',
 
         // 쪽지 (popup)
         '/memo'                   => 'bbs/memo.php',
@@ -185,12 +186,51 @@ class Router
     {
         $path   = parse_url($requestUri, PHP_URL_PATH) ?? '/';
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $basePath = defined('G5SE_BASE_PATH') ? G5SE_BASE_PATH : '';
+        if ($basePath !== '') {
+            if ($path === $basePath) {
+                $path = '/';
+            } else if (str_starts_with($path, $basePath.'/')) {
+                $path = substr($path, strlen($basePath));
+            }
+        }
+        $location = static function ($url) use ($basePath) {
+            if ($basePath !== '' && str_starts_with($url, '/') && !str_starts_with($url, '//')) {
+                if ($url === '/' || !str_starts_with($url, $basePath.'/')) {
+                    return $basePath.$url;
+                }
+            }
+
+            return $url;
+        };
 
         // 0) /index.php → / 301 (클린 URL 정규화 — 설치 완료 후 등 직접 진입 케이스)
         if (($method === 'GET' || $method === 'HEAD') && $path === '/index.php') {
             $qs = parse_url($requestUri, PHP_URL_QUERY);
-            header('Location: /'.($qs ? '?'.$qs : ''), true, 301);
+            header('Location: '.$basePath.'/'.($qs ? '?'.$qs : ''), true, 301);
             exit;
+        }
+
+        // 잘못 생성됐던 댓글 삭제 URL 보정:
+        // /board/free/comment/delete/6&token=... → /board/free/comment/delete/6?token=...
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^/board/([a-zA-Z0-9_]+)/comment/delete/(\d+)&(.+)$#', $path, $m)) {
+            header('Location: '.$basePath.'/board/'.$m[1].'/comment/delete/'.$m[2].'?'.$m[3], true, 302);
+            exit;
+        }
+
+        // /delete_comment.php?bo_table=free&comment_id=6&token=...
+        // → /board/free/comment/delete/6?token=...
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/delete_comment.php') {
+            parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
+            if (!empty($params['bo_table']) && preg_match('/^[a-zA-Z0-9_]+$/', $params['bo_table'])
+                && !empty($params['comment_id']) && preg_match('/^\d+$/', $params['comment_id'])) {
+                $url = $basePath.'/board/'.$params['bo_table'].'/comment/delete/'.$params['comment_id'];
+                unset($params['bo_table'], $params['comment_id']);
+                if (!empty($params)) $url .= '?'.http_build_query($params);
+                header('Location: '.$url, true, 302);
+                exit;
+            }
         }
 
         // 1) 클린 URL 직접 매칭 (trailing slash 정규화)
@@ -209,7 +249,7 @@ class Router
                         $url = $normalized.'/'.$params[$key];
                         unset($params[$key]);
                         if (!empty($params)) $url .= '?'.http_build_query($params);
-                        header('Location: '.$url, true, 301);
+                        header('Location: '.$location($url), true, 301);
                         exit;
                     }
                 }
@@ -251,7 +291,7 @@ class Router
                 $url = '/qa/write_update';
             }
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
 
@@ -280,7 +320,7 @@ class Router
                 if (!empty($params)) {
                     $url .= '?'.http_build_query($params);
                 }
-                header('Location: '.$url, true, 301);
+                header('Location: '.$location($url), true, 301);
                 exit;
             }
         }
@@ -295,7 +335,7 @@ class Router
                 $url = '/shop/item/'.$params['it_id'];
                 unset($params['it_id']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
-                header('Location: '.$url, true, 301);
+                header('Location: '.$location($url), true, 301);
                 exit;
             }
         }
@@ -305,7 +345,7 @@ class Router
                 $url = '/shop/category/'.$params['ca_id'];
                 unset($params['ca_id']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
-                header('Location: '.$url, true, 301);
+                header('Location: '.$location($url), true, 301);
                 exit;
             }
         }
@@ -316,7 +356,7 @@ class Router
                 $url = '/shop/event/'.$params['ev_id'];
                 unset($params['ev_id']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
-                header('Location: '.$url, true, 301);
+                header('Location: '.$location($url), true, 301);
                 exit;
             }
         }
@@ -326,7 +366,7 @@ class Router
                 $url = '/shop/listtype/'.$params['type'];
                 unset($params['type']);
                 if (!empty($params)) $url .= '?'.http_build_query($params);
-                header('Location: '.$url, true, 301);
+                header('Location: '.$location($url), true, 301);
                 exit;
             }
         }
@@ -334,14 +374,14 @@ class Router
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/wishlist';
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/cart.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/cart';
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
         // 주문조회: orderinquiry / orderinquiryview / orderinquirycancel — query 보존 (od_id, uid 등)
@@ -350,7 +390,7 @@ class Router
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/'.$m[1];
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
         // 배송지목록: /shop/orderaddress.php → /shop/orderaddress
@@ -358,7 +398,7 @@ class Router
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/orderaddress';
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
         // 쿠폰: /shop/coupon.php → /shop/coupon
@@ -366,14 +406,14 @@ class Router
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/coupon';
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/orderform.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             $url = '/shop/orderform';
             if (!empty($params)) $url .= '?'.http_build_query($params);
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
 
@@ -383,7 +423,7 @@ class Router
             && preg_match('#^(/admin(?:/[a-zA-Z][a-zA-Z0-9_-]*)+)\.php$#', $path, $m)) {
             $qs = parse_url($requestUri, PHP_URL_QUERY);
             $url = $m[1].($qs ? '?'.$qs : '');
-            header('Location: '.$url, true, 301);
+            header('Location: '.$location($url), true, 301);
             exit;
         }
 
@@ -400,7 +440,7 @@ class Router
         if ($cleanCandidate !== null && isset($this->cleanRoutes[$cleanCandidate])) {
             if ($method === 'GET' || $method === 'HEAD') {
                 $qs = parse_url($requestUri, PHP_URL_QUERY);
-                header('Location: '.$cleanCandidate.($qs ? '?'.$qs : ''), true, 301);
+                header('Location: '.$location($cleanCandidate.($qs ? '?'.$qs : '')), true, 301);
                 exit;
             }
             // POST 등은 그대로 진행 (폼 제출 호환)
