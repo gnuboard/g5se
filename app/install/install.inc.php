@@ -102,10 +102,10 @@ if (!is_dir($data_path))
 
 <div class="ins_inner">
     <p>
-        루트 디렉토리에 아래로 <?php echo G5_DATA_DIR ?> 디렉토리를 생성하여 주십시오.<br />
-        (common.php 파일이 있는곳이 루트 디렉토리 입니다.)<br /><br />
+        설치 루트 디렉토리에 <?php echo G5_DATA_DIR ?> 디렉토리를 생성하여 주십시오.<br />
+        (app 디렉토리가 있는 곳이 설치 루트 디렉토리 입니다.)<br /><br />
         $> mkdir <?php echo G5_DATA_DIR ?><br /><br />
-        윈도우의 경우 data 폴더를 하나 생성해 주시기 바랍니다.<br /><br />
+        윈도우의 경우 app 디렉토리와 같은 위치에 data 폴더를 하나 생성해 주시기 바랍니다.<br /><br />
         위 명령 실행후 브라우저를 새로고침 하십시오.
     </p>
 </div>
@@ -125,7 +125,7 @@ if ($exists_data_dir && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
         ?>
         <div class="ins_inner">
             <p>
-                <?php echo G5_DATA_DIR ?> 디렉토리의 퍼미션을 705로 변경하여 주십시오.<br /><br />
+                설치 루트의 <?php echo G5_DATA_DIR ?> 디렉토리 퍼미션을 705로 변경하여 주십시오.<br /><br />
                 $> chmod 705 <?php echo G5_DATA_DIR ?> 또는 chmod uo+rx <?php echo G5_DATA_DIR ?><br /><br />
                 위 명령 실행후 브라우저를 새로고침 하십시오.
             </p>
@@ -139,7 +139,7 @@ if ($exists_data_dir && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
         ?>
         <div class="ins_inner">
             <p>
-                <?php echo G5_DATA_DIR ?> 디렉토리의 퍼미션을 707로 변경하여 주십시오.<br /><br />
+                설치 루트의 <?php echo G5_DATA_DIR ?> 디렉토리 퍼미션을 707로 변경하여 주십시오.<br /><br />
                 $> chmod 707 <?php echo G5_DATA_DIR ?> 또는 chmod uo+rwx <?php echo G5_DATA_DIR ?><br /><br />
                 위 명령 실행후 브라우저를 새로고침 하십시오.
             </p>
