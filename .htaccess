@@ -30,6 +30,8 @@ RewriteRule ^shop/(img|css|js)/(.*)$ app/shop/$1/$2 [END]
 RewriteRule ^install/?$ app/install/index.php [END]
 # .php 명시적 (legacy form submit 등) — 그대로 매핑
 RewriteRule ^install/([a-zA-Z][a-zA-Z0-9_]*)\.php$ app/install/$1.php [END]
+# 하위 디렉토리 배포에서도 동작해야 하는 설치 단계 클린 URL
+RewriteRule ^install/(install_config|install_db)/?$ app/install/$1.php [END]
 # 클린 URL — 실제 .php 파일 있으면 매핑 (예: /install/install_config → install_config.php)
 RewriteCond %{DOCUMENT_ROOT}/app/install/$1.php -f
 RewriteRule ^install/([a-zA-Z][a-zA-Z0-9_]*)/?$ app/install/$1.php [END]
