@@ -3,7 +3,7 @@
  * /admin/theme — 테마 설정 (모던 카드 그리드).
  *   - 각 카드: screenshot / 테마명 / 폴더명 (mono) / Maker / Version
  *   - 액션: 테마적용 / 사용안함 / 미리보기 / 상세보기
- *   - AJAX: /admin/theme_update (적용/해제), /admin/theme_detail (상세)
+ *   - AJAX: G5_ADMIN_URL 기반 theme_update (적용/해제), theme_detail (상세)
  */
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
@@ -38,6 +38,9 @@ if ($config['cf_theme'] && !in_array($config['cf_theme'], $theme)) {
 }
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$admin_theme_preview_url = G5_ADMIN_URL.'/theme_preview';
+$admin_theme_update_url  = G5_ADMIN_URL.'/theme_update';
+$admin_theme_detail_url  = G5_ADMIN_URL.'/theme_detail';
 
 admin_layout_start('테마 설정', 'theme');
 ?>
@@ -110,7 +113,7 @@ admin_layout_start('테마 설정', 'theme');
                             <button type="button" class="theme_active flex-1 inline-flex items-center justify-center h-8 px-2.5 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-xs font-medium"
                                     data-theme="<?php echo $h($t) ?>" data-name="<?php echo $name ?>" data-set_default_skin="<?php echo $set_default_skin ?>">테마 적용</button>
                         <?php endif; ?>
-                        <a href="/admin/theme_preview?theme=<?php echo urlencode($t) ?>" target="theme_preview" class="inline-flex items-center justify-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" title="미리보기">
+                        <a href="<?php echo $h($admin_theme_preview_url.'?theme='.urlencode($t)) ?>" target="theme_preview" class="inline-flex items-center justify-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" title="미리보기">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </a>
                         <button type="button" class="theme_detail inline-flex items-center justify-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-theme="<?php echo $h($t) ?>" title="상세보기">
@@ -140,6 +143,9 @@ admin_layout_start('테마 설정', 'theme');
 
 <script>
 (function () {
+    var themeUpdateUrl = <?php echo json_encode($admin_theme_update_url, JSON_UNESCAPED_SLASHES); ?>;
+    var themeDetailUrl = <?php echo json_encode($admin_theme_detail_url, JSON_UNESCAPED_SLASHES); ?>;
+
     document.querySelectorAll('button.theme_active').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var theme = btn.dataset.theme, name = btn.dataset.name;
@@ -153,7 +159,7 @@ admin_layout_start('테마 설정', 'theme');
             var fd = new FormData();
             fd.append('theme', theme);
             fd.append('set_default_skin', set_default_skin);
-            fetch('/admin/theme_update', { method: 'POST', body: fd, credentials: 'same-origin' })
+            fetch(themeUpdateUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function (r) { return r.text(); })
                 .then(function (txt) {
                     if (txt && txt.trim()) { alert(txt); return; }
@@ -169,7 +175,7 @@ admin_layout_start('테마 설정', 'theme');
             var fd = new FormData();
             fd.append('theme', theme);
             fd.append('type', 'reset');
-            fetch('/admin/theme_update', { method: 'POST', body: fd, credentials: 'same-origin' })
+            fetch(themeUpdateUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function (r) { return r.text(); })
                 .then(function (txt) {
                     if (txt && txt.trim()) { alert(txt); return; }
@@ -197,7 +203,7 @@ admin_layout_start('테마 설정', 'theme');
             openModal();
             var fd = new FormData();
             fd.append('theme', theme);
-            fetch('/admin/theme_detail', { method: 'POST', body: fd, credentials: 'same-origin' })
+            fetch(themeDetailUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function (r) { return r.text(); })
                 .then(function (html) {
                     modalBody.innerHTML = html;

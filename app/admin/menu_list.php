@@ -3,8 +3,8 @@
  * /admin/menu_list — 사이트 메뉴 설정 (parent + sub 2단 메뉴).
  *
  * 추가는 popup 대신 in-page 모달로. 모달 내부에서
- * /admin/menu_form_search?type=group|board|content (JSON) 으로 검색해 1-click 추가.
- * 저장은 /admin/menu_list_update (gnuboard 의 update 로직 그대로 재사용).
+ * G5_ADMIN_URL 기반 menu_form_search?type=group|board|content (JSON) 으로 검색해 1-click 추가.
+ * 저장은 G5_ADMIN_URL 기반 menu_list_update (gnuboard 의 update 로직 그대로 재사용).
  */
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
@@ -41,6 +41,8 @@ sql_pdo_query(
 $result = sql_pdo_query(" select * from {$g5['menu_table']} order by me_id ");
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$menu_list_update_url = G5_ADMIN_URL.'/menu_list_update';
+$menu_form_search_url = G5_ADMIN_URL.'/menu_form_search';
 
 admin_layout_start('메뉴 설정', 'menus');
 ?>
@@ -60,7 +62,7 @@ admin_layout_start('메뉴 설정', 'menus');
         </div>
     </header>
 
-    <form id="fmenulist" action="/admin/menu_list_update" method="post"
+    <form id="fmenulist" action="<?php echo $h($menu_list_update_url) ?>" method="post"
           class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
         <input type="hidden" name="token" value="<?php echo get_admin_token() ?>">
         <div class="overflow-x-auto">
@@ -197,6 +199,7 @@ admin_layout_start('메뉴 설정', 'menus');
 
 <script>
 (function () {
+    var menuFormSearchUrl = <?php echo json_encode($menu_form_search_url, JSON_UNESCAPED_SLASHES); ?>;
     var tbody  = document.getElementById('menu-tbody');
     var modal  = document.getElementById('menu-modal');
     var tabs   = document.getElementById('modal-tabs');
@@ -305,7 +308,7 @@ admin_layout_start('메뉴 설정', 'menus');
     function loadResults(type) {
         loadEl.classList.remove('hidden');
         resBox.innerHTML = '';
-        fetch('/admin/menu_form_search?type=' + encodeURIComponent(type), { credentials: 'same-origin' })
+        fetch(menuFormSearchUrl + '?type=' + encodeURIComponent(type), { credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 loadEl.classList.add('hidden');

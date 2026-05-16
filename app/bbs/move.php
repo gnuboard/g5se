@@ -15,7 +15,12 @@ if ($is_admin != 'board' && $is_admin != 'group' && $is_admin != 'super')
     alert_close("게시판 관리자 이상 접근이 가능합니다.");
 
 $g5['title'] = '게시물 ' . $act;
+if (defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
+    require_once(G5_THEME_PATH.'/modern/_head.inc.php');
+}
 include_once(G5_PATH.'/head.sub.php');
+
+$move_update_url = G5_URL.'/move_update';
 
 $wr_id_list = '';
 if ($wr_id)
@@ -53,9 +58,16 @@ for ($i=0; $row=sql_fetch_array($result); $i++)
 }
 ?>
 
-<div id="copymove" class="new_win">
-    <h1 id="win_title"><?php echo $g5['title'] ?></h1>
-    <form name="fboardmoveall" method="post" action="./move_update.php" onsubmit="return fboardmoveall_submit(this);">
+<div id="copymove" class="m-popup m-move-popup">
+    <header class="m-popup-head">
+        <h1 id="win_title" class="m-popup-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 7h12"/><path d="M8 12h12"/><path d="M8 17h12"/><path d="M3 7h.01"/><path d="M3 12h.01"/><path d="M3 17h.01"/></svg>
+            <?php echo $g5['title'] ?>
+        </h1>
+        <p class="m-popup-sub"><?php echo $act ?>할 게시판을 한 개 이상 선택해 주십시오.</p>
+    </header>
+
+    <form name="fboardmoveall" method="post" action="<?php echo $move_update_url; ?>" onsubmit="return fboardmoveall_submit(this);" class="m-move-form">
     <input type="hidden" name="sw" value="<?php echo $sw ?>">
     <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
     <input type="hidden" name="wr_id_list" value="<?php echo $wr_id_list ?>">
@@ -68,8 +80,8 @@ for ($i=0; $row=sql_fetch_array($result); $i++)
     <input type="hidden" name="act" value="<?php echo $act ?>">
     <input type="hidden" name="url" value="<?php echo get_text(clean_xss_tags($_SERVER['HTTP_REFERER'])); ?>">
 
-    <div class="tbl_head01 tbl_wrap">
-        <table>
+    <div class="m-move-table-wrap">
+        <table class="m-move-table">
         <caption><?php echo $act ?>할 게시판을 한개 이상 선택하여 주십시오.</caption>
         <thead>
         <tr>
@@ -110,18 +122,135 @@ for ($i=0; $row=sql_fetch_array($result); $i++)
         </table>
     </div>
 
-    <div class="win_btn">
-        <input type="submit" value="<?php echo $act ?>" id="btn_submit" class="btn_submit">
+    <div class="m-popup-actions m-move-actions">
+        <button type="button" class="m-btn m-btn-ghost btn_close">창닫기</button>
+        <button type="submit" id="btn_submit" class="m-btn m-btn-primary"><?php echo $act ?></button>
     </div>
     </form>
 
 </div>
 
+<style>
+.m-move-popup {
+    padding: 18px;
+}
+.m-move-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.m-move-table-wrap {
+    overflow: auto;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    background: var(--m-surface);
+}
+.m-move-table {
+    width: 100%;
+    border: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.m-move-table caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+}
+.m-move-table th,
+.m-move-table td {
+    border-bottom: 1px solid var(--m-border);
+    color: var(--m-text);
+}
+.m-move-table thead th {
+    padding: 10px 12px;
+    background: var(--m-surface-2);
+    font-size: var(--m-text-sm);
+    font-weight: 700;
+}
+.m-move-table tbody td {
+    padding: 12px;
+    font-size: var(--m-text-md);
+    vertical-align: middle;
+}
+.m-move-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+.m-move-table tbody tr:hover td {
+    background: var(--m-surface-2);
+}
+.m-move-table .td_chk {
+    width: 48px;
+    text-align: center;
+}
+.m-move-table th:first-child {
+    width: 48px;
+}
+.m-move-table label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    word-break: break-word;
+    cursor: pointer;
+}
+.m-move-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--m-primary);
+}
+.copymove_current {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    padding: 3px 7px;
+    border-radius: var(--m-radius-sm);
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+    font-size: var(--m-text-xs);
+    font-weight: 700;
+}
+.m-move-table tbody tr.copymove_currentbg > td {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+}
+.m-move-table tbody tr.copymove_currentbg:hover > td {
+    background: var(--m-surface-2) !important;
+}
+.m-move-table tbody tr.copymove_currentbg label {
+    color: var(--m-text) !important;
+}
+.m-move-table tbody tr.copymove_currentbg .copymove_current {
+    background: var(--m-primary-soft) !important;
+    color: var(--m-primary) !important;
+}
+[data-theme="dark"] .m-move-table tbody tr.copymove_currentbg > td {
+    background: #111827 !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .m-move-table tbody tr.copymove_currentbg:hover > td {
+    background: #172033 !important;
+}
+[data-theme="dark"] .m-move-table tbody tr.copymove_currentbg .copymove_current {
+    background: rgba(59, 130, 246, 0.22) !important;
+    color: #bfdbfe !important;
+}
+.m-move-actions {
+    justify-content: flex-end;
+    margin-top: 0;
+}
+.m-move-actions .m-btn {
+    width: auto;
+    min-width: 88px;
+    padding: 9px 18px;
+}
+</style>
+
 <script>
 $(function() {
-    $(".win_btn").append("<button type=\"button\" class=\"btn_cancel btn_close\">창닫기</button>");
-
-    $(".win_btn button").click(function() {
+    $(".btn_close").click(function() {
         window.close();
     });
 });
@@ -162,7 +291,7 @@ function fboardmoveall_submit(f)
 
     document.getElementById('btn_submit').disabled = true;
 
-    f.action = './move_update.php';
+    f.action = <?php echo json_encode($move_update_url, JSON_UNESCAPED_SLASHES); ?>;
     return true;
 }
 </script>

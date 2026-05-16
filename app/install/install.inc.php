@@ -102,11 +102,19 @@ if (!is_dir($data_path))
 
 <div class="ins_inner">
     <p>
-        설치 루트 디렉토리에 <?php echo G5_DATA_DIR ?> 디렉토리를 생성하여 주십시오.<br />
-        (app 디렉토리가 있는 곳이 설치 루트 디렉토리 입니다.)<br /><br />
-        $> mkdir <?php echo G5_DATA_DIR ?><br /><br />
-        윈도우의 경우 app 디렉토리와 같은 위치에 data 폴더를 하나 생성해 주시기 바랍니다.<br /><br />
+        설치 루트에 <?php echo G5_DATA_DIR ?> 디렉토리가 필요합니다.<br />
+        <?php echo G5_DATA_DIR ?> 디렉토리는 app 디렉토리와 같은 위치에 생성해 주십시오.
+    </p>
+    <pre class="ins_dir_tree">/
+|- app/
+|- <?php echo G5_DATA_DIR ?>/</pre>
+    <p>
+        $> <code class="ins_cmd">mkdir <?php echo G5_DATA_DIR ?></code><br /><br />
         위 명령 실행후 브라우저를 새로고침 하십시오.
+    </p>
+    <p class="ins_notice">
+        <strong>주의</strong>
+        Apache에서 .htaccess가 비활성화되어 있으면 .php 확장자 없는 주소를 사용할 수 없어 그누보드5 SE 사용이 어려울 수 있습니다.
     </p>
 </div>
 <?php
@@ -126,7 +134,9 @@ if ($exists_data_dir && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
         <div class="ins_inner">
             <p>
                 설치 루트의 <?php echo G5_DATA_DIR ?> 디렉토리 퍼미션을 705로 변경하여 주십시오.<br /><br />
-                $> chmod 705 <?php echo G5_DATA_DIR ?> 또는 chmod uo+rx <?php echo G5_DATA_DIR ?><br /><br />
+                $> <code class="ins_cmd">chmod 705 <?php echo G5_DATA_DIR ?></code>
+                <span class="ins_cmd_or">또는</span>
+                $> <code class="ins_cmd">chmod uo+rx <?php echo G5_DATA_DIR ?></code><br /><br />
                 위 명령 실행후 브라우저를 새로고침 하십시오.
             </p>
         </div>
@@ -140,7 +150,9 @@ if ($exists_data_dir && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
         <div class="ins_inner">
             <p>
                 설치 루트의 <?php echo G5_DATA_DIR ?> 디렉토리 퍼미션을 707로 변경하여 주십시오.<br /><br />
-                $> chmod 707 <?php echo G5_DATA_DIR ?> 또는 chmod uo+rwx <?php echo G5_DATA_DIR ?><br /><br />
+                $> <code class="ins_cmd">chmod 707 <?php echo G5_DATA_DIR ?></code>
+                <span class="ins_cmd_or">또는</span>
+                $> <code class="ins_cmd">chmod uo+rwx <?php echo G5_DATA_DIR ?></code><br /><br />
                 위 명령 실행후 브라우저를 새로고침 하십시오.
             </p>
         </div>

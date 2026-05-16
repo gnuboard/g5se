@@ -141,6 +141,24 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-text) !important;
 }
 
+/* 빈 상품 영역 — 히트상품도 최신/추천상품처럼 배경 박스 없이 토큰 색상만 적용 */
+.m-shell .m-shop-empty {
+    display: block !important;
+    min-height: 0;
+    margin: 0;
+    padding: 100px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--m-text);
+    font-size: inherit;
+    text-align: center;
+}
+[data-theme="dark"] .m-shell .m-shop-empty {
+    background: transparent !important;
+    color: var(--m-text) !important;
+}
+
 /* 정렬바 (#sct_sortlst — 판매많은순/낮은가격순/...) + view toggle (#sct_lst — 리스트뷰/갤러리뷰).
    legacy style.css 가 #fff 배경 + #adadad 회색 글자 hardcode. 다크에선 토큰화. */
 [data-theme="dark"] #sct_sortlst {

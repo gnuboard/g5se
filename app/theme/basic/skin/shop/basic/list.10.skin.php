@@ -144,7 +144,7 @@ foreach((array) $list as $row){
 if ($i >= 1) echo "</ul>\n";
 
 if ($i === 0) {
-    echo '<p class="sct_noitem rounded-lg border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">등록된 상품이 없습니다.</p>'."\n";
+    echo '<p class="sct_noitem m-shop-empty">등록된 상품이 없습니다.</p>'."\n";
 }
 ?>
 <!-- } 상품진열 10 (modern) 끝 -->
