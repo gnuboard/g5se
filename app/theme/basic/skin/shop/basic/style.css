@@ -538,7 +538,7 @@
 #sit_ov {position:relative;float:none;width:auto;min-width:0;height:auto !important;height:355px;min-height:355px;padding-bottom:20px}
 #sit_ov h3 {margin:0 0 10px}
 
-#sit_title {margin:0 0 10px;font-size:2.4em}
+#sit_title {margin:0 0 10px;font-size:2.4em;color:var(--m-text);overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
 #sit_desc {margin:0 0 10px;padding:0;color:#474747;font-size:1.167em}
 #sit_opt_info {position:absolute;font-size:0;text-indent:-9999em;line-height:0;overflow:hidden}
 
@@ -554,7 +554,7 @@
 #sit_star_sns .sns_area:after {content:"";position:absolute;top:-7px;right:13px;width:0;height:0;border-style:solid;border-width:0 6px 8px 6px;border-color:transparent transparent #fff transparent}
 #sit_star_sns .sns_area a {display:inline-block;width:35px;height:35px;line-height:35px;margin-bottom:5px;background:#eee;text-align:center;border-radius:50%}
 #sit_star_sns .sns_area a img {width:24px;height:auto}
-#sit_star_sns .sns_area #sit_btn_rec {font-size:15px}
+#sit_star_sns .sns_area #sit_btn_rec {font-size:15px;background:#f8fafc;color:#4b5259;border:1px solid #d9e0ea}
 #sit_star_sns .sns_area .share-facebook {background:#415b92}
 #sit_star_sns .sns_area .share-twitter {background:#35b3dc}
 

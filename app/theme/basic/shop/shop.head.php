@@ -120,11 +120,23 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-color: var(--m-border) !important;
     color: var(--m-text) !important;
 }
+[data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_img,
+[data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_img a,
+[data-theme="dark"] .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li .sct_img,
+[data-theme="dark"] .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li .sct_img a {
+    background: var(--m-surface-2) !important;
+}
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_txt,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_txt a,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_basic,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_cost {
     color: var(--m-text) !important;
+}
+[data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_id,
+[data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_txt,
+[data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_basic,
+[data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_cost {
+    background: transparent !important;
 }
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_id,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_dict {
@@ -324,6 +336,73 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 /* item.php 다크모드 — sit_ov_from / sit_pvi / sit_ov / sit_opt_added / sit_btn_*
    / sit_siblings 등 메인 영역은 legacy style.css 가 var(--m-*) 토큰 사용 (모드 자동).
    여기 남은 부분은 #sit_tab (하단 탭 영역, 사용후기 / 상품문의) + 일부 hardcode 박스. */
+[data-theme="dark"] #sit_ov_from,
+[data-theme="dark"] #sit_ov_wrap,
+[data-theme="dark"] #sit_ov,
+[data-theme="dark"] #sit_siblings,
+[data-theme="dark"] #sit_buy,
+[data-theme="dark"] .sit_buy_inner {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sit_title,
+[data-theme="dark"] #sit_tot_price,
+[data-theme="dark"] #sit_tot_price strong,
+[data-theme="dark"] #sit_tot_price span,
+[data-theme="dark"] .sit_tot_price,
+[data-theme="dark"] .sit_tot_price strong,
+[data-theme="dark"] .sit_tot_price span {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .sit_info,
+[data-theme="dark"] .sit_info .tr_price,
+[data-theme="dark"] .sit_ov_tbl,
+[data-theme="dark"] .sit_ov_tbl th,
+[data-theme="dark"] .sit_ov_tbl td,
+[data-theme="dark"] .sit_ov_tbl td strong {
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sit_star_sns span,
+[data-theme="dark"] .sit_option label,
+[data-theme="dark"] .sit_side_option label {
+    color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] #sit_opt_added li,
+[data-theme="dark"] .sit_sel_option li {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sit_opt_added .opt_name,
+[data-theme="dark"] #sit_opt_added .sit_opt_prc,
+[data-theme="dark"] .sit_sel_option .opt_name,
+[data-theme="dark"] .sit_sel_option .sit_opt_prc {
+    color: var(--m-text) !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+[data-theme="dark"] #sit_opt_added button,
+[data-theme="dark"] .sit_sel_option button {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sit_opt_added .num_input,
+[data-theme="dark"] .sit_sel_option .num_input {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .sit_btn_cart {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .sit_btn_cart:hover {
+    background: var(--m-surface-2) !important;
+}
 [data-theme="dark"] #sit_info,
 [data-theme="dark"] #sit_tab .tab_tit,
 [data-theme="dark"] #sit_tab .tab_tit li button,
@@ -333,6 +412,18 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
     color: var(--m-text);
+}
+[data-theme="dark"] .sit_use_top,
+[data-theme="dark"] #sit_use_wbtn,
+[data-theme="dark"] #sit_qa_wbtn {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sit_use_wbtn a.itemuse_list,
+[data-theme="dark"] #sit_qa_wbtn a#itemqa_list {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
 }
 [data-theme="dark"] #sit_inf_open th,
 [data-theme="dark"] #sit_sms_new .prd_name,
@@ -356,6 +447,15 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] #sit_star_sns .sns_area {
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
+}
+[data-theme="dark"] #sit_star_sns .sns_area #sit_btn_rec {
+    background: var(--m-surface-2) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] #sit_star_sns .btn_sns_share,
+[data-theme="dark"] #btn_wish {
+    color: var(--m-text-soft) !important;
 }
 /* 상품 옵션 select (사이즈 등) — native <select>. 다크에선 select 자체 + 브라우저 dropdown
    둘 다 토큰. color-scheme:dark 힌트로 브라우저가 dropdown 옵션 리스트도 다크 팔레트로 그림. */

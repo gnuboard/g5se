@@ -213,7 +213,74 @@ function get_ajax_token()
     return token;
 }
 
+function initAdminFloatingActions()
+{
+    var forms = document.querySelectorAll("main form");
+    var actionLabels = ["확인", "저장", "추가", "수정"];
+
+    forms.forEach(function(form) {
+        if (form.querySelector(".admin-floating-actions")) {
+            return;
+        }
+
+        var source = null;
+        var submit = null;
+
+        Array.prototype.forEach.call(
+            form.querySelectorAll('input[type="submit"], button[type="submit"], button:not([type])'),
+            function(button) {
+                if (submit) {
+                    return;
+                }
+
+                var text = button.tagName === "INPUT" ? button.value : button.textContent;
+                if (actionLabels.indexOf((text || "").trim()) !== -1) {
+                    submit = button;
+                }
+            }
+        );
+
+        if (!submit) {
+            return;
+        }
+
+        [
+            ".btn_fixed_top",
+            ".btn_confirm01",
+            ".btn_confirm",
+            ".flex.items-center.justify-end"
+        ].forEach(function(selector) {
+            if (source) {
+                return;
+            }
+
+            var bar = submit.closest(selector);
+            if (bar && form.contains(bar)) {
+                source = bar;
+            }
+        });
+
+        if (!source) {
+            source = submit.parentElement;
+        }
+
+        var floating = source.cloneNode(true);
+        floating.classList.remove("btn_fixed_top", "btn_confirm01", "btn_confirm");
+        floating.classList.add("admin-floating-actions");
+        floating.setAttribute("aria-label", "폼 저장");
+
+        floating.querySelectorAll("[id]").forEach(function(el) {
+            el.removeAttribute("id");
+        });
+
+        form.classList.add("has-admin-floating-actions");
+        form.insertBefore(floating, form.firstChild);
+    });
+}
+
 $(function() {
+    initAdminFloatingActions();
+
     $(document).on("click", "form input:submit, form button:submit", function() {
         var f = this.form;
         var token = get_ajax_token();

@@ -142,6 +142,7 @@ class Router
         '#^/shop/?$#'                                                                  => 'shop/index.php',
         '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+?)\.php/?$#i'                         => 'shop/{_shoppage}.php',
         '#^/shop/(?P<_shoppage>ajax\.[a-z0-9_.]+)/?$#i'                               => 'shop/{_shoppage}.php',
+        '#^/shop/(itemrecommend(?:mail)?)(?:\.php)?/?$#i'                              => 'shop/{1}.php',
         // 자원형 클린 URL — segment catch-all 보다 먼저 매칭되어야 함
         // (catch-all 이 /shop/item/item0008 도 잡아 shop/item/item0008.php 를 시도하면 404)
         '#^/shop/item/(?P<it_id>[a-zA-Z0-9_-]+)/?$#'                                   => 'shop/item.php',
@@ -338,6 +339,13 @@ class Router
                 header('Location: '.$location($url), true, 301);
                 exit;
             }
+        }
+        // 추천하기 팝업은 레거시 파일을 새 UI로 감싼 엔드포인트다. 노출 URL은
+        // .php 없이 사용하며, clean item URL 하위에서 잘못 상대 해석된 경로도 보정한다.
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/item/itemrecommend.php') {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            header('Location: '.$location('/shop/itemrecommend'.($qs ? '?'.$qs : '')), true, 302);
+            exit;
         }
         if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/list.php') {
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);

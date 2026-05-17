@@ -829,6 +829,29 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
     margin-right: 0.25rem;
     vertical-align: middle;
 }
+.legacy-admin-content .item-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.75rem;
+}
+.legacy-admin-content .item-type-options .frm_info {
+    flex: 0 0 100%;
+}
+.legacy-admin-content .item-type-options input[type="checkbox"] {
+    margin: 0;
+}
+.legacy-admin-content .item-type-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+.legacy-admin-content .item-type-options label img {
+    display: inline-block;
+    vertical-align: middle;
+}
 [data-theme="dark"] .legacy-admin-content .tbl_head01 tbody td,
 [data-theme="dark"] .legacy-admin-content .tbl_frm01 tbody td {
     border-bottom-color: var(--slate-800);
@@ -1667,12 +1690,14 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 }
 .config-page,
 .shop-config-page,
-.member-form-page {
+.member-form-page,
+main form.has-admin-floating-actions {
     padding-bottom: 5rem;
 }
 .config-page .admin-floating-actions,
 .shop-config-page .admin-floating-actions,
-.member-form-page .admin-floating-actions {
+.member-form-page .admin-floating-actions,
+main .admin-floating-actions {
     position: fixed;
     right: 1.5rem;
     bottom: 1.25rem;
@@ -1690,7 +1715,8 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 }
 [data-theme="dark"] .config-page .admin-floating-actions,
 [data-theme="dark"] .shop-config-page .admin-floating-actions,
-[data-theme="dark"] .member-form-page .admin-floating-actions {
+[data-theme="dark"] .member-form-page .admin-floating-actions,
+[data-theme="dark"] main .admin-floating-actions {
     border-color: var(--slate-700);
     background: rgba(15, 23, 42, 0.92);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36);
@@ -1698,7 +1724,8 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 @media (max-width: 640px) {
     .config-page .admin-floating-actions,
     .shop-config-page .admin-floating-actions,
-    .member-form-page .admin-floating-actions {
+    .member-form-page .admin-floating-actions,
+    main .admin-floating-actions {
         right: 0.75rem;
         bottom: 0.75rem;
         left: 0.75rem;

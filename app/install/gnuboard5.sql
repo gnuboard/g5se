@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `g5_config` (
   `cf_mobile_faq_skin` varchar(50) NOT NULL DEFAULT '',
   `cf_mobile_member_skin` varchar(50) NOT NULL DEFAULT '',
   `cf_captcha_mp3` varchar(255) NOT NULL DEFAULT '',
-  `cf_editor` varchar(50) NOT NULL DEFAULT '',
+  `cf_editor` varchar(50) NOT NULL DEFAULT 'ckeditor4',
   `cf_cert_use` tinyint(4) NOT NULL DEFAULT '0',
   `cf_cert_find` tinyint(4) NOT NULL DEFAULT '0',
   `cf_cert_ipin` varchar(255) NOT NULL DEFAULT '',
