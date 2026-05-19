@@ -5,6 +5,7 @@
 
 // g5se: ckeditor4 자산 베이스 (laravel 의 /assets/editors/ckeditor4 가 아닌 plugin 경로 사용)
 window.G5_CKEDITOR4_URL = (typeof g5_editor_url !== 'undefined') ? g5_editor_url : '/plugin/editor/ckeditor4';
+window.G5_CKEDITOR4_UPLOAD_URL = (typeof g5_url !== 'undefined') ? g5_url + '/api/editor/ckeditor4/upload' : '/api/editor/ckeditor4/upload';
 
 // g5se: 페이지(parent) 의 다크모드 감지 — html.dark 또는 [data-theme=dark]
 window.G5_CKEDITOR4_IS_DARK = function () {
@@ -55,9 +56,9 @@ CKEDITOR.editorConfig = function( config ) {
 
     // g5se: 이미지 / 파일 업로드 — plugin 안의 upload.php 사용 (gnuboard 표준 경로).
     // class 자동치환(.ckeditor) 으로 만들어진 인스턴스 전체에 적용.
-    config.filebrowserUploadUrl  = window.G5_CKEDITOR4_URL + '/upload.php';
-    config.filebrowserImageUploadUrl = window.G5_CKEDITOR4_URL + '/upload.php?type=image';
-    config.imageUploadUrl        = window.G5_CKEDITOR4_URL + '/upload.php?responseType=json';
+    config.filebrowserUploadUrl  = window.G5_CKEDITOR4_UPLOAD_URL;
+    config.filebrowserImageUploadUrl = window.G5_CKEDITOR4_UPLOAD_URL + '?type=image';
+    config.imageUploadUrl        = window.G5_CKEDITOR4_UPLOAD_URL + '?responseType=json';
 
     // 폰트 설정
     config.font_names = '굴림/Gulim;돋움/Dotum;바탕/Batang;궁서/Gungsuh;맑은 고딕/Malgun Gothic;' +
@@ -145,9 +146,9 @@ window.initializeCKEditor = function(elementId, customConfig, isAuthenticated, c
             }
         }
         
-        config.filebrowserUploadUrl = '/ckeditor/upload?' + uploadUrlParams;
-        config.filebrowserImageUploadUrl = '/ckeditor/upload?' + uploadUrlParams;
-        config.imageUploadUrl = '/ckeditor/upload-drop?' + uploadUrlParams;
+        config.filebrowserUploadUrl = window.G5_CKEDITOR4_UPLOAD_URL + '?' + uploadUrlParams;
+        config.filebrowserImageUploadUrl = window.G5_CKEDITOR4_UPLOAD_URL + '?' + uploadUrlParams;
+        config.imageUploadUrl = window.G5_CKEDITOR4_UPLOAD_URL + '?' + uploadUrlParams + '&responseType=json';
         config.extraPlugins = 'emoji,uploadwidget,uploadimage';
     } else {
         config.extraPlugins = 'emoji';

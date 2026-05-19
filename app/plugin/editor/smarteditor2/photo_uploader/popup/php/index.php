@@ -9,10 +9,10 @@
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
  */
-include_once("./_common.php");
+include_once(__DIR__ . "/_common.php");
 
 if( !function_exists('json_encode') ) {
-    @include_once("./JSON.php");
+    @include_once(__DIR__ . "/JSON.php");
     function json_encode($data) {
         $json = new Services_JSON();
         return( $json->encode($data) );
@@ -30,7 +30,7 @@ $data_url = G5_DATA_URL.'/editor/'.$ym.'/';
 @chmod($data_dir, G5_DIR_PERMISSION);
 
 if(!function_exists('ft_nonce_is_valid')){
-    include_once('../../../editor.lib.php');
+    include_once(__DIR__ . '/../../../editor.lib.php');
 }
 
 $is_editor_upload = false;
@@ -43,7 +43,7 @@ if( $is_editor_upload ) {
     
     run_event('smarteditor_photo_upload', $data_dir, $data_url);
 
-    require('UploadHandler.php');
+    require(__DIR__ . '/UploadHandler.php');
     $options = array(
         'upload_dir' => $data_dir,
         'upload_url' => $data_url,

@@ -85,6 +85,13 @@ class Router
         '/poll_update'            => 'bbs/poll_update.php',
         '/poll_etc_update'        => 'bbs/poll_etc_update.php',
         '/poll_etc_update_mail'   => 'bbs/poll_etc_update_mail.php',
+
+        // 에디터 업로드 — 글쓰기 페이지와 같은 라우터/세션 컨텍스트에서 처리
+        '/api/editor/upload'              => 'plugin/editor/smarteditor2/photo_uploader/popup/php/index.php',
+        '/api/editor/smarteditor2/upload' => 'plugin/editor/smarteditor2/photo_uploader/popup/php/index.php',
+        '/api/editor/ckeditor4/upload'    => 'plugin/editor/ckeditor4/upload.php',
+        '/api/editor/cheditor5/upload'    => 'plugin/editor/cheditor5/imageUpload/upload.php',
+        '/api/editor/cheditor5/delete'    => 'plugin/editor/cheditor5/imageUpload/delete.php',
     ];
 
     /** 디버그/유틸 라우트 (정규식 기반) */

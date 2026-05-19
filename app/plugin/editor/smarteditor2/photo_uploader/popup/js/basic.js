@@ -15,9 +15,16 @@ jQuery(function ($) {
         ed_nonce = opener.window.nhn.husky.SE2M_Configuration.SE2M_Accessibility.ed_nonce;
     }
 
+    function getUploadUrl() {
+        var parentWindow = (!!opener && !!opener.window) ? opener.window : null;
+        var baseUrl = parentWindow && typeof parentWindow.g5_url !== 'undefined' ? parentWindow.g5_url : '';
+        var handler = baseUrl ? baseUrl + '/api/editor/smarteditor2/upload' : './php/index.php';
+        return handler + '?_nonce=' + encodeURIComponent(ed_nonce);
+    }
+
     // Change this to the location of your server-side upload handler:
     var gnu = {
-        url: './php/index.php?_nonce=' + ed_nonce,
+        url: getUploadUrl(),
         container_el: 'body',
         dreg_area: '#drag_area',
         dreg_area_list: '#drag_area > ul',

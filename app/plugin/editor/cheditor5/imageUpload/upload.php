@@ -1,8 +1,8 @@
 <?php
-require_once("config.php");
+require_once(__DIR__ . "/config.php");
 
 if (!function_exists('ft_nonce_is_valid')) {
-    include_once('../editor.lib.php');
+    include_once(__DIR__ . '/../editor.lib.php');
 }
 
 if (!function_exists('che_reprocessImage')) {
@@ -60,9 +60,14 @@ if (!function_exists('che_reprocessImage')) {
 
 $is_editor_upload = false;
 
+$request_nonce = isset($_REQUEST['_nonce']) ? $_REQUEST['_nonce'] : '';
+if ($request_nonce && ft_nonce_is_valid($request_nonce, 'cheditor')) {
+    $is_editor_upload = true;
+}
+
 $get_nonce = get_session('nonce_' . FT_NONCE_SESSION_KEY);
 
-if ($get_nonce && ft_nonce_is_valid($get_nonce, 'cheditor')) {
+if (!$is_editor_upload && $get_nonce && ft_nonce_is_valid($get_nonce, 'cheditor')) {
     $is_editor_upload = true;
 }
 
