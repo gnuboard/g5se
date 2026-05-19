@@ -252,11 +252,30 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
 
 <?php if (!$_addr_empty) { ?>
 <script>
+function get_order_window()
+{
+    if (window.opener && !window.opener.closed && window.opener.forderform) {
+        return window.opener;
+    }
+
+    if (window.parent && window.parent !== window && window.parent.forderform) {
+        return window.parent;
+    }
+
+    return null;
+}
+
 $(function() {
     $(".sel_address").on("click", function() {
+        var order_win = get_order_window();
+
+        if (!order_win) {
+            return false;
+        }
+
         var addr = $(this).siblings("input").val().split(String.fromCharCode(30));
 
-        var f = window.opener.forderform;
+        var f = order_win.forderform;
         f.od_b_name.value        = addr[0];
         f.od_b_tel.value         = addr[1];
         f.od_b_hp.value          = addr[2];
@@ -273,14 +292,18 @@ $(function() {
         if(zip1 != "" && zip2 != "") {
             var code = String(zip1) + String(zip2);
 
-            if(window.opener.zipcode != code) {
-                window.opener.zipcode = code;
-                window.opener.calculate_sendcost(code);
+            if(order_win.zipcode != code) {
+                order_win.zipcode = code;
+                order_win.calculate_sendcost(code);
             }
         }
 
         window.close();
     });
+
+    if (!get_order_window()) {
+        $(".sel_address").hide();
+    }
 
     $(".del_address").on("click", function() {
         return confirm("배송지 목록을 삭제하시겠습니까?");

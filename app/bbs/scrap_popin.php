@@ -11,8 +11,12 @@ if ($is_guest) {
     echo <<<HEREDOC
     <script>
         alert('회원만 접근 가능합니다.');
-        opener.location.href = '$href2';
-        window.close();
+        if (window.opener) {
+            opener.location.href = '$href2';
+            window.close();
+        } else {
+            top.location.href = '$href2';
+        }
     </script>
     <noscript>
     <p>회원만 접근 가능합니다.</p>
@@ -26,7 +30,10 @@ echo <<<HEREDOC
 <script>
     if (window.name != 'win_scrap') {
         alert('올바른 방법으로 사용해 주십시오.');
-        window.close();
+        if (window.parent && window.parent !== window && window.parent.G5PopupLayer)
+            window.parent.G5PopupLayer.close();
+        else
+            window.close();
     }
 </script>
 HEREDOC;
@@ -47,6 +54,8 @@ if ($row['cnt']) {
     <script>
     if (confirm('이미 스크랩하신 글 입니다.\\n\\n지금 스크랩을 확인하시겠습니까?'))
         document.location.href = '{$scrap_url}';
+    else if (window.parent && window.parent !== window && window.parent.G5PopupLayer)
+        window.parent.G5PopupLayer.close();
     else
         window.close();
     </script>

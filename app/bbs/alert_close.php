@@ -18,7 +18,13 @@ if($error) {
 <script>
 alert("<?php echo $msg; ?>");
 try {
-    window.close();
+    if (window.parent && window.parent !== window && window.parent.G5PopupLayer) {
+        window.parent.G5PopupLayer.close();
+    } else if (window.G5PopupLayer) {
+        window.G5PopupLayer.close();
+    } else {
+        window.close();
+    }
 } catch(error) {
     history.back();
 }

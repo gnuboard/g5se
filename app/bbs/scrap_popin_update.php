@@ -27,6 +27,8 @@ if (isset($row['cnt']) && $row['cnt'])
     <script>
     if (confirm(\'이미 스크랩하신 글 입니다.'."\n\n".'지금 스크랩을 확인하시겠습니까?\'))
         document.location.href = \''.$scrap_url.'\';
+    else if (window.parent && window.parent !== window && window.parent.G5PopupLayer)
+        window.parent.G5PopupLayer.close();
     else
         window.close();
     </script>
@@ -121,6 +123,8 @@ delete_cache_latest($bo_table);
 <script>
     if (confirm("이 글을 스크랩 하였습니다.\n\n지금 스크랩을 확인하시겠습니까?"))
         document.location.href = "<?php echo $scrap_url; ?>";
+    else if (window.parent && window.parent !== window && window.parent.G5PopupLayer)
+        window.parent.G5PopupLayer.close();
     else
         window.close();
 </script>

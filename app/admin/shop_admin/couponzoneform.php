@@ -248,9 +248,9 @@ $(function() {
         var url = "./coupontarget.php?sch_target=";
 
         if(cp_method == "0") {
-            window.open(url+"0", "win_target", opt);
+            popup_window(url+"0", "win_target", opt, "상품검색");
         } else if(cp_method == "1") {
-            window.open(url+"1", "win_target", opt);
+            popup_window(url+"1", "win_target", opt, "분류검색");
         } else {
             return false;
         }

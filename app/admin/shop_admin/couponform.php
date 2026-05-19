@@ -54,6 +54,65 @@ admin_layout_start($g5["title"], "shop");
 <?php
 include_once(G5_PLUGIN_PATH.'/jquery-ui/datepicker.php');
 ?>
+<style>
+.coupon-search-controls {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+.coupon-search-controls .frm_input {
+    min-width: 16rem;
+}
+.coupon-search-controls .btn_frmline {
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--slate-300, #cbd5e1);
+    background: var(--slate-100, #f1f5f9);
+    color: var(--slate-800, #1e293b);
+    font-weight: 700;
+}
+.coupon-search-controls .btn_frmline:hover {
+    border-color: var(--admin-primary-500, #3464f5);
+    color: var(--admin-primary-700, #1d4ed8);
+}
+.coupon-search-controls .coupon-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0 0.75rem;
+    color: var(--slate-700, #334155);
+}
+.coupon-search-controls input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--admin-primary-600, #2563eb);
+}
+[data-theme="dark"] .coupon-search-controls .btn_frmline {
+    border-color: var(--slate-700, #334155);
+    background: var(--slate-800, #1e293b);
+    color: var(--slate-200, #e2e8f0);
+}
+[data-theme="dark"] .coupon-search-controls .btn_frmline:hover {
+    border-color: var(--admin-primary-400, #60a5fa);
+    color: var(--admin-primary-300, #93c5fd);
+}
+[data-theme="dark"] .coupon-search-controls .coupon-check {
+    color: var(--slate-300, #cbd5e1);
+}
+@media (max-width: 640px) {
+    .coupon-search-controls,
+    .coupon-search-controls .frm_input,
+    .coupon-search-controls .btn_frmline {
+        width: 100%;
+    }
+    .coupon-search-controls .btn_frmline {
+        justify-content: center;
+    }
+}
+</style>
 
 <form name="fcouponform" action="./couponformupdate.php" method="post" onsubmit="return form_check(this);">
 <input type="hidden" name="w" value="<?php echo get_sanitize_input($w); ?>">
@@ -93,17 +152,23 @@ include_once(G5_PLUGIN_PATH.'/jquery-ui/datepicker.php');
     <tr id="tr_cp_target">
         <th scope="row"><label for="cp_target"><?php echo $cp_target_label; ?></label></th>
         <td>
-           <input type="text" name="cp_target" value="<?php echo stripslashes($cp['cp_target']); ?>" id="cp_target" required class="required frm_input">
-           <button type="button" id="sch_target" class="btn_frmline"><?php echo $cp_target_btn; ?></button>
+           <div class="coupon-search-controls">
+               <input type="text" name="cp_target" value="<?php echo stripslashes($cp['cp_target']); ?>" id="cp_target" required class="required frm_input">
+               <button type="button" id="sch_target" class="btn_frmline"><?php echo $cp_target_btn; ?></button>
+           </div>
         </td>
     </tr>
     <tr>
         <th scope="row"><label for="mb_id">회원아이디</label></th>
         <td>
-            <input type="text" name="mb_id" value="<?php echo stripslashes($cp['mb_id']); ?>" id="mb_id" class="frm_input">
-            <button type="button" id="sch_member" class="btn_frmline">회원검색</button>
-            <input type="checkbox" name="chk_all_mb" id="chk_all_mb" value="1">
-            <label for="chk_all_mb">전체회원</label>
+            <div class="coupon-search-controls">
+                <input type="text" name="mb_id" value="<?php echo stripslashes($cp['mb_id']); ?>" id="mb_id" class="frm_input">
+                <button type="button" id="sch_member" class="btn_frmline">회원검색</button>
+                <label for="chk_all_mb" class="coupon-check">
+                    <input type="checkbox" name="chk_all_mb" id="chk_all_mb" value="1">
+                    <span>전체회원</span>
+                </label>
+            </div>
         </td>
     </tr>
     <tr>
@@ -207,9 +272,9 @@ $(function() {
         var url = "./coupontarget.php?sch_target=";
 
         if(cp_method == "0") {
-            window.open(url+"0", "win_target", opt);
+            popup_window(url+"0", "win_target", opt, "상품검색");
         } else if(cp_method == "1") {
-            window.open(url+"1", "win_target", opt);
+            popup_window(url+"1", "win_target", opt, "분류검색");
         } else {
             return false;
         }
@@ -223,7 +288,7 @@ $(function() {
 
         var opt = "left=50,top=50,width=520,height=600,scrollbars=1";
         var url = "./couponmember.php";
-        window.open(url, "win_member", opt);
+        popup_window(url, "win_member", opt, "회원검색");
     });
 
     $("#cp_start, #cp_end").datepicker(

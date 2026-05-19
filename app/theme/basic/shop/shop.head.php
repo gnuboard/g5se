@@ -702,6 +702,103 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-primary) !important;
 }
 
+/* 주문상세 주문취소 레이어 */
+.m-shell #sod_cancel_pop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10000 !important;
+}
+.m-shell #sod_cancel_pop .sod_fin_bg {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, .58) !important;
+    backdrop-filter: blur(2px);
+}
+.m-shell #sod_fin_cancelfrm {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    z-index: 1 !important;
+    transform: translate(-50%, -50%) !important;
+    width: min(360px, calc(100vw - 32px)) !important;
+    max-height: calc(100vh - 48px) !important;
+    margin: 0 !important;
+    overflow: auto !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius-lg) !important;
+    background: var(--m-surface) !important;
+    color: var(--m-text) !important;
+    box-shadow: 0 24px 70px rgba(15,23,42,.32) !important;
+}
+.m-shell #sod_fin_cancelfrm h2 {
+    position: static !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 16px 52px 16px 20px !important;
+    border-bottom: 1px solid var(--m-border) !important;
+    background: color-mix(in srgb, var(--m-surface) 92%, var(--m-primary) 8%) !important;
+    color: var(--m-text) !important;
+    font-size: var(--m-text-lg) !important;
+    font-weight: 750 !important;
+    line-height: 1.35 !important;
+    text-align: left !important;
+}
+.m-shell #sod_fin_cancelfrm form {
+    padding: 24px 30px 30px !important;
+}
+.m-shell #sod_fin_cancelfrm .frm_input {
+    width: 100% !important;
+    height: 48px !important;
+    margin: 0 0 8px !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius) !important;
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+}
+.m-shell #sod_fin_cancelfrm .frm_input::placeholder {
+    color: var(--m-text-faint) !important;
+}
+.m-shell #sod_fin_cancelfrm .frm_input:focus {
+    border-color: var(--m-primary) !important;
+    box-shadow: 0 0 0 3px var(--m-primary-soft) !important;
+    outline: none !important;
+}
+.m-shell #sod_fin_cancelfrm .btn_frmline {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 48px !important;
+    padding: 0 16px !important;
+    border: 1px solid var(--m-primary) !important;
+    border-radius: var(--m-radius) !important;
+    background: var(--m-primary) !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+}
+.m-shell #sod_fin_cancelfrm .sod_cls_btn {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: var(--m-radius) !important;
+    background: transparent !important;
+    color: var(--m-text-soft) !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+}
+.m-shell #sod_fin_cancelfrm .sod_cls_btn:hover {
+    background: var(--m-surface-2) !important;
+    color: var(--m-text) !important;
+}
+
 /* 다크 — tbl_head01 (orderer/receiver/payment/dvr) — 상세 정보 테이블 */
 [data-theme="dark"] #sod_fin .tbl_head01 thead th {
     background: var(--m-surface-2) !important;

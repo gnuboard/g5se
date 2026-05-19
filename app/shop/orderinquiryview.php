@@ -211,6 +211,7 @@ if($od['od_pg'] == 'lg') {
         $receipt_price  = $od['od_receipt_price']
                         + $od['od_receipt_point'];
         $cancel_price   = $od['od_cancel_price'];
+        $is_order_cancelled = ($od['od_status'] === '취소' || $cancel_price > 0);
 
         $misu = true;
         $misu_price = $tot_price - $receipt_price;
@@ -270,6 +271,10 @@ if($od['od_pg'] == 'lg') {
                 <tr>
                     <th scope="row">주문일시</th>
                     <td><?php echo $od['od_time']; ?></td>
+                </tr>
+                <tr>
+                    <th scope="row">주문상태</th>
+                    <td><?php echo get_text($od['od_status']); ?></td>
                 </tr>
                 <tr>
                     <th scope="row">결제방식</th>
@@ -624,7 +629,6 @@ if($od['od_pg'] == 'lg') {
             <li class="sod_bsk_dvr">
                 <span>취소금액</span>
                 <strong><?php echo number_format($od['od_cancel_price']); ?> 원</strong>
-                
             </li>
             <?php } ?>
             <li class="sod_bsk_cnt">
@@ -670,7 +674,7 @@ if($od['od_pg'] == 'lg') {
             <h2>주문취소</h2>
             <?php
             // 취소한 내역이 없다면
-            if ($cancel_price == 0) {
+            if (!$is_order_cancelled) {
                 if ($custom_cancel) {
             ?>
             <button type="button" onclick="document.getElementById('sod_fin_cancelfrm').style.display='block';">주문 취소하기</button>
@@ -690,7 +694,7 @@ if($od['od_pg'] == 'lg') {
                 }
             } else {
             ?>
-            <p>주문 취소, 반품, 품절된 내역이 있습니다.</p>
+            <p>주문이 취소되었습니다.</p>
             <?php } ?>
         </section>
     </div>

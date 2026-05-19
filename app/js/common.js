@@ -101,10 +101,270 @@ function number_format(data)
     return number;
 }
 
+// 내부 팝업 레이어
+(function(win, doc) {
+    var popup = null;
+    var popupFrame = null;
+    var popupTitle = null;
+    var popupBody = null;
+    var popupLastFocus = null;
+
+    function is_internal_url(url)
+    {
+        var link = doc.createElement("a");
+        link.href = url;
+
+        return link.protocol === win.location.protocol && link.host === win.location.host;
+    }
+
+    function add_layer_param(url)
+    {
+        var link = doc.createElement("a");
+        link.href = url;
+
+        if (!is_internal_url(link.href))
+            return url;
+
+        if (/[?&]g5_layer=1(?:&|$)/.test(link.search))
+            return link.href;
+
+        link.search += (link.search ? "&" : "?") + "g5_layer=1";
+        return link.href;
+    }
+
+    function get_popup_size(opt)
+    {
+        var width = 720;
+        var height = 640;
+        var match;
+
+        if (opt) {
+            match = String(opt).match(/(?:^|[, ])width\s*=\s*([0-9]+)/i);
+            if (match)
+                width = parseInt(match[1], 10);
+
+            match = String(opt).match(/(?:^|[, ])height\s*=\s*([0-9]+)/i);
+            if (match)
+                height = parseInt(match[1], 10);
+        }
+
+        return { width: width, height: height };
+    }
+
+    function get_popup_title(winname)
+    {
+        var titles = {
+            win_point: "포인트",
+            win_memo: "쪽지",
+            win_email: "메일 보내기",
+            win_profile: "자기소개",
+            win_scrap: "스크랩",
+            win_password_lost: "비밀번호 찾기",
+            win_poll: "설문 결과",
+            win_coupon: "쿠폰",
+            wformmail: "메일 보내기",
+            largeimage: "이미지 보기",
+            itemrecommend: "상품 추천",
+            itemstocksms: "재입고 알림",
+            win_target: "상품검색",
+            win_member: "회원검색",
+            win_address: "배송지 목록"
+        };
+
+        return titles[winname] || "팝업";
+    }
+
+    function is_escape_key(event)
+    {
+        event = event || win.event;
+        return event && (event.key === "Escape" || event.keyCode === 27);
+    }
+
+    function ensure_popup()
+    {
+        var close_btn;
+
+        if (popup)
+            return;
+
+        popup = doc.createElement("div");
+        popup.className = "g5-popup-layer";
+        popup.setAttribute("hidden", "hidden");
+        popup.innerHTML = '' +
+            '<div class="g5-popup-layer__backdrop" data-g5-popup-close></div>' +
+            '<section class="g5-popup-layer__dialog" role="dialog" aria-modal="true" aria-labelledby="g5-popup-layer-title">' +
+                '<header class="g5-popup-layer__head">' +
+                    '<div class="g5-popup-layer__title-wrap">' +
+                        '<span class="g5-popup-layer__mark" aria-hidden="true"></span>' +
+                        '<h2 id="g5-popup-layer-title" class="g5-popup-layer__title"></h2>' +
+                    '</div>' +
+                    '<button type="button" class="g5-popup-layer__close" data-g5-popup-close aria-label="닫기">' +
+                        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+                    '</button>' +
+                '</header>' +
+                '<div class="g5-popup-layer__body"></div>' +
+            '</section>';
+
+        doc.body.appendChild(popup);
+
+        popupTitle = doc.getElementById("g5-popup-layer-title");
+        popupBody = popup.querySelector(".g5-popup-layer__body");
+        close_btn = popup.querySelector(".g5-popup-layer__close");
+
+        popup.addEventListener("click", function(event) {
+            if (event.target && event.target.closest && event.target.closest("[data-g5-popup-close]"))
+                win.G5PopupLayer.close();
+        });
+
+        doc.addEventListener("keydown", function(event) {
+            if (!popup.hasAttribute("hidden") && is_escape_key(event))
+                win.G5PopupLayer.close();
+        });
+
+        if (close_btn)
+            close_btn.focus();
+    }
+
+    function create_popup_frame(winname)
+    {
+        popupBody.innerHTML = "";
+        popupFrame = doc.createElement("iframe");
+        popupFrame.className = "g5-popup-layer__frame";
+        popupFrame.title = "팝업 내용";
+        popupFrame.name = winname || "g5_popup_layer";
+
+        popupFrame.addEventListener("load", function() {
+            try {
+                var frame_win = popupFrame.contentWindow;
+                var frame_doc = frame_win.document;
+                frame_win.close = function() {
+                    win.G5PopupLayer.close();
+                };
+                frame_win.G5PopupLayer = win.G5PopupLayer;
+                if (frame_doc) {
+                    frame_doc.addEventListener("keydown", function(event) {
+                        if (is_escape_key(event))
+                            win.G5PopupLayer.close();
+                    });
+                }
+            } catch (e) {
+                return;
+            }
+        });
+
+        popupBody.appendChild(popupFrame);
+        return popupFrame;
+    }
+
+    function inject_popup_style()
+    {
+        var style;
+
+        if (doc.getElementById("g5-popup-layer-style"))
+            return;
+
+        style = doc.createElement("style");
+        style.id = "g5-popup-layer-style";
+        style.type = "text/css";
+        style.appendChild(doc.createTextNode(
+            ".g5-popup-layer{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}" +
+            ".g5-popup-layer[hidden]{display:none}" +
+            ".g5-popup-layer__backdrop{position:absolute;inset:0;background:rgba(15,23,42,.58);backdrop-filter:blur(2px)}" +
+            ".g5-popup-layer__dialog{position:relative;z-index:1;display:flex;flex-direction:column;width:min(var(--g5-popup-width,720px),calc(100vw - 24px));height:min(var(--g5-popup-height,640px),calc(100vh - 24px));background:var(--m-bg,#f8fafc);border:1px solid var(--m-border,#e2e8f0);border-radius:14px;box-shadow:0 24px 70px rgba(15,23,42,.32);overflow:hidden}" +
+            ".g5-popup-layer__head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;padding:0 10px 0 18px;border-bottom:1px solid var(--m-border,#e2e8f0);background:color-mix(in srgb,var(--m-surface,#fff) 92%,var(--m-primary,#2563eb) 8%);color:var(--m-text,#0f172a)}" +
+            ".g5-popup-layer__title-wrap{display:flex;align-items:center;gap:10px;min-width:0}" +
+            ".g5-popup-layer__mark{width:4px;height:24px;border-radius:999px;background:var(--m-primary,#2563eb);box-shadow:0 0 0 3px var(--m-primary-soft,rgba(37,99,235,.12));flex:0 0 auto}" +
+            ".g5-popup-layer__title{margin:0;min-width:0;font-size:14px;font-weight:750;color:var(--m-text,#0f172a);line-height:1.3;letter-spacing:0}" +
+            ".g5-popup-layer__close{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid var(--m-border,#e2e8f0);border-radius:var(--m-radius,8px);background:transparent;color:var(--m-text-soft,#475569);cursor:pointer}" +
+            ".g5-popup-layer__close svg{display:block;pointer-events:none}" +
+            ".g5-popup-layer__close:hover{background:var(--m-surface-2,var(--m-surface,#fff));color:var(--m-text,#0f172a)}" +
+            ".g5-popup-layer__body{display:flex;flex:1;min-height:0}" +
+            ".g5-popup-layer__frame{display:block;flex:1;width:100%;min-height:0;border:0;background:var(--m-bg,#f8fafc)}" +
+            "[data-theme=dark] .g5-popup-layer__dialog{background:var(--m-bg,#0a0e1a);border-color:var(--m-border,#2a3344)}" +
+            "[data-theme=dark] .g5-popup-layer__head{background:color-mix(in srgb,var(--m-surface,#131825) 92%,var(--m-primary,#3b82f6) 8%);border-bottom-color:var(--m-border,#2a3344);color:var(--m-text,#f1f5f9)}" +
+            "[data-theme=dark] .g5-popup-layer__title{color:var(--m-text,#f1f5f9)}" +
+            "[data-theme=dark] .g5-popup-layer__close{border-color:var(--m-border,#2a3344);color:var(--m-text-soft,#cbd5e1)}" +
+            "[data-theme=dark] .g5-popup-layer__close:hover{background:var(--m-surface-2,#1c2230);border-color:var(--m-border-hover,#3d4a5e);color:var(--m-text,#f1f5f9)}" +
+            "[data-theme=dark] .g5-popup-layer__frame{background:var(--m-bg,#0a0e1a)}" +
+            "body.g5-popup-layer-open{overflow:hidden}" +
+            "@media (max-width:640px){.g5-popup-layer{padding:0}.g5-popup-layer__dialog{width:100vw;height:100vh;border:0;border-radius:0}.g5-popup-layer__head{min-height:48px}}"
+        ));
+        doc.head.appendChild(style);
+    }
+
+    win.G5PopupLayer = {
+        isInternal: is_internal_url,
+        open: function(url, winname, opt, title) {
+            var size;
+
+            if (!doc.body || !is_internal_url(url))
+                return null;
+
+            ensure_popup();
+            inject_popup_style();
+
+            popupLastFocus = doc.activeElement;
+            size = get_popup_size(opt);
+
+            popupTitle.innerHTML = title || get_popup_title(winname);
+            popup.querySelector(".g5-popup-layer__dialog").style.setProperty("--g5-popup-width", size.width + "px");
+            popup.querySelector(".g5-popup-layer__dialog").style.setProperty("--g5-popup-height", size.height + "px");
+            popupFrame = create_popup_frame(winname);
+            popupFrame.src = add_layer_param(url);
+            popup.removeAttribute("hidden");
+            if (doc.body.className.indexOf("g5-popup-layer-open") === -1)
+                doc.body.className += (doc.body.className ? " " : "") + "g5-popup-layer-open";
+
+            setTimeout(function() {
+                try { popupFrame.focus(); } catch (e) {}
+            }, 0);
+
+            return {
+                focus: function() {
+                    try { popupFrame.focus(); } catch (e) {}
+                },
+                close: win.G5PopupLayer.close
+            };
+        },
+        close: function() {
+            if (!popup)
+                return;
+
+            popup.setAttribute("hidden", "hidden");
+            if (popupBody)
+                popupBody.innerHTML = "";
+            popupFrame = null;
+            doc.body.className = doc.body.className.replace(/(?:^|\s)g5-popup-layer-open(?!\S)/g, "");
+
+            if (popupLastFocus && popupLastFocus.focus) {
+                try { popupLastFocus.focus(); } catch (e) {}
+            }
+        }
+    };
+})(window, document);
+
 // 새 창
-function popup_window(url, winname, opt)
+function popup_window(url, winname, opt, title)
 {
-    window.open(url, winname, opt);
+    var layer = null;
+
+    if (window.G5PopupLayer) {
+        try {
+            layer = window.G5PopupLayer.open(url, winname, opt, title);
+        } catch (e) {
+            layer = null;
+        }
+
+        if (layer)
+            return layer;
+    }
+
+    if (window.G5PopupLayer && window.G5PopupLayer.isInternal && window.G5PopupLayer.isInternal(url)) {
+        window.location.href = url;
+        return { focus: function() {}, close: function() {} };
+    }
+
+    return window.open(url, winname, opt);
 }
 
 
@@ -280,7 +540,7 @@ function doc_write(cont)
 }
 
 var win_password_lost = function(href) {
-    window.open(href, "win_password_lost", "left=50, top=50, width=617, height=330, scrollbars=1");
+    popup_window(href, "win_password_lost", "left=50, top=50, width=617, height=430, scrollbars=1");
 }
 
 $(document).ready(function(){
@@ -294,7 +554,7 @@ $(document).ready(function(){
  * 포인트 창
  **/
 var win_point = function(href) {
-    var new_win = window.open(href, 'win_point', 'left=100,top=100,width=600, height=600, scrollbars=1');
+    var new_win = popup_window(href, 'win_point', 'left=100,top=100,width=600, height=600, scrollbars=1');
     new_win.focus();
 }
 
@@ -302,7 +562,7 @@ var win_point = function(href) {
  * 쪽지 창
  **/
 var win_memo = function(href) {
-    var new_win = window.open(href, 'win_memo', 'left=100,top=100,width=620,height=500,scrollbars=1');
+    var new_win = popup_window(href, 'win_memo', 'left=100,top=100,width=620,height=560,scrollbars=1');
     new_win.focus();
 }
 
@@ -323,7 +583,7 @@ var check_goto_new = function(href, event) {
  * 메일 창
  **/
 var win_email = function(href) {
-    var new_win = window.open(href, 'win_email', 'left=100,top=100,width=600,height=580,scrollbars=1');
+    var new_win = popup_window(href, 'win_email', 'left=100,top=100,width=600,height=640,scrollbars=1');
     new_win.focus();
 }
 
@@ -331,7 +591,7 @@ var win_email = function(href) {
  * 자기소개 창
  **/
 var win_profile = function(href) {
-    var new_win = window.open(href, 'win_profile', 'left=100,top=100,width=620,height=510,scrollbars=1');
+    var new_win = popup_window(href, 'win_profile', 'left=100,top=100,width=620,height=560,scrollbars=1');
     new_win.focus();
 }
 
@@ -339,7 +599,7 @@ var win_profile = function(href) {
  * 스크랩 창
  **/
 var win_scrap = function(href) {
-    var new_win = window.open(href, 'win_scrap', 'left=100,top=100,width=600,height=600,scrollbars=1');
+    var new_win = popup_window(href, 'win_scrap', 'left=100,top=100,width=600,height=600,scrollbars=1');
     new_win.focus();
 }
 
@@ -497,7 +757,7 @@ var win_zip = function(frm_name, frm_zip, frm_addr1, frm_addr2, frm_addr3, frm_j
  **/
 win_password_lost = function(href)
 {
-    var new_win = window.open(href, 'win_password_lost', 'width=617, height=330, scrollbars=1');
+    var new_win = popup_window(href, 'win_password_lost', 'width=617, height=430, scrollbars=1');
     new_win.focus();
 }
 
@@ -505,7 +765,7 @@ win_password_lost = function(href)
  * 설문조사 결과
  **/
 var win_poll = function(href) {
-    var new_win = window.open(href, 'win_poll', 'width=616, height=500, scrollbars=1');
+    var new_win = popup_window(href, 'win_poll', 'width=616, height=560, scrollbars=1');
     new_win.focus();
 }
 
@@ -513,7 +773,7 @@ var win_poll = function(href) {
  * 쿠폰
  **/
 var win_coupon = function(href) {
-    var new_win = window.open(href, "win_coupon", "left=100,top=100,width=700, height=600, scrollbars=1");
+    var new_win = popup_window(href, "win_coupon", "left=100,top=100,width=700, height=600, scrollbars=1");
     new_win.focus();
 }
 

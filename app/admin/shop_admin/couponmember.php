@@ -13,6 +13,7 @@ $html_title = '회원검색';
 
 $g5['title'] = $html_title;
 include_once(G5_PATH.'/head.sub.php');
+include_once(__DIR__.'/_coupon_search_popup_style.php');
 
 $sql_common = " from {$g5['member_table']} ";
 $sql_where = " where mb_id <> '{$config['cf_admin']}' and mb_leave_date = '' and mb_intercept_date ='' ";
@@ -84,14 +85,17 @@ $qstr1 = 'mb_name='.urlencode($mb_name);
     <?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?'.$qstr1.'&amp;page='); ?>
 
     <div class="btn_confirm01 btn_confirm win_btn">
-        <button type="button" onclick="window.close();" class="btn_close btn">닫기</button>
+        <button type="button" onclick="window.close();" class="btn_close btn">창닫기</button>
     </div>
 </div>
 
 <script>
 function sel_member_id(id)
 {
-    var f = window.opener.document.fcouponform;
+    var doc = window.opener && !window.opener.closed ? window.opener.document : (window.parent && window.parent !== window ? window.parent.document : document);
+    var f = doc.fcouponform;
+    if (!f) return;
+
     f.mb_id.value = id;
 
     window.close();
