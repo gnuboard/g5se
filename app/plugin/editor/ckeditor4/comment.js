@@ -142,7 +142,8 @@ window.initializeCommentEditor = function(elementId, customConfig, csrfToken) {
     // 인증된 사용자에게 이미지 업로드 기능 추가
     if (csrfToken) {
         // 기본 업로드 URL
-        var uploadUrl = '/ckeditor/upload?is_cm=1&_token=' + csrfToken;
+        var uploadUrlBase = (typeof g5_url !== 'undefined') ? g5_url + '/api/editor/ckeditor4/upload' : '/api/editor/ckeditor4/upload';
+        var uploadUrl = uploadUrlBase + '?is_cm=1&_token=' + csrfToken;
 
         // 게시판 정보 추가 (customConfig에서 제공되는 경우)
         if (customConfig) {
@@ -169,7 +170,7 @@ window.initializeCommentEditor = function(elementId, customConfig, csrfToken) {
 
         config.filebrowserUploadUrl = uploadUrl;
         config.filebrowserImageUploadUrl = uploadUrl;
-        config.imageUploadUrl = uploadUrl.replace('/ckeditor/upload', '/ckeditor/upload-drop');
+        config.imageUploadUrl = uploadUrl + '&responseType=json';
     }
 
     // 에디터 생성
@@ -194,4 +195,3 @@ window.initializeCommentEditor = function(elementId, customConfig, csrfToken) {
 
     return editor;
 };
-

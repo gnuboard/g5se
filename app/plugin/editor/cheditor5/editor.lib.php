@@ -37,9 +37,11 @@ function editor_html($id, $content, $is_dhtml_editor=true)
         $html .= "var ed_{$id} = new cheditor('ed_{$id}');\n";
         $html .= "ed_{$id}.config.editorWidth = \"{$width}\";\n";             
         $html .= "ed_{$id}.config.editorHeight = \"{$height}\";\n";           
-        $html .= "ed_{$id}.config.imgReSize = false;\n";                    
-        $html .= "ed_{$id}.config.fullHTMLSource = false;\n";               
-        $html .= "ed_{$id}.config.editorPath = \"{$editor_url}\";\n"; 
+        $html .= "ed_{$id}.config.imgReSize = false;\n";
+        $html .= "ed_{$id}.config.fullHTMLSource = false;\n";
+        $html .= "ed_{$id}.config.editorPath = \"{$editor_url}\";\n";
+        $html .= "ed_{$id}.config.uploadScript = (typeof g5_url !== \"undefined\" ? g5_url : \"\") + \"/api/editor/cheditor5/upload?_nonce=\" + encodeURIComponent(ed_nonce);\n";
+        $html .= "ed_{$id}.config.deleteScript = (typeof g5_url !== \"undefined\" ? g5_url : \"\") + \"/api/editor/cheditor5/delete?_nonce=\" + encodeURIComponent(ed_nonce);\n";
         $html .= "ed_{$id}.inputForm = \"tx_{$id}\";\n";
         $html .= "</script>\n";                                             
         $html .= "<span class=\"sound_only\">웹에디터 시작</span>";

@@ -857,8 +857,8 @@ function init(dialog) {
     uploadButton = '../icons/imageUpload/add.gif';
     AppSRC = oEditor.config.popupPath + 'flash/chximage.swf';
     uploadMaxNumber = oEditor.config.imgUploadNumber;
-    uploadScript = oEditor.config.editorPath + 'imageUpload/upload.php';
-    deleteScript = oEditor.config.editorPath + 'imageUpload/delete.php';
+    uploadScript = oEditor.config.uploadScript || (oEditor.config.editorPath + 'imageUpload/upload.php');
+    deleteScript = oEditor.config.deleteScript || (oEditor.config.editorPath + 'imageUpload/delete.php');
 
     imageResizeWidth = oEditor.config.imgMaxWidth;
     makeThumbnail = oEditor.config.makeThumbnail;

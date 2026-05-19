@@ -1480,7 +1480,7 @@ function init(dialog) {
 
     uploadImagePath = oEditor.config.iconPath + 'imageUpload';
     uploadMaxNumber = oEditor.config.imgUploadNumber;
-    uploadScript = oEditor.config.editorPath + 'imageUpload/upload.php';
+    uploadScript = oEditor.config.uploadScript || (oEditor.config.editorPath + 'imageUpload/upload.php');
     imageListWrapper = document.getElementById("imageListWrapper");
     imageResizeInput = document.getElementById('idResizeWidth');
     select = document.getElementById('idResizeSelectBox');
