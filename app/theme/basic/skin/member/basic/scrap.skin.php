@@ -18,8 +18,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
         <li class="m-scrap-item">
             <div class="m-scrap-row">
                 <a href="<?php echo $list[$i]['opener_href_wr_id'] ?>" class="m-scrap-subject"
-                   target="_blank"
-                   onclick="opener.document.location.href='<?php echo $list[$i]['opener_href_wr_id'] ?>'; return false;">
+                   onclick="return g5_scrap_open_parent(this.href);">
                     <?php echo $list[$i]['subject'] ?>
                 </a>
                 <a href="<?php echo $list[$i]['del_href']; ?>" onclick="del(this.href); return false;" class="m-scrap-del" title="삭제">
@@ -28,8 +27,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             </div>
             <div class="m-scrap-meta">
                 <a href="<?php echo $list[$i]['opener_href'] ?>" class="m-scrap-board"
-                   target="_blank"
-                   onclick="opener.document.location.href='<?php echo $list[$i]['opener_href'] ?>'; return false;"><?php echo $list[$i]['bo_subject'] ?></a>
+                   onclick="return g5_scrap_open_parent(this.href);"><?php echo $list[$i]['bo_subject'] ?></a>
                 <span class="m-scrap-time">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     <?php echo $list[$i]['ms_datetime'] ?>
@@ -109,4 +107,25 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 .m-scrap-empty svg { color: var(--m-text-faint); }
 .m-scrap-empty p { margin: 0; color: var(--m-text-muted); font-size: var(--m-text-sm); }
 </style>
+<script>
+function g5_scrap_open_parent(url) {
+    try {
+        if (window.parent && window.parent !== window && window.parent.G5PopupLayer) {
+            window.parent.location.href = url;
+            return false;
+        }
+        if (window.opener && !window.opener.closed) {
+            window.opener.location.href = url;
+            window.close();
+            return false;
+        }
+    } catch (e) {
+        window.location.href = url;
+        return false;
+    }
+
+    window.location.href = url;
+    return false;
+}
+</script>
 <!-- } 스크랩 목록 끝 -->

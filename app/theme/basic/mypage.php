@@ -35,7 +35,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
         <!-- 활동 카드 그리드 -->
         <h2 class="my-section-title">활동</h2>
         <div class="my-grid">
-            <a class="my-card" href="<?php echo G5_BBS_URL ?>/point.php" target="win_point" onclick="window.open(this.href, 'win_point', 'left=100,top=100,width=600,height=600,scrollbars=1'); return false;">
+            <a class="my-card" href="<?php echo G5_BBS_URL ?>/point.php" onclick="win_point(this.href); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 </div>
@@ -44,7 +44,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     <div class="my-card-value"><?php echo number_format($_my['point']); ?> <em>점</em></div>
                 </div>
             </a>
-            <a class="my-card" href="<?php echo G5_BBS_URL ?>/memo.php" target="win_memo" onclick="window.open(this.href, 'win_memo', 'left=100,top=100,width=620,height=500,scrollbars=1'); return false;">
+            <a class="my-card" href="<?php echo G5_BBS_URL ?>/memo.php" onclick="win_memo(this.href); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
@@ -56,7 +56,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     </div>
                 </div>
             </a>
-            <a class="my-card" href="<?php echo G5_BBS_URL ?>/scrap.php" target="win_scrap" onclick="window.open(this.href, 'win_scrap', 'left=100,top=100,width=600,height=600,scrollbars=1'); return false;">
+            <a class="my-card" href="<?php echo G5_BBS_URL ?>/scrap.php" onclick="win_scrap(this.href); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                 </div>
@@ -98,7 +98,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     <div class="my-card-value"><?php echo number_format($_my_count['wish']); ?> <em>개</em></div>
                 </div>
             </a>
-            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/coupon" target="win_coupon" onclick="window.open(this.href, 'win_coupon', 'left=100,top=100,width=700,height=600,scrollbars=1'); return false;">
+            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/coupon" onclick="win_coupon(this.href); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
                 </div>
@@ -107,7 +107,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
                     <div class="my-card-value"><?php echo number_format($_my_count['coupon']); ?> <em>장</em></div>
                 </div>
             </a>
-            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/orderaddress.php" target="win_address" onclick="window.open(this.href, 'win_address', 'left=100,top=100,width=800,height=600,scrollbars=1'); return false;">
+            <a class="my-card" href="<?php echo G5_SHOP_URL ?>/orderaddress.php" onclick="popup_window(this.href, 'win_address', 'left=100,top=100,width=800,height=600,scrollbars=1'); return false;">
                 <div class="my-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>

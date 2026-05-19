@@ -66,12 +66,7 @@ $total_count = $row['cnt'];
 // 조건에 맞는 주문서가 없다면
 if ($total_count == 0)
 {
-    if ($is_member) {
-        // 검색 조건 있으면 검색 결과 없음으로 페이지 그대로 보여줌 (검색 form + empty state)
-        if (!$has_search) {
-            alert('주문이 존재하지 않습니다.', G5_SHOP_URL);
-        }
-    } else {
+    if (!$is_member) {
         // 비회원 → 이전 페이지로
         alert('주문이 존재하지 않습니다.');
     }

@@ -700,10 +700,12 @@ add_stylesheet($_modern_float_css, 51);
 $_modern_toggle_js = <<<'JS'
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-    // popup 윈도우 (window.open 으로 열린 새창) 에서는 floating cluster 숨김
-    // — point/memo/scrap/coupon/orderaddress 등 mypage 에서 win_xxx popup 으로 띄울 때
+    // popup 윈도우 및 iframe 레이어에서는 floating cluster 숨김
+    // — point/memo/scrap/coupon/orderaddress 등 popup 컨텍스트에서는 본문 조작 버튼을 노출하지 않는다.
     try {
         if (window.opener && window.opener !== window) return;
+        if (window.parent && window.parent !== window && window.parent.G5PopupLayer) return;
+        if (new URLSearchParams(window.location.search).get("g5_layer") === "1") return;
     } catch (e) { /* cross-origin opener 접근 차단되면 무시 */ }
     // 우하단 floating cluster 생성 (theme toggle + scroll to top)
     var wrap = document.createElement("div");

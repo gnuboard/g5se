@@ -26,6 +26,7 @@ if($_GET['sch_target'] == 1) {
 
 $g5['title'] = $html_title.'검색';
 include_once(G5_PATH.'/head.sub.php');
+include_once(__DIR__.'/_coupon_search_popup_style.php');
 
 if($sch_target == 1) {
     $sql_common = " from {$g5['g5_shop_category_table']} ";
@@ -112,14 +113,17 @@ $qstr1 = 'sch_target='.$sch_target.'&amp;sch_word='.urlencode($sch_word);
     <?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?'.$qstr1.'&amp;page='); ?>
 
     <div class="btn_confirm01 btn_confirm win_btn">
-        <button type="button" onclick="window.close();" class="btn">닫기</button>
+        <button type="button" onclick="window.close();" class="btn">창닫기</button>
     </div>
 </div>
 
 <script>
 function sel_target_id(id)
 {
-    var f = window.opener.document.fcouponform;
+    var doc = window.opener && !window.opener.closed ? window.opener.document : (window.parent && window.parent !== window ? window.parent.document : document);
+    var f = doc.fcouponform || doc.fcouponzoneform;
+    if (!f) return;
+
     f.cp_target.value = id;
 
     window.close();
