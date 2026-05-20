@@ -13,6 +13,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
     <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
         <div class="m-main-col">
+            <?php if (!empty($g5['board_content_head_html']) && empty($g5['board_content_head_rendered'])) {
+                $g5['board_content_head_rendered'] = true;
+                echo '<div class="m-board-content m-board-content-head">'.$g5['board_content_head_html'].'</div>';
+            } ?>
             <article class="m-card m-view">
 
                 <header class="m-view-head">
@@ -252,6 +256,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 include_once(G5_BBS_PATH.'/view_comment.php');
                 ?>
             </article>
+            <?php if (!empty($g5['board_content_tail_html']) && empty($g5['board_content_tail_rendered'])) {
+                $g5['board_content_tail_rendered'] = true;
+                echo '<div class="m-board-content m-board-content-tail">'.$g5['board_content_tail_html'].'</div>';
+            } ?>
         </div>
 
         <aside class="m-side-col">
@@ -262,6 +270,15 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 </div>
 
 <style>
+.m-board-content {
+    padding: 16px 18px; margin-bottom: 18px;
+    background: var(--m-surface); border: 1px solid var(--m-border);
+    border-radius: var(--m-radius); color: var(--m-text);
+    box-shadow: var(--m-shadow);
+}
+.m-board-content-tail { margin-top: 18px; margin-bottom: 0; }
+.m-board-content img { max-width: 100%; height: auto; }
+.m-board-content p:last-child { margin-bottom: 0; }
 .m-view { padding: 0; overflow: hidden; }
 
 .m-view-head {

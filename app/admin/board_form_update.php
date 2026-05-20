@@ -161,11 +161,11 @@ $bo_download_point = isset($_POST['bo_download_point']) ? (int) $_POST['bo_downl
 $bo_select_editor = isset($_POST['bo_select_editor']) ? clean_xss_tags(stripslashes($_POST['bo_select_editor']), 1, 1) : '';
 $bo_skin = isset($_POST['bo_skin']) ? clean_xss_tags(stripslashes($_POST['bo_skin']), 1, 1) : '';
 $bo_mobile_skin = isset($_POST['bo_mobile_skin']) ? clean_xss_tags(stripslashes($_POST['bo_mobile_skin']), 1, 1) : '';
-$bo_content_head = isset($_POST['bo_content_head']) ? $_POST['bo_content_head'] : '';
-$bo_content_tail = isset($_POST['bo_content_tail']) ? $_POST['bo_content_tail'] : '';
-$bo_mobile_content_head = isset($_POST['bo_mobile_content_head']) ? $_POST['bo_mobile_content_head'] : '';
-$bo_mobile_content_tail = isset($_POST['bo_mobile_content_tail']) ? $_POST['bo_mobile_content_tail'] : '';
-$bo_insert_content = isset($_POST['bo_insert_content']) ? $_POST['bo_insert_content'] : '';
+$bo_content_head = isset($_POST['bo_content_head']) ? stripslashes($_POST['bo_content_head']) : '';
+$bo_content_tail = isset($_POST['bo_content_tail']) ? stripslashes($_POST['bo_content_tail']) : '';
+$bo_mobile_content_head = isset($_POST['bo_mobile_content_head']) ? stripslashes($_POST['bo_mobile_content_head']) : '';
+$bo_mobile_content_tail = isset($_POST['bo_mobile_content_tail']) ? stripslashes($_POST['bo_mobile_content_tail']) : '';
+$bo_insert_content = isset($_POST['bo_insert_content']) ? stripslashes($_POST['bo_insert_content']) : '';
 $bo_gallery_cols = isset($_POST['bo_gallery_cols']) ? (int) $_POST['bo_gallery_cols'] : 0;
 $bo_gallery_width = isset($_POST['bo_gallery_width']) ? (int) $_POST['bo_gallery_width'] : 0;
 $bo_gallery_height = isset($_POST['bo_gallery_height']) ? (int) $_POST['bo_gallery_height'] : 0;
@@ -574,4 +574,9 @@ if (function_exists('get_admin_captcha_by')) {
 
 run_event('admin_board_form_update', $bo_table, $w);
 
-header('Location: '.G5_ADMIN_URL."/board_form?w=u&bo_table={$bo_table}&{$qstr}", true, 302); exit;
+$redirect_qstr = str_replace('&amp;', '&', $qstr);
+$redirect_url = G5_ADMIN_URL."/board_form?w=u&bo_table={$bo_table}";
+if ($redirect_qstr !== '') {
+    $redirect_url .= '&'.$redirect_qstr;
+}
+header('Location: '.$redirect_url, true, 302); exit;
