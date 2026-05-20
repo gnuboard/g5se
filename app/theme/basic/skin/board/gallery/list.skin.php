@@ -10,6 +10,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
     <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
         <div class="m-main-col">
+            <?php if (!empty($g5['board_content_head_html']) && empty($g5['board_content_head_rendered'])) {
+                $g5['board_content_head_rendered'] = true;
+                echo '<div class="m-board-content m-board-content-head">'.$g5['board_content_head_html'].'</div>';
+            } ?>
             <div class="m-gallery-head">
                 <div>
                     <h1><?php echo $board['bo_subject'] ?></h1>
@@ -123,6 +127,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
                 <div class="m-board-pagination"><?php echo $write_pages; ?></div>
             </form>
+            <?php if (!empty($g5['board_content_tail_html']) && empty($g5['board_content_tail_rendered'])) {
+                $g5['board_content_tail_rendered'] = true;
+                echo '<div class="m-board-content m-board-content-tail">'.$g5['board_content_tail_html'].'</div>';
+            } ?>
         </div>
 
         <aside class="m-side-col">
@@ -134,6 +142,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 </div>
 
 <style>
+.m-board-content { padding:16px 18px; margin-bottom:18px; background:var(--m-surface); border:1px solid var(--m-border); border-radius:var(--m-radius); color:var(--m-text); box-shadow:var(--m-shadow); }
+.m-board-content-tail { margin-top:18px; margin-bottom:0; }
+.m-board-content img { max-width:100%; height:auto; }
+.m-board-content p:last-child { margin-bottom:0; }
 .m-gallery-head { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--m-border); }
 .m-gallery-head h1 { font-size:22px; margin-bottom:4px; }
 .m-gallery-head p { font-size:13px; color:var(--m-text-muted); }

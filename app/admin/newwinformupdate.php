@@ -47,7 +47,7 @@ foreach ($check_keys as $key => $val) {
     } elseif ($val === 'str') {
         $posts[$key] = isset($_POST[$key]) ? clean_xss_tags($_POST[$key], 1, 1) : 0;
     } else {
-        $posts[$key] = isset($_POST[$key]) ? trim($_POST[$key]) : 0;
+        $posts[$key] = isset($_POST[$key]) ? trim(stripslashes($_POST[$key])) : 0;
     }
 }
 

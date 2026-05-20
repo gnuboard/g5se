@@ -697,7 +697,9 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 }
 [data-theme="dark"] .legacy-admin-content .btn:hover,
 [data-theme="dark"] .legacy-admin-content button:not([class*="rounded"]):hover {
+    border-color: var(--slate-500);
     background-color: var(--slate-700);
+    color: var(--slate-100);
 }
 .legacy-admin-content .btn_submit,
 .legacy-admin-content .btn_01,
