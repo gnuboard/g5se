@@ -271,7 +271,7 @@ switch ($action) {
         if($it['it_buy_min_qty'] > 1)
             $item_ct_qty = $it['it_buy_min_qty'];
 
-        $action_url = G5_THEME_SHOP_URL.'/ajax.action.php';
+        $action_url = G5_SHOP_URL.'/ajax.action.php';
 
         $is_option   = 0;
         $option_item = get_shop_item_options($it['it_id'], $it['it_option_subject'], 0);

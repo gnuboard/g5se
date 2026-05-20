@@ -9,6 +9,14 @@ if (isset($sfl) && $sfl && !in_array($sfl, array('it_name','it_id','it_maker','i
     $sfl = '';
 }
 
+$recent_order_cookie = 'ck_admin_shop_itemlist_recent_order';
+if (isset($_GET['recent_order'])) {
+    $recent_order = $_GET['recent_order'] === '1';
+    set_cookie($recent_order_cookie, $recent_order ? '1' : '0', 86400 * 30);
+} else {
+    $recent_order = get_cookie($recent_order_cookie) === '1';
+}
+
 $g5['title'] = '상품관리';
 admin_layout_start($g5["title"], "shop");
 ?>
@@ -79,7 +87,7 @@ if (!$sst) {
 $allowed_sst = array('it_id', 'it_name', 'it_order', 'it_use', 'it_soldout', 'it_hit', 'it_price', 'it_cust_price', 'it_point', 'it_stock_qty');
 if ($sst && !in_array($sst, $allowed_sst)) $sst = 'it_id';
 if ($sod && !in_array(strtolower($sod), array('asc', 'desc'))) $sod = '';
-$sql_order = "order by $sst $sod";
+$sql_order = $recent_order ? "order by it_update_time desc, it_time desc, it_id desc" : "order by $sst $sod";
 
 
 $sql  = " select *
@@ -132,9 +140,15 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 <input type="text" name="stx" value="<?php echo $stx; ?>" id="stx" class="frm_input">
 <input type="submit" value="검색" class="btn_submit">
 
+<input type="hidden" name="recent_order" value="0">
+<label for="recent_order" class="itemlist-recent-order ml-auto">
+    <input type="checkbox" name="recent_order" value="1" id="recent_order" <?php echo $recent_order ? 'checked' : ''; ?> onchange="this.form.submit();">
+    최근등록순
+</label>
+
 </form>
 
-<form name="fitemlistupdate" method="post" action="./itemlistupdate.php" onsubmit="return fitemlist_submit(this);" autocomplete="off" id="fitemlistupdate">
+<form name="fitemlistupdate" method="post" action="./itemlistupdate.php" onsubmit="return fitemlist_submit(this);" autocomplete="off" id="fitemlistupdate" class="has-admin-floating-actions">
 <input type="hidden" name="sca" value="<?php echo $sca; ?>">
 <input type="hidden" name="sst" value="<?php echo $sst; ?>">
 <input type="hidden" name="sod" value="<?php echo $sod; ?>">
@@ -264,7 +278,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     </table>
 </div>
 
-<div class="btn_fixed_top">
+<div class="btn_fixed_top admin-floating-actions" aria-label="상품 관리 작업">
 
     <a href="./itemform.php" class="btn btn_01">상품등록</a>
     <a href="./itemexcel.php" onclick="return excelform(this.href);" target="_blank" class="btn btn_02">상품일괄등록</a>
