@@ -57,7 +57,7 @@ jQuery(function ($) {
         var $wrap = $(this).closest("li");
 
         $.ajax({
-            url: g5_theme_shop_url+"/ajax.action.php",
+            url: g5_shop_url+"/ajax.action.php",
             type: "POST",
             data: {
                 "it_id" : it_id,

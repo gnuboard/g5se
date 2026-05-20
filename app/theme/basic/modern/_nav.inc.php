@@ -187,6 +187,22 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
             </nav>
             <?php } ?>
 
+            <?php if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
+                $_nav_cart_count = isset($_nav_cart_count) ? (int)$_nav_cart_count : 0;
+            ?>
+            <nav class="m-nav-drawer-shop" aria-label="쇼핑몰 메뉴">
+                <a href="<?php echo G5_SHOP_URL ?>/cart" class="m-nav-drawer-shop-link<?php echo strpos($_cur_path, '/shop/cart') === 0 ? ' is-active' : '' ?>">
+                    <span>장바구니</span>
+                    <?php if ($_nav_cart_count > 0) { ?>
+                    <b class="m-nav-drawer-shop-badge"><?php echo $_nav_cart_count > 99 ? '99+' : $_nav_cart_count ?></b>
+                    <?php } ?>
+                </a>
+                <a href="<?php echo G5_SHOP_URL ?>/wishlist" class="m-nav-drawer-shop-link<?php echo strpos($_cur_path, '/shop/wishlist') === 0 ? ' is-active' : '' ?>">위시리스트</a>
+                <a href="<?php echo G5_SHOP_URL ?>/orderinquiry" class="m-nav-drawer-shop-link<?php echo strpos($_cur_path, '/shop/orderinquiry') === 0 ? ' is-active' : '' ?>">주문내역</a>
+                <a href="/mypage" class="m-nav-drawer-shop-link<?php echo $_cur_path === '/mypage' ? ' is-active' : '' ?>">마이페이지</a>
+            </nav>
+            <?php } ?>
+
             <nav class="m-nav-drawer-links">
                 <a href="/" class="m-nav-drawer-link<?php echo $_cur_path === '/' ? ' is-active' : '' ?>">홈</a>
                 <?php foreach ($_nav_menu as $_row) {
@@ -525,6 +541,50 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 .m-nav-drawer-segment-item.is-active {
     background: var(--m-primary-soft); color: var(--m-primary);
     box-shadow: var(--m-shadow);
+}
+
+.m-nav-drawer-shop {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    padding: 12px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-nav-drawer-shop-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius);
+    background: var(--m-surface);
+    color: var(--m-text-soft);
+    font-size: var(--m-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+}
+.m-nav-drawer-shop-link:hover,
+.m-nav-drawer-shop-link.is-active {
+    border-color: var(--m-primary);
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+}
+.m-nav-drawer-shop-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--m-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
 }
 
 .m-nav-drawer-actions {

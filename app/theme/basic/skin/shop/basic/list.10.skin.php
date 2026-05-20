@@ -4,7 +4,7 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 // g5se: list.10 — modern Tailwind/UnoCSS grid 카드.
 //   기존 sct/sct_10/sct_li 마크업 대신 카드 그리드 + hover lift.
 //   JS 훅 (.btn_cart/.btn_wish + data-it_id, theme.shop.list.js 사용) 유지.
-add_javascript('<script src="'.G5_THEME_JS_URL.'/theme.shop.list.js"></script>', 10);
+add_javascript('<script src="'.G5_THEME_JS_URL.'/theme.shop.list.js?ver=20260520c"></script>', 10);
 ?>
 
 <!-- 상품진열 10 (modern) 시작 { -->

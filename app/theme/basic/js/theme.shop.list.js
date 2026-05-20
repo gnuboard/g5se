@@ -22,7 +22,7 @@ jQuery(function ($) {
         }
 
         $.post(
-            g5_theme_shop_url + "/ajax.action.php",
+            g5_shop_url + "/ajax.action.php",
             { it_id: it_id, action : "wish_update" },
             function(response) {
                 var data = response;
@@ -142,9 +142,59 @@ jQuery(function ($) {
         return false;
     }
 
+    mainCart.update_cart_count = function(cart_count){
+        var count = parseInt(cart_count, 10) || 0;
+        var text = count > 99 ? "99+" : String(count);
+
+        $(".hd_login .shop_cart .count").text(count);
+        $("#btn_hdcart .cart-count").text(count);
+
+        $(".m-nav-cart-link[aria-label='장바구니']").each(function() {
+            var $link = $(this);
+            var $badge = $link.find(".m-nav-cart-badge");
+
+            if (count > 0) {
+                if (!$badge.length) {
+                    $badge = $('<span class="m-nav-cart-badge"></span>').appendTo($link);
+                }
+                $badge.text(text);
+            } else {
+                $badge.remove();
+            }
+        });
+
+        $(".m-nav-drawer-shop-link[href$='/cart']").each(function() {
+            var $link = $(this);
+            var $badge = $link.find(".m-nav-drawer-shop-badge");
+
+            if (count > 0) {
+                if (!$badge.length) {
+                    $badge = $('<b class="m-nav-drawer-shop-badge"></b>').appendTo($link);
+                }
+                $badge.text(text);
+            } else {
+                $badge.remove();
+            }
+        });
+
+        $(".m-shop-quick-btn[title='장바구니']").each(function() {
+            var $link = $(this);
+            var $badge = $link.find(".m-shop-quick-badge");
+
+            if (count > 0) {
+                if (!$badge.length) {
+                    $badge = $('<span class="m-shop-quick-badge"></span>').appendTo($link);
+                }
+                $badge.text(text);
+            } else {
+                $badge.remove();
+            }
+        });
+    }
+
     // 5.4 버전의 기본테마의 사이드바의 장바구니를 새로고침합니다.
     mainCart.update_cart_side = function(){
-        var ajax_url = g5_theme_shop_url || g5_shop_url;
+        var ajax_url = g5_shop_url;
 
         $.ajax({
             url: ajax_url + "/ajax.action.php",
@@ -158,7 +208,7 @@ jQuery(function ($) {
                     cart_count = $(data).find(".cart-count").text();
                 
                 $(".qk_con_wr .sbsk").html(inner_html);
-                $(".hd_login .shop_cart .count").text(cart_count);
+                mainCart.update_cart_count(cart_count);
             },
             error : function(request, status, error){
                 alert("false ajax :"+request.responseText);
@@ -169,7 +219,7 @@ jQuery(function ($) {
     }
 
     mainCart.update_wish_side = function(){
-        var ajax_url = g5_theme_shop_url || g5_shop_url;
+        var ajax_url = g5_shop_url;
         
         if (typeof g5_is_member == "undefined" || ! g5_is_member) {
             return false;
@@ -223,7 +273,7 @@ jQuery(function ($) {
         $("li.sct_li").not($sct_li).removeClass(overclass);
 
         $.ajax({
-            url: g5_theme_shop_url+"/ajax.action.php",
+            url: g5_shop_url+"/ajax.action.php",
             type: "POST",
             data: {
                 "it_id" : it_id,
