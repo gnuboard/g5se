@@ -1,0 +1,130 @@
+/*
+ * 갤러리형 최신글 위젯 (m_gallery)
+ * — 카드 안에 게시판 제목 헤더 + 2열 또는 3열 썸네일 그리드
+ * — 썸네일 없을 땐 no-image 톤 placeholder
+ */
+
+.m-latest-gallery {
+    background: var(--m-surface);
+    border: 1px solid var(--m-border);
+    border-radius: var(--m-radius-lg);
+    box-shadow: var(--m-shadow);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+}
+
+.m-latest-gallery .m-latest-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--m-border);
+}
+.m-latest-gallery .m-latest-title { margin: 0; font-size: var(--m-text-lg); font-weight: 700; }
+.m-latest-gallery .m-latest-title a { color: var(--m-text); text-decoration: none; }
+.m-latest-gallery .m-latest-title a:hover { color: var(--m-primary); }
+.m-latest-gallery .m-latest-more {
+    display: inline-flex; align-items: center; gap: 2px;
+    font-size: var(--m-text-sm); color: var(--m-text-muted);
+    text-decoration: none;
+}
+.m-latest-gallery .m-latest-more:hover { color: var(--m-primary); }
+
+.m-latest-gallery-grid {
+    list-style: none; margin: 0; padding: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+.m-latest-gallery-item { position: relative; }
+.m-latest-gallery-link {
+    display: block; text-decoration: none; color: inherit;
+}
+
+.m-latest-gallery-thumb {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--m-radius);
+    overflow: hidden;
+    background: var(--m-surface-2);
+    border: 1px solid var(--m-border);
+}
+.m-latest-gallery-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.m-latest-gallery-link:hover .m-latest-gallery-thumb img { transform: scale(1.04); }
+
+/* 썸네일 없음 placeholder */
+.m-latest-gallery-thumb-empty {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    color: var(--m-text-faint);
+    font-size: var(--m-text-xs);
+    background:
+        linear-gradient(135deg, transparent 49%, var(--m-border) 49%, var(--m-border) 51%, transparent 51%) 0 0/16px 16px,
+        var(--m-surface-2);
+    opacity: 0.5;
+}
+
+/* 댓글 수 / 추천 등 썸네일 우상단 chip */
+.m-latest-gallery-cmt {
+    position: absolute; top: 6px; right: 6px;
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 7px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 10px; font-weight: 700;
+    backdrop-filter: blur(4px);
+}
+
+.m-latest-gallery-body {
+    margin-top: 8px;
+    padding: 0 2px;
+}
+.m-latest-gallery-subject {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--m-text);
+    font-size: var(--m-text-base);
+    font-weight: 500;
+    line-height: 1.4;
+}
+.m-latest-gallery-link:hover .m-latest-gallery-subject { color: var(--m-primary); }
+
+/* 공지 뱃지 — is_notice 글 앞 chip (m_board 와 동일 톤) */
+.m-latest-gallery .m-latest-notice {
+    display: inline-block;
+    margin-right: 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px; font-weight: 700; line-height: 1.4;
+    background: #ef4444; color: #fff;
+    vertical-align: 1px;
+}
+
+.m-latest-gallery-meta {
+    margin-top: 4px;
+    display: flex; gap: 6px;
+    font-size: var(--m-text-xs); color: var(--m-text-faint);
+}
+.m-latest-gallery-meta .m-latest-gallery-name {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 80px;
+}
+.m-latest-gallery-meta .m-latest-gallery-date { margin-left: auto; }
+
+.m-latest-gallery-empty {
+    padding: 36px 18px;
+    text-align: center;
+    color: var(--m-text-faint);
+    font-size: var(--m-text-sm);
+    grid-column: 1 / -1;
+}
+
+/* 더 작은 화면에서 한 열로 */
+@media (max-width: 480px) {
+    .m-latest-gallery-grid { grid-template-columns: 1fr; }
+}

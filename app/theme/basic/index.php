@@ -47,27 +47,38 @@ include_once(G5_PATH.'/head.sub.php');
             </section>
 
             <section>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <?php
-                    $sql = "select bo_table, bo_subject from `{$g5['board_table']}`
-                            where bo_device <> 'mobile'
-                            ".($is_admin ? '' : "and bo_use_cert = ''")."
-                            order by bo_order, bo_table limit 6";
-                    $rs = sql_query($sql);
-                    while ($row = sql_fetch_array($rs)) {
-                        $bo_table = $row['bo_table'];
-                        $bo_subject = get_text($row['bo_subject']);
-                    ?>
-                    <a href="<?php echo G5_BBS_URL ?>/board.php?bo_table=<?php echo $bo_table ?>"
-                       class="m-card m-board-card"
-                       style="text-decoration: none;">
-                        <div style="font-size: var(--m-text-sm); color: var(--m-text-faint); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">
-                            <?php echo htmlspecialchars($bo_table) ?>
-                        </div>
-                        <div style="font-size: var(--m-text-lg); font-weight: 600; color: var(--m-text);">
-                            <?php echo $bo_subject ?>
-                        </div>
-                    </a>
+                <?php
+                // gnuboard latest 함수 — theme 스킨 사용
+                if (!function_exists('latest')) {
+                    @include_once(G5_LIB_PATH.'/latest.lib.php');
+                }
+
+                // 메인 노출 게시판 목록 — bo_skin 으로 갤러리/게시판 분기
+                $sql = "select bo_table, bo_subject, bo_skin
+                        from `{$g5['board_table']}`
+                        where bo_device <> 'mobile'
+                        ".($is_admin ? '' : "and bo_use_cert = ''")."
+                        order by bo_order, bo_table limit 6";
+                $rs = sql_query($sql);
+                $_widgets = [];
+                while ($row = sql_fetch_array($rs)) {
+                    // bo_skin 에 'gallery' 또는 'pic' 들어가면 갤러리형, 그 외는 게시판형
+                    $bo_skin = strtolower($row['bo_skin'] ?? '');
+                    $is_gallery = (strpos($bo_skin, 'gallery') !== false || strpos($bo_skin, 'pic') !== false);
+                    $_widgets[] = [
+                        'bo_table' => $row['bo_table'],
+                        'widget'   => $is_gallery ? 'theme/m_gallery' : 'theme/m_board',
+                        'rows'     => $is_gallery ? 4 : 5,
+                        'sublen'   => 36,
+                    ];
+                }
+                ?>
+
+                <div class="m-latest-grid">
+                    <?php foreach ($_widgets as $w) { ?>
+                    <div class="m-latest-cell">
+                        <?php echo latest($w['widget'], $w['bo_table'], $w['rows'], $w['sublen']); ?>
+                    </div>
                     <?php } ?>
                 </div>
             </section>
@@ -92,12 +103,6 @@ include_once(G5_PATH.'/head.sub.php');
     <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 
 </div>
-
-<style>
-/* 메인 페이지 게시판 카드 hover (m-with-sidebar 는 _head.inc.php 에서 공통 정의됨) */
-.m-board-card { transition: border-color 0.15s, transform 0.15s; }
-.m-board-card:hover { border-color: var(--m-border-hover); transform: translateY(-2px); }
-</style>
 
 <?php
 // 게시판(bbs/board.php)과 동일하게 tail.sub.php 사용
