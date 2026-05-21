@@ -47,27 +47,54 @@ include_once(G5_PATH.'/head.sub.php');
             </section>
 
             <section>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    <?php
-                    $sql = "select bo_table, bo_subject from `{$g5['board_table']}`
-                            where bo_device <> 'mobile'
-                            ".($is_admin ? '' : "and bo_use_cert = ''")."
-                            order by bo_order, bo_table limit 6";
-                    $rs = sql_query($sql);
-                    while ($row = sql_fetch_array($rs)) {
-                        $bo_table = $row['bo_table'];
-                        $bo_subject = get_text($row['bo_subject']);
-                    ?>
-                    <a href="<?php echo G5_BBS_URL ?>/board.php?bo_table=<?php echo $bo_table ?>"
-                       class="m-card m-board-card"
-                       style="text-decoration: none;">
-                        <div style="font-size: var(--m-text-sm); color: var(--m-text-faint); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">
-                            <?php echo htmlspecialchars($bo_table) ?>
-                        </div>
-                        <div style="font-size: var(--m-text-lg); font-weight: 600; color: var(--m-text);">
-                            <?php echo $bo_subject ?>
-                        </div>
-                    </a>
+                <?php
+                // gnuboard latest 함수 — theme 스킨 사용
+                if (!function_exists('latest')) {
+                    @include_once(G5_LIB_PATH.'/latest.lib.php');
+                }
+
+                // 메인 노출 게시판 목록 — bo_skin 도 같이 가져와서 위젯 형식 자동 결정
+                $sql = "select bo_table, bo_subject, bo_skin, bo_notice
+                        from `{$g5['board_table']}`
+                        where bo_device <> 'mobile'
+                        ".($is_admin ? '' : "and bo_use_cert = ''")."
+                        order by bo_order, bo_table limit 6";
+                $rs = sql_query($sql);
+                $_widgets = [];
+                while ($row = sql_fetch_array($rs)) {
+                    // skin 자동 선택:
+                    //   - bo_skin 에 'gallery' 또는 'pic' 들어가면 갤러리형
+                    //   - bo_notice 가 있으면 (운영자가 강조한 메인 공지글) 매거진형
+                    //   - 그 외는 게시판형
+                    $bo_skin = strtolower($row['bo_skin'] ?? '');
+                    if (strpos($bo_skin, 'gallery') !== false || strpos($bo_skin, 'pic') !== false) {
+                        $widget = 'theme/m_gallery';
+                        $rows   = 4;
+                        $sublen = 36;
+                    } elseif (!empty($row['bo_notice'])) {
+                        $widget = 'theme/m_magazine';
+                        $rows   = 5;
+                        $sublen = 60;
+                    } else {
+                        $widget = 'theme/m_board';
+                        $rows   = 5;
+                        $sublen = 36;
+                    }
+                    $_widgets[] = [
+                        'bo_table' => $row['bo_table'],
+                        'widget'   => $widget,
+                        'span'     => ($widget === 'theme/m_magazine') ? 2 : 1,  // 매거진은 2열 너비
+                        'rows'     => $rows,
+                        'sublen'   => $sublen,
+                    ];
+                }
+                ?>
+
+                <div class="m-latest-grid">
+                    <?php foreach ($_widgets as $w) { ?>
+                    <div class="m-latest-cell" data-span="<?php echo $w['span'] ?>">
+                        <?php echo latest($w['widget'], $w['bo_table'], $w['rows'], $w['sublen']); ?>
+                    </div>
                     <?php } ?>
                 </div>
             </section>
