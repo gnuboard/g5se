@@ -345,7 +345,16 @@ if (!is_file($_route_full)) {
 }
 
 // gnuboard 의 './_common.php' 같은 상대 include 가 동작하도록 CWD 를 맞춘다.
-chdir(dirname($_route_full));
+// app/modules/ 트리 (폴더 기반 자동 라우팅) 의 페이지는 CWD 를 항상 G5_PATH 로 고정해
+// 레시피의 include_once('./_common.php') 패턴이 그대로 동작하게 한다.
+// 식별자: Router::discoverModulePage() 만이 'modules/.../index.php' 를 반환한다.
+// 사용자 정의 routes 가 우연히 'modules/<x>.php' 를 target 으로 잡아도 index.php 가
+// 아니면 이 분기에 들어오지 않도록 suffix 까지 검사.
+if (str_starts_with($_route_target, 'modules/') && str_ends_with($_route_target, '/index.php')) {
+    chdir(G5_PATH);
+} else {
+    chdir(dirname($_route_full));
+}
 
 // gnuboard legacy 코드가 self-URL (페이지네이션, 폼 action 등) 을 만들 때
 // $_SERVER['SCRIPT_NAME'] 을 사용. front controller 에선 항상 '/index.php'

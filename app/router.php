@@ -474,6 +474,12 @@ class Router
             return $resolved;
         }
 
+        // 5) app/modules/ 트리 폴더 기반 자동 라우팅 (Next.js app router 풍)
+        $resolved = $this->discoverModulePage($path);
+        if ($resolved !== null) {
+            return $resolved;
+        }
+
         return null;
     }
 
@@ -570,6 +576,93 @@ class Router
         }
 
         return $path !== '/' ? rtrim($path, '/') : '/';
+    }
+
+    /**
+     * app/modules/ 트리에서 path 에 매칭되는 index.php 를 찾는다.
+     * - 정적 폴더 우선, [name] dynamic 폴더 fallback (dynamic capture 는 $_GET/$_REQUEST 주입)
+     * - segment 패턴: ^[a-zA-Z0-9_-]+$ 만 허용 (path traversal·NUL·\ 차단)
+     * - 진입점은 항상 index.php
+     * @return string|null G5_PATH 기준 상대경로 (예 "modules/fortune/index.php") 또는 null
+     */
+    private function discoverModulePage($path)
+    {
+        if (!is_string($path) || $path === '' || $path === '/') {
+            return null;
+        }
+        $trimmed = trim($path, '/');
+        if ($trimmed === '') {
+            return null;
+        }
+        $segments = explode('/', $trimmed);
+        foreach ($segments as $seg) {
+            if ($seg === '' || !preg_match('/^[a-zA-Z0-9_-]+$/', $seg)) {
+                return null;
+            }
+        }
+
+        $modulesRoot = G5_PATH.'/modules';
+        if (!is_dir($modulesRoot)) {
+            return null;
+        }
+
+        $currentDir = $modulesRoot;
+        $resolvedSegments = [];
+        $dynamicCaptures = [];
+
+        foreach ($segments as $seg) {
+            $staticDir = $currentDir.'/'.$seg;
+            if (is_dir($staticDir)) {
+                $currentDir = $staticDir;
+                $resolvedSegments[] = $seg;
+                continue;
+            }
+
+            $dynamicMatch = null;
+            $entries = @scandir($currentDir);
+            if ($entries === false) {
+                return null;
+            }
+            sort($entries, SORT_STRING);
+            foreach ($entries as $entry) {
+                if (preg_match('/^\[([a-zA-Z0-9_-]+)\]$/', $entry, $m)) {
+                    $dynDir = $currentDir.'/'.$entry;
+                    if (is_dir($dynDir)) {
+                        $dynamicMatch = ['name' => $m[1], 'entry' => $entry, 'dir' => $dynDir];
+                        break;
+                    }
+                }
+            }
+            if ($dynamicMatch === null) {
+                return null;
+            }
+
+            $dynamicCaptures[$dynamicMatch['name']] = $seg;
+            $currentDir = $dynamicMatch['dir'];
+            $resolvedSegments[] = $dynamicMatch['entry'];
+        }
+
+        $indexFile = $currentDir.'/index.php';
+        if (!is_file($indexFile)) {
+            return null;
+        }
+
+        // Symlink/realpath 안전망: 결과 파일이 반드시 G5_PATH/modules/ 하위인지 검증
+        $indexReal = realpath($indexFile);
+        $modulesRootReal = realpath($modulesRoot);
+        if ($indexReal === false || $modulesRootReal === false) {
+            return null;
+        }
+        if (!str_starts_with($indexReal, $modulesRootReal.DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        foreach ($dynamicCaptures as $k => $v) {
+            $_GET[$k] = $v;
+            $_REQUEST[$k] = $v;
+        }
+
+        return 'modules/'.implode('/', $resolvedSegments).'/index.php';
     }
 
     private function normalizeUserTarget($target, $allowQuery = false)
