@@ -10,6 +10,8 @@ RewriteRule ^app(/|$) - [F,L]
 
 # 3) data/ 안에서 PHP/스크립트/HTML 실행 차단 (업로드 우회 방지)
 RewriteRule ^data/.+\.(php|phtml|phar|html?|cgi|pl|py|jsp|asp|sh)$ - [F,L]
+# 3.1) data/modules/ 안의 모듈 DB·내부 데이터 직접 접근 차단
+RewriteRule ^data/modules/ - [F,L]
 
 # 4) 정적 자산 폴더는 app/ 밑 실제 위치로 내부 매핑 (URL 은 root 기준)
 #    data/ 는 app 밖으로 분리되어 docroot 에 직접 존재하므로 매핑 대상에서 제외
