@@ -1,6 +1,9 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
+// 시스템 버전 — 릴리즈 식별용. CSS/JS 캐시 버스터(G5_CSS_VER, G5_JS_VER) 는
+// 별도로 app/extend/version.extend.php 에 정의됨.
+
 define('G5_VERSION', '그누보드5');
 define('G5SE_VERSION', '0.1.19');
 define('G5_GNUBOARD_VER', '5.6.26');
