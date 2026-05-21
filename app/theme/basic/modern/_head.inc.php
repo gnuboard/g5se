@@ -156,16 +156,14 @@ html, body {
     .m-side-col { position: static; order: -1; }   /* 모바일에선 사이드(outlogin)가 위로 */
 }
 
-/* 메인 페이지 최신글 위젯 그리드 — 2열 기본, 매거진은 2열 span, 매우 좁으면 1열 */
+/* 메인 페이지 최신글 위젯 그리드 — 2열 기본, 좁으면 1열 */
 .m-latest-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
-.m-latest-cell[data-span="2"] { grid-column: 1 / -1; }
 @media (max-width: 720px) {
     .m-latest-grid { grid-template-columns: 1fr; }
-    .m-latest-cell[data-span="2"] { grid-column: auto; }
 }
 
 /* ──────────────────────────────────────────────

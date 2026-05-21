@@ -53,8 +53,8 @@ include_once(G5_PATH.'/head.sub.php');
                     @include_once(G5_LIB_PATH.'/latest.lib.php');
                 }
 
-                // 메인 노출 게시판 목록 — bo_skin 도 같이 가져와서 위젯 형식 자동 결정
-                $sql = "select bo_table, bo_subject, bo_skin, bo_notice
+                // 메인 노출 게시판 목록 — bo_skin 으로 갤러리/게시판 분기
+                $sql = "select bo_table, bo_subject, bo_skin
                         from `{$g5['board_table']}`
                         where bo_device <> 'mobile'
                         ".($is_admin ? '' : "and bo_use_cert = ''")."
@@ -62,37 +62,21 @@ include_once(G5_PATH.'/head.sub.php');
                 $rs = sql_query($sql);
                 $_widgets = [];
                 while ($row = sql_fetch_array($rs)) {
-                    // skin 자동 선택:
-                    //   - bo_skin 에 'gallery' 또는 'pic' 들어가면 갤러리형
-                    //   - bo_notice 가 있으면 (운영자가 강조한 메인 공지글) 매거진형
-                    //   - 그 외는 게시판형
+                    // bo_skin 에 'gallery' 또는 'pic' 들어가면 갤러리형, 그 외는 게시판형
                     $bo_skin = strtolower($row['bo_skin'] ?? '');
-                    if (strpos($bo_skin, 'gallery') !== false || strpos($bo_skin, 'pic') !== false) {
-                        $widget = 'theme/m_gallery';
-                        $rows   = 4;
-                        $sublen = 36;
-                    } elseif (!empty($row['bo_notice'])) {
-                        $widget = 'theme/m_magazine';
-                        $rows   = 5;
-                        $sublen = 60;
-                    } else {
-                        $widget = 'theme/m_board';
-                        $rows   = 5;
-                        $sublen = 36;
-                    }
+                    $is_gallery = (strpos($bo_skin, 'gallery') !== false || strpos($bo_skin, 'pic') !== false);
                     $_widgets[] = [
                         'bo_table' => $row['bo_table'],
-                        'widget'   => $widget,
-                        'span'     => ($widget === 'theme/m_magazine') ? 2 : 1,  // 매거진은 2열 너비
-                        'rows'     => $rows,
-                        'sublen'   => $sublen,
+                        'widget'   => $is_gallery ? 'theme/m_gallery' : 'theme/m_board',
+                        'rows'     => $is_gallery ? 4 : 5,
+                        'sublen'   => 36,
                     ];
                 }
                 ?>
 
                 <div class="m-latest-grid">
                     <?php foreach ($_widgets as $w) { ?>
-                    <div class="m-latest-cell" data-span="<?php echo $w['span'] ?>">
+                    <div class="m-latest-cell">
                         <?php echo latest($w['widget'], $w['bo_table'], $w['rows'], $w['sublen']); ?>
                     </div>
                     <?php } ?>
@@ -119,12 +103,6 @@ include_once(G5_PATH.'/head.sub.php');
     <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 
 </div>
-
-<style>
-/* 메인 페이지 게시판 카드 hover (m-with-sidebar 는 _head.inc.php 에서 공통 정의됨) */
-.m-board-card { transition: border-color 0.15s, transform 0.15s; }
-.m-board-card:hover { border-color: var(--m-border-hover); transform: translateY(-2px); }
-</style>
 
 <?php
 // 게시판(bbs/board.php)과 동일하게 tail.sub.php 사용
