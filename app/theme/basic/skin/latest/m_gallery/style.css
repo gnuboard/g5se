@@ -93,7 +93,17 @@
     line-height: 1.4;
 }
 .m-latest-gallery-link:hover .m-latest-gallery-subject { color: var(--m-primary); }
-.m-latest-gallery-subject.is-notice { font-weight: 700; color: var(--m-primary); }
+
+/* 공지 뱃지 — is_notice 글 앞 chip (m_board 와 동일 톤) */
+.m-latest-gallery .m-latest-notice {
+    display: inline-block;
+    margin-right: 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px; font-weight: 700; line-height: 1.4;
+    background: #ef4444; color: #fff;
+    vertical-align: 1px;
+}
 
 .m-latest-gallery-meta {
     margin-top: 4px;

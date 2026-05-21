@@ -52,7 +52,16 @@
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     color: var(--m-text); font-weight: 500;
 }
-.m-latest-subject.is-notice { font-weight: 700; color: var(--m-primary); }
+
+/* 공지 뱃지 — is_notice 글 앞에 작은 빨간 chip */
+.m-latest-notice {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px; font-weight: 700; line-height: 1.4;
+    background: #ef4444; color: #fff;
+    flex-shrink: 0;
+}
 
 .m-latest-cmt {
     display: inline-flex; align-items: center;

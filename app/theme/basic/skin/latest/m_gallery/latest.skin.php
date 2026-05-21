@@ -46,7 +46,7 @@ $thumb_h = 240;
                     <?php } ?>
                 </div>
                 <div class="m-latest-gallery-body">
-                    <p class="m-latest-gallery-subject<?php echo $list[$i]['is_notice'] ? ' is-notice' : '' ?>"><?php echo $list[$i]['subject'] ?></p>
+                    <p class="m-latest-gallery-subject"><?php if ($list[$i]['is_notice']) { ?><span class="m-latest-notice">공지</span> <?php } ?><?php echo $list[$i]['subject'] ?></p>
                     <div class="m-latest-gallery-meta">
                         <span class="m-latest-gallery-name"><?php echo $list[$i]['name'] ?></span>
                         <span class="m-latest-gallery-date"><?php echo $list[$i]['datetime2'] ?></span>

@@ -21,10 +21,13 @@ $list_count = (is_array($list) && $list) ? count($list) : 0;
         <?php for ($i = 0; $i < $list_count; $i++) { ?>
         <li class="m-latest-item">
             <a href="<?php echo get_pretty_url($bo_table, $list[$i]['wr_id']); ?>" class="m-latest-link">
+                <?php if ($list[$i]['is_notice']) { ?>
+                <span class="m-latest-notice">공지</span>
+                <?php } ?>
                 <?php if ($list[$i]['icon_secret']) { ?>
                 <svg class="m-latest-secret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 <?php } ?>
-                <span class="m-latest-subject<?php echo $list[$i]['is_notice'] ? ' is-notice' : '' ?>"><?php echo $list[$i]['subject'] ?></span>
+                <span class="m-latest-subject"><?php echo $list[$i]['subject'] ?></span>
                 <?php if ($list[$i]['comment_cnt']) { ?>
                 <span class="m-latest-cmt"><?php echo $list[$i]['wr_comment'] ?></span>
                 <?php } ?>
