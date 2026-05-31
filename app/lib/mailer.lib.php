@@ -26,7 +26,29 @@ function mailer($fname, $fmail, $to, $subject, $content, $type=0, $file="", $cc=
 
     try {
         $mail = new PHPMailer(); // defaults to using php "mail()"
-        if (defined('G5_SMTP') && G5_SMTP) {
+
+        // 우선순위: /admin/setting 의 smtp 그룹 → G5_SMTP_* 상수 → PHP mail()
+        $smtp_configured = false;
+        if (function_exists('setting')) {
+            try {
+                $smtp = setting('smtp');
+                if (!empty($smtp['host'])) {
+                    $mail->IsSMTP();
+                    $mail->Host = $smtp['host'];
+                    if (!empty($smtp['port'])) $mail->Port = (int)$smtp['port'];
+                    if ($smtp['secure'] !== '') $mail->SMTPSecure = $smtp['secure'];
+                    if (!empty($smtp['auth'])) {
+                        $mail->SMTPAuth = true;
+                        $mail->Username = (string)$smtp['user'];
+                        $mail->Password = (string)$smtp['pass'];
+                    }
+                    $smtp_configured = true;
+                }
+            } catch (\Throwable $e) {
+                // setting() 미가용 시 상수 fallback 으로
+            }
+        }
+        if (!$smtp_configured && defined('G5_SMTP') && G5_SMTP) {
             $mail->IsSMTP(); // telling the class to use SMTP
             $mail->Host = G5_SMTP; // SMTP server
             if(defined('G5_SMTP_PORT') && G5_SMTP_PORT)
