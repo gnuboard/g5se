@@ -262,7 +262,10 @@ admin_layout_start($g5['title'], 'core');
         <?php } ?>
 
         <?php if (!empty($schema['notes'])) { ?>
-        <div class="setting-notes"><?php echo $schema['notes']; /* schema 는 코드 상수 — htmlspecialchars 안 함 (HTML 허용) */ ?></div>
+        <details class="setting-notes-wrap">
+            <summary class="setting-notes-summary">📘 설정 가이드 보기</summary>
+            <div class="setting-notes"><?php echo $schema['notes']; /* schema 는 코드 상수 — htmlspecialchars 안 함 (HTML 허용) */ ?></div>
+        </details>
         <?php } ?>
 
         <?php if (isset($_errors[$key])) { ?>
@@ -395,7 +398,18 @@ admin_layout_start($g5['title'], 'core');
 .setting-card-desc   { font-size: 0.9rem; color: var(--slate-600); margin: 0 0 1rem; }
 [data-theme="dark"] .setting-card-desc { color: var(--slate-400); }
 
-.setting-notes       { padding: 1rem 1.25rem; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.25); border-radius: 0.5rem; margin: 0 0 1.25rem; font-size: 0.85rem; line-height: 1.55; color: var(--slate-700); }
+.setting-notes-wrap     { margin: 0 0 1.25rem; }
+.setting-notes-summary  { cursor: pointer; padding: 0.55rem 0.85rem; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.25); border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--slate-700); list-style: none; user-select: none; }
+.setting-notes-summary::-webkit-details-marker { display: none; }
+.setting-notes-summary::before { content: "▶"; display: inline-block; margin-right: 0.45rem; font-size: 0.7em; transition: transform 0.15s; }
+.setting-notes-wrap[open] > .setting-notes-summary::before { transform: rotate(90deg); }
+.setting-notes-summary:hover { background: rgba(59,130,246,0.1); }
+[data-theme="dark"] .setting-notes-summary { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.4); color: var(--slate-200); }
+[data-theme="dark"] .setting-notes-summary:hover { background: rgba(59,130,246,0.18); }
+.setting-notes-wrap[open] > .setting-notes-summary { border-radius: 0.5rem 0.5rem 0 0; border-bottom: 0; }
+.setting-notes-wrap[open] > .setting-notes { border-top: 0; border-radius: 0 0 0.5rem 0.5rem; margin: 0; }
+
+.setting-notes       { padding: 1rem 1.25rem; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.25); border-radius: 0.5rem; font-size: 0.85rem; line-height: 1.55; color: var(--slate-700); }
 [data-theme="dark"] .setting-notes { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.4); color: var(--slate-200); }
 .setting-notes h4    { font-size: 0.95rem; font-weight: 700; margin: 0.6rem 0 0.4rem; color: var(--slate-900); }
 .setting-notes h4:first-child { margin-top: 0; }
