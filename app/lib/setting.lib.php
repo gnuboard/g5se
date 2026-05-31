@@ -35,7 +35,7 @@ const SETTINGS_SCHEMA = [
     <li><strong>port</strong>: <code>587</code> (TLS) 또는 <code>465</code> (SSL)</li>
     <li><strong>암호화</strong>: port 587 이면 <strong>TLS</strong>, port 465 이면 <strong>SSL/SMTPS</strong></li>
     <li><strong>인증 사용</strong>: <strong>반드시 체크</strong></li>
-    <li><strong>계정</strong>: 전체 이메일 또는 네이버 ID (예: <code>kagla@naver.com</code> 또는 <code>kagla</code>) — 둘 중 안 되면 다른 쪽 시도</li>
+    <li><strong>계정</strong>: 전체 이메일 또는 네이버 ID (예: <code>me@naver.com</code> 또는 <code>me</code>) — 둘 중 안 되면 다른 쪽 시도</li>
     <li><strong>비밀번호</strong>: <strong>네이버 앱 비밀번호 12자</strong> — 일반 네이버 로그인 비번 안 받음</li>
 </ul>
 <p>설정 순서:</p>
