@@ -261,6 +261,10 @@ admin_layout_start($g5['title'], 'core');
         <p class="setting-card-desc"><?php echo htmlspecialchars($schema['description']); ?></p>
         <?php } ?>
 
+        <?php if (!empty($schema['notes'])) { ?>
+        <div class="setting-notes"><?php echo $schema['notes']; /* schema 는 코드 상수 — htmlspecialchars 안 함 (HTML 허용) */ ?></div>
+        <?php } ?>
+
         <?php if (isset($_errors[$key])) { ?>
         <div class="setting-error"><?php echo htmlspecialchars($_errors[$key]); ?></div>
         <?php } ?>
@@ -390,6 +394,23 @@ admin_layout_start($g5['title'], 'core');
 
 .setting-card-desc   { font-size: 0.9rem; color: var(--slate-600); margin: 0 0 1rem; }
 [data-theme="dark"] .setting-card-desc { color: var(--slate-400); }
+
+.setting-notes       { padding: 1rem 1.25rem; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.25); border-radius: 0.5rem; margin: 0 0 1.25rem; font-size: 0.85rem; line-height: 1.55; color: var(--slate-700); }
+[data-theme="dark"] .setting-notes { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.4); color: var(--slate-200); }
+.setting-notes h4    { font-size: 0.95rem; font-weight: 700; margin: 0.6rem 0 0.4rem; color: var(--slate-900); }
+.setting-notes h4:first-child { margin-top: 0; }
+[data-theme="dark"] .setting-notes h4 { color: var(--slate-50); }
+.setting-notes ul    { margin: 0.25rem 0 0.5rem 1.25rem; padding: 0; }
+.setting-notes li    { margin: 0.15rem 0; }
+.setting-notes code  { background: var(--slate-100); padding: 0.1em 0.35em; border-radius: 0.25rem; font-size: 0.92em; color: var(--slate-900); }
+[data-theme="dark"] .setting-notes code { background: var(--slate-900); color: var(--slate-100); }
+.setting-notes a     { color: #2563eb; text-decoration: underline; }
+.setting-notes a:hover { color: #1d4ed8; }
+[data-theme="dark"] .setting-notes a { color: #60a5fa; }
+[data-theme="dark"] .setting-notes a:hover { color: #93c5fd; }
+.setting-notes p     { margin: 0.4rem 0; }
+.setting-notes em    { font-style: normal; color: #b91c1c; font-weight: 600; }
+[data-theme="dark"] .setting-notes em { color: #fca5a5; }
 
 .setting-form        { display: flex; flex-direction: column; gap: 0.9rem; }
 .setting-field       { display: flex; flex-direction: column; gap: 0.35rem; }

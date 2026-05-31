@@ -18,6 +18,27 @@ const SETTINGS_SCHEMA = [
     'smtp' => [
         'title'       => 'SMTP 메일 발송',
         'description' => 'PHP mail() 대신 외부 SMTP 서버 사용. host 비우면 PHP mail() 폴백.',
+        'notes' => <<<HTML
+<h4>📧 Gmail 설정 가이드</h4>
+<ul>
+    <li><strong>host</strong>: <code>smtp.gmail.com</code></li>
+    <li><strong>port</strong>: <code>587</code> (TLS 권장) 또는 <code>465</code> (SSL)</li>
+    <li><strong>암호화</strong>: port 587 이면 <strong>TLS</strong>, port 465 이면 <strong>SSL/SMTPS</strong>. <em>"없음" 으로 두면 발송 실패함</em></li>
+    <li><strong>인증 사용</strong>: <strong>반드시 체크</strong> (Gmail 은 인증 필수)</li>
+    <li><strong>계정</strong>: 전체 이메일 주소 (예: <code>me@gmail.com</code>)</li>
+    <li><strong>비밀번호</strong>: <strong>앱 비밀번호</strong> — 일반 Gmail 비밀번호는 더 이상 안 받음</li>
+</ul>
+<p>앱 비밀번호 만들기: <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a> (2단계 인증 활성화 필요) → 앱 비밀번호 생성 → 16자 코드를 그대로 붙여넣기 (공백 포함 가능)</p>
+<h4>🇰🇷 Naver 설정 가이드</h4>
+<ul>
+    <li><strong>host</strong>: <code>smtp.naver.com</code></li>
+    <li><strong>port</strong>: <code>587</code> (TLS) 또는 <code>465</code> (SSL)</li>
+    <li><strong>암호화</strong>: TLS 또는 SSL</li>
+    <li><strong>인증 사용</strong>: <strong>체크 필수</strong></li>
+    <li><strong>계정</strong>: 네이버 ID (예: <code>myid</code>) 또는 전체 이메일</li>
+    <li><strong>비밀번호</strong>: 네이버 메일 환경설정 → POP3/IMAP/SMTP 사용 켠 후 표시되는 비밀번호</li>
+</ul>
+HTML,
         'fields' => [
             'host'   => ['label' => 'SMTP 호스트', 'type' => 'text',     'default' => '',
                          'help'  => '예: smtp.gmail.com (비우면 PHP mail() 사용)'],
