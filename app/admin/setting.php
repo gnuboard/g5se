@@ -28,15 +28,123 @@ $_schemas = setting_schemas();
 $_saved_key = (isset($_GET['saved']) && isset($_schemas[$_GET['saved']])) ? (string)$_GET['saved'] : '';
 $_reset_key = (isset($_GET['reset']) && isset($_schemas[$_GET['reset']])) ? (string)$_GET['reset'] : '';
 
-// 그룹별 현재 값 (저장값 + defaults). 검증 실패 후 입력 유지 dict 자리 (Task 4 에서 채움).
+// ── POST 처리 (save) ──────────────────────────────────────────────
+$_action = isset($_POST['action']) ? (string)$_POST['action'] : '';
+$_post_key = isset($_POST['key']) ? (string)$_POST['key'] : '';
+$_form_values = isset($_POST['v']) && is_array($_POST['v']) ? $_POST['v'] : [];
+
+if ($_action && (!isset($_POST['token']) || !hash_equals($_csrf, (string)$_POST['token']))) {
+    alert('보안 토큰이 일치하지 않습니다.');
+}
+
+$_values_override = [];
+
+// save 액션: 검증 → setting_put → PRG redirect
+if ($_action === 'save' && isset($_schemas[$_post_key])) {
+    $schema = $_schemas[$_post_key];
+    $errors = [];
+    $values_to_put = [];
+
+    foreach ($schema['fields'] as $fkey => $field) {
+        $raw = $_form_values[$fkey] ?? null;
+        $type = $field['type'];
+        $required = !empty($field['required']);
+
+        if ($type === 'text') {
+            $val = is_string($raw) ? trim($raw) : '';
+            if ($required && $val === '') {
+                $errors[] = $field['label'].' 은(는) 필수입니다.';
+                continue;
+            }
+            $values_to_put[$fkey] = $val;
+        } elseif ($type === 'number') {
+            $str = is_string($raw) ? trim($raw) : '';
+            if ($required && $str === '') {
+                $errors[] = $field['label'].' 은(는) 필수입니다.';
+                continue;
+            }
+            if ($str === '') {
+                $values_to_put[$fkey] = (int)$field['default'];
+                continue;
+            }
+            $val = (int)$str;
+            if (isset($field['min']) && $val < (int)$field['min']) {
+                $errors[] = $field['label'].' 은(는) '.(int)$field['min'].' 이상이어야 합니다.';
+                continue;
+            }
+            if (isset($field['max']) && $val > (int)$field['max']) {
+                $errors[] = $field['label'].' 은(는) '.(int)$field['max'].' 이하이어야 합니다.';
+                continue;
+            }
+            $values_to_put[$fkey] = $val;
+        } elseif ($type === 'select') {
+            $val = is_string($raw) ? $raw : '';
+            $allowed = array_keys($field['options'] ?? []);
+            if (!in_array($val, array_map('strval', $allowed), true)) {
+                $errors[] = $field['label'].' 의 값이 잘못되었습니다.';
+                continue;
+            }
+            $values_to_put[$fkey] = $val;
+        } elseif ($type === 'bool') {
+            $values_to_put[$fkey] = !empty($raw);
+        } elseif ($type === 'password') {
+            $val = is_string($raw) ? $raw : '';
+            if ($val === '') {
+                // 빈 입력 = 기존 값 유지 — values_to_put 에서 제외
+                continue;
+            }
+            $values_to_put[$fkey] = $val;
+        }
+    }
+
+    if ($errors) {
+        // 검증 실패 — 같은 페이지 재렌더 (입력값 유지 + 에러 표시)
+        $_errors[$_post_key] = implode(' / ', $errors);
+        // 사용자가 막 입력한 값을 prefill 로 사용 — 단 password 는 폼에서 항상 빈 input
+        try {
+            $merged = setting($_post_key);
+        } catch (\Throwable $e) {
+            $merged = [];
+            foreach ($schema['fields'] as $fkey => $field) {
+                $merged[$fkey] = $field['default'];
+            }
+        }
+        foreach ($schema['fields'] as $fkey => $field) {
+            if (array_key_exists($fkey, $_form_values) && $field['type'] !== 'password') {
+                $raw = $_form_values[$fkey];
+                if ($field['type'] === 'bool') {
+                    $merged[$fkey] = !empty($raw);
+                } elseif ($field['type'] === 'number') {
+                    $merged[$fkey] = is_string($raw) && $raw !== '' ? (int)$raw : $field['default'];
+                } else {
+                    $merged[$fkey] = is_string($raw) ? $raw : '';
+                }
+            }
+        }
+        $_values_override = [$_post_key => $merged];
+    } else {
+        // 새 CSRF 발급 후 PRG
+        $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
+        setting_put($_post_key, $values_to_put);
+        header('Location: /admin/setting?saved='.urlencode($_post_key), true, 303);
+        exit;
+    }
+}
+
+// 그룹별 현재 값. POST 검증 실패 시 $_values_override 에 부분 채워짐.
 $_values = [];
-$_errors = [];   // [group_key => 'error message']
 foreach ($_schemas as $key => $schema) {
+    if (isset($_values_override[$key])) {
+        $_values[$key] = $_values_override[$key];
+        continue;
+    }
     try {
         $_values[$key] = setting($key);
     } catch (\Throwable $e) {
         $_values[$key] = [];
-        $_errors[$key] = 'g5_setting 테이블이 없습니다. /admin/db_migrate 에서 생성하세요.';
+        if (!isset($_errors[$key])) {
+            $_errors[$key] = 'g5_setting 테이블이 없습니다. /admin/db_migrate 에서 생성하세요.';
+        }
     }
 }
 
