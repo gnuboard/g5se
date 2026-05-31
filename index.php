@@ -4,6 +4,18 @@
 // 주의: gnuboard 의 require 는 반드시 *글로벌 스코프* 에서 호출해야 한다.
 //       (메서드/함수 안에서 require 하면 $g5 등 전역 변수가 로컬에 갇혀 DB 연결을 잃는다.)
 
+// PHP 7.4 환경에서 PHP 8.0+ 문자열 함수 폴리필 (배포 서버가 7.4 인 경우 대비).
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool {
+        return $needle === '' || strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+if (!function_exists('str_ends_with')) {
+    function str_ends_with(string $haystack, string $needle): bool {
+        return $needle === '' || (strlen($haystack) >= strlen($needle) && substr_compare($haystack, $needle, -strlen($needle)) === 0);
+    }
+}
+
 define('_GNUBOARD_', true);
 define('G5_PATH', __DIR__.'/app');
 
