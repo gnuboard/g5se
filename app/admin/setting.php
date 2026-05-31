@@ -124,9 +124,9 @@ if ($_action === 'save' && isset($_schemas[$_post_key])) {
         }
         $_values_override = [$_post_key => $merged];
     } else {
-        // 새 CSRF 발급 후 PRG
-        $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
+        // setting_put 성공 후 CSRF 발급 + PRG
         setting_put($_post_key, $values_to_put);
+        $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
         header('Location: /admin/setting?saved='.urlencode($_post_key), true, 303);
         exit;
     }
