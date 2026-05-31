@@ -74,14 +74,18 @@ document.getElementById('ins-theme-toggle').addEventListener('click', function (
 <div id="g5se-rw-warn" hidden style="max-width:760px;margin:16px auto;padding:20px 24px;border:1px solid #dc2626;border-left:4px solid #dc2626;border-radius:8px;background:var(--surface,#fff);color:var(--text,#0f172a);">
     <h2 style="margin:0 0 12px;font-size:1.1em;color:#dc2626;display:flex;align-items:center;gap:8px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        URL 라우팅 설정이 누락되었습니다
+        짧은 주소(URL 라우터) 설정이 안 돼 있어요
     </h2>
-    <p style="margin:0 0 10px;">정적 자산 URL (예: <code>/css/default.css</code>, <code>/img/*</code>, <code>/theme/*</code>) 이 404 입니다. 설치는 진행되지만, 설치 후 사이트의 CSS/JS/이미지가 모두 깨집니다.</p>
-    <p style="margin:0 0 8px;">이 프로젝트의 <code>.htaccess</code> 가 <code>/(theme|skin|img|js|css|mobile|plugin)/*</code> URL 을 <code>/app/$1/*</code> 로 내부 매핑하도록 짜여 있습니다. 웹서버에 동등 설정이 필요합니다:</p>
-    <ul style="margin:6px 0;padding-left:20px;">
-        <li><strong>Apache</strong>: <code>mod_rewrite</code> 활성화 + <code>AllowOverride All</code></li>
-        <li><strong>nginx</strong>: <code>RewriteRule</code> 들을 <code>rewrite</code> / <code>try_files</code> 로 옮기거나, docroot 에 <code>theme &rarr; app/theme</code> 등 symlink 추가</li>
-    </ul>
+    <p style="margin:0 0 10px;">이 사이트는 <code>/css/…</code>, <code>/img/…</code>, <code>/theme/…</code> 같은 <strong>짧은 주소</strong>를 실제 파일 위치로 연결해 주는 설정이 필요합니다. 지금 웹서버에 이 설정이 없어서 CSS·이미지·자바스크립트가 모두 깨집니다.</p>
+    <p style="margin:0 0 8px;">설치는 끝까지 진행되지만, <strong>설치 후 화면이 깨져 보입니다.</strong> 웹서버 담당자에게 아래 설정을 요청하세요.</p>
+    <details style="margin:6px 0;">
+        <summary style="cursor:pointer;opacity:0.8;">서버 담당자용 설정 방법</summary>
+        <p style="margin:8px 0;">짧은 주소 <code>/(theme|skin|img|js|css|mobile|plugin)/*</code> 를 <code>/app/$1/*</code> 로 연결해야 합니다.</p>
+        <ul style="margin:6px 0;padding-left:20px;">
+            <li><strong>Apache</strong>: <code>mod_rewrite</code> 활성화 + <code>AllowOverride All</code> (이미 <code>.htaccess</code> 에 규칙이 들어 있음)</li>
+            <li><strong>nginx</strong>: <code>.htaccess</code> 의 규칙을 <code>rewrite</code> / <code>try_files</code> 로 옮기거나, docroot 에 <code>theme &rarr; app/theme</code> 등 symlink 추가</li>
+        </ul>
+    </details>
     <p style="margin:10px 0 0;font-size:0.88em;opacity:0.7;">현재 서버: <code id="g5se-rw-srv">?</code></p>
 </div>
 <script>
