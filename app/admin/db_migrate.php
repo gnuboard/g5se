@@ -18,17 +18,14 @@ if ($member['mb_id'] !== $config['cf_admin']) {
 
 $g5['title'] = 'DB 마이그레이션';
 
+require_once __DIR__.'/admin.lib.php';  // get_admin_token / check_admin_token
+
 $_log = [];
 $_action = isset($_POST['action']) ? (string)$_POST['action'] : '';
 
-// CSRF — 단순 세션 토큰 (TODO: gnuboard set_session 사용)
-if (!isset($_SESSION['_db_migrate_token'])) {
-    $_SESSION['_db_migrate_token'] = bin2hex(random_bytes(16));
-}
-$_csrf = $_SESSION['_db_migrate_token'];
-
-if ($_action && (!isset($_POST['token']) || !hash_equals($_csrf, (string)$_POST['token']))) {
-    alert('보안 토큰이 일치하지 않습니다.');
+// gnuboard admin 토큰 검증 (admin.js 가 form submit 시 ajax.token.php 로 새 토큰을 채워줌)
+if ($_action) {
+    check_admin_token();
 }
 
 // 현재 DB 이름
@@ -165,12 +162,6 @@ if ($_action === 'create_setting') {
     }
 }
 
-// 새 토큰 발급 (한번 쓰고 폐기)
-if ($_action) {
-    $_SESSION['_db_migrate_token'] = bin2hex(random_bytes(16));
-    $_csrf = $_SESSION['_db_migrate_token'];
-}
-
 // 현재 상태 조사 ──────────────────────────────────────────
 // charset 상태
 $_charset_rows = sql_pdo_query(
@@ -289,7 +280,7 @@ admin_layout_start($g5['title'], 'core');
         <?php if ($_tables_utf8mb3) { ?>
         <div class="dbm-bulk">
             <form method="post" class="dbm-action" onsubmit="return confirm('utf8mb3 테이블 <?php echo count($_tables_utf8mb3); ?>개를 모두 utf8mb4 로 변환합니다.\n\n주의: 행 수가 많은 테이블은 변환 중 락이 걸려 서비스 영향이 있을 수 있습니다.\n트래픽 적은 시간에 실행 권장.\n\n계속하시겠습니까?');">
-                <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+                <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
                 <input type="hidden" name="action" value="charset_all">
                 <button type="submit" class="btn_submit dbm-btn dbm-btn-bulk">⚡ 전체 일괄 변환 (<?php echo count($_tables_utf8mb3); ?>개)</button>
             </form>
@@ -308,7 +299,7 @@ admin_layout_start($g5['title'], 'core');
                         <td class="td_num_right"><?php echo number_format((int)$r['rows_est']); ?></td>
                         <td>
                             <form method="post" class="dbm-action" onsubmit="return confirm('테이블 <?php echo htmlspecialchars($r['tbl']); ?> 을 utf8mb4 로 변환합니다.\n장시간 락이 걸릴 수 있습니다 (행수 비례).\n계속하시겠습니까?');">
-                                <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+                                <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
                                 <input type="hidden" name="action" value="charset_table">
                                 <input type="hidden" name="table" value="<?php echo htmlspecialchars($r['tbl']); ?>">
                                 <button type="submit" class="btn_submit dbm-btn">변환</button>
@@ -338,7 +329,7 @@ admin_layout_start($g5['title'], 'core');
         <?php if ($_zd_pending) { ?>
         <div class="dbm-bulk">
             <form method="post" class="dbm-action" onsubmit="return confirm('zero-date 컬럼 <?php echo count($_zd_pending); ?>개를 모두 NULL 허용 + 기존 0000 값 NULL 변환합니다.\n\n주의: 행 수 많은 테이블은 락 영향 있음.\n\n계속하시겠습니까?');">
-                <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+                <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
                 <input type="hidden" name="action" value="zerodate_all">
                 <button type="submit" class="btn_submit dbm-btn dbm-btn-bulk">⚡ 전체 일괄 변환 (<?php echo count($_zd_pending); ?>개)</button>
             </form>
@@ -361,7 +352,7 @@ admin_layout_start($g5['title'], 'core');
                         <td><?php echo $r['def'] === null ? '<em>NULL</em>' : '<code>'.htmlspecialchars($r['def']).'</code>'; ?></td>
                         <td>
                             <form method="post" class="dbm-action" onsubmit="return confirm('<?php echo htmlspecialchars($r['tbl']); ?>.<?php echo htmlspecialchars($r['col']); ?> 을 NULL 허용 + 0000 값 NULL 변환합니다.\n계속하시겠습니까?');">
-                                <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+                                <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
                                 <input type="hidden" name="action" value="zerodate_column">
                                 <input type="hidden" name="table" value="<?php echo htmlspecialchars($r['tbl']); ?>">
                                 <input type="hidden" name="column" value="<?php echo htmlspecialchars($r['col']); ?>">
@@ -394,7 +385,7 @@ admin_layout_start($g5['title'], 'core');
 
         <?php if (!$_setting_exists) { ?>
         <form method="post" class="dbm-action" onsubmit="return confirm('g5_setting 테이블을 생성합니다. 계속하시겠습니까?');">
-            <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+            <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
             <input type="hidden" name="action" value="create_setting">
             <button type="submit" class="btn_submit dbm-btn">테이블 생성</button>
         </form>
