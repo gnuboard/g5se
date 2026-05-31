@@ -33,11 +33,21 @@ const SETTINGS_SCHEMA = [
 <ul>
     <li><strong>host</strong>: <code>smtp.naver.com</code></li>
     <li><strong>port</strong>: <code>587</code> (TLS) 또는 <code>465</code> (SSL)</li>
-    <li><strong>암호화</strong>: TLS 또는 SSL</li>
-    <li><strong>인증 사용</strong>: <strong>체크 필수</strong></li>
-    <li><strong>계정</strong>: 네이버 ID (예: <code>myid</code>) 또는 전체 이메일</li>
-    <li><strong>비밀번호</strong>: 네이버 메일 환경설정 → POP3/IMAP/SMTP 사용 켠 후 표시되는 비밀번호</li>
+    <li><strong>암호화</strong>: port 587 이면 <strong>TLS</strong>, port 465 이면 <strong>SSL/SMTPS</strong></li>
+    <li><strong>인증 사용</strong>: <strong>반드시 체크</strong></li>
+    <li><strong>계정</strong>: 전체 이메일 또는 네이버 ID (예: <code>kagla@naver.com</code> 또는 <code>kagla</code>) — 둘 중 안 되면 다른 쪽 시도</li>
+    <li><strong>비밀번호</strong>: <strong>네이버 앱 비밀번호 12자</strong> — 일반 네이버 로그인 비번 안 받음</li>
 </ul>
+<p>설정 순서:</p>
+<ol>
+    <li><a href="https://mail.naver.com/v2/settings/smtp/imap" target="_blank" rel="noopener">mail.naver.com 환경설정 → POP3/IMAP 설정</a> → "IMAP/SMTP 설정" 또는 "POP3/SMTP 설정" 탭 → <strong>사용함</strong> 선택</li>
+    <li>같은 페이지의 안내 박스 안 <strong>[설정하기]</strong> 버튼 → 네이버 ID 보안설정 페이지로 이동</li>
+    <li><strong>2단계 인증 활성화</strong> (이미 켜있으면 건너뜀)</li>
+    <li><strong>애플리케이션 비밀번호 생성</strong> — 종류 "직접 입력" 으로 식별 이름 (예: <code>g5se</code>) → [생성하기] → 표시되는 12자 비번 메모 (창 닫으면 다시 못 봄)</li>
+    <li>다시 IMAP/SMTP 설정 페이지로 가서 [저장]</li>
+    <li>위 12자 비번을 이 폼의 비밀번호 필드에 붙여넣기</li>
+</ol>
+<p><em>주의:</em> 인증 실패 누적 시 일시 차단됨 (10~30분 대기 후 재시도)</p>
 HTML,
         'fields' => [
             'host'   => ['label' => 'SMTP 호스트', 'type' => 'text',     'default' => '',
