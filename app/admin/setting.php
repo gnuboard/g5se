@@ -132,6 +132,17 @@ if ($_action === 'save' && isset($_schemas[$_post_key])) {
     }
 }
 
+// reset 액션: DELETE → PRG redirect
+if ($_action === 'reset' && isset($_schemas[$_post_key])) {
+    sql_pdo_query(
+        "DELETE FROM `".G5_TABLE_PREFIX."setting` WHERE s_key = ?",
+        [$_post_key]
+    );
+    $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
+    header('Location: /admin/setting?reset='.urlencode($_post_key), true, 303);
+    exit;
+}
+
 // 그룹별 현재 값. POST 검증 실패 시 $_values_override 에 부분 채워짐.
 $_values = [];
 foreach ($_schemas as $key => $schema) {
