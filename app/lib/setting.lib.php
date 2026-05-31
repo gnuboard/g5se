@@ -73,7 +73,8 @@ function setting(string $key): array
         // 테이블 없거나 JSON 깨짐 — defaults 만 반환
     }
 
-    return array_merge($defaults, $stored);
+    // schema 에 선언된 키만 반환 — 과거 schema 의 잔재 키가 응답에 새지 않도록
+    return array_intersect_key(array_merge($defaults, $stored), $defaults);
 }
 
 /**
@@ -102,7 +103,9 @@ function setting_put(string $key, array $values): void
         }
     }
 
-    $merged = array_merge($existing, $values);
+    // 현재 schema 의 필드만 저장 — 제거된 필드의 잔재가 영구 누적되지 않도록
+    $allowed = array_flip(array_keys(SETTINGS_SCHEMA[$key]['fields']));
+    $merged = array_intersect_key(array_merge($existing, $values), $allowed);
     $json = json_encode($merged, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
 
     sql_pdo_query(
