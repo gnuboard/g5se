@@ -144,6 +144,28 @@ if ($_action === 'zerodate_all') {
     }
     $_log[] = ['ok', "── 일괄 완료: 컬럼 $_done 성공 / $_fail 실패, 총 $_total_rows 행 0000→NULL"];
 }
+// g5_setting 테이블 — 생성/삭제
+if ($_action === 'create_setting') {
+    try {
+        sql_pdo_query("CREATE TABLE IF NOT EXISTS `".G5_TABLE_PREFIX."setting` (
+            `s_key`        VARCHAR(64)  NOT NULL,
+            `s_value`      LONGTEXT     NOT NULL,
+            `s_updated_at` DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (`s_key`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $_log[] = ['ok', "✓ `".G5_TABLE_PREFIX."setting` 테이블 생성 완료"];
+    } catch (Throwable $e) {
+        $_log[] = ['err', "✗ 생성 실패: ".$e->getMessage()];
+    }
+}
+if ($_action === 'drop_setting') {
+    try {
+        sql_pdo_query("DROP TABLE IF EXISTS `".G5_TABLE_PREFIX."setting`");
+        $_log[] = ['ok', "✓ `".G5_TABLE_PREFIX."setting` 테이블 삭제 완료"];
+    } catch (Throwable $e) {
+        $_log[] = ['err', "✗ 삭제 실패: ".$e->getMessage()];
+    }
+}
 
 // 새 토큰 발급 (한번 쓰고 폐기)
 if ($_action) {
@@ -211,6 +233,24 @@ $_pk_r = sql_pdo_fetch(
     [':db' => $_db_name]
 );
 $_pk_date_count = (int)($_pk_r['c'] ?? 0);
+
+// g5_setting 테이블 상태
+$_setting_exists = false;
+$_setting_rows   = 0;
+$_setting_table  = G5_TABLE_PREFIX.'setting';
+try {
+    $r = sql_pdo_fetch(
+        "SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = :db AND table_name = :tbl",
+        [':db' => $_db_name, ':tbl' => $_setting_table]
+    );
+    $_setting_exists = ((int)($r['c'] ?? 0) > 0);
+    if ($_setting_exists) {
+        $r = sql_pdo_fetch("SELECT COUNT(*) AS c FROM `".$_setting_table."`");
+        $_setting_rows = (int)($r['c'] ?? 0);
+    }
+} catch (Throwable $e) {
+    $_setting_exists = false;
+}
 
 // 현재 sql_mode
 $_sm = sql_pdo_fetch("SELECT @@sql_mode AS m");
@@ -338,9 +378,37 @@ admin_layout_start($g5['title'], 'core');
         <?php } ?>
     </section>
 
+    <!-- Section 2.5: g5_setting 테이블 -->
+    <section>
+        <h2 class="h2_frm">③ g5_setting — 사이트 설정 저장 테이블</h2>
+        <p class="dbm-desc">
+            상태:
+            <?php if ($_setting_exists) { ?>
+                <strong class="dbm-ok-inline">✅ 생성됨</strong> (<?php echo number_format($_setting_rows); ?> rows)
+            <?php } else { ?>
+                <strong class="dbm-warn">❌ 미생성</strong>
+            <?php } ?>
+            — <code>/admin/setting</code> 에서 편집
+        </p>
+
+        <?php if (!$_setting_exists) { ?>
+        <form method="post" class="dbm-action" onsubmit="return confirm('g5_setting 테이블을 생성합니다. 계속하시겠습니까?');">
+            <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+            <input type="hidden" name="action" value="create_setting">
+            <button type="submit" class="btn_submit dbm-btn">테이블 생성</button>
+        </form>
+        <?php } else { ?>
+        <form method="post" class="dbm-action" onsubmit="return confirm('⚠ g5_setting 테이블을 삭제합니다 (저장된 모든 설정값 손실). 계속하시겠습니까?');">
+            <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
+            <input type="hidden" name="action" value="drop_setting">
+            <button type="submit" class="btn_submit dbm-btn dbm-btn-bulk">테이블 삭제</button>
+        </form>
+        <?php } ?>
+    </section>
+
     <!-- Section 3: sql_mode 정보 -->
     <section>
-        <h2 class="h2_frm">③ 현재 sql_mode (참고)</h2>
+        <h2 class="h2_frm">④ 현재 sql_mode (참고)</h2>
         <pre class="dbm-pre"><?php echo htmlspecialchars($_sql_mode); ?></pre>
         <p class="dbm-desc">
             마이그레이션 완료 후 <code>my.cnf</code> 에 <code>NO_ZERO_DATE,NO_ZERO_IN_DATE</code> 를 추가하면
@@ -355,6 +423,7 @@ admin_layout_start($g5['title'], 'core');
 .dbm-desc { font-size: 0.85rem; color: var(--slate-600); margin: 0 0 0.75rem; }
 .dbm-warn { color: #ef4444; font-weight: 700; }
 .dbm-ok { color: #059669; font-weight: 600; padding: 0.75rem 1rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 0.5rem; }
+.dbm-ok-inline { color: #059669; font-weight: 700; }
 .dbm-action { display: inline; margin: 0; }
 .dbm-btn { padding: 0.3rem 0.8rem; font-size: 0.78rem; }
 .dbm-bulk { margin: 0 0 0.85rem; }
