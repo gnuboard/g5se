@@ -158,14 +158,6 @@ if ($_action === 'create_setting') {
         $_log[] = ['err', "✗ 생성 실패: ".$e->getMessage()];
     }
 }
-if ($_action === 'drop_setting') {
-    try {
-        sql_pdo_query("DROP TABLE IF EXISTS `".G5_TABLE_PREFIX."setting`");
-        $_log[] = ['ok', "✓ `".G5_TABLE_PREFIX."setting` 테이블 삭제 완료"];
-    } catch (Throwable $e) {
-        $_log[] = ['err', "✗ 삭제 실패: ".$e->getMessage()];
-    }
-}
 
 // 새 토큰 발급 (한번 쓰고 폐기)
 if ($_action) {
@@ -396,12 +388,6 @@ admin_layout_start($g5['title'], 'core');
             <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
             <input type="hidden" name="action" value="create_setting">
             <button type="submit" class="btn_submit dbm-btn">테이블 생성</button>
-        </form>
-        <?php } else { ?>
-        <form method="post" class="dbm-action" onsubmit="return confirm('⚠ g5_setting 테이블을 삭제합니다 (저장된 모든 설정값 손실). 계속하시겠습니까?');">
-            <input type="hidden" name="token" value="<?php echo $_csrf; ?>">
-            <input type="hidden" name="action" value="drop_setting">
-            <button type="submit" class="btn_submit dbm-btn dbm-btn-bulk">테이블 삭제</button>
         </form>
         <?php } ?>
     </section>
