@@ -38,13 +38,15 @@ $_db_name = $_db_row['db'] ?? '';
 // 액션 처리 ───────────────────────────────────────────────
 if ($_action === 'charset_table' && !empty($_POST['table'])) {
     $_t = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['table']);
-    if ($_t) {
+    if ($_t && (G5_TABLE_PREFIX === '' || strpos($_t, G5_TABLE_PREFIX) === 0)) {
         try {
             sql_pdo_query("ALTER TABLE `$_t` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
             $_log[] = ['ok', "✓ `$_t` → utf8mb4_unicode_ci 변환 완료"];
         } catch (Throwable $e) {
             $_log[] = ['err', "✗ `$_t` 실패: ".$e->getMessage()];
         }
+    } else {
+        $_log[] = ['err', "✗ `$_t` — `".G5_TABLE_PREFIX."` 접두사가 아니어서 변환 거부"];
     }
 }
 if ($_action === 'zerodate_column' && !empty($_POST['table']) && !empty($_POST['column']) && !empty($_POST['type'])) {
@@ -53,6 +55,8 @@ if ($_action === 'zerodate_column' && !empty($_POST['table']) && !empty($_POST['
     $_type = strtoupper(preg_replace('/[^A-Za-z]/', '', $_POST['type']));
     if (!in_array($_type, ['DATE', 'DATETIME', 'TIMESTAMP'], true)) {
         $_log[] = ['err', "✗ 잘못된 타입: $_type"];
+    } else if ($_t && (G5_TABLE_PREFIX !== '' && strpos($_t, G5_TABLE_PREFIX) !== 0)) {
+        $_log[] = ['err', "✗ `$_t` — `".G5_TABLE_PREFIX."` 접두사가 아니어서 변환 거부"];
     } else if ($_t && $_c) {
         $_zero = ($_type === 'DATE') ? '0000-00-00' : '0000-00-00 00:00:00';
         try {
@@ -78,8 +82,9 @@ if ($_action === 'charset_all') {
     $_rs = sql_pdo_query(
         "SELECT table_name AS tbl FROM information_schema.tables
           WHERE table_schema = :db AND table_collation NOT LIKE 'utf8mb4%'
+            AND LEFT(table_name, CHAR_LENGTH(:pfx)) = :pfx
           ORDER BY table_name",
-        [':db' => $_db_name]
+        [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
     );
     $_done = 0; $_fail = 0;
     while ($r = sql_fetch_array($_rs)) {
@@ -113,11 +118,12 @@ if ($_action === 'zerodate_all') {
                 WHERE tc.constraint_type = 'PRIMARY KEY'
            ) pk USING (table_schema, table_name, column_name)
           WHERE c.table_schema = :db
+            AND LEFT(c.table_name, CHAR_LENGTH(:pfx)) = :pfx
             AND c.data_type IN ('date','datetime','timestamp')
             AND (c.column_default IN ('0000-00-00','0000-00-00 00:00:00') OR c.is_nullable = 'NO')
             AND pk.column_name IS NULL
           ORDER BY c.table_name, c.column_name",
-        [':db' => $_db_name]
+        [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
     );
     $_done = 0; $_fail = 0; $_total_rows = 0;
     while ($r = sql_fetch_array($_rs)) {
@@ -171,8 +177,9 @@ $_charset_rows = sql_pdo_query(
     "SELECT t.table_name AS tbl, t.table_collation AS coll, t.table_rows AS rows_est
        FROM information_schema.tables t
       WHERE t.table_schema = :db
+        AND LEFT(t.table_name, CHAR_LENGTH(:pfx)) = :pfx
       ORDER BY t.table_name",
-    [':db' => $_db_name]
+    [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
 );
 $_tables_utf8mb3 = [];
 $_tables_utf8mb4 = [];
@@ -197,11 +204,12 @@ $_zd_rows = sql_pdo_query(
             WHERE tc.constraint_type = 'PRIMARY KEY'
        ) pk USING (table_schema, table_name, column_name)
       WHERE c.table_schema = :db
+        AND LEFT(c.table_name, CHAR_LENGTH(:pfx)) = :pfx
         AND c.data_type IN ('date','datetime','timestamp')
         AND (c.column_default IN ('0000-00-00','0000-00-00 00:00:00') OR c.is_nullable = 'NO')
         AND pk.column_name IS NULL
       ORDER BY c.table_name, c.column_name",
-    [':db' => $_db_name]
+    [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
 );
 $_zd_pending  = [];
 $_zd_complete = [];
@@ -220,9 +228,10 @@ $_pk_r = sql_pdo_fetch(
        JOIN information_schema.key_column_usage k USING (table_schema, table_name, column_name)
        JOIN information_schema.table_constraints tc USING (table_schema, table_name, constraint_name)
       WHERE c.table_schema = :db
+        AND LEFT(c.table_name, CHAR_LENGTH(:pfx)) = :pfx
         AND c.data_type IN ('date','datetime','timestamp')
         AND tc.constraint_type = 'PRIMARY KEY'",
-    [':db' => $_db_name]
+    [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
 );
 $_pk_date_count = (int)($_pk_r['c'] ?? 0);
 
