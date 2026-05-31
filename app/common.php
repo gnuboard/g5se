@@ -156,6 +156,7 @@ if (file_exists($dbconfig_file)) {
     include_once($dbconfig_file);
     include_once(G5_LIB_PATH.'/common.lib.php');    // 공통 라이브러리
     include_once(G5_LIB_PATH.'/sql_pdo.lib.php');   // PDO prepared statement 헬퍼 (sql_pdo_query / sql_pdo_fetch)
+    include_once(G5_LIB_PATH.'/setting.lib.php');   // 사이트 설정값 (SETTINGS_SCHEMA + setting/setting_put/setting_schemas)
 
     $connect_db = sql_connect(G5_MYSQL_HOST, G5_MYSQL_USER, G5_MYSQL_PASSWORD) or die('MySQL Connect Error!!!');
     $select_db  = sql_select_db(G5_MYSQL_DB, $connect_db) or die('MySQL DB Error!!!');
