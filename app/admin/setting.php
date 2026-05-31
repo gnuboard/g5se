@@ -37,6 +37,7 @@ if ($_action && (!isset($_POST['token']) || !hash_equals($_csrf, (string)$_POST[
     alert('보안 토큰이 일치하지 않습니다.');
 }
 
+$_errors = [];
 $_values_override = [];
 
 // save 액션: 검증 → setting_put → PRG redirect
