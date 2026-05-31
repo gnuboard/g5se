@@ -20,11 +20,7 @@ if ($member['mb_id'] !== $config['cf_admin']) {
 
 $g5['title'] = '설정 관리';
 
-// CSRF 토큰 (세션 키 _setting_token)
-if (!isset($_SESSION['_setting_token'])) {
-    $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
-}
-$_csrf = $_SESSION['_setting_token'];
+require_once __DIR__.'/admin.lib.php';  // get_admin_token / check_admin_token
 
 $_schemas = setting_schemas();
 
@@ -36,8 +32,9 @@ $_action = isset($_POST['action']) ? (string)$_POST['action'] : '';
 $_post_key = isset($_POST['key']) ? (string)$_POST['key'] : '';
 $_form_values = isset($_POST['v']) && is_array($_POST['v']) ? $_POST['v'] : [];
 
-if ($_action && (!isset($_POST['token']) || !hash_equals($_csrf, (string)$_POST['token']))) {
-    alert('보안 토큰이 일치하지 않습니다.');
+// gnuboard admin 토큰 검증 (admin.js 가 form submit 시 ajax.token.php 로 새 토큰을 채워줌)
+if ($_action) {
+    check_admin_token();
 }
 
 $_errors = [];
@@ -128,7 +125,6 @@ if ($_action === 'save' && isset($_schemas[$_post_key])) {
         $_values_override = [$_post_key => $merged];
     } else {
         setting_put($_post_key, $values_to_put);
-        $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
         $_SESSION['_setting_flash'] = ['type' => 'saved', 'key' => $_post_key];
         header('Location: /admin/setting?key='.urlencode($_post_key), true, 303);
         exit;
@@ -141,7 +137,6 @@ if ($_action === 'reset' && isset($_schemas[$_post_key])) {
         "DELETE FROM `".G5_TABLE_PREFIX."setting` WHERE s_key = ?",
         [$_post_key]
     );
-    $_SESSION['_setting_token'] = bin2hex(random_bytes(16));
     $_SESSION['_setting_flash'] = ['type' => 'reset', 'key' => $_post_key];
     header('Location: /admin/setting?key='.urlencode($_post_key), true, 303);
     exit;
@@ -271,7 +266,7 @@ admin_layout_start($g5['title'], 'core');
         <?php } ?>
 
         <form method="post" class="setting-form">
-            <input type="hidden" name="token" value="<?php echo htmlspecialchars($_csrf); ?>">
+            <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
             <input type="hidden" name="key"   value="<?php echo htmlspecialchars($key); ?>">
 
             <?php foreach ($schema['fields'] as $fkey => $field) {
