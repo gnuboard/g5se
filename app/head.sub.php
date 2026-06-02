@@ -2,6 +2,13 @@
 // 이 파일은 새로운 파일 생성시 반드시 포함되어야 함
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
+// 세션 테마 미리보기 표시 바 (super-admin + ss_theme_preview 활성 시만 출력).
+// 테마 delegation 이전에 실행해서 어느 테마든 일관 동작 — position:fixed 라
+// DOM 위치 무관, 브라우저가 stray content 를 body 로 받아줌.
+if (!defined('G5_IS_ADMIN') && !empty($_SESSION['ss_theme_preview'])) {
+    @include G5_PATH.'/_theme_preview_bar.inc.php';
+}
+
 // 테마 head.sub.php 파일
 if(!defined('G5_IS_ADMIN') && defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/head.sub.php')) {
     require_once(G5_THEME_PATH.'/head.sub.php');

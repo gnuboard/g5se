@@ -889,8 +889,17 @@ if (isset($member['mb_id']) && $member['mb_id']) {
 }
 
 // 테마경로
-if(defined('_THEME_PREVIEW_') && _THEME_PREVIEW_ === true)
+if (defined('_THEME_PREVIEW_') && _THEME_PREVIEW_ === true) {
+    // (legacy) admin/theme_preview.php 의 inline preview — _THEME_PREVIEW_ 상수 + ?theme=
     $config['cf_theme'] = isset($_GET['theme']) ? trim($_GET['theme']) : '';
+}
+else if (!empty($_SESSION['ss_theme_preview'])
+         && isset($member['mb_id'])
+         && $config['cf_admin'] !== ''
+         && $member['mb_id'] === $config['cf_admin']) {
+    // 세션 기반 미리보기 — super-admin 만. 테마 존재 여부는 아래 is_dir() 가 검증.
+    $config['cf_theme'] = $_SESSION['ss_theme_preview'];
+}
 
 if(isset($config['cf_theme']) && trim($config['cf_theme'])) {
     $theme_path = G5_PATH.'/'.G5_THEME_DIR.'/'.$config['cf_theme'];
