@@ -41,7 +41,7 @@ $board_count = count($boards);
                 <h1 class="m-group-title"><?php echo get_text($group['gr_subject']) ?></h1>
                 <p class="m-group-sub">
                     <strong><?php echo $board_count ?></strong>개 게시판
-                    <?php if ($group['gr_subject2']) { ?>
+                    <?php if (!empty($group['gr_subject2'])) { ?>
                     <span class="m-group-meta-sep">·</span>
                     <span class="m-group-desc"><?php echo strip_tags($group['gr_subject2']) ?></span>
                     <?php } ?>
