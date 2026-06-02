@@ -176,6 +176,9 @@ class Router
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/good/(?P<wr_id>\d+)/?$#'                 => 'bbs/good.php',
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/download/(?P<wr_id>\d+)/(?P<no>\d+)/?$#' => 'bbs/download.php',
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/view_image/(?P<wr_id>\d+)/(?P<no>\d+)/?$#' => 'bbs/view_image.php',
+        // ?fn= 만 있는 query 형태 (gallery skin 의 view_image 링크 등) 폴백
+        '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/view_image/?$#'                            => 'bbs/view_image.php',
+        '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/download/?$#'                              => 'bbs/download.php',
     ];
 
     /** 사용자 확장 라우트 — app/routes/*.php 에서 로드 */
