@@ -4,8 +4,9 @@
  * + 세션 unset + 안내 alert.
  */
 require_once __DIR__.'/_common.php';
-admin_require_login();
+require_once __DIR__.'/_layout.php';
 require_once __DIR__.'/admin.lib.php';
+admin_require_login();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') alert('잘못된 접근입니다.');
 if ($member['mb_id'] !== $config['cf_admin']) alert('최고 관리자만 접근 가능합니다.');

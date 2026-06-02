@@ -4,8 +4,9 @@
  * GET token. 멱등.
  */
 require_once __DIR__.'/_common.php';
-admin_require_login();
+require_once __DIR__.'/_layout.php';
 require_once __DIR__.'/admin.lib.php';
+admin_require_login();
 
 if ($member['mb_id'] !== $config['cf_admin']) alert('최고 관리자만 접근 가능합니다.');
 

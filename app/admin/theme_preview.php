@@ -1,213 +1,143 @@
 <?php
 /*
- * /admin/theme_preview — 테마 미리보기 (별도 창에 사용자 사이트 그대로 렌더, admin shell wrap 없음).
+ * /admin/theme_preview — 테마 launcher.
+ * 설치된 테마 목록 + 각 테마에 [미리보기 시작] / [지금 적용 중] 표시.
+ * inline preview 는 제거됨 — 시작 클릭 시 세션 + 사이트 navigation 으로.
  */
 $sub_menu = "100280";
-define('_THEME_PREVIEW_', true);
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
 admin_require_login();
 require_once __DIR__.'/admin.lib.php';
 
-$theme_dir = get_theme_dir();
-
-if(!$theme || !in_array($theme, $theme_dir))
-    alert_close('테마가 존재하지 않거나 올바르지 않습니다.');
-
-$info = get_theme_info($theme);
-
-$arr_mode = array('index', 'list', 'view', 'shop', 'ca_list', 'item');
-$mode = isset($_GET['mode']) ? substr(strip_tags($_GET['mode']), 0, 20) : '';
-
-if(!in_array($mode, $arr_mode))
-    $mode = 'index';
-
-if((defined('G5_COMMUNITY_USE') && G5_COMMUNITY_USE === false) || $mode == 'shop' || $mode == 'ca_list' || $mode == 'item')
-    define('_SHOP_', true);
-
-$qstr_index   = '&amp;mode=index';
-$qstr_list    = '&amp;mode=list';
-$qstr_view    = '&amp;mode=view';
-$qstr_shop    = '&amp;mode=shop';
-$qstr_ca_list = '&amp;mode=ca_list';
-$qstr_item    = '&amp;mode=item';
-$qstr_device  = '&amp;mode='.$mode.'&amp;device='.(G5_IS_MOBILE ? 'pc' : 'mobile');
-
-$sql = " select bo_table, wr_parent from {$g5['board_new_table']} order by bn_id desc limit 1 ";
-$row = sql_fetch($sql);
-$bo_table = $row['bo_table'];
-$board = sql_fetch(" select * from {$g5['board_table']} where bo_table = '{$bo_table}' ");
-$write_table = $g5['write_prefix'] . $bo_table;
-
-// theme.config.php 미리보기 게시판 스킨이 설정돼 있다면
-$tconfig = get_theme_config_value($theme);
-if($mode == 'list' || $mode == 'view') {
-    if($tconfig['preview_board_skin'])
-        $board['bo_skin'] = preg_match('#^theme/.+$#', $tconfig['preview_board_skin']) ? $tconfig['preview_board_skin'] : 'theme/'.$tconfig['preview_board_skin'];
-
-    if($tconfig['preview_mobile_board_skin'])
-        $board['bo_mobile_skin'] = preg_match('#^theme/.+$#', $tconfig['preview_mobile_board_skin']) ? $tconfig['preview_mobile_board_skin'] : 'theme/'.$tconfig['preview_mobile_board_skin'];
+if ($member['mb_id'] !== $config['cf_admin']) {
+    alert('최고 관리자만 접근 가능합니다.');
 }
 
-// 스킨경로
-if (G5_IS_MOBILE) {
-    $board_skin_path    = get_skin_path('board', $board['bo_mobile_skin']);
-    $board_skin_url     = get_skin_url('board', $board['bo_mobile_skin']);
-    $member_skin_path   = get_skin_path('member', $config['cf_mobile_member_skin']);
-    $member_skin_url    = get_skin_url('member', $config['cf_mobile_member_skin']);
-    $new_skin_path      = get_skin_path('new', $config['cf_mobile_new_skin']);
-    $new_skin_url       = get_skin_url('new', $config['cf_mobile_new_skin']);
-    $search_skin_path   = get_skin_path('search', $config['cf_mobile_search_skin']);
-    $search_skin_url    = get_skin_url('search', $config['cf_mobile_search_skin']);
-    $connect_skin_path  = get_skin_path('connect', $config['cf_mobile_connect_skin']);
-    $connect_skin_url   = get_skin_url('connect', $config['cf_mobile_connect_skin']);
-    $faq_skin_path      = get_skin_path('faq', $config['cf_mobile_faq_skin']);
-    $faq_skin_url       = get_skin_url('faq', $config['cf_mobile_faq_skin']);
-} else {
-    $board_skin_path    = get_skin_path('board', $board['bo_skin']);
-    $board_skin_url     = get_skin_url('board', $board['bo_skin']);
-    $member_skin_path   = get_skin_path('member', $config['cf_member_skin']);
-    $member_skin_url    = get_skin_url('member', $config['cf_member_skin']);
-    $new_skin_path      = get_skin_path('new', $config['cf_new_skin']);
-    $new_skin_url       = get_skin_url('new', $config['cf_new_skin']);
-    $search_skin_path   = get_skin_path('search', $config['cf_search_skin']);
-    $search_skin_url    = get_skin_url('search', $config['cf_search_skin']);
-    $connect_skin_path  = get_skin_path('connect', $config['cf_connect_skin']);
-    $connect_skin_url   = get_skin_url('connect', $config['cf_connect_skin']);
-    $faq_skin_path      = get_skin_path('faq', $config['cf_faq_skin']);
-    $faq_skin_url       = get_skin_url('faq', $config['cf_faq_skin']);
-}
+$g5['title'] = '테마 관리';
 
-// 쇼핑몰 스킨 재설정
-if($tconfig['de_shop_skin'])
-    $default['de_shop_skin'] = preg_match('#^theme/.+$#', $tconfig['de_shop_skin']) ? $tconfig['de_shop_skin'] : 'theme/'.$tconfig['de_shop_skin'];
+$theme_dirs = get_theme_dir();
+$current_theme = (string)($config['cf_theme'] ?? '');
+$preview_theme = isset($_SESSION['ss_theme_preview']) ? (string)$_SESSION['ss_theme_preview'] : '';
 
-if($tconfig['de_shop_mobile_skin'])
-    $default['de_shop_mobile_skin'] = preg_match('#^theme/.+$#', $tconfig['de_shop_mobile_skin']) ? $tconfig['de_shop_mobile_skin'] : 'theme/'.$tconfig['de_shop_mobile_skin'];
-
-// 쇼핑몰초기화면 변수 재설정
-for($i=1; $i<=5; $i++) {
-    $default['de_type'.$i.'_list_use']          = (isset($tconfig['de_type'.$i.'_list_use']) && $tconfig['de_type'.$i.'_list_use']) ? $tconfig['de_type'.$i.'_list_use'] : $default['de_type'.$i.'_list_use'];
-    $default['de_type'.$i.'_list_skin']         = (isset($tconfig['de_type'.$i.'_list_skin']) && $tconfig['de_type'.$i.'_list_skin']) ? $tconfig['de_type'.$i.'_list_skin'] : $default['de_type'.$i.'_list_skin'];
-    $default['de_type'.$i.'_list_mod']          = (isset($tconfig['de_type'.$i.'_list_mod']) && $tconfig['de_type'.$i.'_list_mod']) ? $tconfig['de_type'.$i.'_list_mod'] : $default['de_type'.$i.'_list_mod'];
-    $default['de_type'.$i.'_list_row']          = (isset($tconfig['de_type'.$i.'_list_row']) && $tconfig['de_type'.$i.'_list_row']) ? $tconfig['de_type'.$i.'_list_row'] : $default['de_type'.$i.'_list_row'];
-    $default['de_type'.$i.'_img_width']         = (isset($tconfig['de_type'.$i.'_img_width']) && $tconfig['de_type'.$i.'_img_width']) ? $tconfig['de_type'.$i.'_img_width'] : $default['de_type'.$i.'_img_width'];
-    $default['de_type'.$i.'_img_height']        = (isset($tconfig['de_type'.$i.'_img_height']) && $tconfig['de_type'.$i.'_img_height']) ? $tconfig['de_type'.$i.'_img_height'] : $default['de_type'.$i.'_img_height'];
-
-    $default['de_mobile_type'.$i.'_list_use']   = (isset($tconfig['de_mobile_type'.$i.'_list_use']) && $tconfig['de_mobile_type'.$i.'_list_use']) ? $tconfig['de_mobile_type'.$i.'_list_use'] : $default['de_mobile_type'.$i.'_list_use'];
-    $default['de_mobile_type'.$i.'_list_skin']  = (isset($tconfig['de_mobile_type'.$i.'_list_skin']) && $tconfig['de_mobile_type'.$i.'_list_skin']) ? $tconfig['de_mobile_type'.$i.'_list_skin'] : $default['de_mobile_type'.$i.'_list_skin'];
-    $default['de_mobile_type'.$i.'_list_mod']   = (isset($tconfig['de_mobile_type'.$i.'_list_mod']) && $tconfig['de_mobile_type'.$i.'_list_mod']) ? $tconfig['de_mobile_type'.$i.'_list_mod'] : $default['de_mobile_type'.$i.'_list_mod'];
-    $default['de_mobile_type'.$i.'_list_row']   = (isset($tconfig['de_mobile_type'.$i.'_list_row']) && $tconfig['de_mobile_type'.$i.'_list_row']) ? $tconfig['de_mobile_type'.$i.'_list_row'] : $default['de_mobile_type'.$i.'_list_row'];
-    $default['de_mobile_type'.$i.'_img_width']  = (isset($tconfig['de_mobile_type'.$i.'_img_width']) && $tconfig['de_mobile_type'.$i.'_img_width']) ? $tconfig['de_mobile_type'.$i.'_img_width'] : $default['de_mobile_type'.$i.'_img_width'];
-    $default['de_mobile_type'.$i.'_img_height'] = (isset($tconfig['de_mobile_type'.$i.'_img_height']) && $tconfig['de_mobile_type'.$i.'_img_height']) ? $tconfig['de_mobile_type'.$i.'_img_height'] : $default['de_mobile_type'.$i.'_img_height'];
-}
-
-// 상품상세 이미지 사이즈 재설정
-$default['de_mimg_width']  = (isset($tconfig['de_mimg_width']) && $tconfig['de_mimg_width']) ? $tconfig['de_mimg_width'] : $default['de_mimg_width'];
-$default['de_mimg_height'] = (isset($tconfig['de_mimg_height']) && $tconfig['de_mimg_height']) ? $tconfig['de_mimg_height'] : $default['de_mimg_height'];
-
-if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
-    // 테마 경로 설정
-    if(defined('G5_THEME_PATH')) {
-        define('G5_THEME_SHOP_PATH',   G5_THEME_PATH.'/'.G5_SHOP_DIR);
-        define('G5_THEME_SHOP_URL',    G5_THEME_URL.'/'.G5_SHOP_DIR);
-        define('G5_THEME_MSHOP_PATH',  G5_THEME_PATH.'/'.G5_MOBILE_DIR.'/'.G5_SHOP_DIR);
-        define('G5_THEME_MSHOP_URL',   G5_THEME_URL.'/'.G5_MOBILE_DIR.'/'.G5_SHOP_DIR);
-    }
-
-    // 스킨 경로 설정
-    if(preg_match('#^theme/(.+)$#', $default['de_shop_skin'], $match)) {
-        define('G5_SHOP_SKIN_PATH',  G5_THEME_PATH.'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$match[1]);
-        define('G5_SHOP_SKIN_URL',   G5_THEME_URL .'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$match[1]);
-    } else {
-        define('G5_SHOP_SKIN_PATH',  G5_PATH.'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$default['de_shop_skin']);
-        define('G5_SHOP_SKIN_URL',   G5_URL .'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$default['de_shop_skin']);
-    }
-
-    if(preg_match('#^theme/(.+)$#', $default['de_shop_mobile_skin'], $match)) {
-        define('G5_MSHOP_SKIN_PATH', G5_THEME_MOBILE_PATH.'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$match[1]);
-        define('G5_MSHOP_SKIN_URL',  G5_THEME_URL .'/'.G5_MOBILE_DIR.'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$match[1]);
-    } else {
-        define('G5_MSHOP_SKIN_PATH', G5_MOBILE_PATH.'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$default['de_shop_mobile_skin']);
-        define('G5_MSHOP_SKIN_URL',  G5_MOBILE_URL .'/'.G5_SKIN_DIR.'/'.G5_SHOP_DIR.'/'.$default['de_shop_mobile_skin']);
-    }
-}
-
-$conf = sql_fetch(" select cf_theme from {$g5['config_table']} ");
-$name = get_text($info['theme_name']);
-if($conf['cf_theme'] != $theme) {
-    if($tconfig['set_default_skin'])
-        $set_default_skin = 'true';
-    else
-        $set_default_skin = 'false';
-
-    $btn_active = '<li><button type="button" class="theme_sl theme_active" data-theme="'.$theme.'" '.'data-name="'.$name.'" data-set_default_skin="'.$set_default_skin.'">테마적용</button></li>';
-} else {
-    $btn_active = '';
-}
-
-$g5['title'] = get_text($info['theme_name']).' 테마 미리보기';
-require_once(G5_PATH.'/head.sub.php');
+admin_layout_start($g5['title'], 'core');
 ?>
+<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<header class="flex items-center gap-3 mb-5">
+    <h1 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']); ?></h1>
+</header>
 
-<link rel="stylesheet" href="<?php echo G5_ADMIN_URL; ?>/css/theme.css">
-<script src="<?php echo G5_ADMIN_URL; ?>/theme.js"></script>
+<?php if ($preview_theme !== '') { ?>
+<div class="tp-notice">
+    🎨 현재 <strong><?php echo htmlspecialchars($preview_theme); ?></strong> 테마를 미리보기 중. 사이트 상단의 [종료] 로 해제하거나, 아래에서 다른 테마를 선택해 갈아탈 수 있습니다.
+</div>
+<?php } ?>
+
+<?php if (!$theme_dirs) { ?>
+<div class="tp-empty">설치된 테마가 없습니다. <code>app/theme/</code> 아래에 테마 폴더를 두면 여기 나타납니다.</div>
+<?php } else { ?>
+<div class="tp-grid">
+<?php foreach ($theme_dirs as $theme) {
+    $info = get_theme_info($theme);
+    $is_current = ($theme === $current_theme);
+    $is_previewing = ($theme === $preview_theme);
+    $thumb_path = G5_PATH.'/'.G5_THEME_DIR.'/'.$theme.'/screenshot.png';
+    $thumb_url = is_file($thumb_path)
+        ? G5_URL.'/'.G5_THEME_DIR.'/'.$theme.'/screenshot.png'
+        : '';
+?>
+    <div class="tp-card<?php echo $is_current ? ' tp-current' : ''; ?><?php echo $is_previewing ? ' tp-previewing' : ''; ?>">
+        <div class="tp-thumb">
+            <?php if ($thumb_url) { ?>
+                <img src="<?php echo htmlspecialchars($thumb_url); ?>" alt="">
+            <?php } else { ?>
+                <span class="tp-thumb-empty">미리보기 이미지 없음</span>
+            <?php } ?>
+        </div>
+        <div class="tp-body">
+            <h3 class="tp-name"><?php echo htmlspecialchars((string)($info['theme_name'] ?? $theme)); ?>
+                <?php if ($is_current) { ?><span class="tp-tag tp-tag-current">적용 중</span><?php } ?>
+                <?php if ($is_previewing) { ?><span class="tp-tag tp-tag-preview">미리보기 중</span><?php } ?>
+            </h3>
+            <p class="tp-meta"><code><?php echo htmlspecialchars($theme); ?></code></p>
+            <?php if (!empty($info['theme_description'])) { ?>
+            <p class="tp-desc"><?php echo htmlspecialchars((string)$info['theme_description']); ?></p>
+            <?php } ?>
+            <div class="tp-actions">
+                <form method="post" action="<?php echo G5_ADMIN_URL; ?>/theme_preview_start" style="display:inline">
+                    <input type="hidden" name="theme" value="<?php echo htmlspecialchars($theme); ?>">
+                    <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
+                    <button type="submit" class="tp-btn tp-btn-preview">미리보기 시작</button>
+                </form>
+                <?php if (!$is_current) { ?>
+                <form method="post" action="<?php echo G5_ADMIN_URL; ?>/theme_preview_apply" style="display:inline"
+                      onsubmit="return confirm('테마 <?php echo htmlspecialchars($theme, ENT_QUOTES); ?> 를 사이트 전체에 적용합니다. 계속하시겠습니까?');">
+                    <input type="hidden" name="theme" value="<?php echo htmlspecialchars($theme); ?>">
+                    <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
+                    <button type="submit" class="tp-btn tp-btn-apply">이 테마로 적용</button>
+                </form>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+</div>
+<?php } ?>
+
+</main>
+
 <style>
-/* theme_preview 는 admin 안에 index/board/shop 페이지를 inline include 함.
-   nested head 로 인해 #hd_pop h2 / .sound_only 의 hide 룰이 일부 안 먹는 경우가 있어
-   미리보기 컨텍스트에서 팝업레이어 영역을 강제 숨김. */
-#hd_pop { display: none !important; }
+.tp-notice {
+    background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.3);
+    color: #1d4ed8; padding: 12px 16px; border-radius: 8px;
+    margin-bottom: 20px; font-size: 14px;
+}
+[data-theme="dark"] .tp-notice {
+    background: rgba(96,165,250,0.15); border-color: rgba(96,165,250,0.4); color: #93c5fd;
+}
+.tp-empty {
+    padding: 32px; text-align: center; color: var(--slate-500);
+    background: var(--slate-50); border: 1px dashed var(--slate-300); border-radius: 8px;
+}
+[data-theme="dark"] .tp-empty { color: var(--slate-400); background: var(--slate-800); border-color: var(--slate-700); }
+.tp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.tp-card {
+    background: #fff; border: 1px solid var(--slate-200); border-radius: 10px;
+    overflow: hidden; display: flex; flex-direction: column;
+}
+[data-theme="dark"] .tp-card { background: var(--slate-800); border-color: var(--slate-700); }
+.tp-card.tp-current { border-color: #10b981; }
+.tp-card.tp-previewing { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96,165,250,0.2); }
+.tp-thumb {
+    aspect-ratio: 16/10; background: var(--slate-100);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+[data-theme="dark"] .tp-thumb { background: var(--slate-900); }
+.tp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tp-thumb-empty { color: var(--slate-400); font-size: 13px; }
+.tp-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.tp-name { font-size: 15px; font-weight: 700; margin: 0; color: var(--slate-900); }
+[data-theme="dark"] .tp-name { color: var(--slate-100); }
+.tp-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+.tp-tag-current { background: rgba(16,185,129,0.12); color: #047857; }
+[data-theme="dark"] .tp-tag-current { background: rgba(16,185,129,0.2); color: #34d399; }
+.tp-tag-preview { background: rgba(96,165,250,0.12); color: #1d4ed8; }
+[data-theme="dark"] .tp-tag-preview { background: rgba(96,165,250,0.2); color: #93c5fd; }
+.tp-meta { font-size: 12px; color: var(--slate-500); margin: 0; }
+.tp-desc { font-size: 13px; color: var(--slate-600); margin: 4px 0 0; line-height: 1.4; }
+[data-theme="dark"] .tp-desc { color: var(--slate-400); }
+.tp-actions { display: flex; gap: 6px; margin-top: 10px; }
+.tp-btn {
+    padding: 7px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    border: 1px solid transparent; cursor: pointer;
+}
+.tp-btn-preview { background: #2563eb; color: #fff; border-color: #2563eb; }
+.tp-btn-preview:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.tp-btn-apply { background: var(--slate-100); color: var(--slate-900); border-color: var(--slate-200); }
+.tp-btn-apply:hover { background: var(--slate-200); }
+[data-theme="dark"] .tp-btn-apply { background: var(--slate-700); color: var(--slate-100); border-color: var(--slate-600); }
+[data-theme="dark"] .tp-btn-apply:hover { background: var(--slate-600); }
 </style>
 
-<section id="preview_item">
-    <ul>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_index; ?>">인덱스 화면</a></li>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_list; ?>">게시글 리스트</a></li>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_view; ?>">게시글 보기</a></li>
-        <?php if(defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
-        <?php if(defined('G5_COMMUNITY_USE') == false || G5_COMMUNITY_USE) { ?>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_shop; ?>">쇼핑몰</a></li>
-        <?php } ?>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_ca_list; ?>">상품리스트</a></li>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_item; ?>">상품상세</a></li>
-        <?php } ?>
-        <li><a href="<?php echo G5_ADMIN_URL ?>/theme_preview?theme=<?php echo $theme.$qstr_device; ?>"><?php echo (G5_IS_MOBILE ? 'PC 버전' : '모바일 버전'); ?></a></li>
-        <?php echo $btn_active; ?>
-    </ul>
-</section>
-
-<section id="preview_content">
-    <?php
-    switch($mode) {
-        case 'list':
-            include(G5_BBS_PATH.'/board.php');
-            break;
-        case 'view':
-            $wr_id = $row['wr_parent'];
-            $write = sql_fetch(" select * from {$write_table} where wr_id = '{$wr_id}' ");
-            include(G5_BBS_PATH.'/board.php');
-            break;
-        case 'shop':
-            include(G5_SHOP_PATH.'/index.php');
-            break;
-        case 'ca_list':
-            $sql = " select ca_id from {$g5['g5_shop_category_table']} where ca_use = '1' order by ca_id limit 1 ";
-            $tmp = sql_fetch($sql);
-            $ca_id = $tmp['ca_id'];
-            include(G5_SHOP_PATH.'/list.php');
-            break;
-        case 'item':
-            $sql = " select it_id from {$g5['g5_shop_item_table']} where it_use = '1' order by it_id desc limit 1 ";
-            $tmp = sql_fetch($sql);
-            $_GET['it_id'] = $tmp['it_id'];
-            include(G5_SHOP_PATH.'/item.php');
-            break;
-        default:
-            include(G5_PATH.'/index.php');
-            break;
-    }
-    ?>
-</section>
-
-<?php
-require_once(G5_PATH.'/tail.sub.php');
+<?php admin_layout_end(); ?>

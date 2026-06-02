@@ -4,8 +4,9 @@
  * 입력: GET theme + token. POST 만 받음.
  */
 require_once __DIR__.'/_common.php';
-admin_require_login();
+require_once __DIR__.'/_layout.php';
 require_once __DIR__.'/admin.lib.php';
+admin_require_login();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') alert('잘못된 접근입니다.');
 
