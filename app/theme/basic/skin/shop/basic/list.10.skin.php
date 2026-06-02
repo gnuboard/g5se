@@ -14,8 +14,9 @@ $i = 0;
 $this->view_star = (method_exists($this, 'view_star')) ? $this->view_star : true;
 
 $list_mod = max(1, min(6, (int)$this->list_mod));
-// Tailwind grid-cols-N — UnoCSS runtime 이 DOM scan 으로 동적 클래스 픽업
-$cols_class = "grid-cols-2 sm:grid-cols-2 md:grid-cols-{$list_mod} lg:grid-cols-{$list_mod}";
+// grid-template-columns 를 inline style 로 직접 — UnoCSS runtime 의 동적 클래스 미감지 회피.
+// 전 viewport 동일 N 열. 셀 폭은 viewport / N (자동 축소).
+$cols_style = 'grid-template-columns: repeat('.$list_mod.', minmax(0, 1fr));';
 
 foreach((array) $list as $row){
     if( empty($row) ) continue;
@@ -28,7 +29,7 @@ foreach((array) $list as $row){
     $wish_icon = $is_wished ? 'fa-heart' : 'fa-heart-o';
 
     if ($i === 0) {
-        echo '<ul class="sct grid gap-4 '.$cols_class.' list-none p-0 m-0">'."\n";
+        echo '<ul class="sct grid gap-4 list-none p-0 m-0" style="'.$cols_style.'">'."\n";
     }
     $i++;
 ?>

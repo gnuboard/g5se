@@ -159,32 +159,6 @@ admin_layout_start($g5["title"], "shop");
         </td>
     </tr>
     <tr>
-        <th scope="row"><label for="ev_mobile_img_width">모바일 출력이미지 폭</label></th>
-        <td>
-              <input type="text" name="ev_mobile_img_width" value="<?php echo $ev['ev_mobile_img_width']; ?>" id="ev_mobile_img_width" required class="required frm_input" size="5"> 픽셀
-        </td>
-    </tr>
-    <tr>
-        <th scope="row"><label for="ev_mobile_img_height">모바일 출력이미지 높이</label></th>
-        <td>
-          <input type="text" name="ev_mobile_img_height" value="<?php echo $ev['ev_mobile_img_height']; ?>" id="ev_mobile_img_height" required class="required frm_input" size="5"> 픽셀
-        </td>
-    </tr>
-    <tr>
-        <th scope="row"><label for="ev_mobile_list_mod">모바일 1줄당 이미지 수</label></th>
-        <td>
-            <?php echo help("1행에 설정한 값만큼의 상품을 출력합니다. 스킨 설정에 따라 1행에 하나의 상품만 출력할 수도 있습니다."); ?>
-            <input type="text" name="ev_mobile_list_mod" value="<?php echo $ev['ev_mobile_list_mod']; ?>" id="ev_mobile_list_mod" required class="required frm_input" size="3"> 개
-        </td>
-    </tr>
-    <tr>
-        <th scope="row"><label for="ev_mobile_list_row">모바일 이미지 줄 수</label></th>
-        <td>
-            <?php echo help("한 페이지에 출력할 이미지 줄 수를 설정합니다.\n한 페이지에 표시되는 상품수는 (1줄당 이미지 수 x 줄 수) 입니다."); ?>
-            <input type="text" name="ev_mobile_list_row" value="<?php echo $ev['ev_mobile_list_row']; ?>" id="ev_mobile_list_row" required class="required frm_input" size="3"> 개
-        </td>
-    </tr>
-    <tr>
         <th scope="row"><label for="ev_use">사용</label></th>
         <td>
             <?php echo help("사용하지 않으면 레이아웃의 이벤트 메뉴 및 이벤트 관련 페이지에 접근할 수 없습니다."); ?>
