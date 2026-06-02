@@ -57,6 +57,21 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     height: auto;
     display: block;
 }
+/* 긴 상품명 (영문/숫자 연속) 이 셀 폭을 침범하는 문제.
+   grid item 의 기본 min-width:auto 가 unbreakable string 에 막혀 cell 이 늘어남
+   → min-width:0 + overflow-wrap:anywhere 로 강제 wrap. */
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li,
+.m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li {
+    min-width: 0;
+}
+.m-shop-grid .sct_txt,
+.m-shop-grid .sct_txt a,
+.m-shop-grid .sct_id,
+.m-shop-grid .sct_id a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    min-width: 0;
+}
 /* 옛날 UX 정리:
    - .sctrl: main.20 의 ▶◾ (수직 롤링 효과재생/정지) — list_row>=2 + stacked-ul 일 때만
      의미 있는데 grid 레이아웃에선 작동 안함
