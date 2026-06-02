@@ -10,7 +10,6 @@ global $member, $config;
 
 // 세션 active + super-admin 검사
 $_tp_theme = isset($_SESSION['ss_theme_preview']) ? (string)$_SESSION['ss_theme_preview'] : '';
-$_tp_device = isset($_SESSION['ss_theme_preview_device']) ? (string)$_SESSION['ss_theme_preview_device'] : '';
 if ($_tp_theme === ''
     || !isset($member['mb_id'])
     || ($config['cf_admin'] ?? '') === ''
@@ -20,18 +19,12 @@ if ($_tp_theme === ''
 
 require_once G5_ADMIN_PATH.'/admin.lib.php';  // get_admin_token
 
-$_tp_is_mobile = (function_exists('defined') && defined('G5_IS_MOBILE') && G5_IS_MOBILE);
 $_tp_token = get_admin_token();
 ?>
 <div id="m-theme-preview-bar" role="region" aria-label="테마 미리보기">
     <div class="tpb-inner">
         <span class="tpb-lbl">🎨 테마 미리보기</span>
         <strong class="tpb-theme"><?php echo htmlspecialchars($_tp_theme, ENT_QUOTES, 'UTF-8'); ?></strong>
-        <span class="tpb-sep">·</span>
-        <a href="<?php echo G5_ADMIN_URL; ?>/theme_preview_device?d=pc&amp;token=<?php echo $_tp_token; ?>"
-           class="tpb-btn tpb-device<?php echo !$_tp_is_mobile ? ' is-on' : ''; ?>">💻 PC</a>
-        <a href="<?php echo G5_ADMIN_URL; ?>/theme_preview_device?d=mobile&amp;token=<?php echo $_tp_token; ?>"
-           class="tpb-btn tpb-device<?php echo $_tp_is_mobile ? ' is-on' : ''; ?>">📱 모바일</a>
         <span class="tpb-spacer"></span>
         <form method="post" action="<?php echo G5_ADMIN_URL; ?>/theme_preview_apply" class="tpb-form-apply">
             <input type="hidden" name="theme" value="<?php echo htmlspecialchars($_tp_theme, ENT_QUOTES, 'UTF-8'); ?>">
@@ -64,7 +57,6 @@ $_tp_token = get_admin_token();
     padding: 4px 10px; border-radius: 12px;
     font-weight: 700; color: #60a5fa;
 }
-#m-theme-preview-bar .tpb-sep { opacity: 0.4; padding: 0 2px; }
 #m-theme-preview-bar .tpb-btn {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 6px 12px; border-radius: 6px;
@@ -75,9 +67,6 @@ $_tp_token = get_admin_token();
 }
 #m-theme-preview-bar .tpb-btn:hover {
     background: #1e293b; color: #fff;
-}
-#m-theme-preview-bar .tpb-device.is-on {
-    background: #1e293b; color: #fff; border-color: #334155;
 }
 #m-theme-preview-bar .tpb-form-apply { margin: 0; display: inline-flex; }
 #m-theme-preview-bar .tpb-apply {

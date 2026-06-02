@@ -21,6 +21,6 @@ if ($theme === '' || !in_array($theme, $theme_dir, true)) {
 
 sql_pdo_query("UPDATE `".G5_TABLE_PREFIX."config` SET cf_theme = ? LIMIT 1", [$theme]);
 
-unset($_SESSION['ss_theme_preview'], $_SESSION['ss_theme_preview_device']);
+unset($_SESSION['ss_theme_preview']);
 
 alert('테마 \''.$theme.'\' 가 적용되었습니다.', G5_ADMIN_URL.'/theme_preview');

@@ -12,7 +12,7 @@ if ($member['mb_id'] !== $config['cf_admin']) alert('최고 관리자만 접근 
 
 check_admin_token();
 
-unset($_SESSION['ss_theme_preview'], $_SESSION['ss_theme_preview_device']);
+unset($_SESSION['ss_theme_preview']);
 
 header('Location: '.G5_ADMIN_URL.'/theme_preview', true, 303);
 exit;

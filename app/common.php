@@ -987,16 +987,6 @@ if (G5_USE_MOBILE && $set_device) {
 }
 
 $_SESSION['ss_is_mobile'] = $is_mobile;
-// 미리보기 디바이스 강제 — super-admin + 세션 active 일 때만 (gnuboard 기본 감지 결과를 덮어씀)
-if (!empty($_SESSION['ss_theme_preview_device'])
-    && isset($member['mb_id'])
-    && $config['cf_admin'] !== ''
-    && $member['mb_id'] === $config['cf_admin']) {
-    $_ptd = $_SESSION['ss_theme_preview_device'];
-    if ($_ptd === 'mobile')   $is_mobile = true;
-    else if ($_ptd === 'pc')  $is_mobile = false;
-    unset($_ptd);
-}
 define('G5_IS_MOBILE', $is_mobile);
 define('G5_DEVICE_BUTTON_DISPLAY', $set_device);
 if (G5_IS_MOBILE) {

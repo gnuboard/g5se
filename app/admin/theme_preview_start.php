@@ -21,8 +21,6 @@ if ($theme === '' || !in_array($theme, $theme_dir, true)) {
 }
 
 $_SESSION['ss_theme_preview'] = $theme;
-// device 는 시작 시 비워둠 (gnuboard 기본 user-agent 감지로 시작). bar 에서 토글.
-unset($_SESSION['ss_theme_preview_device']);
 
 header('Location: '.G5_URL.'/', true, 303);
 exit;
