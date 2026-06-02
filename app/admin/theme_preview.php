@@ -152,6 +152,12 @@ require_once(G5_PATH.'/head.sub.php');
 
 <link rel="stylesheet" href="<?php echo G5_ADMIN_URL; ?>/css/theme.css">
 <script src="<?php echo G5_ADMIN_URL; ?>/theme.js"></script>
+<style>
+/* theme_preview 는 admin 안에 index/board/shop 페이지를 inline include 함.
+   nested head 로 인해 #hd_pop h2 / .sound_only 의 hide 룰이 일부 안 먹는 경우가 있어
+   미리보기 컨텍스트에서 팝업레이어 영역을 강제 숨김. */
+#hd_pop { display: none !important; }
+</style>
 
 <section id="preview_item">
     <ul>
