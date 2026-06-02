@@ -85,11 +85,15 @@ $_tp_token = get_admin_token();
 }
 #m-theme-preview-bar .tpb-spacer { flex: 1; }
 body { padding-top: 40px !important; }
+/* modern UI: .m-shell { position:fixed; inset:0 } 라 body padding 무의미.
+   shell 자체를 40px 아래로 push. */
+.m-shell { top: 40px !important; }
 @media (max-width: 640px) {
     #m-theme-preview-bar { height: 36px; font-size: 12px; }
     #m-theme-preview-bar .tpb-inner { padding: 0 8px; gap: 6px; }
     #m-theme-preview-bar .tpb-lbl { display: none; }
     #m-theme-preview-bar .tpb-btn { padding: 4px 8px; }
     body { padding-top: 36px !important; }
+    .m-shell { top: 36px !important; }
 }
 </style>

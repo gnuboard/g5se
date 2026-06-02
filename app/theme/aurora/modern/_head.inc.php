@@ -30,18 +30,18 @@ ob_start();
    디자인 토큰 (라이트)
    ────────────────────────────────────────────── */
 :root {
-    --m-bg:           #f8fafc;
+    --m-bg:           #faf5ff;
     --m-surface:      #ffffff;
-    --m-surface-2:    #f1f5f9;
-    --m-border:       #e2e8f0;
-    --m-border-hover: #cbd5e1;
-    --m-text:         #0f172a;
-    --m-text-muted:   #64748b;
-    --m-text-soft:    #475569;
-    --m-text-faint:   #94a3b8;
-    --m-primary:      #2563eb;
-    --m-primary-hover:#1d4ed8;
-    --m-primary-soft: rgba(37,99,235,0.12);
+    --m-surface-2:    #f5f0ff;
+    --m-border:       #e9d5ff;
+    --m-border-hover: #c4b5fd;
+    --m-text:         #1e1b4b;
+    --m-text-muted:   #6d6589;
+    --m-text-soft:    #4c1d95;
+    --m-text-faint:   #a78bfa;
+    --m-primary:      #7c3aed;
+    --m-primary-hover:#5b21b6;
+    --m-primary-soft: rgba(124,58,237,0.12);
     --m-radius-sm:    6px;
     --m-radius:       8px;
     --m-radius-lg:    12px;
@@ -82,18 +82,18 @@ ob_start();
 
 /* 디자인 토큰 (다크) — html[data-theme="dark"] 일 때 덮어씀 */
 [data-theme="dark"] {
-    --m-bg:           #0a0e1a;
-    --m-surface:      #131825;
-    --m-surface-2:    #1c2230;
-    --m-border:       #2a3344;
-    --m-border-hover: #3d4a5e;
-    --m-text:         #f1f5f9;
-    --m-text-muted:   #94a3b8;
-    --m-text-soft:    #cbd5e1;
-    --m-text-faint:   #64748b;
-    --m-primary:      #3b82f6;
-    --m-primary-hover:#60a5fa;
-    --m-primary-soft: rgba(59,130,246,0.20);
+    --m-bg:           #1e1b4b;
+    --m-surface:      #2e1065;
+    --m-surface-2:    #3b1872;
+    --m-border:       #5b21b6;
+    --m-border-hover: #7c3aed;
+    --m-text:         #faf5ff;
+    --m-text-muted:   #c4b5fd;
+    --m-text-soft:    #e9d5ff;
+    --m-text-faint:   #a78bfa;
+    --m-primary:      #c084fc;
+    --m-primary-hover:#e9d5ff;
+    --m-primary-soft: rgba(192,132,252,0.20);
     --m-shadow:       0 1px 3px rgba(0,0,0,0.5);
     --m-shadow-md:    0 4px 16px -4px rgba(0,0,0,0.6);
     color-scheme:     dark;
