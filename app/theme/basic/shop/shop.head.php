@@ -299,6 +299,8 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 }
 #gnb .gnb_2da {
     color: var(--m-text-soft) !important;
+    /* default.css 의 background:#fff 박힌 거 무력화 — 부모 .gnb_2dul 의 surface 색이 비치도록 */
+    background: transparent !important;
 }
 #gnb .gnb_1dli_on .gnb_1da {
     background-color: var(--m-surface-2) !important;
@@ -310,6 +312,8 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 #gnb .gnb_2da:focus,
 #gnb .gnb_2da:hover {
     color: var(--m-primary) !important;
+    /* default.css 의 hover background:#f7f7f8 도 무력화 — 테마 surface-2 사용 */
+    background: var(--m-surface-2) !important;
 }
 [data-theme="dark"] #gnb {
     background: transparent !important;
@@ -325,6 +329,59 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .gnb_1dli_over2 .gnb_2dul {
     background: var(--m-surface) !important;
     border-color: var(--m-border) !important;
+}
+
+/* sct_location 의 카테고리 dropdown (item view 의 브레드크럼). JS 가 native <select>
+   를 .shop_select_to_html > .menulist > .option 구조로 변환. style.css 가 .menulist 의
+   background:#fff, hover #f6f7f9, 홈/> 아이콘 color:#a2a2a2 하드코딩 — 다크모드에서
+   글자 안 보임. 다크 토큰으로 오버라이드. */
+[data-theme="dark"] #sct_location .go_home,
+[data-theme="dark"] #sct_location i.dividing-line {
+    color: var(--m-text-soft) !important;
+}
+/* 닫힌 상태의 트리거 (.category_title) + 그 안의 ▼ 아이콘 — JS 가 .category_title.current
+   안에 텍스트 + <i class="fa fa-chevron-circle-down"> 를 박음. 기본 색이 inherit 라
+   다크모드 부모 색에 따라 흐려짐. 명시 토큰 적용. */
+[data-theme="dark"] .shop_select_to_html .category_title,
+[data-theme="dark"] .shop_select_to_html .category_title i {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .shop_select_to_html .menulist {
+    background-color: var(--m-surface) !important;
+    box-shadow: 0 0 0 1px var(--m-border) !important;
+}
+[data-theme="dark"] .shop_select_to_html .menulist ul.left-border {
+    border-left-color: var(--m-border) !important;
+}
+[data-theme="dark"] .shop_select_to_html .option,
+[data-theme="dark"] .shop_select_to_html .option a {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .shop_select_to_html .option:hover,
+[data-theme="dark"] .shop_select_to_html .option.focus,
+[data-theme="dark"] .shop_select_to_html .option.selected.focus {
+    background-color: var(--m-surface-2) !important;
+}
+
+/* 카테고리 list 페이지 상단의 하위 카테 네비게이션 (.sct_ct = aside, #sct_ct_1 li a).
+   style.css 가 background:#fff, border-top:2px solid #000, li 구분자 #f6f6f6 하드코딩
+   → 다크에서 흰 박스 + 흐린 글자. 다크 토큰 적용. */
+[data-theme="dark"] .sct_ct {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    border-top-color: var(--m-text-soft) !important;
+}
+[data-theme="dark"] .sct_ct a {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .sct_ct a:hover {
+    color: var(--m-primary) !important;
+}
+[data-theme="dark"] #sct_ct_1 li {
+    border-right-color: var(--m-border) !important;
+}
+[data-theme="dark"] .sct_ct_here {
+    color: var(--m-primary) !important;  /* 원본 #ff3600 도 다크에서 보이지만 테마와 일관 */
 }
 
 /* 설문조사 (poll) — shop_basic skin */
