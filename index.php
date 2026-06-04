@@ -114,10 +114,10 @@ ob_start(function ($html) {
         $html
     );
 
-    // 3) 게시판 액션 URL 정리: /write.php / delete.php / good.php / download.php / view_image.php
+    // 3) 게시판 액션 URL 정리: /write.php / delete.php / good.php / download.php / view_image.php / link.php
     //    매개변수 순서 무관하게 bo_table, wr_id, no, w 추출 후 /board/{bo_table}/{action}[/{wr_id}[/{no}]][?w=X&...] 로 재조립
     $html = preg_replace_callback(
-        '#/(write|write_update|delete|good|nogood|download|view_image)\.php\?([^"\'\s<>]+)#',
+        '#/(write|write_update|delete|good|nogood|download|view_image|link)\.php\?([^"\'\s<>]+)#',
         function ($m) {
             $action = $m[1];
             $qs = str_replace('&amp;', '&', $m[2]);
