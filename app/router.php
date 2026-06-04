@@ -179,6 +179,8 @@ class Router
         // ?fn= 만 있는 query 형태 (gallery skin 의 view_image 링크 등) 폴백
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/view_image/?$#'                            => 'bbs/view_image.php',
         '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/download/?$#'                              => 'bbs/download.php',
+        // 게시글 첨부 링크 redirect (gnuboard link.php — 본문에 첨부된 외부 URL 클릭 시)
+        '#^/board/(?P<bo_table>[a-zA-Z0-9_]+)/link/(?P<wr_id>\d+)/(?P<no>\d+)/?$#'      => 'bbs/link.php',
     ];
 
     /** 사용자 확장 라우트 — app/routes/*.php 에서 로드 */
@@ -313,7 +315,7 @@ class Router
         //    delete/good/nogood/download/view_image 도 동일한 규칙
         //    (단, GET/HEAD 만 — POST 는 그대로 통과시켜 폼 제출 호환)
         if (($method === 'GET' || $method === 'HEAD')
-            && preg_match('#^/(?:bbs/)?(board|write|write_update|delete|good|nogood|download|view_image)\.php$#', $path, $m)) {
+            && preg_match('#^/(?:bbs/)?(board|write|write_update|delete|good|nogood|download|view_image|link)\.php$#', $path, $m)) {
             $action = $m[1];
             parse_str(parse_url($requestUri, PHP_URL_QUERY) ?? '', $params);
             if (!empty($params['bo_table']) && preg_match('/^[a-zA-Z0-9_]+$/', $params['bo_table'])) {
