@@ -172,10 +172,10 @@ if ($_edit_key !== '') {
     } else {
         try {
             $_values[$_edit_key] = setting($_edit_key);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $_values[$_edit_key] = [];
             if (!isset($_errors[$_edit_key])) {
-                $_errors[$_edit_key] = 'g5_setting 테이블이 없습니다. /admin/db_migrate 에서 생성하세요.';
+                $_errors[$_edit_key] = 'g5_setting 테이블이 없습니다. 목록 페이지의 [⟳ 업데이트] 버튼을 눌러 생성하세요.';
             }
         }
     }
