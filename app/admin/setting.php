@@ -255,11 +255,18 @@ admin_layout_start($g5['title'], 'core');
 </div>
 <?php } ?>
 
-<?php if ($_edit_key === '') { ?>
+<?php if ($_edit_key === '') {
+    // 활성 그룹 = DB 에 row 가 있는 schema 만 (목록 노출 기준)
+    $_active_schemas = array_intersect_key($_schemas, $_saved_keys);
+?>
     <!-- ─── 목록 모드 ─── -->
     <?php if (!$_schemas) { ?>
         <div class="setting-empty">
             아직 등록된 설정 schema 가 없습니다. <code>app/lib/setting.lib.php</code> 의 <code>SETTINGS_SCHEMA</code> 배열에 항목을 추가하세요.
+        </div>
+    <?php } elseif (!$_active_schemas) { ?>
+        <div class="setting-empty">
+            활성화된 설정 그룹이 없습니다. 우측 상단의 <strong>[⟳ 업데이트]</strong> 버튼을 눌러 schema 의 그룹들을 활성화하세요.
         </div>
     <?php } else { ?>
         <div class="setting-list-wrap">
@@ -269,23 +276,15 @@ admin_layout_start($g5['title'], 'core');
                         <th class="setting-col-key">키</th>
                         <th class="setting-col-title">제목</th>
                         <th class="setting-col-desc">설명</th>
-                        <th class="setting-col-status">상태</th>
                         <th class="setting-col-edit"></th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($_schemas as $_k => $_s) { ?>
+                <?php foreach ($_active_schemas as $_k => $_s) { ?>
                     <tr>
                         <td><code><?php echo htmlspecialchars($_k); ?></code></td>
                         <td class="setting-cell-title"><?php echo htmlspecialchars($_s['title']); ?></td>
                         <td class="setting-cell-desc"><?php echo htmlspecialchars($_s['description'] ?? ''); ?></td>
-                        <td>
-                            <?php if (isset($_saved_keys[$_k])) { ?>
-                                <span class="setting-badge setting-badge-saved">✓ 저장됨</span>
-                            <?php } else { ?>
-                                <span class="setting-badge setting-badge-default">기본값</span>
-                            <?php } ?>
-                        </td>
                         <td class="setting-col-edit">
                             <a href="/admin/setting?key=<?php echo urlencode($_k); ?>" class="setting-btn-edit">편집</a>
                         </td>
