@@ -1367,7 +1367,8 @@ $pg_anchor = '<ul class="anchor">
 <script>
 $(function(){
     $("#board_copy").click(function(){
-        window.open(this.href, "win_board_copy", "left=10,top=10,width=500,height=400");
+        var boTable = new URL(this.href, location.origin).searchParams.get('bo_table');
+        openBoardCopyModal(boTable);
         return false;
     });
 
@@ -1404,7 +1405,7 @@ $(function(){
 });
 
 function board_copy(bo_table) {
-    window.open(<?php echo json_encode(G5_ADMIN_URL.'/board_copy?bo_table=') ?>+bo_table, "BoardCopy", "left=10,top=10,width=500,height=200");
+    openBoardCopyModal(bo_table);
 }
 
 function set_point(f) {
