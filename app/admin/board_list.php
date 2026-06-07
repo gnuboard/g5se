@@ -271,7 +271,8 @@ admin_layout_start('게시판 관리', 'bbs_board');
     document.querySelectorAll('a.board-copy').forEach(function (a) {
         a.addEventListener('click', function (e) {
             e.preventDefault();
-            window.open(a.href, 'win_board_copy', 'left=100,top=100,width=550,height=450');
+            var boTable = new URL(a.href, location.origin).searchParams.get('bo_table');
+            openBoardCopyModal(boTable, { reloadOnSuccess: true });
         });
     });
 })();
