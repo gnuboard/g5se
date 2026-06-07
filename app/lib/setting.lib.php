@@ -64,6 +64,27 @@ HTML,
         ],
     ],
 
+    'social_share' => [
+        'title'       => '소셜 공유',
+        'description' => '게시판 view 의 [공유] 모달에서 직접 공유에 사용되는 외부 SDK 키. 비워두면 Web Share API / 클립보드 fallback.',
+        'notes' => <<<HTML
+<h4>🟡 카카오톡 공유</h4>
+<ol>
+    <li><a href="https://developers.kakao.com" target="_blank" rel="noopener">developers.kakao.com</a> → 내 애플리케이션 → 추가</li>
+    <li>앱 이름 입력 후 저장 → 앱 상세에서 <strong>JavaScript 키</strong> 복사</li>
+    <li>왼쪽 메뉴 [플랫폼] → [Web 플랫폼 등록] → 사이트 도메인에 운영 URL (예: <code>https://example.com</code>) 추가</li>
+    <li>왼쪽 메뉴 [카카오톡 공유] → <strong>활성화 설정</strong> ON</li>
+    <li>여기 폼의 카카오 JavaScript 키 필드에 위 키 붙여넣기 → 저장</li>
+</ol>
+<p>설정 후 게시판 view 에서 [공유] → [카카오톡] 클릭 시 카카오톡 공유창이 직접 열린다 (피드 형태).
+키를 비우면 모바일에선 Web Share API (native share sheet), 데스크탑에선 클립보드 복사로 fallback.</p>
+HTML,
+        'fields' => [
+            'kakao_js_key' => ['label' => '카카오 JavaScript 키', 'type' => 'text', 'default' => '',
+                               'help'  => 'developers.kakao.com 내 앱의 JavaScript 키. 도메인이 앱의 Web 플랫폼에 등록되어 있어야 함.'],
+        ],
+    ],
+
     // 새 설정 그룹은 여기에 추가
 ];
 

@@ -18,12 +18,20 @@ add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orionca
 add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">', -7);
 add_javascript('<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>', -1);
 
-// 카카오 SDK 자동 로드 — 관리자 환경설정의 cf_kakao_js_apikey 가 등록됐을 때만.
+// 카카오 SDK 자동 로드 — modern admin 의 '소셜 공유' (social_share) 그룹에 카카오 JS 키가 등록됐을 때만.
 // share modal 의 [카카오톡] 버튼이 Kakao.Share.sendDefault 로 직접 공유 (SDK 없으면 navigator.share / clipboard fallback).
-if (!empty($config['cf_kakao_js_apikey'])) {
-    add_javascript('<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" integrity="sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Hs90nka" crossorigin="anonymous"></script>', -2);
-    add_javascript('<script>window.kakao_javascript_apikey = '.json_encode((string)$config['cf_kakao_js_apikey']).';</script>', -1);
+$_kakao_js_key = '';
+if (function_exists('setting')) {
+    try {
+        $_social = setting('social_share');
+        $_kakao_js_key = isset($_social['kakao_js_key']) ? trim((string)$_social['kakao_js_key']) : '';
+    } catch (\Throwable $e) { /* schema 미등록 시 silent — fallback 동작 */ }
 }
+if ($_kakao_js_key !== '') {
+    add_javascript('<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" integrity="sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Hs90nka" crossorigin="anonymous"></script>', -2);
+    add_javascript('<script>window.kakao_javascript_apikey = '.json_encode($_kakao_js_key).';</script>', -1);
+}
+unset($_kakao_js_key);
 
 // 다크모드 FOUC 방지: localStorage / 시스템 설정으로 페인트 전에 data-theme 적용
 add_javascript('<script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})();</script>', -100);
