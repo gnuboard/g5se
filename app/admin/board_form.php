@@ -1366,10 +1366,14 @@ $pg_anchor = '<ul class="anchor">
 
 <script>
 $(function(){
-    $("#board_copy").click(function(){
+    $("#board_copy").on("click", function(e){
+        e.preventDefault();
         var boTable = new URL(this.href, location.origin).searchParams.get('bo_table');
-        openBoardCopyModal(boTable);
-        return false;
+        if (typeof openBoardCopyModal === "function") {
+            openBoardCopyModal(boTable);
+        } else {
+            alert("스크립트 로딩이 지연되었습니다. 새로고침 후 다시 시도해 주세요.");
+        }
     });
 
     $(".get_theme_galc").on("click", function() {
