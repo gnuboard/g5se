@@ -652,6 +652,41 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 [data-theme="dark"] .hd_pops_footer button,
 [data-theme="dark"] .hd_pops_footer .hd_pops_reject,
 [data-theme="dark"] .hd_pops_footer .hd_pops_close { background: #2a3344 !important; color: var(--m-text-soft) !important; }
+
+/* 게시판 view 의 SNS 공유 버튼 (#bo_v_sns) — 토큰 기반 칩 형태.
+   기본 마크업: <ul id="bo_v_sns"><li><a class="sns_f|sns_t|sns_g|sns_k|...">
+   <img .../> <span>...</span></a></li>… */
+.m-shell #bo_v_sns {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    list-style: none; margin: 16px 0 24px; padding: 0;
+    justify-content: flex-end;
+}
+.m-shell #bo_v_sns li { margin: 0; padding: 0; }
+.m-shell #bo_v_sns li a {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--m-surface); color: var(--m-text);
+    border: 1px solid var(--m-border);
+    text-decoration: none;
+    font-size: var(--m-text-base); font-weight: 600;
+    transition: background .15s, border-color .15s, color .15s, transform .15s;
+}
+.m-shell #bo_v_sns li a:hover {
+    background: var(--m-surface-2);
+    border-color: var(--m-border-hover);
+    transform: translateY(-1px);
+}
+.m-shell #bo_v_sns li a img { width: 18px; height: 18px; display: block; flex-shrink: 0; }
+/* SNS 별 brand color hover */
+.m-shell #bo_v_sns li a.sns_f:hover { background: rgba(24,119,242,0.10); border-color: #1877f2; color: #1877f2; }
+.m-shell #bo_v_sns li a.sns_t:hover { background: rgba(29,161,242,0.10); border-color: #1da1f2; color: #1da1f2; }
+.m-shell #bo_v_sns li a.sns_g:hover { background: rgba(219,68,55,0.10); border-color: #db4437; color: #db4437; }
+.m-shell #bo_v_sns li a.sns_k:hover { background: rgba(254,229,0,0.18); border-color: #fee500; color: #3d2900; }
+@media (max-width: 640px) {
+    .m-shell #bo_v_sns { justify-content: stretch; gap: 6px; }
+    .m-shell #bo_v_sns li { flex: 1 1 calc(50% - 3px); min-width: 0; }
+    .m-shell #bo_v_sns li a { width: 100%; justify-content: center; padding: 8px 10px; font-size: var(--m-text-sm); }
+}
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
