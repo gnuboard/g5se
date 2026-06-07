@@ -1365,20 +1365,21 @@ $pg_anchor = '<ul class="anchor">
 </form>
 
 <script>
-// 게시판 복사 — 목록(board_list)과 동일한 순수 JS 핸들러. jQuery 의존 없음.
-(function () {
-    document.querySelectorAll('a.board-copy').forEach(function (a) {
-        a.addEventListener('click', function (e) {
-            e.preventDefault();
-            var boTable = new URL(a.href, location.origin).searchParams.get('bo_table');
-            if (typeof openBoardCopyModal === "function") {
-                openBoardCopyModal(boTable);
-            } else {
-                alert("스크립트 로딩이 지연되었습니다. 새로고침 후 다시 시도해 주세요.");
-            }
-        });
-    });
-})();
+// 게시판 복사 — document 위임(delegation). jQuery 의존 없음.
+// admin.js 가 btn_fixed_top 바를 cloneNode(true) 로 복제해 floating 바를 만드는데,
+// cloneNode 는 addEventListener 리스너를 복사하지 않는다. 개별 바인딩 대신
+// document 위임으로 원본·복제본의 a.board-copy 클릭을 모두 처리한다.
+document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.board-copy');
+    if (!a) return;
+    e.preventDefault();
+    var boTable = new URL(a.href, location.origin).searchParams.get('bo_table');
+    if (typeof openBoardCopyModal === "function") {
+        openBoardCopyModal(boTable);
+    } else {
+        alert("스크립트 로딩이 지연되었습니다. 새로고침 후 다시 시도해 주세요.");
+    }
+});
 
 $(function(){
 
