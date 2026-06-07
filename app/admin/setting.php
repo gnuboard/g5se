@@ -181,14 +181,22 @@ if ($_edit_key !== '') {
     }
 } else {
     // 목록 모드 — 저장된 키 집합 한 번에 SELECT
+    $_table_missing = false;
     try {
         $_rs = sql_pdo_query("SELECT s_key FROM `".G5_TABLE_PREFIX."setting`");
         while ($_r = sql_fetch_array($_rs)) {
             $_saved_keys[$_r['s_key']] = true;
         }
-    } catch (\Throwable $e) {
+    } catch (\Throwable) {
         // 테이블 미생성 — 모두 default 로 표시
+        $_table_missing = true;
     }
+    // schema 중 DB 에 없는 그룹 목록 (업데이트 버튼 활성 여부 판단)
+    $_missing_groups = [];
+    foreach (array_keys($_schemas) as $_k) {
+        if (!isset($_saved_keys[$_k])) $_missing_groups[] = $_k;
+    }
+    $_sync_needed = $_table_missing || !empty($_missing_groups);
 }
 
 admin_layout_start($g5['title'], 'core');
@@ -198,11 +206,22 @@ admin_layout_start($g5['title'], 'core');
 <?php if ($_edit_key === '') { ?>
     <header class="flex items-center gap-3 mb-5">
         <h1 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']); ?></h1>
-        <form method="post" class="ml-auto" onsubmit="return confirm('schema 의 모든 그룹 중 DB 에 없는 것만 기본값으로 추가합니다. 기존 저장값은 유지됩니다. 계속할까요?');">
-            <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
-            <input type="hidden" name="action" value="sync_schema">
-            <button type="submit" class="setting-btn-sync" title="schema 와 DB 동기화 — 새 그룹/테이블 자동 추가">⟳ 업데이트</button>
-        </form>
+        <div class="ml-auto setting-sync-area">
+        <?php if (!empty($_sync_needed)) {
+            $_sync_parts = [];
+            if (!empty($_table_missing)) $_sync_parts[] = '테이블 생성 필요';
+            if (!empty($_missing_groups)) $_sync_parts[] = count($_missing_groups).'개 그룹 추가 필요';
+            $_sync_title = '동기화 필요: '.implode(' · ', $_sync_parts);
+        ?>
+            <form method="post" onsubmit="return confirm('schema 의 모든 그룹 중 DB 에 없는 것만 기본값으로 추가합니다. 기존 저장값은 유지됩니다. 계속할까요?');">
+                <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
+                <input type="hidden" name="action" value="sync_schema">
+                <button type="submit" class="setting-btn-sync" title="<?php echo htmlspecialchars($_sync_title); ?>">⟳ 업데이트 (<?php echo htmlspecialchars(implode(' · ', $_sync_parts)); ?>)</button>
+            </form>
+        <?php } else { ?>
+            <span class="setting-sync-ok" title="모든 schema 가 DB 와 동기화된 상태">✓ 동기화됨</span>
+        <?php } ?>
+        </div>
     </header>
 <?php } else {
     $_edit_schema = $_schemas[$_edit_key];
@@ -425,6 +444,9 @@ admin_layout_start($g5['title'], 'core');
 .setting-btn-sync:hover { background: #2563eb; border-color: #2563eb; }
 [data-theme="dark"] .setting-btn-sync { background: #2563eb; border-color: #2563eb; }
 [data-theme="dark"] .setting-btn-sync:hover { background: #1d4ed8; border-color: #1d4ed8; }
+
+.setting-sync-ok     { color: #16a34a; font-size: 0.85rem; font-weight: 600; padding: 0.45rem 0.6rem; }
+[data-theme="dark"] .setting-sync-ok { color: #4ade80; }
 
 /* 편집 카드 */
 .setting-card        { background: #fff; border: 1px solid var(--slate-200); border-radius: 0.75rem; padding: 1.25rem 1.5rem; }
