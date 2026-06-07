@@ -845,10 +845,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // 게시판 view 페이지에서만 활성화 — #bo_v_sns 존재가 indicator
     var sns = document.getElementById("bo_v_sns");
     if (!sns) return;
-    // target: 스크랩 div 우선 (그 안 m-icon-btn 옆), 없으면 .m-view-actions fallback
-    var scrap   = document.querySelector(".m-view-scrap");
     var actions = document.querySelector("#bo_v_top.m-view-actions");
-    if (!scrap && !actions) return;
+    if (!actions) return;
+
+    // 스크랩 마크업 normalize — .m-view-scrap 의 anchor 를 actions 으로 옮기고 빈 div 제거.
+    // (skin 의 별도 박스 → 목록/답변/글쓰기 같은 m-icon-btn 칩 라인으로 통합)
+    var scrap = document.querySelector(".m-view-scrap");
+    if (scrap) {
+        var scrapAnchor = scrap.querySelector("a.m-icon-btn");
+        if (scrapAnchor) {
+            var kebabFirst = actions.querySelector(".m-view-kebab");
+            if (kebabFirst) actions.insertBefore(scrapAnchor, kebabFirst);
+            else actions.appendChild(scrapAnchor);
+        }
+        scrap.parentNode.removeChild(scrap);
+    }
 
     // 페이지 URL / title 자체 추출 (sns_send.php 의존 안 함 — 직접 외부 share URL 생성)
     var pageUrl   = window.location.href;
@@ -913,14 +924,15 @@ document.addEventListener("DOMContentLoaded", function () {
         '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>' +
         '<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>' +
         '</svg><span>공유</span>';
-    if (scrap) {
-        // 스크랩 div 안 (스크랩 anchor 우측)
-        scrap.appendChild(shareBtn);
+    // 스크랩 anchor 직후 (있으면) — 사용자 요구 "스크랩 우측". 없으면 케밥 직전.
+    var kebab = actions.querySelector(".m-view-kebab");
+    var scrapInActions = actions.querySelector("a.m-icon-btn[title='스크랩']");
+    if (scrapInActions) {
+        scrapInActions.parentNode.insertBefore(shareBtn, scrapInActions.nextSibling);
+    } else if (kebab) {
+        actions.insertBefore(shareBtn, kebab);
     } else {
-        // fallback: actions 의 케밥 직전
-        var kebab = actions.querySelector(".m-view-kebab");
-        if (kebab) actions.insertBefore(shareBtn, kebab);
-        else actions.appendChild(shareBtn);
+        actions.appendChild(shareBtn);
     }
 
     // 모달
