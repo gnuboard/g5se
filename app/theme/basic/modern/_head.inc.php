@@ -18,6 +18,13 @@ add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orionca
 add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">', -7);
 add_javascript('<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>', -1);
 
+// 카카오 SDK 자동 로드 — 관리자 환경설정의 cf_kakao_js_apikey 가 등록됐을 때만.
+// share modal 의 [카카오톡] 버튼이 Kakao.Share.sendDefault 로 직접 공유 (SDK 없으면 navigator.share / clipboard fallback).
+if (!empty($config['cf_kakao_js_apikey'])) {
+    add_javascript('<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" integrity="sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Hs90nka" crossorigin="anonymous"></script>', -2);
+    add_javascript('<script>window.kakao_javascript_apikey = '.json_encode((string)$config['cf_kakao_js_apikey']).';</script>', -1);
+}
+
 // 다크모드 FOUC 방지: localStorage / 시스템 설정으로 페인트 전에 data-theme 적용
 add_javascript('<script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})();</script>', -100);
 
@@ -908,26 +915,44 @@ document.addEventListener("DOMContentLoaded", function () {
             href: null,  // 클릭 시 JS 핸들러 — share API 또는 copy
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.8 1.857 5.265 4.638 6.66l-1.18 4.31c-.103.376.296.69.628.49l5.158-3.413c.247.025.496.043.756.043 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>',
             customClick: function (showToast, setToast) {
+                // 1) Kakao SDK (cf_kakao_js_apikey 설정 시 자동 로드됨) — 직접 카카오톡 공유
+                if (window.Kakao && window.kakao_javascript_apikey) {
+                    try {
+                        if (!Kakao.isInitialized()) Kakao.init(window.kakao_javascript_apikey);
+                        var KakaoShare = Kakao.Share || Kakao.Link;
+                        if (KakaoShare && KakaoShare.sendDefault) {
+                            KakaoShare.sendDefault({
+                                objectType: "feed",
+                                content: {
+                                    title: pageTitle,
+                                    description: pageUrl,
+                                    link: { mobileWebUrl: pageUrl, webUrl: pageUrl }
+                                }
+                            });
+                            return;
+                        }
+                    } catch (e) {}
+                }
+                // 2) Web Share API (모바일 native sheet 에서 카카오톡 선택 가능)
                 if (navigator.share) {
                     navigator.share({ title: pageTitle, url: pageUrl }).catch(function () {});
-                } else {
-                    var copy = function () {
-                        if (navigator.clipboard && navigator.clipboard.writeText) {
-                            return navigator.clipboard.writeText(pageTitle + "\n" + pageUrl).catch(function () { return Promise.reject(); });
-                        }
-                        return Promise.reject();
-                    };
-                    copy().then(function () {
+                    return;
+                }
+                // 3) 클립보드 fallback
+                var fallbackCopy = function (text) {
+                    var ta = document.createElement("textarea");
+                    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+                    document.body.appendChild(ta); ta.select();
+                    try { document.execCommand("copy"); setToast("링크가 복사되었습니다 — 카카오톡에 붙여넣어 공유"); showToast(); } catch (e) {}
+                    document.body.removeChild(ta);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(pageTitle + "\n" + pageUrl).then(function () {
                         setToast("링크가 복사되었습니다 — 카카오톡에 붙여넣어 공유");
                         showToast();
-                    }).catch(function () {
-                        var ta = document.createElement("textarea");
-                        ta.value = pageTitle + "\n" + pageUrl;
-                        ta.style.position = "fixed"; ta.style.opacity = "0";
-                        document.body.appendChild(ta); ta.select();
-                        try { document.execCommand("copy"); setToast("링크가 복사되었습니다 — 카카오톡에 붙여넣어 공유"); showToast(); } catch (e) {}
-                        document.body.removeChild(ta);
-                    });
+                    }).catch(function () { fallbackCopy(pageTitle + "\n" + pageUrl); });
+                } else {
+                    fallbackCopy(pageTitle + "\n" + pageUrl);
                 }
             }
         }
