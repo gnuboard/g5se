@@ -70,10 +70,12 @@ HTML,
         'notes' => <<<HTML
 <h4>🟡 카카오톡 공유</h4>
 <ol>
-    <li><a href="https://developers.kakao.com" target="_blank" rel="noopener">developers.kakao.com</a> → 내 애플리케이션 → 추가</li>
-    <li>앱 이름 입력 후 저장 → 앱 상세에서 <strong>JavaScript 키</strong> 복사</li>
-    <li>왼쪽 메뉴 [플랫폼] → [Web 플랫폼 등록] → 사이트 도메인에 운영 URL (예: <code>https://example.com</code>) 추가</li>
-    <li>왼쪽 메뉴 [카카오톡 공유] → <strong>활성화 설정</strong> ON</li>
+    <li><a href="https://developers.kakao.com" target="_blank" rel="noopener">developers.kakao.com</a> 로그인 → <strong>내 애플리케이션</strong> → <strong>애플리케이션 추가하기</strong></li>
+    <li>앱 이름 / 사업자명 입력 → 저장</li>
+    <li>방금 만든 앱 클릭 → 왼쪽 사이드바 <strong>앱 설정 → 앱 → 일반</strong></li>
+    <li>오른쪽 패널의 <strong>앱 키</strong> 섹션에서 <strong>JavaScript 키</strong> 복사</li>
+    <li>같은 페이지 아래로 스크롤 → <strong>플랫폼</strong> 또는 <strong>사이트 도메인</strong> 섹션 → [수정] → 운영 도메인 추가 (예: <code>https://example.com</code>) → 저장</li>
+    <li>왼쪽 사이드바 <strong>제품 설정 → 카카오톡 메시지</strong> → <strong>활성화 설정</strong> ON</li>
     <li>여기 폼의 카카오 JavaScript 키 필드에 위 키 붙여넣기 → 저장</li>
 </ol>
 <p>설정 후 게시판 view 에서 [공유] → [카카오톡] 클릭 시 카카오톡 공유창이 직접 열린다 (피드 형태).
