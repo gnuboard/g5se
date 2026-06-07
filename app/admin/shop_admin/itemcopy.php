@@ -31,7 +31,7 @@ include_once(G5_PATH.'/head.sub.php');
     </form>
 </div>
 
-<script src="<?php echo G5_ADMIN_URL ?>/admin.js"></script>
+<script src="<?php echo G5_ADMIN_URL ?>/js/admin.js?ver=<?php echo G5_JS_VER; ?>" defer></script>
 
 <script>
 // <![CDATA[

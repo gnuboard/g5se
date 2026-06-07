@@ -294,7 +294,7 @@ function form_check(f)
 
 <?php
 if($popup == 'yes') {
-    echo '<script src="'.G5_ADMIN_URL.'/admin.js"></script>'.PHP_EOL;
+    echo '<script src="'.G5_ADMIN_URL.'/js/admin.js?ver='.G5_JS_VER.'" defer></script>'.PHP_EOL;
     include_once(G5_PATH.'/tail.sub.php');
 } else {
     ?>
