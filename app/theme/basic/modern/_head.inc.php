@@ -653,9 +653,28 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 [data-theme="dark"] .hd_pops_footer .hd_pops_reject,
 [data-theme="dark"] .hd_pops_footer .hd_pops_close { background: #2a3344 !important; color: var(--m-text-soft) !important; }
 
-/* 게시판 view 의 기본 SNS 영역은 숨김 — modern UI 는 .m-view-actions 의 [공유] 버튼 + 모달 사용.
+/* 게시판 view 의 기본 SNS 영역은 숨김 — modern UI 는 .m-view-scrap 의 [공유] 버튼 + 모달 사용.
    JS 가 #bo_v_sns 의 link 들을 파싱해 모달 옵션으로 옮긴다. */
 .m-shell #bo_v_sns { display: none !important; }
+
+/* .m-view-scrap (본문 하단의 스크랩 + 공유 칩 라인) — .m-view-actions 와 동일한
+   m-icon-btn 칩 layout. JS 가 [공유] 버튼을 스크랩 anchor 우측에 inject. */
+.m-view-scrap {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 14px;
+    justify-content: flex-end;
+}
+.m-view-scrap .m-icon-btn {
+    width: auto; padding: 6px 12px;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+}
+.m-view-scrap .m-icon-btn span { font-size: var(--m-text-sm); }
+@media (max-width: 540px) {
+    .m-view-scrap { flex-wrap: nowrap; gap: 2px; }
+    .m-view-scrap .m-icon-btn { padding: 6px 8px; gap: 3px; }
+    .m-view-scrap .m-icon-btn span { font-size: var(--m-text-xs); }
+}
 
 /* 공유 모달 */
 .m-share-modal[hidden] { display: none !important; }
@@ -845,20 +864,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // 게시판 view 페이지에서만 활성화 — #bo_v_sns 존재가 indicator
     var sns = document.getElementById("bo_v_sns");
     if (!sns) return;
-    var actions = document.querySelector("#bo_v_top.m-view-actions");
-    if (!actions) return;
-
-    // 스크랩 마크업 normalize — .m-view-scrap 의 anchor 를 actions 으로 옮기고 빈 div 제거.
-    // (skin 의 별도 박스 → 목록/답변/글쓰기 같은 m-icon-btn 칩 라인으로 통합)
+    // [공유] 위치: .m-view-scrap (하단 영역) 의 스크랩 우측. 스크랩 없으면 새 .m-view-scrap 생성해서
+    // .m-view-react (추천/비추천 영역) 직전에 둠. .m-view-react 도 없으면 #bo_v_atc 다음.
     var scrap = document.querySelector(".m-view-scrap");
-    if (scrap) {
-        var scrapAnchor = scrap.querySelector("a.m-icon-btn");
-        if (scrapAnchor) {
-            var kebabFirst = actions.querySelector(".m-view-kebab");
-            if (kebabFirst) actions.insertBefore(scrapAnchor, kebabFirst);
-            else actions.appendChild(scrapAnchor);
+    if (!scrap) {
+        scrap = document.createElement("div");
+        scrap.className = "m-view-scrap";
+        var react = document.querySelector(".m-view-react");
+        if (react && react.parentNode) {
+            react.parentNode.insertBefore(scrap, react);
+        } else {
+            var atc = document.getElementById("bo_v_atc");
+            if (atc && atc.parentNode) atc.parentNode.insertBefore(scrap, atc.nextSibling);
+            else return;
         }
-        scrap.parentNode.removeChild(scrap);
     }
 
     // 페이지 URL / title 자체 추출 (sns_send.php 의존 안 함 — 직접 외부 share URL 생성)
@@ -924,15 +943,12 @@ document.addEventListener("DOMContentLoaded", function () {
         '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>' +
         '<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>' +
         '</svg><span>공유</span>';
-    // 스크랩 anchor 직후 (있으면) — 사용자 요구 "스크랩 우측". 없으면 케밥 직전.
-    var kebab = actions.querySelector(".m-view-kebab");
-    var scrapInActions = actions.querySelector("a.m-icon-btn[title='스크랩']");
-    if (scrapInActions) {
-        scrapInActions.parentNode.insertBefore(shareBtn, scrapInActions.nextSibling);
-    } else if (kebab) {
-        actions.insertBefore(shareBtn, kebab);
+    // 사용자 요구: 스크랩 우측 (스크랩 anchor 의 nextSibling 위치).
+    var scrapAnchor = scrap.querySelector("a.m-icon-btn");
+    if (scrapAnchor) {
+        scrap.insertBefore(shareBtn, scrapAnchor.nextSibling);
     } else {
-        actions.appendChild(shareBtn);
+        scrap.appendChild(shareBtn);
     }
 
     // 모달
