@@ -1355,7 +1355,7 @@ $pg_anchor = '<ul class="anchor">
 
 <div class="btn_fixed_top">
     <?php if ($bo_table && $w) { ?>
-        <a href="<?php echo G5_ADMIN_URL ?>/board_copy?bo_table=<?php echo $board['bo_table']; ?>" id="board_copy" target="win_board_copy" class=" btn_02 btn">게시판복사</a>
+        <a href="<?php echo G5_ADMIN_URL ?>/board_copy?bo_table=<?php echo $board['bo_table']; ?>" id="board_copy" class=" btn_02 btn board-copy">게시판복사</a>
         <a href="<?php echo get_pretty_url($board['bo_table']); ?>" class=" btn_02 btn">게시판 바로가기</a>
         <a href="<?php echo G5_ADMIN_URL ?>/board_thumbnail_delete?bo_table=<?php echo $board['bo_table'].'&amp;'.$qstr;?>" onclick="return delete_confirm2('게시판 썸네일 파일을 삭제하시겠습니까?');" class="btn_02 btn">게시판 썸네일 삭제</a>
     <?php } ?>
@@ -1365,11 +1365,23 @@ $pg_anchor = '<ul class="anchor">
 </form>
 
 <script>
+// 게시판 복사 — document 위임(delegation). jQuery 의존 없음.
+// admin.js 가 btn_fixed_top 바를 cloneNode(true) 로 복제해 floating 바를 만드는데,
+// cloneNode 는 addEventListener 리스너를 복사하지 않는다. 개별 바인딩 대신
+// document 위임으로 원본·복제본의 a.board-copy 클릭을 모두 처리한다.
+document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.board-copy');
+    if (!a) return;
+    e.preventDefault();
+    var boTable = new URL(a.href, location.origin).searchParams.get('bo_table');
+    if (typeof openBoardCopyModal === "function") {
+        openBoardCopyModal(boTable);
+    } else {
+        alert("스크립트 로딩이 지연되었습니다. 새로고침 후 다시 시도해 주세요.");
+    }
+});
+
 $(function(){
-    $("#board_copy").click(function(){
-        window.open(this.href, "win_board_copy", "left=10,top=10,width=500,height=400");
-        return false;
-    });
 
     $(".get_theme_galc").on("click", function() {
         if(!confirm("현재 테마의 게시판 이미지 설정을 적용하시겠습니까?"))
@@ -1402,10 +1414,6 @@ $(function(){
         });
     });
 });
-
-function board_copy(bo_table) {
-    window.open(<?php echo json_encode(G5_ADMIN_URL.'/board_copy?bo_table=') ?>+bo_table, "BoardCopy", "left=10,top=10,width=500,height=200");
-}
 
 function set_point(f) {
     if (f.chk_grp_point.checked) {

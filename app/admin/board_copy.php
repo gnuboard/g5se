@@ -1,6 +1,8 @@
 <?php
 /*
- * /admin/board_copy — 게시판 복사 popup 폼.
+ * /admin/board_copy — 게시판 복사 폼 조각.
+ * PopupManager 모달(board_list / board_form)이 fetch 해서 #popupBody 에 주입한다.
+ * 단독 페이지/팝업이 아니므로 shell·head.sub·admin.js 를 출력하지 않는다.
  */
 $sub_menu = "300100";
 require_once __DIR__.'/_common.php';
@@ -9,88 +11,51 @@ admin_require_login();
 require_once __DIR__.'/admin.lib.php';
 auth_check_menu($auth, $sub_menu, 'w');
 
-$g5['title'] = '게시판 복사';
-require_once G5_PATH . '/head.sub.php';
-
 if (empty($bo_table)) {
-    alert_close("정상적인 방법으로 이용해주세요.");
+    echo '<p class="legacy-admin-content" style="color:#e11d48;">정상적인 방법으로 이용해주세요.</p>';
+    return;
 }
+
+// 게시판명 금지어 (board 관리자 권한이 아닐 때만 클라이언트 검증에 사용)
+$banned = (!$w) ? get_bo_table_banned_word() : array();
 ?>
-<script>
-    var g5_admin_csrf_token_key = "<?php echo (function_exists('admin_csrf_token_key')) ? admin_csrf_token_key() : ''; ?>";
-</script>
-<script src="<?php echo G5_ADMIN_URL ?>/admin.js?ver=<?php echo G5_JS_VER; ?>"></script>
-
-<div class="new_win">
-    <h1><?php echo $g5['title']; ?></h1>
-
-    <form name="fboardcopy" id="fboardcopy" action="<?php echo G5_ADMIN_URL; ?>/board_copy_update" onsubmit="return fboardcopy_check(this);" method="post">
-        <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>" id="bo_table">
-        <input type="hidden" name="token" value="">
-        <div class=" new_win_con">
-            <div class="tbl_frm01 tbl_wrap">
-                <table>
-                    <caption><?php echo $g5['title']; ?></caption>
-                    <tbody>
-                        <tr>
-                            <th scope="col">원본 테이블명</th>
-                            <td><?php echo $bo_table ?></td>
-                        </tr>
-                        <tr>
-                            <th scope="col"><label for="target_table">복사 테이블명<strong class="sound_only">필수</strong></label></th>
-                            <td><input type="text" name="target_table" id="target_table" required class="required alnum_ frm_input" maxlength="20">영문자, 숫자, _ 만 가능 (공백없이)</td>
-                        </tr>
-                        <tr>
-                            <th scope="col"><label for="target_subject">게시판 제목<strong class="sound_only">필수</strong></label></th>
-                            <td><input type="text" name="target_subject" value="[복사본] <?php echo get_sanitize_input($board['bo_subject']); ?>" id="target_subject" required class="required frm_input" maxlength="120"></td>
-                        </tr>
-                        <tr>
-                            <th scope="col">복사 유형</th>
-                            <td>
-                                <input type="radio" name="copy_case" value="schema_only" id="copy_case" checked>
-                                <label for="copy_case">구조만</label>
-                                <input type="radio" name="copy_case" value="schema_data_both" id="copy_case2">
-                                <label for="copy_case2">구조와 데이터</label>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="win_btn ">
-            <input type="submit" class="btn_submit btn" value="복사">
-            <input type="button" class="btn_close btn" value="창닫기" onclick="window.close();">
-        </div>
-
-    </form>
-
-</div>
-
-<script>
-    function fboardcopy_check(f) {
-        <?php
-
-        if (!$w) {
-            $js_array = get_bo_table_banned_word();
-            echo "var banned_array = " . json_encode($js_array) . ";\n";
-        }
-        ?>
-
-        // 게시판명이 금지된 단어로 되어 있으면
-        if ((typeof banned_array != 'undefined') && jQuery.inArray(f.target_table.value, banned_array) !== -1) {
-            alert("입력한 게시판 TABLE명을 사용할수 없습니다. 다른 이름으로 입력해 주세요.");
-            return false;
-        }
-
-        if (f.bo_table.value == f.target_table.value) {
-            alert("원본 테이블명과 복사할 테이블명이 달라야 합니다.");
-            return false;
-        }
-
-        return true;
-    }
-</script>
-
-
-<?php
-require_once G5_PATH . '/tail.sub.php';
+<form name="fboardcopy" id="fboardcopy"
+      action="<?php echo G5_ADMIN_URL; ?>/board_copy_update"
+      method="post"
+      class="legacy-admin-content p-4"
+      data-banned="<?php echo htmlspecialchars(json_encode($banned), ENT_QUOTES); ?>">
+    <input type="hidden" name="bo_table" value="<?php echo $bo_table ?>">
+    <input type="hidden" name="token" value="">
+    <div class="tbl_frm01 tbl_wrap">
+        <table>
+            <caption>게시판 복사</caption>
+            <tbody>
+                <tr>
+                    <th scope="row">원본 테이블명</th>
+                    <td><?php echo $bo_table ?></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="target_table">복사 테이블명<strong class="sound_only">필수</strong></label></th>
+                    <td><input type="text" name="target_table" id="target_table" required class="required alnum_ frm_input" maxlength="20">영문자, 숫자, _ 만 가능 (공백없이)</td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="target_subject">게시판 제목<strong class="sound_only">필수</strong></label></th>
+                    <td><input type="text" name="target_subject" value="[복사본] <?php echo get_sanitize_input($board['bo_subject']); ?>" id="target_subject" required class="required frm_input" maxlength="120"></td>
+                </tr>
+                <tr>
+                    <th scope="row">복사 유형</th>
+                    <td>
+                        <input type="radio" name="copy_case" value="schema_only" id="copy_case" checked>
+                        <label for="copy_case">구조만</label>
+                        <input type="radio" name="copy_case" value="schema_data_both" id="copy_case2">
+                        <label for="copy_case2">구조와 데이터</label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="win_btn">
+        <input type="submit" class="btn_submit btn" value="복사">
+        <input type="button" class="btn_close btn" value="닫기" onclick="PopupManager.close('popupOverlay')">
+    </div>
+</form>

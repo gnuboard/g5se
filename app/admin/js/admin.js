@@ -300,3 +300,72 @@ $(function() {
         return true;
     });
 });
+
+/**
+ * 게시판 복사 모달 — board_list / board_form 공용.
+ * @param {string} boTable - 원본 게시판 테이블명
+ * @param {object} [opts]  - { reloadOnSuccess: boolean }
+ */
+function openBoardCopyModal(boTable, opts) {
+    opts = opts || {};
+    fetch(g5_admin_url + '/board_copy?bo_table=' + encodeURIComponent(boTable), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin'
+    })
+    .then(function (res) { return res.text(); })
+    .then(function (html) {
+        PopupManager.render('게시판 복사', html);
+        var form = document.getElementById('fboardcopy');
+        if (!form) return;
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!boardCopyValidate(form)) return;
+            submitBoardCopy(form, opts);
+        });
+        var tt = document.getElementById('target_table');
+        if (tt) tt.focus();
+    })
+    .catch(function () { alert('복사 폼을 불러오지 못했습니다.'); });
+}
+
+/** 제출 전 클라이언트 검증 (금지어 / 원본=대상 동일 방지) */
+function boardCopyValidate(form) {
+    var banned = [];
+    try { banned = JSON.parse(form.dataset.banned || '[]'); } catch (e) {}
+    var target = form.target_table.value;
+    if (banned.indexOf(target) !== -1) {
+        alert('입력한 게시판 TABLE명을 사용할수 없습니다. 다른 이름으로 입력해 주세요.');
+        return false;
+    }
+    if (form.bo_table.value === target) {
+        alert('원본 테이블명과 복사할 테이블명이 달라야 합니다.');
+        return false;
+    }
+    return true;
+}
+
+/** 복사 폼 AJAX 제출 + 결과 처리 */
+function submitBoardCopy(form, opts) {
+    var token = (typeof get_ajax_token === 'function') ? get_ajax_token() : '';
+    if (!token) { alert('토큰 정보가 올바르지 않습니다.'); return; }
+    var fd = new FormData(form);
+    fd.set('token', token);
+    fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin'
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+        if (!data || !data.success) {
+            alert((data && data.message) || '복사에 실패했습니다.');
+            return;
+        }
+        PopupManager.close('popupOverlay');
+        alert(data.message || '복사에 성공했습니다.');
+        // 복사 성공 후 게시판 목록으로 이동 — 새로 만들어진 게시판 확인.
+        location.href = g5_admin_url + '/board_list';
+    })
+    .catch(function () { alert('요청 처리 중 오류가 발생했습니다.'); });
+}

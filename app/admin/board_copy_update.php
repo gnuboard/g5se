@@ -11,6 +11,14 @@ auth_check_menu($auth, $sub_menu, 'w');
 
 check_admin_token();
 
+function board_copy_json($success, $message, $extra = array()) {
+    if (!headers_sent()) {
+        header('Content-Type: application/json; charset=utf-8');
+    }
+    echo json_encode(array_merge(array('success' => $success, 'message' => $message), $extra));
+    exit;
+}
+
 $bo_table       = isset($_POST['bo_table']) ? substr(preg_replace('/[^a-z0-9_]/i', '', $_POST['bo_table']), 0, 20) : null;
 $target_table   = isset($_POST['target_table']) ? trim($_POST['target_table']) : '';
 $target_subject = isset($_POST['target_subject']) ? trim($_POST['target_subject']) : '';
@@ -20,24 +28,24 @@ $target_subject = strip_tags(clean_xss_attributes($target_subject));
 $file_copy      = array();
 
 if (empty($bo_table)) {
-    alert("원본 테이블 정보가 없습니다.");
+    board_copy_json(false, '원본 테이블 정보가 없습니다.');
 }
 
 if (!preg_match('/[A-Za-z0-9_]{1,20}/', $target_table)) {
-    alert('게시판 TABLE명은 공백없이 영문자, 숫자, _ 만 사용 가능합니다. (20자 이내)');
+    board_copy_json(false, '게시판 TABLE명은 공백없이 영문자, 숫자, _ 만 사용 가능합니다. (20자 이내)');
 }
 
 $target_table = substr(preg_replace('/[^a-z0-9_]/i', '', $target_table), 0, 20);
 
 // 게시판명이 금지된 단어로 되어 있으면
 if ($w == '' && in_array($target_table, get_bo_table_banned_word())) {
-    alert('입력한 게시판 TABLE명을 사용할수 없습니다. 다른 이름으로 입력해 주세요.');
+    board_copy_json(false, '입력한 게시판 TABLE명을 사용할수 없습니다. 다른 이름으로 입력해 주세요.');
 }
 
 $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['board_table']} where bo_table = :target_table ",
                     [':target_table' => $target_table]);
 if ($row['cnt']) {
-    alert($target_table . '은(는) 이미 존재하는 게시판 테이블명 입니다.\\n복사할 테이블명으로 사용할 수 없습니다.');
+    board_copy_json(false, $target_table . '은(는) 이미 존재하는 게시판 테이블명 입니다. 복사할 테이블명으로 사용할 수 없습니다.');
 }
 
 // 게시판 테이블 생성 — table 명에 변수 들어가므로 (placeholder 불가) 영숫자 검증된 값만 보간
@@ -179,6 +187,4 @@ if (count($file_copy)) {
 delete_cache_latest($bo_table);
 delete_cache_latest($target_table);
 
-echo "<script>opener.document.location.reload();</script>";
-
-alert("복사에 성공 했습니다.", G5_ADMIN_URL.'/board_copy?bo_table=' . $bo_table . '&amp;' . $qstr);
+board_copy_json(true, '복사에 성공했습니다.', array('target_table' => $target_table));

@@ -198,7 +198,6 @@ admin_layout_start('게시판 관리', 'bbs_board');
                     </td>
                     <td class="px-3 py-2 text-right whitespace-nowrap">
                         <a href="/admin/board_form?w=u&amp;bo_table=<?php echo urlencode($row['bo_table']) ?>" class="inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">수정</a>
-                        <a href="/admin/board_copy?bo_table=<?php echo urlencode($row['bo_table']) ?>" class="inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 board-copy">복사</a>
                     </td>
                 </tr>
                 <?php
@@ -268,12 +267,6 @@ admin_layout_start('게시판 관리', 'bbs_board');
             if (window.__pressed === '선택삭제' && !confirm('선택한 자료를 정말 삭제하시겠습니까?')) { e.preventDefault(); }
         });
     }
-    document.querySelectorAll('a.board-copy').forEach(function (a) {
-        a.addEventListener('click', function (e) {
-            e.preventDefault();
-            window.open(a.href, 'win_board_copy', 'left=100,top=100,width=550,height=450');
-        });
-    });
 })();
 </script>
 
