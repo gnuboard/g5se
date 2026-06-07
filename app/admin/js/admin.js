@@ -364,7 +364,8 @@ function submitBoardCopy(form, opts) {
         }
         PopupManager.close('popupOverlay');
         alert(data.message || '복사에 성공했습니다.');
-        if (opts.reloadOnSuccess) location.reload();
+        // 복사 성공 후 게시판 목록으로 이동 — 새로 만들어진 게시판 확인.
+        location.href = g5_admin_url + '/board_list';
     })
     .catch(function () { alert('요청 처리 중 오류가 발생했습니다.'); });
 }
