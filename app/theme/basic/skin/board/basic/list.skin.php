@@ -142,9 +142,9 @@ if ($is_nogood) $colspan++;
                                 <?php
                                 $icons = '';
                                 if ($list[$i]['icon_new'])         $icons .= '<span class="m-icon-pill m-icon-new">N</span>';
-                                if (isset($list[$i]['icon_hot']))  $icons .= '<span class="m-icon-pill m-icon-hot">HOT</span>';
-                                if (isset($list[$i]['icon_file'])) $icons .= '<span class="m-icon-mini" title="첨부"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>';
-                                if (isset($list[$i]['icon_link'])) $icons .= '<span class="m-icon-mini" title="링크"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
+                                if (!empty($list[$i]['icon_hot']))  $icons .= '<span class="m-icon-pill m-icon-hot">HOT</span>';
+                                if (!empty($list[$i]['icon_file'])) $icons .= '<span class="m-icon-mini" title="첨부"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>';
+                                if (!empty($list[$i]['icon_link'])) $icons .= '<span class="m-icon-mini" title="링크"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
                                 if ($icons) echo '<span class="m-row-icons">'.$icons.'</span>';
                                 ?>
                             </td>
