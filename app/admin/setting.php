@@ -142,11 +142,23 @@ if ($_action === 'reset' && isset($_schemas[$_post_key])) {
     exit;
 }
 
+// sync_schema 액션: 테이블 ensure + schema 중 row 없는 그룹만 default 로 INSERT
+if ($_action === 'sync_schema') {
+    $sync = setting_sync();
+    $_SESSION['_setting_flash'] = ['type' => 'sync', 'sync' => $sync];
+    header('Location: /admin/setting', true, 303);
+    exit;
+}
+
 // ── 플래시 읽기 (1 회) ───────────────────────────────────────────
 $_flash = $_SESSION['_setting_flash'] ?? null;
 unset($_SESSION['_setting_flash']);
-if ($_flash && (!isset($_flash['key']) || !isset($_schemas[$_flash['key']]))) {
-    $_flash = null;
+if ($_flash) {
+    if ($_flash['type'] === 'sync') {
+        // sync flash 는 key 무관, 그대로 유지
+    } elseif (!isset($_flash['key']) || !isset($_schemas[$_flash['key']])) {
+        $_flash = null;
+    }
 }
 
 // ── 모드별 데이터 준비 ────────────────────────────────────────────
@@ -186,6 +198,11 @@ admin_layout_start($g5['title'], 'core');
 <?php if ($_edit_key === '') { ?>
     <header class="flex items-center gap-3 mb-5">
         <h1 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']); ?></h1>
+        <form method="post" class="ml-auto" onsubmit="return confirm('schema 의 모든 그룹 중 DB 에 없는 것만 기본값으로 추가합니다. 기존 저장값은 유지됩니다. 계속할까요?');">
+            <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
+            <input type="hidden" name="action" value="sync_schema">
+            <button type="submit" class="setting-btn-sync" title="schema 와 DB 동기화 — 새 그룹/테이블 자동 추가">⟳ 업데이트</button>
+        </form>
     </header>
 <?php } else {
     $_edit_schema = $_schemas[$_edit_key];
@@ -198,14 +215,27 @@ admin_layout_start($g5['title'], 'core');
     </header>
 <?php } ?>
 
-<?php if ($_flash) {
-    $_flash_title = $_schemas[$_flash['key']]['title'];
-?>
+<?php if ($_flash) { ?>
 <div class="setting-toast setting-toast-ok">
     <?php if ($_flash['type'] === 'saved') {
+        $_flash_title = $_schemas[$_flash['key']]['title'];
         echo htmlspecialchars($_flash_title).' 설정이 저장되었습니다.';
     } elseif ($_flash['type'] === 'reset') {
+        $_flash_title = $_schemas[$_flash['key']]['title'];
         echo htmlspecialchars($_flash_title).' 설정이 기본값으로 리셋되었습니다.';
+    } elseif ($_flash['type'] === 'sync') {
+        $_s = $_flash['sync'] ?? ['table_created' => false, 'inserted' => []];
+        $_msgs = [];
+        if (!empty($_s['table_created'])) $_msgs[] = 'g5_setting 테이블 생성됨';
+        if (!empty($_s['inserted'])) {
+            $_titles = [];
+            foreach ($_s['inserted'] as $_k) {
+                $_titles[] = ($_schemas[$_k]['title'] ?? $_k).' ('.$_k.')';
+            }
+            $_msgs[] = count($_s['inserted']).'개 그룹 추가: '.implode(', ', $_titles);
+        }
+        if (!$_msgs) $_msgs[] = '추가할 그룹이 없습니다 — 모든 schema 가 이미 동기화됨.';
+        echo htmlspecialchars(implode(' · ', $_msgs));
     } ?>
 </div>
 <?php } ?>
@@ -390,6 +420,11 @@ admin_layout_start($g5['title'], 'core');
 .setting-btn-edit:hover { background: var(--slate-200); }
 [data-theme="dark"] .setting-btn-edit { background: var(--slate-700); color: var(--slate-100); border-color: var(--slate-600); }
 [data-theme="dark"] .setting-btn-edit:hover { background: var(--slate-600); }
+
+.setting-btn-sync    { background: #3b82f6; color: #fff; border: 1px solid #3b82f6; padding: 0.45rem 0.9rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.setting-btn-sync:hover { background: #2563eb; border-color: #2563eb; }
+[data-theme="dark"] .setting-btn-sync { background: #2563eb; border-color: #2563eb; }
+[data-theme="dark"] .setting-btn-sync:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
 /* 편집 카드 */
 .setting-card        { background: #fff; border: 1px solid var(--slate-200); border-radius: 0.75rem; padding: 1.25rem 1.5rem; }

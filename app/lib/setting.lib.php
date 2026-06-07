@@ -174,3 +174,62 @@ function setting_schemas(): array
 {
     return SETTINGS_SCHEMA;
 }
+
+/**
+ * Schema 와 DB 동기화 (idempotent).
+ *
+ * 1) g5_setting 테이블 없으면 CREATE TABLE IF NOT EXISTS
+ * 2) SETTINGS_SCHEMA 의 모든 그룹 중 DB 에 row 없는 것만 default 값으로 INSERT
+ *    (기존 row 의 사용자 입력값은 절대 덮어쓰지 않음)
+ *
+ * @return array{table_created: bool, inserted: list<string>} 추가 결과
+ */
+function setting_sync(): array
+{
+    $result = ['table_created' => false, 'inserted' => []];
+    $table = G5_TABLE_PREFIX.'setting';
+
+    // 1) 테이블 존재 확인 후 CREATE
+    $exists = false;
+    try {
+        sql_pdo_query("SELECT 1 FROM `".$table."` LIMIT 1");
+        $exists = true;
+    } catch (\Throwable) {
+        // 미존재 → CREATE
+    }
+    if (!$exists) {
+        sql_pdo_query(
+            "CREATE TABLE IF NOT EXISTS `".$table."` (
+                `s_key`     varchar(64)  NOT NULL,
+                `s_value`   longtext     NOT NULL,
+                `s_updated` datetime     DEFAULT NULL,
+                PRIMARY KEY (`s_key`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        );
+        $result['table_created'] = true;
+    }
+
+    // 2) 저장된 키 목록
+    $saved = [];
+    $rs = sql_pdo_query("SELECT s_key FROM `".$table."`");
+    while ($r = $rs->fetch(PDO::FETCH_ASSOC)) {
+        $saved[$r['s_key']] = true;
+    }
+
+    // 3) schema 중 없는 그룹만 default 로 INSERT
+    foreach (SETTINGS_SCHEMA as $key => $schema) {
+        if (isset($saved[$key])) continue;
+        $defaults = [];
+        foreach ($schema['fields'] as $fkey => $field) {
+            $defaults[$fkey] = $field['default'];
+        }
+        $json = json_encode($defaults, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        sql_pdo_query(
+            "INSERT INTO `".$table."` (s_key, s_value) VALUES (?, ?)",
+            [$key, $json]
+        );
+        $result['inserted'][] = $key;
+    }
+
+    return $result;
+}
