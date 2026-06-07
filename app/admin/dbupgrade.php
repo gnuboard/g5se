@@ -386,6 +386,19 @@ if (!sql_query(" DESC `{$g5['member_auto_login_table']}` ", false)) {
     $is_check = true;
 }
 
+// 설정 KV 테이블 — modern admin (/admin/setting) 의 SETTINGS_SCHEMA 그룹별 JSON 저장.
+// 키(그룹)·필드 추가는 SETTINGS_SCHEMA 코드 수정만 — read 는 schema default 와 자동 병합,
+// write 는 schema 의 현재 필드만 저장. 별도 그룹별 마이그레이션 필요 없음 (테이블만 보장).
+if (!sql_query(" DESC `{$g5['setting_table']}` ", false)) {
+    sql_query(" CREATE TABLE IF NOT EXISTS `{$g5['setting_table']}` (
+                  `s_key`     varchar(64)  NOT NULL,
+                  `s_value`   longtext     NOT NULL,
+                  `s_updated` datetime     DEFAULT NULL,
+                  PRIMARY KEY (`s_key`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ", true);
+    $is_check = true;
+}
+
 $is_check = run_replace('admin_dbupgrade', $is_check);
 
 $db_upgrade_msg = $is_check ? 'DB 업그레이드가 완료되었습니다.' : '더 이상 업그레이드 할 내용이 없습니다.<br>현재 DB 업그레이드가 완료된 상태입니다.';
