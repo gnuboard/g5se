@@ -172,6 +172,10 @@ if (file_exists($dbconfig_file)) {
     if (!isset($g5['member_auto_login_table'])) {
         $g5['member_auto_login_table'] = G5_TABLE_PREFIX.'member_auto_login';
     }
+    // 설정 KV 테이블 (modern admin /admin/setting 의 SETTINGS_SCHEMA 그룹별 JSON 저장)
+    if (!isset($g5['setting_table'])) {
+        $g5['setting_table'] = G5_TABLE_PREFIX.'setting';
+    }
 } else {
 ?>
 

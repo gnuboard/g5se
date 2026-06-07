@@ -386,6 +386,9 @@ if (!sql_query(" DESC `{$g5['member_auto_login_table']}` ", false)) {
     $is_check = true;
 }
 
+// 설정 KV 테이블 (g5_setting) 은 /admin/setting 의 [⟳ 업데이트] 버튼이 자동 CREATE.
+// dbupgrade 에서 중복 처리 안 함 — 단일 진입점.
+
 $is_check = run_replace('admin_dbupgrade', $is_check);
 
 $db_upgrade_msg = $is_check ? 'DB 업그레이드가 완료되었습니다.' : '더 이상 업그레이드 할 내용이 없습니다.<br>현재 DB 업그레이드가 완료된 상태입니다.';

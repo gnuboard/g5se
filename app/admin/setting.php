@@ -142,11 +142,23 @@ if ($_action === 'reset' && isset($_schemas[$_post_key])) {
     exit;
 }
 
+// sync_schema 액션: 테이블 ensure + schema 중 row 없는 그룹만 default 로 INSERT
+if ($_action === 'sync_schema') {
+    $sync = setting_sync();
+    $_SESSION['_setting_flash'] = ['type' => 'sync', 'sync' => $sync];
+    header('Location: /admin/setting', true, 303);
+    exit;
+}
+
 // ── 플래시 읽기 (1 회) ───────────────────────────────────────────
 $_flash = $_SESSION['_setting_flash'] ?? null;
 unset($_SESSION['_setting_flash']);
-if ($_flash && (!isset($_flash['key']) || !isset($_schemas[$_flash['key']]))) {
-    $_flash = null;
+if ($_flash) {
+    if ($_flash['type'] === 'sync') {
+        // sync flash 는 key 무관, 그대로 유지
+    } elseif (!isset($_flash['key']) || !isset($_schemas[$_flash['key']])) {
+        $_flash = null;
+    }
 }
 
 // ── 모드별 데이터 준비 ────────────────────────────────────────────
@@ -160,23 +172,31 @@ if ($_edit_key !== '') {
     } else {
         try {
             $_values[$_edit_key] = setting($_edit_key);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $_values[$_edit_key] = [];
             if (!isset($_errors[$_edit_key])) {
-                $_errors[$_edit_key] = 'g5_setting 테이블이 없습니다. /admin/db_migrate 에서 생성하세요.';
+                $_errors[$_edit_key] = 'g5_setting 테이블이 없습니다. 목록 페이지의 [⟳ 업데이트] 버튼을 눌러 생성하세요.';
             }
         }
     }
 } else {
     // 목록 모드 — 저장된 키 집합 한 번에 SELECT
+    $_table_missing = false;
     try {
         $_rs = sql_pdo_query("SELECT s_key FROM `".G5_TABLE_PREFIX."setting`");
         while ($_r = sql_fetch_array($_rs)) {
             $_saved_keys[$_r['s_key']] = true;
         }
-    } catch (\Throwable $e) {
+    } catch (\Throwable) {
         // 테이블 미생성 — 모두 default 로 표시
+        $_table_missing = true;
     }
+    // schema 중 DB 에 없는 그룹 목록 (업데이트 버튼 활성 여부 판단)
+    $_missing_groups = [];
+    foreach (array_keys($_schemas) as $_k) {
+        if (!isset($_saved_keys[$_k])) $_missing_groups[] = $_k;
+    }
+    $_sync_needed = $_table_missing || !empty($_missing_groups);
 }
 
 admin_layout_start($g5['title'], 'core');
@@ -186,6 +206,18 @@ admin_layout_start($g5['title'], 'core');
 <?php if ($_edit_key === '') { ?>
     <header class="flex items-center gap-3 mb-5">
         <h1 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']); ?></h1>
+        <?php if (!empty($_sync_needed)) {
+            $_sync_parts = [];
+            if (!empty($_table_missing)) $_sync_parts[] = '테이블 생성 필요';
+            if (!empty($_missing_groups)) $_sync_parts[] = count($_missing_groups).'개 그룹 추가 필요';
+            $_sync_title = '동기화 필요: '.implode(' · ', $_sync_parts);
+        ?>
+            <form method="post" class="ml-auto" onsubmit="return confirm('schema 의 모든 그룹 중 DB 에 없는 것만 기본값으로 추가합니다. 기존 저장값은 유지됩니다. 계속할까요?');">
+                <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
+                <input type="hidden" name="action" value="sync_schema">
+                <button type="submit" class="setting-btn-sync" title="<?php echo htmlspecialchars($_sync_title); ?>">⟳ 업데이트 (<?php echo htmlspecialchars(implode(' · ', $_sync_parts)); ?>)</button>
+            </form>
+        <?php } ?>
     </header>
 <?php } else {
     $_edit_schema = $_schemas[$_edit_key];
@@ -198,23 +230,43 @@ admin_layout_start($g5['title'], 'core');
     </header>
 <?php } ?>
 
-<?php if ($_flash) {
-    $_flash_title = $_schemas[$_flash['key']]['title'];
-?>
+<?php if ($_flash) { ?>
 <div class="setting-toast setting-toast-ok">
     <?php if ($_flash['type'] === 'saved') {
+        $_flash_title = $_schemas[$_flash['key']]['title'];
         echo htmlspecialchars($_flash_title).' 설정이 저장되었습니다.';
     } elseif ($_flash['type'] === 'reset') {
+        $_flash_title = $_schemas[$_flash['key']]['title'];
         echo htmlspecialchars($_flash_title).' 설정이 기본값으로 리셋되었습니다.';
+    } elseif ($_flash['type'] === 'sync') {
+        $_s = $_flash['sync'] ?? ['table_created' => false, 'inserted' => []];
+        $_msgs = [];
+        if (!empty($_s['table_created'])) $_msgs[] = 'g5_setting 테이블 생성됨';
+        if (!empty($_s['inserted'])) {
+            $_titles = [];
+            foreach ($_s['inserted'] as $_k) {
+                $_titles[] = ($_schemas[$_k]['title'] ?? $_k).' ('.$_k.')';
+            }
+            $_msgs[] = count($_s['inserted']).'개 그룹 추가: '.implode(', ', $_titles);
+        }
+        if (!$_msgs) $_msgs[] = '추가할 그룹이 없습니다 — 모든 schema 가 이미 동기화됨.';
+        echo htmlspecialchars(implode(' · ', $_msgs));
     } ?>
 </div>
 <?php } ?>
 
-<?php if ($_edit_key === '') { ?>
+<?php if ($_edit_key === '') {
+    // 활성 그룹 = DB 에 row 가 있는 schema 만 (목록 노출 기준)
+    $_active_schemas = array_intersect_key($_schemas, $_saved_keys);
+?>
     <!-- ─── 목록 모드 ─── -->
     <?php if (!$_schemas) { ?>
         <div class="setting-empty">
             아직 등록된 설정 schema 가 없습니다. <code>app/lib/setting.lib.php</code> 의 <code>SETTINGS_SCHEMA</code> 배열에 항목을 추가하세요.
+        </div>
+    <?php } elseif (!$_active_schemas) { ?>
+        <div class="setting-empty">
+            활성화된 설정 그룹이 없습니다. 우측 상단의 <strong>[⟳ 업데이트]</strong> 버튼을 눌러 schema 의 그룹들을 활성화하세요.
         </div>
     <?php } else { ?>
         <div class="setting-list-wrap">
@@ -224,23 +276,15 @@ admin_layout_start($g5['title'], 'core');
                         <th class="setting-col-key">키</th>
                         <th class="setting-col-title">제목</th>
                         <th class="setting-col-desc">설명</th>
-                        <th class="setting-col-status">상태</th>
                         <th class="setting-col-edit"></th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($_schemas as $_k => $_s) { ?>
+                <?php foreach ($_active_schemas as $_k => $_s) { ?>
                     <tr>
                         <td><code><?php echo htmlspecialchars($_k); ?></code></td>
                         <td class="setting-cell-title"><?php echo htmlspecialchars($_s['title']); ?></td>
                         <td class="setting-cell-desc"><?php echo htmlspecialchars($_s['description'] ?? ''); ?></td>
-                        <td>
-                            <?php if (isset($_saved_keys[$_k])) { ?>
-                                <span class="setting-badge setting-badge-saved">✓ 저장됨</span>
-                            <?php } else { ?>
-                                <span class="setting-badge setting-badge-default">기본값</span>
-                            <?php } ?>
-                        </td>
                         <td class="setting-col-edit">
                             <a href="/admin/setting?key=<?php echo urlencode($_k); ?>" class="setting-btn-edit">편집</a>
                         </td>
@@ -390,6 +434,11 @@ admin_layout_start($g5['title'], 'core');
 .setting-btn-edit:hover { background: var(--slate-200); }
 [data-theme="dark"] .setting-btn-edit { background: var(--slate-700); color: var(--slate-100); border-color: var(--slate-600); }
 [data-theme="dark"] .setting-btn-edit:hover { background: var(--slate-600); }
+
+.setting-btn-sync    { background: #3b82f6; color: #fff; border: 1px solid #3b82f6; padding: 0.45rem 0.9rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.setting-btn-sync:hover { background: #2563eb; border-color: #2563eb; }
+[data-theme="dark"] .setting-btn-sync { background: #2563eb; border-color: #2563eb; }
+[data-theme="dark"] .setting-btn-sync:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
 /* 편집 카드 */
 .setting-card        { background: #fff; border: 1px solid var(--slate-200); border-radius: 0.75rem; padding: 1.25rem 1.5rem; }

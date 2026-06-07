@@ -61,6 +61,7 @@ ob_start(function ($html) {
         'formmail', 'formmail_send', 'profile', 'point',
         'scrap', 'scrap_delete', 'scrap_popin', 'scrap_popin_update',
         'poll_result', 'poll_update', 'poll_etc_update', 'poll_etc_update_mail',
+        'sns_send',
     ];
     // 0) 내용관리 URL 정리: /content.php?co_id=X[&...] → /content/X[?...]
     $html = preg_replace_callback(

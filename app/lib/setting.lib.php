@@ -64,6 +64,29 @@ HTML,
         ],
     ],
 
+    'social_share' => [
+        'title'       => '소셜 공유',
+        'description' => '게시판 view 의 [공유] 모달에서 직접 공유에 사용되는 외부 SDK 키. 비워두면 Web Share API / 클립보드 fallback.',
+        'notes' => <<<HTML
+<h4>🟡 카카오톡 공유</h4>
+<ol>
+    <li><a href="https://developers.kakao.com" target="_blank" rel="noopener">developers.kakao.com</a> 로그인 → <strong>내 애플리케이션</strong> → <strong>애플리케이션 추가하기</strong></li>
+    <li>앱 이름 / 사업자명 입력 → 저장</li>
+    <li>방금 만든 앱 클릭 → 왼쪽 사이드바 <strong>앱 설정 → 앱 → 일반</strong></li>
+    <li>오른쪽 패널의 <strong>앱 키</strong> 섹션에서 <strong>JavaScript 키</strong> 복사</li>
+    <li>같은 페이지 아래로 스크롤 → <strong>플랫폼</strong> 또는 <strong>사이트 도메인</strong> 섹션 → [수정] → 운영 도메인 추가 (예: <code>https://example.com</code>) → 저장</li>
+    <li>왼쪽 사이드바 <strong>제품 설정 → 카카오톡 메시지</strong> → <strong>활성화 설정</strong> ON</li>
+    <li>여기 폼의 카카오 JavaScript 키 필드에 위 키 붙여넣기 → 저장</li>
+</ol>
+<p>설정 후 게시판 view 에서 [공유] → [카카오톡] 클릭 시 카카오톡 공유창이 직접 열린다 (피드 형태).
+키를 비우면 모바일에선 Web Share API (native share sheet), 데스크탑에선 클립보드 복사로 fallback.</p>
+HTML,
+        'fields' => [
+            'kakao_js_key' => ['label' => '카카오 JavaScript 키', 'type' => 'text', 'default' => '',
+                               'help'  => 'developers.kakao.com 내 앱의 JavaScript 키. 도메인이 앱의 Web 플랫폼에 등록되어 있어야 함.'],
+        ],
+    ],
+
     // 새 설정 그룹은 여기에 추가
 ];
 
@@ -150,4 +173,63 @@ function setting_put(string $key, array $values): void
 function setting_schemas(): array
 {
     return SETTINGS_SCHEMA;
+}
+
+/**
+ * Schema 와 DB 동기화 (idempotent).
+ *
+ * 1) g5_setting 테이블 없으면 CREATE TABLE IF NOT EXISTS
+ * 2) SETTINGS_SCHEMA 의 모든 그룹 중 DB 에 row 없는 것만 default 값으로 INSERT
+ *    (기존 row 의 사용자 입력값은 절대 덮어쓰지 않음)
+ *
+ * @return array{table_created: bool, inserted: list<string>} 추가 결과
+ */
+function setting_sync(): array
+{
+    $result = ['table_created' => false, 'inserted' => []];
+    $table = G5_TABLE_PREFIX.'setting';
+
+    // 1) 테이블 존재 확인 후 CREATE
+    $exists = false;
+    try {
+        sql_pdo_query("SELECT 1 FROM `".$table."` LIMIT 1");
+        $exists = true;
+    } catch (\Throwable) {
+        // 미존재 → CREATE
+    }
+    if (!$exists) {
+        sql_pdo_query(
+            "CREATE TABLE IF NOT EXISTS `".$table."` (
+                `s_key`     varchar(64)  NOT NULL,
+                `s_value`   longtext     NOT NULL,
+                `s_updated` datetime     DEFAULT NULL,
+                PRIMARY KEY (`s_key`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        );
+        $result['table_created'] = true;
+    }
+
+    // 2) 저장된 키 목록
+    $saved = [];
+    $rs = sql_pdo_query("SELECT s_key FROM `".$table."`");
+    while ($r = $rs->fetch(PDO::FETCH_ASSOC)) {
+        $saved[$r['s_key']] = true;
+    }
+
+    // 3) schema 중 없는 그룹만 default 로 INSERT
+    foreach (SETTINGS_SCHEMA as $key => $schema) {
+        if (isset($saved[$key])) continue;
+        $defaults = [];
+        foreach ($schema['fields'] as $fkey => $field) {
+            $defaults[$fkey] = $field['default'];
+        }
+        $json = json_encode($defaults, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        sql_pdo_query(
+            "INSERT INTO `".$table."` (s_key, s_value) VALUES (?, ?)",
+            [$key, $json]
+        );
+        $result['inserted'][] = $key;
+    }
+
+    return $result;
 }

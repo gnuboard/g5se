@@ -18,6 +18,21 @@ add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orionca
 add_stylesheet('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset/tailwind.min.css">', -7);
 add_javascript('<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js"></script>', -1);
 
+// 카카오 SDK 자동 로드 — modern admin 의 '소셜 공유' (social_share) 그룹에 카카오 JS 키가 등록됐을 때만.
+// share modal 의 [카카오톡] 버튼이 Kakao.Share.sendDefault 로 직접 공유 (SDK 없으면 navigator.share / clipboard fallback).
+$_kakao_js_key = '';
+if (function_exists('setting')) {
+    try {
+        $_social = setting('social_share');
+        $_kakao_js_key = isset($_social['kakao_js_key']) ? trim((string)$_social['kakao_js_key']) : '';
+    } catch (\Throwable $e) { /* schema 미등록 시 silent — fallback 동작 */ }
+}
+if ($_kakao_js_key !== '') {
+    add_javascript('<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" integrity="sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Hs90nka" crossorigin="anonymous"></script>', -2);
+    add_javascript('<script>window.kakao_javascript_apikey = '.json_encode($_kakao_js_key).';</script>', -1);
+}
+unset($_kakao_js_key);
+
 // 다크모드 FOUC 방지: localStorage / 시스템 설정으로 페인트 전에 data-theme 적용
 add_javascript('<script>(function(){try{var t=localStorage.getItem("m-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})();</script>', -100);
 
@@ -652,6 +667,93 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 [data-theme="dark"] .hd_pops_footer button,
 [data-theme="dark"] .hd_pops_footer .hd_pops_reject,
 [data-theme="dark"] .hd_pops_footer .hd_pops_close { background: #2a3344 !important; color: var(--m-text-soft) !important; }
+
+/* 게시판 view 의 기본 SNS 영역은 숨김 — modern UI 는 .m-view-scrap 의 [공유] 버튼 + 모달 사용.
+   JS 가 #bo_v_sns 의 link 들을 파싱해 모달 옵션으로 옮긴다. */
+.m-shell #bo_v_sns { display: none !important; }
+
+/* .m-view-scrap (본문 하단의 스크랩 + 공유 칩 라인) — .m-view-actions 와 동일한
+   m-icon-btn 칩 layout. JS 가 [공유] 버튼을 스크랩 anchor 우측에 inject. */
+.m-view-scrap {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 14px;
+    justify-content: flex-end;
+}
+.m-view-scrap .m-icon-btn {
+    width: auto; padding: 6px 12px;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: var(--m-text-sm); color: var(--m-text-soft);
+}
+.m-view-scrap .m-icon-btn span { font-size: var(--m-text-sm); }
+@media (max-width: 540px) {
+    .m-view-scrap { flex-wrap: nowrap; gap: 2px; }
+    .m-view-scrap .m-icon-btn { padding: 6px 8px; gap: 3px; }
+    .m-view-scrap .m-icon-btn span { font-size: var(--m-text-xs); }
+}
+
+/* 공유 모달 */
+.m-share-modal[hidden] { display: none !important; }
+.m-share-modal {
+    position: fixed; inset: 0; z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.5);
+    padding: 16px;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+.m-share-modal.is-open { opacity: 1; }
+.m-share-card {
+    position: relative;
+    background: var(--m-surface);
+    border-radius: var(--m-radius-lg);
+    padding: 20px;
+    max-width: 360px; width: 100%;
+    box-shadow: var(--m-shadow-md);
+    transform: translateY(10px);
+    transition: transform .18s cubic-bezier(0.4,0,0.2,1);
+}
+.m-share-modal.is-open .m-share-card { transform: translateY(0); }
+.m-share-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.m-share-title { font-size: var(--m-text-lg); font-weight: 700; color: var(--m-text); margin: 0; }
+.m-share-close {
+    background: transparent; border: 0; cursor: pointer;
+    padding: 6px 10px; border-radius: var(--m-radius-sm);
+    color: var(--m-text-muted); font-size: 16px;
+}
+.m-share-close:hover { background: var(--m-surface-2); color: var(--m-text); }
+.m-share-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.m-share-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--m-radius);
+    background: var(--m-surface-2);
+    color: var(--m-text);
+    border: 1px solid var(--m-border);
+    text-decoration: none;
+    font-size: var(--m-text-base); font-weight: 600;
+    cursor: pointer; text-align: left;
+    transition: background .15s, border-color .15s, color .15s, transform .15s;
+}
+.m-share-btn:hover { transform: translateY(-1px); }
+.m-share-btn img, .m-share-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.m-share-btn.sns_f:hover  { background: rgba(24,119,242,0.10); border-color: #1877f2; color: #1877f2; }
+.m-share-btn.sns_x:hover  { background: var(--m-text); border-color: var(--m-text); color: var(--m-bg); }
+.m-share-btn.sns_k:hover  { background: rgba(254,229,0,0.20); border-color: #fee500; color: #3d2900; }
+[data-theme="dark"] .m-share-btn.sns_k:hover { color: #fee500; }
+.m-share-btn.sns_threads:hover { background: var(--m-text); border-color: var(--m-text); color: var(--m-bg); }
+.m-share-btn.sns_copy:hover { background: var(--m-primary-soft); border-color: var(--m-primary); color: var(--m-primary); }
+.m-share-toast {
+    position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
+    background: var(--m-text); color: var(--m-bg);
+    padding: 6px 12px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s;
+}
+.m-share-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+@media (max-width: 480px) {
+    .m-share-grid { grid-template-columns: 1fr; }
+}
 </style>
 <?php
 // 위 <style> 블록을 ob 에서 꺼내 add_stylesheet 큐로 등록 (default.css 이후에 삽입).
@@ -765,3 +867,208 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 JS;
 add_javascript($_modern_toggle_js, 100);
+
+// ──────────────────────────────────────────────
+// 게시판 view 의 공유 버튼 + 모달 — 기존 #bo_v_sns 의 link 들을 파싱해서
+// .m-view-actions 안에 [공유] m-icon-btn inject 하고 모달 열기.
+// + 링크 복사 (clipboard API) 옵션 추가.
+// ──────────────────────────────────────────────
+$_modern_share_js = <<<'JS'
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 게시판 view 페이지에서만 활성화 — #bo_v_sns 존재가 indicator
+    var sns = document.getElementById("bo_v_sns");
+    if (!sns) return;
+    // [공유] 위치: .m-view-scrap (하단 영역) 의 스크랩 우측. 스크랩 없으면 새 .m-view-scrap 생성해서
+    // .m-view-react (추천/비추천 영역) 직전에 둠. .m-view-react 도 없으면 #bo_v_atc 다음.
+    var scrap = document.querySelector(".m-view-scrap");
+    if (!scrap) {
+        scrap = document.createElement("div");
+        scrap.className = "m-view-scrap";
+        var react = document.querySelector(".m-view-react");
+        if (react && react.parentNode) {
+            react.parentNode.insertBefore(scrap, react);
+        } else {
+            var atc = document.getElementById("bo_v_atc");
+            if (atc && atc.parentNode) atc.parentNode.insertBefore(scrap, atc.nextSibling);
+            else return;
+        }
+    }
+
+    // 페이지 URL / title 자체 추출 (sns_send.php 의존 안 함 — 직접 외부 share URL 생성)
+    var pageUrl   = window.location.href;
+    var pageTitle = document.title || (document.querySelector("h1") ? document.querySelector("h1").textContent.trim() : "");
+
+    // SNS 옵션 정의
+    var SNS = [
+        {
+            key: "sns_f", label: "페이스북",
+            href: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(pageUrl),
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>'
+        },
+        {
+            key: "sns_x", label: "X",
+            href: "https://x.com/intent/post?url=" + encodeURIComponent(pageUrl) + "&text=" + encodeURIComponent(pageTitle),
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'
+        },
+        {
+            key: "sns_threads", label: "Threads",
+            href: "https://www.threads.net/intent/post?text=" + encodeURIComponent(pageTitle + "\n" + pageUrl),
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.255 11.083a8.4 8.4 0 0 0-.32-.144c-.188-3.47-2.084-5.456-5.262-5.476h-.043c-1.9 0-3.482.812-4.455 2.287l1.747 1.198c.728-1.103 1.87-1.337 2.71-1.337h.029c1.044.007 1.832.31 2.343.902.371.43.62 1.026.745 1.776a13.5 13.5 0 0 0-2.998-.144c-3.015.175-4.954 1.933-4.823 4.378.066 1.24.685 2.307 1.74 3.003.893.589 2.043.876 3.238.812 1.578-.087 2.817-.687 3.681-1.785.658-.836 1.075-1.92 1.258-3.282.752.453 1.31 1.05 1.618 1.767.523 1.22.554 3.224-1.082 4.86-1.435 1.432-3.16 2.052-5.764 2.071-2.888-.021-5.07-.948-6.485-2.755C7.798 17.532 7.092 15.43 7.064 12c.028-3.43.734-5.531 2.084-7.244C10.564 2.948 12.746 2.022 15.634 2c2.91.022 5.13.952 6.6 2.766.72.889 1.263 2.007 1.62 3.314l-2.151.575c-.286-1.05-.696-1.937-1.224-2.65-.928-1.255-2.367-1.926-4.279-1.946-3.03.021-5.16.93-6.331 2.696-1.103 1.66-1.676 4.044-1.706 7.288.03 3.244.603 5.627 1.706 7.288 1.171 1.766 3.302 2.675 6.331 2.696 2.27-.012 3.79-.564 5.067-1.847.92-.922 1.467-2.2 1.456-3.392-.011-.804-.236-1.535-.661-2.17z"/></svg>'
+        },
+        {
+            // 카카오: Web Share API (모바일 native sheet 에서 카카오톡 선택 가능) + 데스크탑 fallback
+            // = 클립보드 복사 후 toast "링크 복사됨 — 카카오톡에 붙여넣어 공유"
+            key: "sns_k", label: "카카오톡",
+            href: null,  // 클릭 시 JS 핸들러 — share API 또는 copy
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.8 1.857 5.265 4.638 6.66l-1.18 4.31c-.103.376.296.69.628.49l5.158-3.413c.247.025.496.043.756.043 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>',
+            customClick: function (showToast, setToast) {
+                // 1) Kakao SDK (cf_kakao_js_apikey 설정 시 자동 로드됨) — 직접 카카오톡 공유
+                if (window.Kakao && window.kakao_javascript_apikey) {
+                    try {
+                        if (!Kakao.isInitialized()) Kakao.init(window.kakao_javascript_apikey);
+                        var KakaoShare = Kakao.Share || Kakao.Link;
+                        if (KakaoShare && KakaoShare.sendDefault) {
+                            KakaoShare.sendDefault({
+                                objectType: "feed",
+                                content: {
+                                    title: pageTitle,
+                                    description: pageUrl,
+                                    link: { mobileWebUrl: pageUrl, webUrl: pageUrl }
+                                }
+                            });
+                            return;
+                        }
+                    } catch (e) {}
+                }
+                // 2) Web Share API (모바일 native sheet 에서 카카오톡 선택 가능)
+                if (navigator.share) {
+                    navigator.share({ title: pageTitle, url: pageUrl }).catch(function () {});
+                    return;
+                }
+                // 3) 클립보드 fallback
+                var fallbackCopy = function (text) {
+                    var ta = document.createElement("textarea");
+                    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+                    document.body.appendChild(ta); ta.select();
+                    try { document.execCommand("copy"); setToast("링크가 복사되었습니다 — 카카오톡에 붙여넣어 공유"); showToast(); } catch (e) {}
+                    document.body.removeChild(ta);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(pageTitle + "\n" + pageUrl).then(function () {
+                        setToast("링크가 복사되었습니다 — 카카오톡에 붙여넣어 공유");
+                        showToast();
+                    }).catch(function () { fallbackCopy(pageTitle + "\n" + pageUrl); });
+                } else {
+                    fallbackCopy(pageTitle + "\n" + pageUrl);
+                }
+            }
+        }
+    ];
+
+    // [공유] m-icon-btn inject
+    var shareBtn = document.createElement("button");
+    shareBtn.type = "button";
+    shareBtn.className = "m-icon-btn";
+    shareBtn.title = "공유";
+    shareBtn.innerHTML =
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>' +
+        '<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>' +
+        '</svg><span>공유</span>';
+    // 사용자 요구: 스크랩 우측 (스크랩 anchor 의 nextSibling 위치).
+    var scrapAnchor = scrap.querySelector("a.m-icon-btn");
+    if (scrapAnchor) {
+        scrap.insertBefore(shareBtn, scrapAnchor.nextSibling);
+    } else {
+        scrap.appendChild(shareBtn);
+    }
+
+    // 모달
+    var modal = document.createElement("div");
+    modal.className = "m-share-modal";
+    modal.hidden = true;
+    modal.innerHTML =
+        '<div class="m-share-card" role="dialog" aria-modal="true" aria-label="공유">' +
+            '<header class="m-share-head">' +
+                '<h3 class="m-share-title">공유</h3>' +
+                '<button type="button" class="m-share-close" aria-label="닫기">✕</button>' +
+            '</header>' +
+            '<div class="m-share-grid"></div>' +
+            '<div class="m-share-toast">링크가 복사되었습니다</div>' +
+        '</div>';
+    var grid = modal.querySelector(".m-share-grid");
+    var toast = modal.querySelector(".m-share-toast");
+
+    function setToast(text) { toast.textContent = text; }
+    function showToast() {
+        toast.classList.add("is-show");
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(function () { toast.classList.remove("is-show"); }, 2000);
+    }
+
+    SNS.forEach(function (s) {
+        var el;
+        if (s.customClick) {
+            el = document.createElement("button");
+            el.type = "button";
+            el.addEventListener("click", function () { s.customClick(showToast, setToast); });
+        } else {
+            el = document.createElement("a");
+            el.href = s.href;
+            el.target = "_blank";
+            el.rel = "noopener";
+        }
+        el.className = "m-share-btn " + s.key;
+        el.innerHTML = s.icon + '<span>' + s.label + '</span>';
+        grid.appendChild(el);
+    });
+
+    // 링크 복사
+    var copyBtn = document.createElement("button");
+    copyBtn.type = "button";
+    copyBtn.className = "m-share-btn sns_copy";
+    copyBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="9" y="9" width="13" height="13" rx="2"/>' +
+        '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+        '</svg><span>링크 복사</span>';
+    copyBtn.addEventListener("click", function () {
+        function done() { setToast("링크가 복사되었습니다"); showToast(); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(pageUrl).then(done).catch(function () {
+                var ta = document.createElement("textarea");
+                ta.value = pageUrl; ta.style.position = "fixed"; ta.style.opacity = "0";
+                document.body.appendChild(ta); ta.select();
+                try { document.execCommand("copy"); done(); } catch (e) {}
+                document.body.removeChild(ta);
+            });
+        } else {
+            var ta = document.createElement("textarea");
+            ta.value = pageUrl; ta.style.position = "fixed"; ta.style.opacity = "0";
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand("copy"); done(); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+    });
+    grid.appendChild(copyBtn);
+    document.body.appendChild(modal);
+
+    function open() {
+        modal.hidden = false;
+        requestAnimationFrame(function () { modal.classList.add("is-open"); });
+        document.body.style.overflow = "hidden";
+    }
+    function close() {
+        modal.classList.remove("is-open");
+        document.body.style.overflow = "";
+        setTimeout(function () { if (!modal.classList.contains("is-open")) modal.hidden = true; }, 200);
+    }
+    shareBtn.addEventListener("click", function (e) { e.preventDefault(); open(); });
+    modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+    modal.querySelector(".m-share-close").addEventListener("click", close);
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !modal.hidden) close(); });
+});
+</script>
+JS;
+add_javascript($_modern_share_js, 110);

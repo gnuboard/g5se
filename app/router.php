@@ -64,6 +64,9 @@ class Router
         // 프로필 / 자기소개 (popup)
         '/profile'                => 'bbs/profile.php',
 
+        // SNS 공유 redirect (페이스북 / 트위터 / Google+ 등 외부 share URL)
+        '/sns_send'               => 'bbs/sns_send.php',
+
         // 포인트 내역
         '/point'                  => 'bbs/point.php',
 
