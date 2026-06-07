@@ -1404,10 +1404,6 @@ $(function(){
     });
 });
 
-function board_copy(bo_table) {
-    openBoardCopyModal(bo_table);
-}
-
 function set_point(f) {
     if (f.chk_grp_point.checked) {
         f.bo_read_point.value = "<?php echo $config['cf_read_point'] ?>";
