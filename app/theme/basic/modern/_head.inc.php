@@ -653,39 +653,71 @@ a.pg_page:hover, a.pg_start:hover, a.pg_prev:hover, a.pg_next:hover, a.pg_end:ho
 [data-theme="dark"] .hd_pops_footer .hd_pops_reject,
 [data-theme="dark"] .hd_pops_footer .hd_pops_close { background: #2a3344 !important; color: var(--m-text-soft) !important; }
 
-/* 게시판 view 의 SNS 공유 버튼 (#bo_v_sns) — 토큰 기반 칩 형태.
-   기본 마크업: <ul id="bo_v_sns"><li><a class="sns_f|sns_t|sns_g|sns_k|...">
-   <img .../> <span>...</span></a></li>… */
-.m-shell #bo_v_sns {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    list-style: none; margin: 16px 0 24px; padding: 0;
-    justify-content: flex-end;
+/* 게시판 view 의 기본 SNS 영역은 숨김 — modern UI 는 .m-view-actions 의 [공유] 버튼 + 모달 사용.
+   JS 가 #bo_v_sns 의 link 들을 파싱해 모달 옵션으로 옮긴다. */
+.m-shell #bo_v_sns { display: none !important; }
+
+/* 공유 모달 */
+.m-share-modal[hidden] { display: none !important; }
+.m-share-modal {
+    position: fixed; inset: 0; z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.5);
+    padding: 16px;
+    opacity: 0;
+    transition: opacity .15s ease;
 }
-.m-shell #bo_v_sns li { margin: 0; padding: 0; }
-.m-shell #bo_v_sns li a {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-radius: 8px;
-    background: var(--m-surface); color: var(--m-text);
+.m-share-modal.is-open { opacity: 1; }
+.m-share-card {
+    position: relative;
+    background: var(--m-surface);
+    border-radius: var(--m-radius-lg);
+    padding: 20px;
+    max-width: 360px; width: 100%;
+    box-shadow: var(--m-shadow-md);
+    transform: translateY(10px);
+    transition: transform .18s cubic-bezier(0.4,0,0.2,1);
+}
+.m-share-modal.is-open .m-share-card { transform: translateY(0); }
+.m-share-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.m-share-title { font-size: var(--m-text-lg); font-weight: 700; color: var(--m-text); margin: 0; }
+.m-share-close {
+    background: transparent; border: 0; cursor: pointer;
+    padding: 6px 10px; border-radius: var(--m-radius-sm);
+    color: var(--m-text-muted); font-size: 16px;
+}
+.m-share-close:hover { background: var(--m-surface-2); color: var(--m-text); }
+.m-share-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.m-share-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--m-radius);
+    background: var(--m-surface-2);
+    color: var(--m-text);
     border: 1px solid var(--m-border);
     text-decoration: none;
     font-size: var(--m-text-base); font-weight: 600;
+    cursor: pointer; text-align: left;
     transition: background .15s, border-color .15s, color .15s, transform .15s;
 }
-.m-shell #bo_v_sns li a:hover {
-    background: var(--m-surface-2);
-    border-color: var(--m-border-hover);
-    transform: translateY(-1px);
+.m-share-btn:hover { transform: translateY(-1px); }
+.m-share-btn img, .m-share-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.m-share-btn.sns_f:hover { background: rgba(24,119,242,0.10); border-color: #1877f2; color: #1877f2; }
+.m-share-btn.sns_t:hover { background: rgba(29,161,242,0.10); border-color: #1da1f2; color: #1da1f2; }
+.m-share-btn.sns_g:hover { background: rgba(219,68,55,0.10); border-color: #db4437; color: #db4437; }
+.m-share-btn.sns_k:hover { background: rgba(254,229,0,0.18); border-color: #fee500; color: #3d2900; }
+.m-share-btn.sns_copy:hover { background: var(--m-primary-soft); border-color: var(--m-primary); color: var(--m-primary); }
+.m-share-toast {
+    position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
+    background: var(--m-text); color: var(--m-bg);
+    padding: 6px 12px; border-radius: var(--m-radius-sm);
+    font-size: var(--m-text-sm); white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s;
 }
-.m-shell #bo_v_sns li a img { width: 18px; height: 18px; display: block; flex-shrink: 0; }
-/* SNS 별 brand color hover */
-.m-shell #bo_v_sns li a.sns_f:hover { background: rgba(24,119,242,0.10); border-color: #1877f2; color: #1877f2; }
-.m-shell #bo_v_sns li a.sns_t:hover { background: rgba(29,161,242,0.10); border-color: #1da1f2; color: #1da1f2; }
-.m-shell #bo_v_sns li a.sns_g:hover { background: rgba(219,68,55,0.10); border-color: #db4437; color: #db4437; }
-.m-shell #bo_v_sns li a.sns_k:hover { background: rgba(254,229,0,0.18); border-color: #fee500; color: #3d2900; }
-@media (max-width: 640px) {
-    .m-shell #bo_v_sns { justify-content: stretch; gap: 6px; }
-    .m-shell #bo_v_sns li { flex: 1 1 calc(50% - 3px); min-width: 0; }
-    .m-shell #bo_v_sns li a { width: 100%; justify-content: center; padding: 8px 10px; font-size: var(--m-text-sm); }
+.m-share-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+@media (max-width: 480px) {
+    .m-share-grid { grid-template-columns: 1fr; }
 }
 </style>
 <?php
@@ -800,3 +832,130 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 JS;
 add_javascript($_modern_toggle_js, 100);
+
+// ──────────────────────────────────────────────
+// 게시판 view 의 공유 버튼 + 모달 — 기존 #bo_v_sns 의 link 들을 파싱해서
+// .m-view-actions 안에 [공유] m-icon-btn inject 하고 모달 열기.
+// + 링크 복사 (clipboard API) 옵션 추가.
+// ──────────────────────────────────────────────
+$_modern_share_js = <<<'JS'
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var sns = document.getElementById("bo_v_sns");
+    if (!sns) return;
+    var actions = document.querySelector("#bo_v_top.m-view-actions");
+    if (!actions) return;
+
+    // 기존 sns link 들 parse
+    var SNS_ICONS = {
+        sns_f: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>',
+        sns_t: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.85.38-1.78.64-2.75.75 1-.6 1.76-1.55 2.12-2.68-.93.55-1.96.95-3.06 1.17-.88-.94-2.13-1.53-3.51-1.53-2.66 0-4.81 2.16-4.81 4.81 0 .38.04.75.13 1.1C6.69 9.43 3.67 7.79 1.64 5.31c-.41.71-.65 1.54-.65 2.42 0 1.67.85 3.15 2.14 4.01-.79-.03-1.53-.24-2.18-.6v.06c0 2.33 1.66 4.28 3.86 4.72-.4.11-.83.17-1.27.17-.31 0-.61-.03-.91-.08.61 1.91 2.39 3.3 4.5 3.34-1.65 1.29-3.73 2.06-5.99 2.06-.39 0-.77-.02-1.15-.07 2.13 1.37 4.66 2.16 7.38 2.16 8.85 0 13.69-7.33 13.69-13.69 0-.21-.01-.42-.02-.62.94-.68 1.76-1.53 2.41-2.5z"/></svg>'
+    };
+    var SNS_LABELS = {
+        sns_f: "페이스북",
+        sns_t: "트위터",
+        sns_g: "구글+",
+        sns_k: "카카오톡"
+    };
+    var sources = [];
+    sns.querySelectorAll("a").forEach(function (a) {
+        var klass = "";
+        ["sns_f","sns_t","sns_g","sns_k"].forEach(function (c) { if (a.classList.contains(c)) klass = c; });
+        sources.push({ href: a.href, label: SNS_LABELS[klass] || "공유", className: klass });
+    });
+    if (!sources.length) return;
+
+    // [공유] m-icon-btn inject — .m-view-kebab 직전 (또는 actions 끝)
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "m-icon-btn";
+    btn.title = "공유";
+    btn.innerHTML =
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>' +
+        '<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>' +
+        '</svg><span>공유</span>';
+    var kebab = actions.querySelector(".m-view-kebab");
+    if (kebab) actions.insertBefore(btn, kebab);
+    else actions.appendChild(btn);
+
+    // 모달 마크업
+    var modal = document.createElement("div");
+    modal.className = "m-share-modal";
+    modal.hidden = true;
+    modal.innerHTML =
+        '<div class="m-share-card" role="dialog" aria-modal="true" aria-label="공유">' +
+            '<header class="m-share-head">' +
+                '<h3 class="m-share-title">공유</h3>' +
+                '<button type="button" class="m-share-close" aria-label="닫기">✕</button>' +
+            '</header>' +
+            '<div class="m-share-grid"></div>' +
+            '<div class="m-share-toast">링크가 복사되었습니다</div>' +
+        '</div>';
+    var grid = modal.querySelector(".m-share-grid");
+    sources.forEach(function (s) {
+        var a = document.createElement("a");
+        a.href = s.href;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.className = "m-share-btn " + s.className;
+        var iconHTML = SNS_ICONS[s.className] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>';
+        a.innerHTML = iconHTML + '<span>' + s.label + '</span>';
+        grid.appendChild(a);
+    });
+    // 링크 복사
+    var copyBtn = document.createElement("button");
+    copyBtn.type = "button";
+    copyBtn.className = "m-share-btn sns_copy";
+    copyBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="9" y="9" width="13" height="13" rx="2"/>' +
+        '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+        '</svg><span>링크 복사</span>';
+    grid.appendChild(copyBtn);
+    document.body.appendChild(modal);
+
+    function showToast() {
+        var t = modal.querySelector(".m-share-toast");
+        t.classList.add("is-show");
+        clearTimeout(t._timer);
+        t._timer = setTimeout(function () { t.classList.remove("is-show"); }, 1800);
+    }
+    function fallbackCopy(text) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); showToast(); } catch (e) {}
+        document.body.removeChild(ta);
+    }
+    copyBtn.addEventListener("click", function () {
+        var url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(showToast).catch(function () { fallbackCopy(url); });
+        } else {
+            fallbackCopy(url);
+        }
+    });
+
+    function open() {
+        modal.hidden = false;
+        requestAnimationFrame(function () { modal.classList.add("is-open"); });
+        document.body.style.overflow = "hidden";
+    }
+    function close() {
+        modal.classList.remove("is-open");
+        document.body.style.overflow = "";
+        setTimeout(function () { if (!modal.classList.contains("is-open")) modal.hidden = true; }, 200);
+    }
+    btn.addEventListener("click", function (e) { e.preventDefault(); open(); });
+    modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+    modal.querySelector(".m-share-close").addEventListener("click", close);
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !modal.hidden) close();
+    });
+});
+</script>
+JS;
+add_javascript($_modern_share_js, 110);
