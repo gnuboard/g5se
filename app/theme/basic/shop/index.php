@@ -37,13 +37,13 @@ include_once(G5_THEME_SHOP_PATH.'/shop.head.php');
 <script>
 //히트상품
 $(function(){
-    var hit_smt_val = parseInt($('#idx_hit .smt_40').attr("data-value"));
-    
+    var hit_smt_val = parseInt($('#idx_hit .owl-carousel').attr("data-value"));
+
     if(! hit_smt_val){
         hit_smt_val = 5;
     }
 
-	$('#idx_hit .smt_40').owlCarousel({
+	$('#idx_hit .owl-carousel').owlCarousel({
 	    loop:true,
 	    nav:true,
 	    autoplay:true,
