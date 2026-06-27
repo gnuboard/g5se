@@ -10,12 +10,15 @@ if ($is_nogood) $colspan++;
 ?>
 
 <!-- 게시판 목록 시작 { -->
+<?php // bo_use_list_view 로 view.php 뒤에 올 땐 골격(m-shell)을 이미 view.skin 이 열어놨으므로 재사용 (중복 방지)
+if (empty($g5['m_board_chrome_open'])) { ?>
 <div class="m-shell">
 
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
     <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
         <div class="m-main-col">
+<?php } ?>
         <?php if (!empty($g5['board_content_head_html']) && empty($g5['board_content_head_rendered'])) {
             $g5['board_content_head_rendered'] = true;
             echo '<div class="m-board-content m-board-content-head">'.$g5['board_content_head_html'].'</div>';

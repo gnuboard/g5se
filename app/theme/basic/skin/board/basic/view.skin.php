@@ -8,6 +8,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 <script src="<?php echo G5_JS_URL; ?>/viewimageresize.js"></script>
 
 <!-- 게시물 읽기 시작 { -->
+<?php $g5['m_board_chrome_open'] = true; // bo_use_list_view 로 list.php 가 뒤따라올 때 골격(m-shell) 중복 방지 ?>
 <div class="m-shell">
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
@@ -260,6 +261,8 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                 $g5['board_content_tail_rendered'] = true;
                 echo '<div class="m-board-content m-board-content-tail">'.$g5['board_content_tail_html'].'</div>';
             } ?>
+        <?php // bo_use_list_view 로 list.php 가 뒤따르면 골격을 닫지 않고 열어둔다 (list.skin 이 닫음). board.php 의 list include 조건과 동일.
+        if (!($board['bo_use_list_view'] && $member['mb_level'] >= $board['bo_list_level'])) { ?>
         </div>
 
         <aside class="m-side-col">
@@ -268,6 +271,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
     </main>
     <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
 </div>
+        <?php } ?>
 
 <style>
 .m-board-content {
