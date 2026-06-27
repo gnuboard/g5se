@@ -24,7 +24,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
                     <?php if ($category_name && !empty($view['ca_name'])) { ?>
                     <span class="m-cate-tag" style="margin-bottom: 8px;"><?php echo $view['ca_name'] ?></span>
                     <?php } ?>
-                    <h1 class="m-view-title"><?php echo cut_str(get_text($view['wr_subject']), 70) ?></h1>
+                    <h1 class="m-view-title"><?php echo $view['subject'] ?></h1>
 
                     <div class="m-view-meta">
                         <span class="m-view-name"><?php echo $view['name'] ?></span>
