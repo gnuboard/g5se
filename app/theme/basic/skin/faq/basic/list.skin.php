@@ -160,7 +160,10 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 }
 .m-faq-cate:hover { border-color: var(--m-primary); color: var(--m-primary); }
 .m-faq-cate.is-active {
-    background: var(--m-primary); border-color: var(--m-primary); color: #fff;
+    background: color-mix(in srgb, var(--m-primary) 12%, transparent);
+    border-color: var(--m-primary);
+    color: var(--m-primary);
+    font-weight: 600;
 }
 
 .m-faq-list {
