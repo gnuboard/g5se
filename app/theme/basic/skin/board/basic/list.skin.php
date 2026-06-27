@@ -156,12 +156,18 @@ if ($is_nogood) $colspan++;
                         </tr>
                         <?php } ?>
                         <?php if (count($list) == 0) { ?>
+                        <?php $is_search_empty = (!empty($stx) || !empty($sca)); ?>
                         <tr><td colspan="<?php echo $colspan ?>" class="m-empty">
                             <div style="padding: 60px 20px; text-align: center; color: var(--m-text-faint);">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-bottom: 8px;">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; display: block; margin: 0 auto 8px;">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
                                 </svg>
-                                <div style="font-size: 14px;">게시물이 없습니다</div>
+                                <div style="font-size: 14px;"><?php echo $is_search_empty ? '검색 결과가 없습니다' : '게시물이 없습니다'; ?></div>
+                                <?php if ($is_search_empty) { ?>
+                                <div style="margin-top: 16px;">
+                                    <a href="<?php echo get_pretty_url($bo_table) ?>" class="m-btn" style="width: auto; padding: 9px 16px; display: inline-flex;">전체 목록 보기</a>
+                                </div>
+                                <?php } ?>
                             </div>
                         </td></tr>
                         <?php } ?>
