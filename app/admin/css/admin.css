@@ -1693,9 +1693,7 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 .config-page,
 .shop-config-page,
 .member-form-page,
-main form.has-admin-floating-actions {
-    padding-top: 3.25rem;
-}
+/* sticky 액션 바가 문서 흐름에서 자리를 차지하므로 별도 본문 패딩 불필요 */
 /* 체크박스 옆 텍스트('사용' 등) 라벨 — 클릭 시 토글 (admin.js 가 생성) */
 .i-chk-label { cursor: pointer; user-select: none; }
 /* 비밀번호 마스킹 — type=text 로 두어 Chrome 내장 비번 매니저(저장된 로그인 목록)를
@@ -1706,19 +1704,19 @@ main form.has-admin-floating-actions {
 .shop-config-page .admin-floating-actions,
 .member-form-page .admin-floating-actions,
 main .admin-floating-actions {
-    position: fixed;
-    right: 1.5rem;
-    top: 4.25rem;
-    z-index: 60;
+    position: sticky;
+    top: 3.5rem;            /* sticky 헤더(h-14=3.5rem) 바로 아래 */
+    z-index: 30;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-    padding: 0.625rem;
+    margin: 0 0 1rem;       /* 아래 본문과 간격 (흐름에서 자리 차지 → 상단 버튼 안 가림) */
+    padding: 0.625rem 0.75rem;
     border: 1px solid var(--slate-300);
     border-radius: 0.75rem;
     background: rgba(255, 255, 255, 0.94);
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
     backdrop-filter: blur(10px);
 }
 [data-theme="dark"] .config-page .admin-floating-actions,
@@ -1734,9 +1732,7 @@ main .admin-floating-actions {
     .shop-config-page .admin-floating-actions,
     .member-form-page .admin-floating-actions,
     main .admin-floating-actions {
-        right: 0.75rem;
-        top: 4rem;
-        left: 0.75rem;
+        top: 3.5rem;
     }
 }
 
