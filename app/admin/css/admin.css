@@ -1740,6 +1740,48 @@ main .admin-floating-actions {
     }
 }
 
+/* 맨 위로 버튼 — 긴 폼에서 스크롤 시 노출. 하단 저장 바 '위'에 배치(겹침 방지). */
+#admin-scroll-top {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 5rem;
+    z-index: 60;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--slate-300);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+    backdrop-filter: blur(10px);
+    color: var(--slate-700);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+#admin-scroll-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+#admin-scroll-top:hover {
+    color: var(--admin-primary-700);
+    border-color: var(--admin-primary-700);
+}
+[data-theme="dark"] #admin-scroll-top {
+    border-color: var(--slate-700);
+    background: rgba(15, 23, 42, 0.92);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36);
+    color: var(--slate-200);
+}
+@media (max-width: 640px) {
+    #admin-scroll-top { right: 0.75rem; bottom: 4rem; }
+}
+
 /* 링크 */
 .legacy-admin-content a {
     color: var(--admin-primary-700);
