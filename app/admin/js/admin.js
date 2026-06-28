@@ -288,6 +288,8 @@ function initAdminScrollTop()
     var btn = document.createElement("button");
     btn.type = "button";
     btn.id = "admin-scroll-top";
+    // 'rounded' 포함 클래스 — .legacy-admin-content button:not([class*="rounded"]) 레거시 버튼 스타일(padding 등) 회피
+    btn.className = "admin-rounded";
     btn.setAttribute("aria-label", "맨 위로");
     btn.setAttribute("title", "맨 위로");
     btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
