@@ -422,7 +422,7 @@ admin_layout_start($g5['title'], 'core');
 .setting-cell-desc   { color: var(--slate-600); font-size: 0.85rem; }
 [data-theme="dark"] .setting-cell-desc { color: var(--slate-400); }
 
-.setting-col-edit    { text-align: right; }
+.setting-col-edit    { text-align: right; white-space: nowrap; width: 1%; }
 
 .setting-badge       { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 0.375rem; font-size: 0.78rem; font-weight: 600; }
 .setting-badge-saved { background: rgba(16,185,129,0.12); color: #047857; }
@@ -430,7 +430,7 @@ admin_layout_start($g5['title'], 'core');
 .setting-badge-default { background: var(--slate-100); color: var(--slate-600); }
 [data-theme="dark"] .setting-badge-default { background: var(--slate-700); color: var(--slate-300); }
 
-.setting-btn-edit    { background: var(--slate-100); color: var(--slate-900); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.82rem; text-decoration: none; }
+.setting-btn-edit    { display: inline-block; white-space: nowrap; background: var(--slate-100); color: var(--slate-900); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.82rem; text-decoration: none; }
 .setting-btn-edit:hover { background: var(--slate-200); }
 [data-theme="dark"] .setting-btn-edit { background: var(--slate-700); color: var(--slate-100); border-color: var(--slate-600); }
 [data-theme="dark"] .setting-btn-edit:hover { background: var(--slate-600); }
