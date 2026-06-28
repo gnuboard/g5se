@@ -278,7 +278,8 @@ function initAdminFloatingActions()
     });
 }
 
-// 긴 관리자 페이지용 "맨 위로" 버튼. 스크롤 시 우하단(하단 저장 바 위)에 나타난다.
+// "맨 위로" 버튼. 하단 플로팅 저장 바가 있으면 그 '안 우측 끝'에 항상 표시(겹침 원천 차단),
+// 없으면 우하단 코너에 고정. (initAdminFloatingActions 이후에 호출되어야 함)
 function initAdminScrollTop()
 {
     if (document.getElementById("admin-scroll-top")) {
@@ -290,34 +291,18 @@ function initAdminScrollTop()
     btn.setAttribute("aria-label", "맨 위로");
     btn.setAttribute("title", "맨 위로");
     btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
-    document.body.appendChild(btn);
 
     btn.addEventListener("click", function() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    // 하단 플로팅 저장 바가 있으면 그 '실제 높이'를 측정해 바로 위에 배치(겹침 방지).
-    // 바가 없으면 CSS 기본값(우하단 코너).
     var bar = document.querySelector("main .admin-floating-actions");
-    function reposition() {
-        // 주의: position:fixed 바는 offsetParent 가 항상 null 이므로 rect 높이로 가시성 판단
-        var rect = bar ? bar.getBoundingClientRect() : null;
-        if (rect && rect.height > 0) {
-            btn.style.bottom = Math.round(window.innerHeight - rect.top + 12) + "px";
-        } else {
-            btn.style.bottom = "";
-        }
+    if (bar) {
+        btn.classList.add("in-bar");   // 바 안 우측 끝, 항상 표시
+        bar.appendChild(btn);
+    } else {
+        document.body.appendChild(btn); // 바 없는 페이지: 우하단 코너
     }
-
-    function onScroll() {
-        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-        btn.classList.toggle("is-visible", y > 300);
-    }
-
-    reposition();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", reposition, { passive: true });
-    onScroll();
 }
 
 // 관리자 폼 입력에 브라우저 autocomplete/오토필 차단 (라벨에 주소/메일/이름 키워드가
