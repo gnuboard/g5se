@@ -500,6 +500,10 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 }
 ?>
 
+<style>
+/* 체크박스 옆 라벨('사용' 등)을 클릭해도 토글되도록 — 클릭 영역 + 커서 */
+.i-chk-label { cursor: pointer; user-select: none; padding: 2px 2px; }
+</style>
 <form name="fconfigform" id="fconfigform" method="post" action="<?php echo G5_ADMIN_URL; ?>/config_form_update" onsubmit="return fconfigform_submit(this);">
     <input type="hidden" name="token" value="<?php echo get_admin_token() ?>" id="token">
     <div class="admin-floating-actions" aria-label="설정 저장">
@@ -544,7 +548,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_use_point">포인트 사용</label></th>
-                        <td colspan="3"><input type="checkbox" name="cf_use_point" value="1" id="cf_use_point" <?php echo $config['cf_use_point'] ? 'checked' : ''; ?>> 사용</td>
+                        <td colspan="3"><input type="checkbox" name="cf_use_point" value="1" id="cf_use_point" <?php echo $config['cf_use_point'] ? 'checked' : ''; ?>> <label for="cf_use_point" class="i-chk-label">사용</label></td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_login_point">로그인시 포인트<strong class="sound_only">필수</strong></label></th>
@@ -986,7 +990,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_use_recommend">추천인제도 사용</label></th>
-                        <td><input type="checkbox" name="cf_use_recommend" value="1" id="cf_use_recommend" <?php echo $config['cf_use_recommend'] ? 'checked' : ''; ?>> 사용</td>
+                        <td><input type="checkbox" name="cf_use_recommend" value="1" id="cf_use_recommend" <?php echo $config['cf_use_recommend'] ? 'checked' : ''; ?>> <label for="cf_use_recommend" class="i-chk-label">사용</label></td>
                         <th scope="row"><label for="cf_recommend_point">추천인 포인트</label></th>
                         <td><input type="text" name="cf_recommend_point" value="<?php echo (int) $config['cf_recommend_point'] ?>" id="cf_recommend_point" class="frm_input"> 점</td>
                     </tr>
@@ -1179,7 +1183,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <th scope="row"><label for="cf_email_use">메일발송 사용</label></th>
                         <td>
                             <?php echo help('체크하지 않으면 메일발송을 아예 사용하지 않습니다. 메일 테스트도 불가합니다.') ?>
-                            <input type="checkbox" name="cf_email_use" value="1" id="cf_email_use" <?php echo $config['cf_email_use'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_use" value="1" id="cf_email_use" <?php echo $config['cf_email_use'] ? 'checked' : ''; ?>> <label for="cf_email_use" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
@@ -1187,14 +1191,14 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <td>
                             <?php $tmp = !(defined('G5_SOCIAL_CERTIFY_MAIL') && G5_SOCIAL_CERTIFY_MAIL) ? '<br>( SNS를 이용한 소셜로그인 한 회원은 회원메일인증을 하지 않습니다. 일반회원에게만 해당됩니다. )' : ''; ?>
                             <?php echo help('메일에 배달된 인증 주소를 클릭하여야 회원으로 인정합니다.' . $tmp); ?>
-                            <input type="checkbox" name="cf_use_email_certify" value="1" id="cf_use_email_certify" <?php echo $config['cf_use_email_certify'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_use_email_certify" value="1" id="cf_use_email_certify" <?php echo $config['cf_use_email_certify'] ? 'checked' : ''; ?>> <label for="cf_use_email_certify" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_formmail_is_member">폼메일 사용 여부</label></th>
                         <td>
                             <?php echo help('체크하지 않으면 비회원도 사용 할 수 있습니다.') ?>
-                            <input type="checkbox" name="cf_formmail_is_member" value="1" id="cf_formmail_is_member" <?php echo $config['cf_formmail_is_member'] ? 'checked' : ''; ?>> 회원만 사용
+                            <input type="checkbox" name="cf_formmail_is_member" value="1" id="cf_formmail_is_member" <?php echo $config['cf_formmail_is_member'] ? 'checked' : ''; ?>> <label for="cf_formmail_is_member" class="i-chk-label">회원만 사용</label>
                         </td>
                     </tr>
                 </tbody>
@@ -1219,35 +1223,35 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <th scope="row"><label for="cf_email_wr_super_admin">최고관리자</label></th>
                         <td>
                             <?php echo help('최고관리자에게 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_wr_super_admin" value="1" id="cf_email_wr_super_admin" <?php echo $config['cf_email_wr_super_admin'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_wr_super_admin" value="1" id="cf_email_wr_super_admin" <?php echo $config['cf_email_wr_super_admin'] ? 'checked' : ''; ?>> <label for="cf_email_wr_super_admin" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_email_wr_group_admin">그룹관리자</label></th>
                         <td>
                             <?php echo help('그룹관리자에게 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_wr_group_admin" value="1" id="cf_email_wr_group_admin" <?php echo $config['cf_email_wr_group_admin'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_wr_group_admin" value="1" id="cf_email_wr_group_admin" <?php echo $config['cf_email_wr_group_admin'] ? 'checked' : ''; ?>> <label for="cf_email_wr_group_admin" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_email_wr_board_admin">게시판관리자</label></th>
                         <td>
                             <?php echo help('게시판관리자에게 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_wr_board_admin" value="1" id="cf_email_wr_board_admin" <?php echo $config['cf_email_wr_board_admin'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_wr_board_admin" value="1" id="cf_email_wr_board_admin" <?php echo $config['cf_email_wr_board_admin'] ? 'checked' : ''; ?>> <label for="cf_email_wr_board_admin" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_email_wr_write">원글작성자</label></th>
                         <td>
                             <?php echo help('게시자님께 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_wr_write" value="1" id="cf_email_wr_write" <?php echo $config['cf_email_wr_write'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_wr_write" value="1" id="cf_email_wr_write" <?php echo $config['cf_email_wr_write'] ? 'checked' : ''; ?>> <label for="cf_email_wr_write" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_email_wr_comment_all">댓글작성자</label></th>
                         <td>
                             <?php echo help('원글에 댓글이 올라오는 경우 댓글 쓴 모든 분들께 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_wr_comment_all" value="1" id="cf_email_wr_comment_all" <?php echo $config['cf_email_wr_comment_all'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_wr_comment_all" value="1" id="cf_email_wr_comment_all" <?php echo $config['cf_email_wr_comment_all'] ? 'checked' : ''; ?>> <label for="cf_email_wr_comment_all" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                 </tbody>
@@ -1272,14 +1276,14 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <th scope="row"><label for="cf_email_mb_super_admin">최고관리자 메일발송</label></th>
                         <td>
                             <?php echo help('최고관리자에게 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_mb_super_admin" value="1" id="cf_email_mb_super_admin" <?php echo $config['cf_email_mb_super_admin'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_mb_super_admin" value="1" id="cf_email_mb_super_admin" <?php echo $config['cf_email_mb_super_admin'] ? 'checked' : ''; ?>> <label for="cf_email_mb_super_admin" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_email_mb_member">회원님께 메일발송</label></th>
                         <td>
                             <?php echo help('회원가입한 회원님께 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_mb_member" value="1" id="cf_email_mb_member" <?php echo $config['cf_email_mb_member'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_mb_member" value="1" id="cf_email_mb_member" <?php echo $config['cf_email_mb_member'] ? 'checked' : ''; ?>> <label for="cf_email_mb_member" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                 </tbody>
@@ -1304,7 +1308,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <th scope="row"><label for="cf_email_po_super_admin">최고관리자 메일발송</label></th>
                         <td>
                             <?php echo help('최고관리자에게 메일을 발송합니다.') ?>
-                            <input type="checkbox" name="cf_email_po_super_admin" value="1" id="cf_email_po_super_admin" <?php echo $config['cf_email_po_super_admin'] ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_email_po_super_admin" value="1" id="cf_email_po_super_admin" <?php echo $config['cf_email_po_super_admin'] ? 'checked' : ''; ?>> <label for="cf_email_po_super_admin" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                 </tbody>
@@ -1331,7 +1335,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <th scope="row"><label for="cf_social_login_use">소셜로그인설정</label></th>
                         <td colspan="3">
                             <?php echo help('소셜로그인을 사용합니다. <a href="https://sir.kr/manual/g5/276" class="btn btn_03" target="_blank" style="margin-left:10px" >설정 관련 메뉴얼 보기</a> ') ?>
-                            <input type="checkbox" name="cf_social_login_use" value="1" id="cf_social_login_use" <?php echo (!empty($config['cf_social_login_use'])) ? 'checked' : ''; ?>> 사용
+                            <input type="checkbox" name="cf_social_login_use" value="1" id="cf_social_login_use" <?php echo (!empty($config['cf_social_login_use'])) ? 'checked' : ''; ?>> <label for="cf_social_login_use" class="i-chk-label">사용</label>
                         </td>
                     </tr>
                     <tr>
