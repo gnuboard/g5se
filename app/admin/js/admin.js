@@ -329,6 +329,21 @@ function initAdminFormAutocomplete()
                 inp.setAttribute("data-bwignore", "true");       // Bitwarden
                 inp.setAttribute("data-protonpass-ignore", "true"); // Proton Pass
                 inp.setAttribute("data-form-type", "other");     // 1Password 힌트
+                // Chrome 내장 매니저(저장된 로그인 목록)까지 차단: 로드 시 readonly →
+                // 사용자가 포커스/클릭하면 해제해 입력은 정상. (data-* 무시 속성은 Chrome 내장엔 안 먹음)
+                // required(신규 회원) 필드는 readonly 가 native 필수검증을 무력화하므로 제외
+                if (!inp.required && inp.getAttribute("data-admin-pw-lock") !== "1") {
+                    inp.setAttribute("data-admin-pw-lock", "1");
+                    inp.setAttribute("readonly", "readonly");
+                    var unlock = function() {
+                        if (inp.hasAttribute("readonly")) {
+                            inp.removeAttribute("readonly");
+                        }
+                    };
+                    inp.addEventListener("focus", unlock);
+                    inp.addEventListener("mousedown", unlock);
+                    inp.addEventListener("touchstart", unlock, { passive: true });
+                }
                 return;
             }
             if (inp.hasAttribute("autocomplete")) {
