@@ -504,7 +504,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
 /* 체크박스 옆 라벨('사용' 등)을 클릭해도 토글되도록 — 클릭 영역 + 커서 */
 .i-chk-label { cursor: pointer; user-select: none; padding: 2px 2px; }
 </style>
-<form name="fconfigform" id="fconfigform" method="post" action="<?php echo G5_ADMIN_URL; ?>/config_form_update" onsubmit="return fconfigform_submit(this);">
+<form name="fconfigform" id="fconfigform" method="post" action="<?php echo G5_ADMIN_URL; ?>/config_form_update" onsubmit="return fconfigform_submit(this);" autocomplete="off">
     <input type="hidden" name="token" value="<?php echo get_admin_token() ?>" id="token">
     <div class="admin-floating-actions" aria-label="설정 저장">
         <input type="submit" value="확인" class="btn_submit btn" accesskey="s">
@@ -1539,7 +1539,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         <th scope="row"><label for="cf_icode_pw">아이코드 비밀번호<br>(구버전)</label></th>
                         <td>
                             <?php echo help("아이코드에서 사용하시는 비밀번호를 입력합니다."); ?>
-                            <input type="password" name="cf_icode_pw" value="<?php echo get_sanitize_input($config['cf_icode_pw']); ?>" id="cf_icode_pw" class="frm_input">
+                            <input type="password" name="cf_icode_pw" value="<?php echo get_sanitize_input($config['cf_icode_pw']); ?>" id="cf_icode_pw" class="frm_input" autocomplete="new-password">
                         </td>
                     </tr>
                     <tr class="icode_old_version <?php if (!(isset($userinfo['payment']) && $userinfo['payment'])) { echo 'cf_tr_hide'; } ?>">
