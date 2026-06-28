@@ -308,9 +308,58 @@ function initAdminScrollTop()
     onScroll();
 }
 
+// 관리자 폼 입력에 브라우저 autocomplete/오토필 차단 (라벨에 주소/메일/이름 키워드가
+// 있으면 Chrome 이 폼 단위 off 를 무시하므로 필드 단위로 지정). 비밀번호는 new-password.
+function initAdminFormAutocomplete()
+{
+    var textTypes = ["text", "email", "number", "url", "tel", "search", ""];
+    document.querySelectorAll("main form").forEach(function(form) {
+        if (!form.hasAttribute("autocomplete")) {
+            form.setAttribute("autocomplete", "off");
+        }
+        form.querySelectorAll("input").forEach(function(inp) {
+            if (inp.hasAttribute("autocomplete")) {
+                return;
+            }
+            var t = (inp.getAttribute("type") || "text").toLowerCase();
+            if (t === "password") {
+                inp.setAttribute("autocomplete", "new-password");
+            } else if (textTypes.indexOf(t) !== -1) {
+                inp.setAttribute("autocomplete", "off");
+            }
+        });
+    });
+}
+
+// 체크박스 바로 뒤의 텍스트('사용' 등)를 <label for> 로 감싸 클릭 시 토글되게 함.
+// 이미 <label> 등 엘리먼트가 따라오는 경우(공백 텍스트 포함)는 건드리지 않음.
+function initAdminCheckboxLabels()
+{
+    document.querySelectorAll('main form input[type="checkbox"]').forEach(function(cb) {
+        if (!cb.id) {
+            return;
+        }
+        var node = cb.nextSibling;
+        if (!node || node.nodeType !== 3) {        // 3 = TEXT_NODE
+            return;
+        }
+        var text = node.textContent;
+        if (!text || !text.trim()) {               // 공백뿐이면(뒤에 별도 label 등) 건너뜀
+            return;
+        }
+        var label = document.createElement("label");
+        label.setAttribute("for", cb.id);
+        label.className = "i-chk-label";
+        label.textContent = text.replace(/\s+$/, "");   // 앞 공백(간격)은 유지, 뒤 공백만 제거
+        node.parentNode.replaceChild(label, node);
+    });
+}
+
 $(function() {
     initAdminFloatingActions();
     initAdminScrollTop();
+    initAdminFormAutocomplete();
+    initAdminCheckboxLabels();
 
     $(document).on("click", "form input:submit, form button:submit", function() {
         var f = this.form;

@@ -1696,6 +1696,8 @@ html.dark body { background-color: var(--slate-950); color: var(--slate-100); }
 main form.has-admin-floating-actions {
     padding-top: 3.25rem;
 }
+/* 체크박스 옆 텍스트('사용' 등) 라벨 — 클릭 시 토글 (admin.js 가 생성) */
+.i-chk-label { cursor: pointer; user-select: none; }
 .config-page .admin-floating-actions,
 .shop-config-page .admin-floating-actions,
 .member-form-page .admin-floating-actions,
