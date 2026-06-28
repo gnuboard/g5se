@@ -278,8 +278,134 @@ function initAdminFloatingActions()
     });
 }
 
+// 긴 관리자 페이지용 "맨 위로" 버튼. 스크롤 시 나타나며, 플로팅 저장 바 아래에 위치한다.
+function initAdminScrollTop()
+{
+    if (document.getElementById("admin-scroll-top")) {
+        return;
+    }
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "admin-scroll-top";
+    btn.setAttribute("aria-label", "맨 위로");
+    btn.setAttribute("title", "맨 위로");
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+    document.body.appendChild(btn);
+
+    btn.addEventListener("click", function() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    function onScroll() {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var scrolled = y > 300;
+        btn.classList.toggle("is-visible", scrolled);
+        document.body.classList.toggle("admin-scrolled", scrolled);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+}
+
+// 관리자 폼 입력에 브라우저 autocomplete/오토필 차단 (라벨에 주소/메일/이름 키워드가
+// 있으면 Chrome 이 폼 단위 off 를 무시하므로 필드 단위로 지정). 비밀번호는 new-password.
+function initAdminFormAutocomplete()
+{
+    var textTypes = ["text", "email", "number", "url", "tel", "search", ""];
+    document.querySelectorAll("main form").forEach(function(form) {
+        if (!form.hasAttribute("autocomplete")) {
+            form.setAttribute("autocomplete", "off");
+        }
+        form.querySelectorAll("input").forEach(function(inp) {
+            var t = (inp.getAttribute("type") || "text").toLowerCase();
+            if (t === "password") {
+                // 이미 autocomplete 가 있어도 비밀번호 매니저/저장된 비번·이력 노출은 별도 차단해야 함
+                if (!inp.hasAttribute("autocomplete")) {
+                    inp.setAttribute("autocomplete", "new-password");
+                }
+                inp.setAttribute("data-1p-ignore", "true");      // 1Password
+                inp.setAttribute("data-lpignore", "true");       // LastPass
+                inp.setAttribute("data-bwignore", "true");       // Bitwarden
+                inp.setAttribute("data-protonpass-ignore", "true"); // Proton Pass
+                inp.setAttribute("data-form-type", "other");     // 1Password 힌트
+                // Chrome 내장 매니저(저장된 로그인 목록)까지 차단: 로드 시 readonly →
+                // 사용자가 포커스/클릭하면 해제해 입력은 정상. (data-* 무시 속성은 Chrome 내장엔 안 먹음)
+                // required(신규 회원) 필드는 readonly 가 native 필수검증을 무력화하므로 제외
+                if (!inp.required && inp.getAttribute("data-admin-pw-lock") !== "1") {
+                    inp.setAttribute("data-admin-pw-lock", "1");
+                    inp.setAttribute("readonly", "readonly");
+                    var unlock = function() {
+                        if (inp.hasAttribute("readonly")) {
+                            inp.removeAttribute("readonly");
+                        }
+                    };
+                    inp.addEventListener("focus", unlock);
+                    inp.addEventListener("mousedown", unlock);
+                    inp.addEventListener("touchstart", unlock, { passive: true });
+                }
+                return;
+            }
+            if (inp.hasAttribute("autocomplete")) {
+                return;
+            }
+            if (textTypes.indexOf(t) !== -1) {
+                inp.setAttribute("autocomplete", "off");
+            }
+        });
+    });
+}
+
+// 비밀번호 마스킹 폴백 — admin 의 data-pw-mask 필드는 type=text + -webkit-text-security 로
+// Chrome 내장 비번 매니저를 피한다. 이 속성을 지원하지 않는 브라우저(예: Firefox)에서는
+// 마스킹이 안 되므로 실제 password 타입으로 되돌린다.
+function initAdminPwMaskFallback()
+{
+    var probe = document.createElement("input");
+    probe.style.setProperty("-webkit-text-security", "disc");
+    var supported = probe.style.getPropertyValue("-webkit-text-security") === "disc";
+    if (supported) {
+        return;
+    }
+    document.querySelectorAll('input[data-pw-mask="1"]').forEach(function(inp) {
+        inp.setAttribute("type", "password");
+        inp.classList.remove("admin-pw-mask");
+        if (!inp.getAttribute("autocomplete")) {
+            inp.setAttribute("autocomplete", "new-password");
+        }
+    });
+}
+
+// 체크박스 바로 뒤의 텍스트('사용' 등)를 <label for> 로 감싸 클릭 시 토글되게 함.
+// 이미 <label> 등 엘리먼트가 따라오는 경우(공백 텍스트 포함)는 건드리지 않음.
+function initAdminCheckboxLabels()
+{
+    document.querySelectorAll('main form input[type="checkbox"]').forEach(function(cb) {
+        if (!cb.id) {
+            return;
+        }
+        var node = cb.nextSibling;
+        if (!node || node.nodeType !== 3) {        // 3 = TEXT_NODE
+            return;
+        }
+        var text = node.textContent;
+        if (!text || !text.trim()) {               // 공백뿐이면(뒤에 별도 label 등) 건너뜀
+            return;
+        }
+        var label = document.createElement("label");
+        label.setAttribute("for", cb.id);
+        label.className = "i-chk-label";
+        label.textContent = text.replace(/\s+$/, "");   // 앞 공백(간격)은 유지, 뒤 공백만 제거
+        node.parentNode.replaceChild(label, node);
+    });
+}
+
 $(function() {
     initAdminFloatingActions();
+    initAdminScrollTop();
+    initAdminPwMaskFallback();
+    initAdminFormAutocomplete();
+    initAdminCheckboxLabels();
 
     $(document).on("click", "form input:submit, form button:submit", function() {
         var f = this.form;
