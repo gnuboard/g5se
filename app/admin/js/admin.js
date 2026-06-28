@@ -356,6 +356,26 @@ function initAdminFormAutocomplete()
     });
 }
 
+// 비밀번호 마스킹 폴백 — admin 의 data-pw-mask 필드는 type=text + -webkit-text-security 로
+// Chrome 내장 비번 매니저를 피한다. 이 속성을 지원하지 않는 브라우저(예: Firefox)에서는
+// 마스킹이 안 되므로 실제 password 타입으로 되돌린다.
+function initAdminPwMaskFallback()
+{
+    var probe = document.createElement("input");
+    probe.style.setProperty("-webkit-text-security", "disc");
+    var supported = probe.style.getPropertyValue("-webkit-text-security") === "disc";
+    if (supported) {
+        return;
+    }
+    document.querySelectorAll('input[data-pw-mask="1"]').forEach(function(inp) {
+        inp.setAttribute("type", "password");
+        inp.classList.remove("admin-pw-mask");
+        if (!inp.getAttribute("autocomplete")) {
+            inp.setAttribute("autocomplete", "new-password");
+        }
+    });
+}
+
 // 체크박스 바로 뒤의 텍스트('사용' 등)를 <label for> 로 감싸 클릭 시 토글되게 함.
 // 이미 <label> 등 엘리먼트가 따라오는 경우(공백 텍스트 포함)는 건드리지 않음.
 function initAdminCheckboxLabels()
@@ -383,6 +403,7 @@ function initAdminCheckboxLabels()
 $(function() {
     initAdminFloatingActions();
     initAdminScrollTop();
+    initAdminPwMaskFallback();
     initAdminFormAutocomplete();
     initAdminCheckboxLabels();
 

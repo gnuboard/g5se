@@ -1698,6 +1698,10 @@ main form.has-admin-floating-actions {
 }
 /* 체크박스 옆 텍스트('사용' 등) 라벨 — 클릭 시 토글 (admin.js 가 생성) */
 .i-chk-label { cursor: pointer; user-select: none; }
+/* 비밀번호 마스킹 — type=text 로 두어 Chrome 내장 비번 매니저(저장된 로그인 목록)를
+   원천 차단하되, 입력은 점(•)으로 가린다. text-security 미지원 브라우저는 admin.js 가
+   type=password 로 폴백. */
+.admin-pw-mask { -webkit-text-security: disc; text-security: disc; }
 .config-page .admin-floating-actions,
 .shop-config-page .admin-floating-actions,
 .member-form-page .admin-floating-actions,
