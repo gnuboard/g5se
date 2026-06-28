@@ -296,11 +296,26 @@ function initAdminScrollTop()
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
+    // 하단 플로팅 저장 바가 있으면 그 '실제 높이'를 측정해 바로 위에 배치(겹침 방지).
+    // 바가 없으면 CSS 기본값(우하단 코너).
+    var bar = document.querySelector("main .admin-floating-actions");
+    function reposition() {
+        if (bar && bar.offsetParent !== null) {
+            var rect = bar.getBoundingClientRect();
+            btn.style.bottom = Math.round(window.innerHeight - rect.top + 12) + "px";
+        } else {
+            btn.style.bottom = "";
+        }
+    }
+
     function onScroll() {
         var y = window.pageYOffset || document.documentElement.scrollTop || 0;
         btn.classList.toggle("is-visible", y > 300);
     }
+
+    reposition();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", reposition, { passive: true });
     onScroll();
 }
 
