@@ -278,8 +278,39 @@ function initAdminFloatingActions()
     });
 }
 
+// 긴 관리자 페이지용 "맨 위로" 버튼. 스크롤 시 나타나며, 플로팅 저장 바 아래에 위치한다.
+function initAdminScrollTop()
+{
+    if (document.getElementById("admin-scroll-top")) {
+        return;
+    }
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "admin-scroll-top";
+    btn.setAttribute("aria-label", "맨 위로");
+    btn.setAttribute("title", "맨 위로");
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+    document.body.appendChild(btn);
+
+    btn.addEventListener("click", function() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    function onScroll() {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var scrolled = y > 300;
+        btn.classList.toggle("is-visible", scrolled);
+        document.body.classList.toggle("admin-scrolled", scrolled);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+}
+
 $(function() {
     initAdminFloatingActions();
+    initAdminScrollTop();
 
     $(document).on("click", "form input:submit, form button:submit", function() {
         var f = this.form;
