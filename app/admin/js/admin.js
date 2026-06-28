@@ -318,13 +318,23 @@ function initAdminFormAutocomplete()
             form.setAttribute("autocomplete", "off");
         }
         form.querySelectorAll("input").forEach(function(inp) {
+            var t = (inp.getAttribute("type") || "text").toLowerCase();
+            if (t === "password") {
+                // 이미 autocomplete 가 있어도 비밀번호 매니저/저장된 비번·이력 노출은 별도 차단해야 함
+                if (!inp.hasAttribute("autocomplete")) {
+                    inp.setAttribute("autocomplete", "new-password");
+                }
+                inp.setAttribute("data-1p-ignore", "true");      // 1Password
+                inp.setAttribute("data-lpignore", "true");       // LastPass
+                inp.setAttribute("data-bwignore", "true");       // Bitwarden
+                inp.setAttribute("data-protonpass-ignore", "true"); // Proton Pass
+                inp.setAttribute("data-form-type", "other");     // 1Password 힌트
+                return;
+            }
             if (inp.hasAttribute("autocomplete")) {
                 return;
             }
-            var t = (inp.getAttribute("type") || "text").toLowerCase();
-            if (t === "password") {
-                inp.setAttribute("autocomplete", "new-password");
-            } else if (textTypes.indexOf(t) !== -1) {
+            if (textTypes.indexOf(t) !== -1) {
                 inp.setAttribute("autocomplete", "off");
             }
         });
