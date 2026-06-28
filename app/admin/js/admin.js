@@ -300,8 +300,9 @@ function initAdminScrollTop()
     // 바가 없으면 CSS 기본값(우하단 코너).
     var bar = document.querySelector("main .admin-floating-actions");
     function reposition() {
-        if (bar && bar.offsetParent !== null) {
-            var rect = bar.getBoundingClientRect();
+        // 주의: position:fixed 바는 offsetParent 가 항상 null 이므로 rect 높이로 가시성 판단
+        var rect = bar ? bar.getBoundingClientRect() : null;
+        if (rect && rect.height > 0) {
             btn.style.bottom = Math.round(window.innerHeight - rect.top + 12) + "px";
         } else {
             btn.style.bottom = "";
