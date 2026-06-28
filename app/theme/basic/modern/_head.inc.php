@@ -361,7 +361,7 @@ html, body {
 }
 
 /* ──────────────────────────────────────────────
-   다크모드 토글 버튼 (.m-nav-actions 안에 JS 가 자동 주입)
+   다크모드 토글 버튼 (_nav.inc.php 헤더에 정적 배치, 클릭 핸들러는 JS)
    ────────────────────────────────────────────── */
 .m-theme-toggle {
     width: 36px; height: 36px; padding: 0;
@@ -761,8 +761,8 @@ $_modern_main_css = ob_get_clean();
 add_stylesheet($_modern_main_css, 50);
 
 // ──────────────────────────────────────────────
-// 화면 우하단 floating 버튼 클러스터 — 다크모드 토글 + 위로가기.
-// (m-nav-actions 안에 inject 하던 방식 폐기)
+// 화면 우하단 floating "위로 가기" 버튼.
+// (다크모드 토글은 _nav.inc.php 헤더로 이동 — 로그인/햄버거 좌측에 정적 배치)
 // ──────────────────────────────────────────────
 $_modern_float_css = <<<'CSS'
 <style>
@@ -800,11 +800,6 @@ $_modern_float_css = <<<'CSS'
     .m-float-actions { right: 12px; bottom: 12px; gap: 6px; }
     .m-float-actions button { width: 40px; height: 40px; }
 }
-/* 다크모드 sun/moon icon swap (이전 .m-theme-toggle 룰과 동일) */
-.m-float-actions .m-icon-sun  { display: none; }
-.m-float-actions .m-icon-moon { display: block; }
-[data-theme="dark"] .m-float-actions .m-icon-sun  { display: block; }
-[data-theme="dark"] .m-float-actions .m-icon-moon { display: none; }
 </style>
 CSS;
 add_stylesheet($_modern_float_css, 51);
@@ -812,35 +807,34 @@ add_stylesheet($_modern_float_css, 51);
 $_modern_toggle_js = <<<'JS'
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-    // popup 윈도우 및 iframe 레이어에서는 floating cluster 숨김
+    // 헤더(_nav) 의 테마 토글 — popup/iframe 여부와 무관하게 항상 바인딩
+    var themeBtn = document.querySelector(".m-theme-toggle");
+    if (themeBtn) {
+        themeBtn.addEventListener("click", function(){
+            var cur = document.documentElement.dataset.theme || "light";
+            var next = cur === "dark" ? "light" : "dark";
+            document.documentElement.dataset.theme = next;
+            try { localStorage.setItem("m-theme", next); } catch(e) {}
+        });
+    }
+
+    // popup 윈도우 및 iframe 레이어에서는 floating "위로 가기" 숨김
     // — point/memo/scrap/coupon/orderaddress 등 popup 컨텍스트에서는 본문 조작 버튼을 노출하지 않는다.
     try {
         if (window.opener && window.opener !== window) return;
         if (window.parent && window.parent !== window && window.parent.G5PopupLayer) return;
         if (new URLSearchParams(window.location.search).get("g5_layer") === "1") return;
     } catch (e) { /* cross-origin opener 접근 차단되면 무시 */ }
-    // 우하단 floating cluster 생성 (theme toggle + scroll to top)
+    // 우하단 floating "위로 가기" 버튼 생성
     var wrap = document.createElement("div");
     wrap.className = "m-float-actions";
     wrap.innerHTML = ''
-        + '<button type="button" class="m-theme-toggle" aria-label="테마 전환" title="테마 전환">'
-        +   '<svg class="m-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
-        +   '<svg class="m-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>'
-        + '</button>'
         + '<button type="button" class="m-float-top" aria-label="위로 가기" title="위로 가기">'
         +   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>'
         + '</button>';
     document.body.appendChild(wrap);
 
-    var themeBtn = wrap.querySelector(".m-theme-toggle");
-    var topBtn   = wrap.querySelector(".m-float-top");
-
-    themeBtn.addEventListener("click", function(){
-        var cur = document.documentElement.dataset.theme || "light";
-        var next = cur === "dark" ? "light" : "dark";
-        document.documentElement.dataset.theme = next;
-        try { localStorage.setItem("m-theme", next); } catch(e) {}
-    });
+    var topBtn = wrap.querySelector(".m-float-top");
 
     // 위로 가기 — m-shell 이 실제 scroll container 면 그걸, 아니면 window
     var shell = document.querySelector(".m-shell");
