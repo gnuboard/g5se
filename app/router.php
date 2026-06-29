@@ -329,7 +329,7 @@ class Router
                 if (!empty($params['wr_id']) && preg_match('/^\d+$/', $params['wr_id'])) {
                     $url .= '/'.$params['wr_id'];
                 }
-                if (!empty($params['no']) && preg_match('/^\d+$/', $params['no'])) {
+                if (isset($params['no']) && preg_match('/^\d+$/', $params['no'])) {
                     $url .= '/'.$params['no'];
                 }
                 unset($params['bo_table'], $params['wr_id'], $params['no']);

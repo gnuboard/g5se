@@ -131,7 +131,7 @@ ob_start(function ($html) {
                 $url .= '/'.$params['wr_id'];
                 unset($params['wr_id']);
             }
-            if (!empty($params['no']) && preg_match('/^\d+$/', $params['no'])) {
+            if (isset($params['no']) && preg_match('/^\d+$/', $params['no'])) {
                 $url .= '/'.$params['no'];
                 unset($params['no']);
             }

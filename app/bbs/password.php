@@ -7,7 +7,7 @@ $comment_id = isset($_REQUEST['comment_id']) ? preg_replace('/[^0-9]/', '', $_RE
 
 switch ($w) {
     case 'u' :
-        $action = G5_HTTP_BBS_URL.'/write.php';
+        $action = https_url(G5_BBS_DIR).'/write.php';
         $return_url = short_url_clean(G5_HTTP_BBS_URL.'/board.php?bo_table='.$bo_table.'&amp;wr_id='.$wr_id);
         break;
     case 'd' :
