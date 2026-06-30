@@ -366,7 +366,7 @@ html, body {
 .m-theme-toggle {
     width: 36px; height: 36px; padding: 0;
     background: transparent;
-    border: 1px solid var(--m-border);
+    border: 1px solid transparent;
     border-radius: var(--m-radius);
     color: var(--m-text-soft);
     cursor: pointer;
@@ -376,7 +376,6 @@ html, body {
 .m-theme-toggle:hover {
     background: var(--m-surface-2);
     color: var(--m-text);
-    border-color: var(--m-border-hover);
 }
 .m-theme-toggle svg { width: 16px; height: 16px; }
 .m-theme-toggle .m-icon-sun  { display: none; }

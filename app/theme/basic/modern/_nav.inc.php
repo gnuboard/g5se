@@ -60,6 +60,11 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </a>
 
+            <button type="button" class="m-theme-toggle" aria-label="테마 전환" title="테마 전환">
+                <svg class="m-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg class="m-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            </button>
+
             <nav class="m-nav-utility" aria-label="유틸 메뉴">
                 <a href="/faq" class="m-nav-utility-link<?php echo strpos($_cur_path, '/faq') === 0 ? ' is-active' : '' ?>">FAQ</a>
                 <a href="/qa"  class="m-nav-utility-link<?php echo strpos($_cur_path, '/qa') === 0 ? ' is-active' : '' ?>">Q&amp;A</a>
@@ -90,11 +95,6 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </a>
             <?php } ?>
-
-            <button type="button" class="m-theme-toggle" aria-label="테마 전환" title="테마 전환">
-                <svg class="m-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <svg class="m-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-            </button>
 
             <div class="m-nav-actions">
                 <?php if ($is_member) { ?>
@@ -359,7 +359,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 .m-nav-search-icon-btn {
     display: inline-flex; align-items: center; justify-content: center;
     width: 36px; height: 36px; flex-shrink: 0;
-    background: transparent; border: 1px solid var(--m-border);
+    background: transparent; border: 1px solid transparent;
     border-radius: var(--m-radius); color: var(--m-text-soft);
     text-decoration: none;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -367,7 +367,6 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 .m-nav-search-icon-btn:hover {
     background: var(--m-surface-2);
     color: var(--m-primary);
-    border-color: var(--m-primary);
 }
 
 .m-nav-utility {
@@ -391,7 +390,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     align-items: center;
     justify-content: center;
     width: 36px; height: 36px;
-    border: 1px solid var(--m-border);
+    border: 1px solid transparent;
     border-radius: var(--m-radius);
     color: var(--m-text-soft);
     background: transparent;
@@ -401,7 +400,6 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 .m-nav-cart-link:hover {
     background: var(--m-surface-2);
     color: var(--m-text);
-    border-color: var(--m-border-hover);
 }
 .m-nav-cart-link svg { display: block; }
 .m-nav-cart-badge {
