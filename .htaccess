@@ -3,7 +3,7 @@ Options -Indexes +FollowSymLinks
 
 # 1) PHP 직접 접근 차단 — 정적자산 폴더 + 라이브러리 폴더 안의 .php 는 절대 실행되면 안 됨
 #    plugin/ 은 캡차·결제·소셜로그인·본인확인 등 외부 호출이 필요한 first-party 엔드포인트가 들어있어 차단 대상에서 제외
-RewriteRule ^(theme|skin|extend|lib|js|css|img|mobile)/.+\.(php|phtml|phar)$ - [F,L]
+RewriteRule ^(theme|skin|extend|lib|js|css|img)/.+\.(php|phtml|phar)$ - [F,L]
 
 # 2) /app/* 직접접근 전면 차단
 RewriteRule ^app(/|$) - [F,L]
@@ -18,7 +18,7 @@ RewriteRule ^data/modules/ - [F,L]
 #    /adm 와 /adm/* 는 모던 /admin 으로 외부 redirect (사용자가 봐야 할 admin 은 /admin 한 곳)
 RewriteRule ^adm/?$ /admin [R=301,L]
 RewriteRule ^adm/(.*)$ /admin/$1 [R=301,L]
-RewriteRule ^(theme|skin|img|js|css|mobile|plugin)/(.*)$ app/$1/$2 [END]
+RewriteRule ^(theme|skin|img|js|css|plugin)/(.*)$ app/$1/$2 [END]
 
 #    모던 admin 의 정적 자산: /admin/(css|js|img)/... → app/admin/$1/$2
 #    (.php 컨트롤러는 front controller 가 처리해야 하므로 정적 자산만 매핑)
