@@ -64,8 +64,9 @@ if(is_file($skin_file)) {
         alert('1:1문의 설정에서 분류를 설정해 주십시오');
     }
 
+    // 에디터 사용 여부는 기기와 무관하게 1:1문의/사이트 설정으로만 결정 (반응형 UI라 모바일에서도 에디터 사용)
     $is_dhtml_editor = false;
-    if ($config['cf_editor'] && $qaconfig['qa_use_editor'] && (!is_mobile() || defined('G5_IS_MOBILE_DHTML_USE') && G5_IS_MOBILE_DHTML_USE)) {
+    if ($config['cf_editor'] && $qaconfig['qa_use_editor']) {
         $is_dhtml_editor = true;
     }
 

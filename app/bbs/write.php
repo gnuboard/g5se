@@ -412,13 +412,10 @@ if ($is_use_captcha) {
 }
 
 $is_dhtml_editor = false;
-$is_dhtml_editor_use = false;
 $editor_content_js = '';
-if(!is_mobile() || defined('G5_IS_MOBILE_DHTML_USE') && G5_IS_MOBILE_DHTML_USE)
-    $is_dhtml_editor_use = true;
 
-// 모바일에서는 G5_IS_MOBILE_DHTML_USE 설정에 따라 DHTML 에디터 적용
-if ($config['cf_editor'] && $is_dhtml_editor_use && $board['bo_use_dhtml_editor'] && $member['mb_level'] >= $board['bo_html_level']) {
+// 에디터 사용 여부는 기기와 무관하게 게시판/사이트 설정으로만 결정 (반응형 UI라 모바일에서도 에디터 사용)
+if ($config['cf_editor'] && $board['bo_use_dhtml_editor'] && $member['mb_level'] >= $board['bo_html_level']) {
     $is_dhtml_editor = true;
 
     if ( $w == 'u' && (! $is_member || ! $is_admin || $write['mb_id'] !== $member['mb_id']) ){
