@@ -15,16 +15,11 @@ if ($is_admin !== 'super') {
 admin_referer_check();
 
 $theme = isset($_POST['theme']) ? trim($_POST['theme']) : '';
-$post_type = isset($_POST['type']) ? clean_xss_tags($_POST['type'], 1, 1) : '';
 $post_set_default_skin = isset($_POST['set_default_skin']) ? clean_xss_tags($_POST['set_default_skin'], 1, 1) : '';
 
 $theme_dir = get_theme_dir();
 
-if($post_type == 'reset') {
-    sql_query(" update {$g5['config_table']} set cf_theme = '' ");
-    die('');
-}
-
+// 테마 해제(reset) 액션은 제거됨 — cf_theme 미설정 시 basic 으로 폴백되므로(app/common.php) '사용 안함' 개념이 없음
 if(!in_array($theme, $theme_dir))
     die('선택하신 테마가 설치되어 있지 않습니다.');
 

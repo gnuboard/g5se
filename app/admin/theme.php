@@ -2,8 +2,8 @@
 /*
  * /admin/theme — 테마 설정 (모던 카드 그리드).
  *   - 각 카드: screenshot / 테마명 / 폴더명 (mono) / Maker / Version
- *   - 액션: 테마적용 / 사용안함 / 미리보기 / 상세보기
- *   - AJAX: G5_ADMIN_URL 기반 theme_update (적용/해제), theme_detail (상세)
+ *   - 액션: 테마적용 / 미리보기 / 상세보기
+ *   - AJAX: G5_ADMIN_URL 기반 theme_update (적용), theme_detail (상세)
  */
 require_once __DIR__.'/_common.php';
 require_once __DIR__.'/_layout.php';
@@ -107,8 +107,7 @@ admin_layout_start('테마 설정', 'theme');
                     </div>
                     <div class="mt-auto flex items-center gap-1 pt-2 border-t border-slate-100 dark:border-slate-800">
                         <?php if ($is_active): ?>
-                            <button type="button" class="theme_deactive flex-1 inline-flex items-center justify-center h-8 px-2.5 rounded-md border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-900/30"
-                                    data-theme="<?php echo $h($t) ?>" data-name="<?php echo $name ?>">사용 안함</button>
+                            <span class="flex-1 inline-flex items-center justify-center h-8 px-2.5 rounded-md bg-emerald-50 dark:bg-emerald-900/30 text-xs text-emerald-700 dark:text-emerald-300 font-medium">사용중</span>
                         <?php else: ?>
                             <button type="button" class="theme_active flex-1 inline-flex items-center justify-center h-8 px-2.5 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-xs font-medium"
                                     data-theme="<?php echo $h($t) ?>" data-name="<?php echo $name ?>" data-set_default_skin="<?php echo $set_default_skin ?>">테마 적용</button>
@@ -159,22 +158,6 @@ admin_layout_start('테마 설정', 'theme');
             var fd = new FormData();
             fd.append('theme', theme);
             fd.append('set_default_skin', set_default_skin);
-            fetch(themeUpdateUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
-                .then(function (r) { return r.text(); })
-                .then(function (txt) {
-                    if (txt && txt.trim()) { alert(txt); return; }
-                    location.reload();
-                });
-        });
-    });
-
-    document.querySelectorAll('button.theme_deactive').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var theme = btn.dataset.theme, name = btn.dataset.name;
-            if (!confirm(name + ' 테마 사용설정을 해제하시겠습니까?\n\n테마 설정을 해제하셔도 게시판 등의 스킨은 변경되지 않으므로 개별 변경작업이 필요합니다.')) return;
-            var fd = new FormData();
-            fd.append('theme', theme);
-            fd.append('type', 'reset');
             fetch(themeUpdateUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function (r) { return r.text(); })
                 .then(function (txt) {

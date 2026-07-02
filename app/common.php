@@ -905,19 +905,20 @@ else if (!empty($_SESSION['ss_theme_preview'])
     $config['cf_theme'] = $_SESSION['ss_theme_preview'];
 }
 
-if(isset($config['cf_theme']) && trim($config['cf_theme'])) {
-    $theme_path = G5_PATH.'/'.G5_THEME_DIR.'/'.$config['cf_theme'];
-    if(is_dir($theme_path)) {
-        define('G5_THEME_PATH',        $theme_path);
-        define('G5_THEME_URL',         G5_URL.'/'.G5_THEME_DIR.'/'.$config['cf_theme']);
-        define('G5_THEME_MOBILE_PATH', $theme_path.'/'.G5_MOBILE_DIR);
-        define('G5_THEME_LIB_PATH',    $theme_path.'/'.G5_LIB_DIR);
-        define('G5_THEME_CSS_URL',     G5_THEME_URL.'/'.G5_CSS_DIR);
-        define('G5_THEME_IMG_URL',     G5_THEME_URL.'/'.G5_IMG_DIR);
-        define('G5_THEME_JS_URL',      G5_THEME_URL.'/'.G5_JS_DIR);
-    }
-    unset($theme_path);
-}
+// cf_theme 미설정/유실 시 basic 테마로 폴백 — 레거시(테마 없음) 화면 차단
+$config['cf_theme'] = (isset($config['cf_theme']) && trim($config['cf_theme'])) ? trim($config['cf_theme']) : 'basic';
+if(!is_dir(G5_PATH.'/'.G5_THEME_DIR.'/'.$config['cf_theme']))
+    $config['cf_theme'] = 'basic'; // 지정 테마 폴더가 없으면 basic (항상 존재)
+
+$theme_path = G5_PATH.'/'.G5_THEME_DIR.'/'.$config['cf_theme'];
+define('G5_THEME_PATH',        $theme_path);
+define('G5_THEME_URL',         G5_URL.'/'.G5_THEME_DIR.'/'.$config['cf_theme']);
+define('G5_THEME_MOBILE_PATH', $theme_path.'/'.G5_MOBILE_DIR);
+define('G5_THEME_LIB_PATH',    $theme_path.'/'.G5_LIB_DIR);
+define('G5_THEME_CSS_URL',     G5_THEME_URL.'/'.G5_CSS_DIR);
+define('G5_THEME_IMG_URL',     G5_THEME_URL.'/'.G5_IMG_DIR);
+define('G5_THEME_JS_URL',      G5_THEME_URL.'/'.G5_JS_DIR);
+unset($theme_path);
 
 
 // 테마 설정 로드
