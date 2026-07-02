@@ -21,11 +21,6 @@ if( ! (isset($co['co_seo_title']) && $co['co_seo_title']) && isset($co['co_id'])
     seo_title_update($g5['content_table'], $co['co_id'], 'content');
 }
 
-if (G5_IS_MOBILE) {
-    include_once(G5_MOBILE_PATH.'/content.php');
-    return;
-}
-
 if (! (isset($co['co_id']) && $co['co_id']))
     alert('등록된 내용이 없습니다.');
 

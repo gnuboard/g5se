@@ -153,7 +153,7 @@ if ($stx) {
             $sch_all = "";
             if ($onetable == $g5_search['tables'][$i]) $sch_class = "class=sch_on";
             else $sch_all = "class=sch_on";
-            $str_board_list .= '<li><a href="/search?'.$search_query.'&amp;gr_id='.$gr_id.'&amp;onetable='.$g5_search['tables'][$i].'" '.$sch_class.'><strong>'.((G5_IS_MOBILE && $row2['bo_mobile_subject']) ? $row2['bo_mobile_subject'] : $row2['bo_subject']).'</strong><span class="cnt_cmt">'.$row['cnt'].'</span></a></li>';
+            $str_board_list .= '<li><a href="/search?'.$search_query.'&amp;gr_id='.$gr_id.'&amp;onetable='.$g5_search['tables'][$i].'" '.$sch_class.'><strong>'.$row2['bo_subject'].'</strong><span class="cnt_cmt">'.$row['cnt'].'</span></a></li>';
         }
     }
 
@@ -178,7 +178,7 @@ if ($stx) {
     for ($idx=$table_index; $idx<count($search_table); $idx++) {
         $row = sql_pdo_fetch(" select bo_subject, bo_mobile_subject from {$g5['board_table']} where bo_table = :bo_table ",
                              [':bo_table' => $search_table[$idx]]);
-        $bo_subject[$idx] = ((G5_IS_MOBILE && $row['bo_mobile_subject']) ? $row['bo_mobile_subject'] : $row['bo_subject']);
+        $bo_subject[$idx] = $row['bo_subject'];
 
         $tmp_write_table = $g5['write_prefix'] . $search_table[$idx];
 
@@ -239,7 +239,7 @@ if ($stx) {
         $from_record = 0;
     }
 
-    $write_pages = get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '/search?'.$search_query.'&amp;gr_id='.$gr_id.'&amp;srows='.$srows.'&amp;onetable='.$onetable.'&amp;page=');
+    $write_pages = get_paging($config['cf_write_pages'], $page, $total_page, '/search?'.$search_query.'&amp;gr_id='.$gr_id.'&amp;srows='.$srows.'&amp;onetable='.$onetable.'&amp;page=');
 }
 
 $group_select = '<label for="gr_id" class="sound_only">게시판 그룹선택</label><select name="gr_id" id="gr_id" class="select"><option value="">전체 분류';

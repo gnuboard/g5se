@@ -32,7 +32,7 @@ if(is_file($skin_file)) {
     if(!(isset($view['qa_id']) && $view['qa_id']))
         alert('게시글이 존재하지 않습니다.\\n삭제되었거나 자신의 글이 아닌 경우입니다.');
 
-    $subject_len = G5_IS_MOBILE ? $qaconfig['qa_mobile_subject_len'] : $qaconfig['qa_subject_len'];
+    $subject_len = $qaconfig['qa_subject_len'];
 
     $view['category'] = get_text($view['qa_category']);
     $view['subject'] = conv_subject($view['qa_subject'], $subject_len, '…');
@@ -167,7 +167,7 @@ if(is_file($skin_file)) {
 
     $is_dhtml_editor = false;
     // 모바일에서는 DHTML 에디터 사용불가
-    if ($config['cf_editor'] && $qaconfig['qa_use_editor'] && !G5_IS_MOBILE) {
+    if ($config['cf_editor'] && $qaconfig['qa_use_editor']) {
         $is_dhtml_editor = true;
     }
     $editor_html = editor_html('qa_content', $content, $is_dhtml_editor);

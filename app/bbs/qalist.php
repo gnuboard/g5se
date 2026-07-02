@@ -87,7 +87,7 @@ if(is_file($skin_file)) {
     $row = sql_pdo_fetch(" select count(*) as cnt $sql_common $sql_search ", $search_params);
     $total_count = $row['cnt'];
 
-    $page_rows = G5_IS_MOBILE ? $qaconfig['qa_mobile_page_rows'] : $qaconfig['qa_page_rows'];
+    $page_rows = $qaconfig['qa_page_rows'];
     $total_page  = ceil($total_count / $page_rows);  // 전체 페이지 계산
     if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
     $from_record = ($page - 1) * $page_rows; // 시작 열을 구함
@@ -99,7 +99,7 @@ if(is_file($skin_file)) {
 
     $list = array();
     $num = $total_count - ($page - 1) * $page_rows;
-    $subject_len = G5_IS_MOBILE ? $qaconfig['qa_mobile_subject_len'] : $qaconfig['qa_subject_len'];
+    $subject_len = $qaconfig['qa_subject_len'];
     for($i=0; $row=sql_fetch_array($result); $i++) {
         $list[$i] = $row;
 
@@ -133,7 +133,7 @@ if(is_file($skin_file)) {
     $list_href = G5_BBS_URL.'/qa';
     $write_href = G5_BBS_URL.'/qawrite.php';
 
-    $list_pages = preg_replace('/(\.php)(&amp;|&)/i', '$1?', get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, './qa'.$qstr.'&amp;page='));
+    $list_pages = preg_replace('/(\.php)(&amp;|&)/i', '$1?', get_paging($config['cf_write_pages'], $page, $total_page, './qa'.$qstr.'&amp;page='));
 
     $stx = get_text(stripslashes($stx));
     include_once($skin_file);

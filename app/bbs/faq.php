@@ -40,16 +40,14 @@ if(is_file($skin_file)) {
     if($is_admin)
         $admin_href = G5_ADMIN_URL.'/faqmasterform.php?w=u&amp;fm_id='.$fm_id;
 
-    if(!G5_IS_MOBILE) {
-        $himg = G5_DATA_PATH.'/faq/'.$fm_id.'_h';
-        if (is_file($himg)){
-            $himg_src = G5_DATA_URL.'/faq/'.$fm_id.'_h';
-        }
+    $himg = G5_DATA_PATH.'/faq/'.$fm_id.'_h';
+    if (is_file($himg)){
+        $himg_src = G5_DATA_URL.'/faq/'.$fm_id.'_h';
+    }
 
-        $timg = G5_DATA_PATH.'/faq/'.$fm_id.'_t';
-        if (is_file($timg)){
-            $timg_src = G5_DATA_URL.'/faq/'.$fm_id.'_t';
-        }
+    $timg = G5_DATA_PATH.'/faq/'.$fm_id.'_t';
+    if (is_file($timg)){
+        $timg_src = G5_DATA_URL.'/faq/'.$fm_id.'_t';
     }
 
     $category_href = G5_BBS_URL.'/faq.php';
@@ -67,7 +65,7 @@ if(is_file($skin_file)) {
 
     if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 
-    $page_rows = G5_IS_MOBILE ? $config['cf_mobile_page_rows'] : $config['cf_page_rows'];
+    $page_rows = $config['cf_page_rows'];
 
     $total = sql_pdo_fetch(" select count(*) as cnt
                 from {$g5['faq_table']}
