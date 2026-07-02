@@ -60,13 +60,8 @@ if ($sca || $stx || $stx === '0') {     //검색이면
     $total_count = $board['bo_count_write'];
 }
 
-if(G5_IS_MOBILE) {
-    $page_rows = $board['bo_mobile_page_rows'];
-    $list_page_rows = $board['bo_mobile_page_rows'];
-} else {
-    $page_rows = $board['bo_page_rows'];
-    $list_page_rows = $board['bo_page_rows'];
-}
+$page_rows = $board['bo_page_rows'];
+$list_page_rows = $board['bo_page_rows'];
 
 if ($page < 1) { $page = 1; } // 페이지가 없으면 첫 페이지 (1 페이지)
 
@@ -112,7 +107,7 @@ if (!$is_search_bbs) {
 
         if($k < $from_notice_idx) continue;
 
-        $list[$i] = get_list($row, $board, $board_skin_url, G5_IS_MOBILE ? $board['bo_mobile_subject_len'] : $board['bo_subject_len']);
+        $list[$i] = get_list($row, $board, $board_skin_url, $board['bo_subject_len']);
         $list[$i]['is_notice'] = true;
         $list[$i]['list_content'] = $list[$i]['wr_content'];
 
@@ -240,7 +235,7 @@ if ($page_rows > 0) {
 $k = 0;
 foreach ($rows_to_process as $row)
 {
-    $list[$i] = get_list($row, $board, $board_skin_url, G5_IS_MOBILE ? $board['bo_mobile_subject_len'] : $board['bo_subject_len']);
+    $list[$i] = get_list($row, $board, $board_skin_url, $board['bo_subject_len']);
     if (strstr($sfl, 'subject')) {
         $list[$i]['subject'] = search_font($stx, $list[$i]['subject']);
     }
@@ -261,7 +256,7 @@ foreach ($rows_to_process as $row)
 
 g5_latest_cache_data($board['bo_table'], $list);
 
-$write_pages = get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, get_pretty_url($bo_table, '', $qstr.'&amp;page='));
+$write_pages = get_paging($config['cf_write_pages'], $page, $total_page, get_pretty_url($bo_table, '', $qstr.'&amp;page='));
 
 $list_href = '';
 $prev_part_href = '';
