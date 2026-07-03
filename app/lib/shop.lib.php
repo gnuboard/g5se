@@ -1365,6 +1365,11 @@ function get_list_skin_options($pattern, $dirname='./', $sval='')
 {
     $str = '<option value="">선택</option>'.PHP_EOL;
 
+    // g5se: 존재하지 않는 스킨 디렉토리(예: 삭제된 모바일 스킨)면 기본 옵션만 반환.
+    if (!is_dir($dirname)) {
+        return $str;
+    }
+
     unset($arr);
     $handle = opendir($dirname);
     while ($file = readdir($handle)) {
