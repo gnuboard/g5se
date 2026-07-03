@@ -48,14 +48,8 @@ header("Pragma: no-cache"); // HTTP/1.0
 <head>
 <meta charset="utf-8">
 <?php
-if (G5_IS_MOBILE) {
-    echo '<meta name="viewport" id="meta_viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10">'.PHP_EOL;
-    echo '<meta name="HandheldFriendly" content="true">'.PHP_EOL;
-    echo '<meta name="format-detection" content="telephone=no">'.PHP_EOL;
-} else {
-    echo '<meta http-equiv="imagetoolbar" content="no">'.PHP_EOL;
-    echo '<meta http-equiv="X-UA-Compatible" content="IE=Edge">'.PHP_EOL;
-}
+echo '<meta http-equiv="imagetoolbar" content="no">'.PHP_EOL;
+echo '<meta http-equiv="X-UA-Compatible" content="IE=Edge">'.PHP_EOL;
 
 if($config['cf_add_meta'])
     echo $config['cf_add_meta'].PHP_EOL;
@@ -68,7 +62,7 @@ if (defined('G5_IS_ADMIN')) {
 } else {
     $shop_css = '';
     if (defined('_SHOP_')) $shop_css = '_shop';
-    echo '<link rel="stylesheet" href="'.run_replace('head_css_url', G5_CSS_URL.'/'.(G5_IS_MOBILE?'mobile':'default').$shop_css.'.css?ver='.G5_CSS_VER, G5_URL).'">'.PHP_EOL;
+    echo '<link rel="stylesheet" href="'.run_replace('head_css_url', G5_CSS_URL.'/default'.$shop_css.'.css?ver='.G5_CSS_VER, G5_URL).'">'.PHP_EOL;
 }
 ?>
 <!--[if lte IE 8]>
@@ -80,7 +74,7 @@ var g5_url       = "<?php echo G5_URL ?>";
 var g5_bbs_url   = "<?php echo G5_BBS_URL ?>";
 var g5_is_member = "<?php echo isset($is_member)?$is_member:''; ?>";
 var g5_is_admin  = "<?php echo isset($is_admin)?$is_admin:''; ?>";
-var g5_is_mobile = "<?php echo G5_IS_MOBILE ?>";
+var g5_is_mobile = "";
 var g5_bo_table  = "<?php echo isset($bo_table)?$bo_table:''; ?>";
 var g5_sca       = "<?php echo isset($sca)?$sca:''; ?>";
 var g5_editor    = "<?php echo ($config['cf_editor'] && $board['bo_use_dhtml_editor'])?$config['cf_editor']:''; ?>";
@@ -96,9 +90,7 @@ var g5_admin_url = "<?php echo G5_ADMIN_URL; ?>";
 add_javascript('<script src="'.G5_JS_URL.'/jquery-1.12.4.min.js"></script>', 0);
 add_javascript('<script src="'.G5_JS_URL.'/jquery-migrate-1.4.1.min.js"></script>', 0);
 if (defined('_SHOP_')) {
-    if(!G5_IS_MOBILE) {
-        add_javascript('<script src="'.G5_JS_URL.'/jquery.shop.menu.js?ver='.G5_JS_VER.'"></script>', 0);
-    }
+    add_javascript('<script src="'.G5_JS_URL.'/jquery.shop.menu.js?ver='.G5_JS_VER.'"></script>', 0);
 } else {
     add_javascript('<script src="'.G5_JS_URL.'/jquery.menu.js?ver='.G5_JS_VER.'"></script>', 0);
 }
@@ -107,9 +99,6 @@ add_javascript('<script src="'.G5_JS_URL.'/wrest.js?ver='.G5_JS_VER.'"></script>
 add_javascript('<script src="'.G5_JS_URL.'/placeholders.min.js"></script>', 0);
 add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/font-awesome/css/font-awesome.min.css">', 0);
 
-if(G5_IS_MOBILE) {
-    add_javascript('<script src="'.G5_JS_URL.'/modernizr.custom.70111.js"></script>', 1); // overflow scroll 감지
-}
 if(!defined('G5_IS_ADMIN'))
     echo $config['cf_add_script'];
 ?>
