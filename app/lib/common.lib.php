@@ -4268,16 +4268,6 @@ function get_params_merge_url($params, $url=''){
     return $href;
 }
 
-function get_device_change_url()
-{
-    // g5se: 반응형 단일 UI(G5_IS_MOBILE 항상 false) — 항상 mobile 로의 전환 URL.
-    // (테마 tail.php 의 "모바일버전" 링크가 아직 이 함수를 호출한다)
-    $q = array();
-    $q['device'] = 'mobile';
-
-    return get_params_merge_url($q);
-}
-
 // 스킨 path
 function get_skin_path($dir, $skin)
 {

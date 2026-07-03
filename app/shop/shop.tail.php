@@ -23,7 +23,6 @@ $admin = get_admin("super");
             <li><a href="<?php echo get_pretty_url('content', 'company'); ?>">회사소개</a></li>
             <li><a href="<?php echo get_pretty_url('content', 'provision'); ?>">서비스이용약관</a></li>
             <li><a href="<?php echo get_pretty_url('content', 'privacy'); ?>">개인정보처리방침</a></li>
-            <li><a href="<?php echo get_device_change_url(); ?>">모바일버전</a></li>
         </ul>
         <div id="ft_company" class="ft_cnt">
         	<h2>사이트 정보</h2>

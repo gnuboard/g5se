@@ -32,7 +32,6 @@ if(G5_COMMUNITY_USE === false) {
             <a href="<?php echo get_pretty_url('content', 'company'); ?>">회사소개</a>
             <a href="<?php echo get_pretty_url('content', 'privacy'); ?>">개인정보처리방침</a>
             <a href="<?php echo get_pretty_url('content', 'provision'); ?>">서비스이용약관</a>
-            <a href="<?php echo get_device_change_url(); ?>">모바일버전</a>
         </div>
         <div id="ft_company" class="ft_cnt">
         	<h2>사이트 정보</h2>
@@ -73,10 +72,6 @@ if(G5_COMMUNITY_USE === false) {
 </div>
 
 <?php
-if(G5_DEVICE_BUTTON_DISPLAY && !G5_IS_MOBILE) { ?>
-<?php
-}
-
 if ($config['cf_analytics']) {
     echo $config['cf_analytics'];
 }
