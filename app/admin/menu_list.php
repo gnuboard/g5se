@@ -73,8 +73,7 @@ admin_layout_start('메뉴 설정', 'menus');
                     <th class="px-3 py-2.5 text-left whitespace-nowrap min-w-[16rem]">링크</th>
                     <th class="px-3 py-2.5 text-center whitespace-nowrap">새창</th>
                     <th class="px-3 py-2.5 text-center whitespace-nowrap">순서</th>
-                    <th class="px-3 py-2.5 text-center whitespace-nowrap">PC</th>
-                    <th class="px-3 py-2.5 text-center whitespace-nowrap">모바일</th>
+                    <th class="px-3 py-2.5 text-center whitespace-nowrap">사용</th>
                     <th class="px-3 py-2.5 text-right whitespace-nowrap">관리</th>
                 </tr>
             </thead>
@@ -85,7 +84,7 @@ admin_layout_start('메뉴 설정', 'menus');
             while ($row = sql_fetch_array($result)) {
                 $is_sub = strlen($row['me_code']) === 4;
                 $code2  = substr($row['me_code'], 0, 2);
-                $rows_data[] = ['code'=>$code2, 'is_sub'=>$is_sub, 'name'=>$row['me_name'], 'link'=>$row['me_link'], 'target'=>$row['me_target'], 'order'=>(int)$row['me_order'], 'use'=>(int)$row['me_use'], 'mobile_use'=>(int)$row['me_mobile_use']];
+                $rows_data[] = ['code'=>$code2, 'is_sub'=>$is_sub, 'name'=>$row['me_name'], 'link'=>$row['me_link'], 'target'=>$row['me_target'], 'order'=>(int)$row['me_order'], 'use'=>(int)$row['me_use']];
             }
 
             $input_cls  = 'w-full h-9 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm';
@@ -122,12 +121,6 @@ admin_layout_start('메뉴 설정', 'menus');
                             <option value="0" <?php echo $r['use']==0?'selected':'' ?>>안함</option>
                         </select>
                     </td>
-                    <td class="px-3 py-2 text-center">
-                        <select name="me_mobile_use[]" class="<?php echo $select_cls ?>">
-                            <option value="1" <?php echo $r['mobile_use']==1?'selected':'' ?>>사용</option>
-                            <option value="0" <?php echo $r['mobile_use']==0?'selected':'' ?>>안함</option>
-                        </select>
-                    </td>
                     <td class="px-3 py-2 text-right whitespace-nowrap">
                         <?php if (!$r['is_sub']): ?>
                         <button type="button" class="btn-add-sub inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">+ 서브</button>
@@ -139,7 +132,7 @@ admin_layout_start('메뉴 설정', 'menus');
                 $i++;
             endforeach;
             if ($i === 0): ?>
-                <tr id="empty-row"><td colspan="7" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">메뉴가 없습니다 — 우측 상단 "메뉴 추가" 로 시작하세요</td></tr>
+                <tr id="empty-row"><td colspan="6" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">메뉴가 없습니다 — 우측 상단 "메뉴 추가" 로 시작하세요</td></tr>
             <?php endif; ?>
             </tbody>
         </table>
@@ -247,7 +240,6 @@ admin_layout_start('메뉴 설정', 'menus');
             '<td class="px-3 py-2 text-center"><select name="me_target[]" class="'+selectCls+'"><option value="self">현재창</option><option value="blank">새창</option></select></td>'+
             '<td class="px-3 py-2 text-center"><input type="text" name="me_order[]" value="0" class="'+numCls+'"></td>'+
             '<td class="px-3 py-2 text-center"><select name="me_use[]" class="'+selectCls+'"><option value="1">사용</option><option value="0">안함</option></select></td>'+
-            '<td class="px-3 py-2 text-center"><select name="me_mobile_use[]" class="'+selectCls+'"><option value="1">사용</option><option value="0">안함</option></select></td>'+
             '<td class="px-3 py-2 text-right whitespace-nowrap">'+
               (isSub ? '' : '<button type="button" class="btn-add-sub inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">+ 서브</button> ')+
               '<button type="button" class="btn-del-row inline-flex items-center h-8 px-2.5 rounded-md border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-900/30">삭제</button>'+

@@ -164,15 +164,8 @@ if ($new == 'new' || !$code) {
         list += "<input type=\"text\" name=\"me_order[]\" value=\"0\" id=\"me_order_" + ms + "\" required class=\"required frm_input\" size=\"5\">";
         list += "</td>";
         list += "<td class=\"td_mngsmall\">";
-        list += "<label for=\"me_use_" + ms + "\"  class=\"sound_only\">PC사용</label>";
+        list += "<label for=\"me_use_" + ms + "\"  class=\"sound_only\">사용</label>";
         list += "<select name=\"me_use[]\" id=\"me_use_" + ms + "\">";
-        list += "<option value=\"1\">사용함</option>";
-        list += "<option value=\"0\">사용안함</option>";
-        list += "</select>";
-        list += "</td>";
-        list += "<td class=\"td_mngsmall\">";
-        list += "<label for=\"me_mobile_use_" + ms + "\"  class=\"sound_only\">모바일사용</label>";
-        list += "<select name=\"me_mobile_use[]\" id=\"me_mobile_use_" + ms + "\">";
         list += "<option value=\"1\">사용함</option>";
         list += "<option value=\"0\">사용안함</option>";
         list += "</select>";
