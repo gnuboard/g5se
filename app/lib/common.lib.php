@@ -2944,9 +2944,9 @@ function check_device($device)
 
     if ($is_admin) return;
 
-    if ($device=='pc' && G5_IS_MOBILE) {
-        alert('PC 전용 게시판입니다.', G5_URL);
-    } else if ($device=='mobile' && !G5_IS_MOBILE) {
+    // g5se: 반응형 단일 UI(G5_IS_MOBILE 항상 false) — 'pc' 전용 분기는 죽은 코드.
+    // 'mobile' 전용 게시판은 (모바일 화면이 없으므로) 기존과 동일하게 차단한다.
+    if ($device=='mobile') {
         alert('모바일 전용 게시판입니다.', G5_URL);
     }
 }
@@ -4270,9 +4270,10 @@ function get_params_merge_url($params, $url=''){
 
 function get_device_change_url()
 {
+    // g5se: 반응형 단일 UI(G5_IS_MOBILE 항상 false) — 항상 mobile 로의 전환 URL.
+    // (테마 tail.php 의 "모바일버전" 링크가 아직 이 함수를 호출한다)
     $q = array();
-    $device = (G5_IS_MOBILE ? 'pc' : 'mobile');
-    $q['device'] = $device;
+    $q['device'] = 'mobile';
 
     return get_params_merge_url($q);
 }

@@ -930,106 +930,32 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/theme.config.php'))
 if (defined('G5_USE_SHOP') && G5_USE_SHOP)
     include_once(G5_PATH.'/shop.config.php');
 
-//=====================================================================================
+//==============================================================================
 // 사용기기 설정
-// 테마의 G5_THEME_DEVICE 설정에 따라 사용자 화면 제한됨
-// 테마에 별도 설정이 없는 경우 config.php G5_SET_DEVICE 설정에 따라 사용자 화면 제한됨
-// pc 설정 시 모바일 기기에서도 PC화면 보여짐
-// mobile 설정 시 PC에서도 모바일화면 보여짐
-// both 설정 시 접속 기기에 따른 화면 보여짐
-//-------------------------------------------------------------------------------------
-$is_mobile = false;
-$set_device = true;
-
-if(defined('G5_THEME_DEVICE') && G5_THEME_DEVICE != '') {
-    switch(G5_THEME_DEVICE) {
-        case 'pc':
-            $is_mobile  = false;
-            $set_device = false;
-            break;
-        case 'mobile':
-            $is_mobile  = true;
-            $set_device = false;
-            break;
-        default:
-            break;
-    }
-}
-
-if(defined('G5_SET_DEVICE') && $set_device) {
-    switch(G5_SET_DEVICE) {
-        case 'pc':
-            $is_mobile  = false;
-            $set_device = false;
-            break;
-        case 'mobile':
-            $is_mobile  = true;
-            $set_device = false;
-            break;
-        default:
-            break;
-    }
-}
-//==============================================================================
-
-//==============================================================================
-// Mobile 모바일 설정
-// 쿠키에 저장된 값이 모바일이라면 브라우저 상관없이 모바일로 실행
-// 그렇지 않다면 브라우저의 HTTP_USER_AGENT 에 따라 모바일 결정
-// G5_MOBILE_AGENT : config.php 에서 선언
+// g5se: 반응형 단일 UI — 레거시 모바일 모드는 사용하지 않는다.
+// (실제 기기 감지가 필요한 결제 코드는 is_mobile() 을 직접 사용)
 //------------------------------------------------------------------------------
-if (G5_USE_MOBILE && $set_device) {
-    if (isset($_REQUEST['device']) && $_REQUEST['device']=='pc')
-        $is_mobile = false;
-    else if (isset($_REQUEST['device']) && $_REQUEST['device']=='mobile')
-        $is_mobile = true;
-    else if (isset($_SESSION['ss_is_mobile']))
-        $is_mobile = $_SESSION['ss_is_mobile'];
-    else if (is_mobile())
-        $is_mobile = true;
-} else {
-    $set_device = false;
-}
-
-$_SESSION['ss_is_mobile'] = $is_mobile;
-define('G5_IS_MOBILE', $is_mobile);
-define('G5_DEVICE_BUTTON_DISPLAY', $set_device);
-if (G5_IS_MOBILE) {
-    $g5['mobile_path'] = G5_PATH.'/'.G5_MOBILE_DIR;
-}
+define('G5_IS_MOBILE', false);
+define('G5_DEVICE_BUTTON_DISPLAY', false);
 //==============================================================================
 
 
 //==============================================================================
 // 스킨경로
 //------------------------------------------------------------------------------
-if (G5_IS_MOBILE) {
-    $board_skin_path    = get_skin_path('board', $board['bo_mobile_skin']);
-    $board_skin_url     = get_skin_url('board', $board['bo_mobile_skin']);
-    $member_skin_path   = get_skin_path('member', $config['cf_mobile_member_skin']);
-    $member_skin_url    = get_skin_url('member', $config['cf_mobile_member_skin']);
-    $new_skin_path      = get_skin_path('new', $config['cf_mobile_new_skin']);
-    $new_skin_url       = get_skin_url('new', $config['cf_mobile_new_skin']);
-    $search_skin_path   = get_skin_path('search', $config['cf_mobile_search_skin']);
-    $search_skin_url    = get_skin_url('search', $config['cf_mobile_search_skin']);
-    $connect_skin_path  = get_skin_path('connect', $config['cf_mobile_connect_skin']);
-    $connect_skin_url   = get_skin_url('connect', $config['cf_mobile_connect_skin']);
-    $faq_skin_path      = get_skin_path('faq', $config['cf_mobile_faq_skin']);
-    $faq_skin_url       = get_skin_url('faq', $config['cf_mobile_faq_skin']);
-} else {
-    $board_skin_path    = get_skin_path('board', $board['bo_skin']);
-    $board_skin_url     = get_skin_url('board', $board['bo_skin']);
-    $member_skin_path   = get_skin_path('member', $config['cf_member_skin']);
-    $member_skin_url    = get_skin_url('member', $config['cf_member_skin']);
-    $new_skin_path      = get_skin_path('new', $config['cf_new_skin']);
-    $new_skin_url       = get_skin_url('new', $config['cf_new_skin']);
-    $search_skin_path   = get_skin_path('search', $config['cf_search_skin']);
-    $search_skin_url    = get_skin_url('search', $config['cf_search_skin']);
-    $connect_skin_path  = get_skin_path('connect', $config['cf_connect_skin']);
-    $connect_skin_url   = get_skin_url('connect', $config['cf_connect_skin']);
-    $faq_skin_path      = get_skin_path('faq', $config['cf_faq_skin']);
-    $faq_skin_url       = get_skin_url('faq', $config['cf_faq_skin']);
-}
+// g5se: 반응형 단일 UI — PC 스킨 경로만 사용 (G5_IS_MOBILE 항상 false)
+$board_skin_path    = get_skin_path('board', $board['bo_skin']);
+$board_skin_url     = get_skin_url('board', $board['bo_skin']);
+$member_skin_path   = get_skin_path('member', $config['cf_member_skin']);
+$member_skin_url    = get_skin_url('member', $config['cf_member_skin']);
+$new_skin_path      = get_skin_path('new', $config['cf_new_skin']);
+$new_skin_url       = get_skin_url('new', $config['cf_new_skin']);
+$search_skin_path   = get_skin_path('search', $config['cf_search_skin']);
+$search_skin_url    = get_skin_url('search', $config['cf_search_skin']);
+$connect_skin_path  = get_skin_path('connect', $config['cf_connect_skin']);
+$connect_skin_url   = get_skin_url('connect', $config['cf_connect_skin']);
+$faq_skin_path      = get_skin_path('faq', $config['cf_faq_skin']);
+$faq_skin_url       = get_skin_url('faq', $config['cf_faq_skin']);
 //==============================================================================
 
 
