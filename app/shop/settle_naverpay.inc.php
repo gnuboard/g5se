@@ -20,7 +20,6 @@ define('G5_SHOP_USE_NAVERPAY', 1);
 $naverpay_button_js = '';
 
 $is_mobile_order = is_mobile();
-//$is_mobile_order = G5_IS_MOBILE;
 $naverpay_button_enable = 'Y';
 
 $naverpay_button_count = 2;

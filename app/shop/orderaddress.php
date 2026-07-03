@@ -29,7 +29,7 @@ $_addr_empty = !sql_num_rows($result);
 
 $order_action_url = G5_HTTPS_SHOP_URL.'/orderaddressupdate.php';
 
-// g5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 markup + 미디어쿼리만 사용.
+// g5se: 반응형 단일 마크업 정책 — 데스크탑 markup + 미디어쿼리만 사용.
 
 // 테마에 orderaddress.php 있으면 include
 if(defined('G5_THEME_SHOP_PATH')) {

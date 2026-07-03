@@ -1,5 +1,5 @@
 <?php
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
-// g5se: 반응형 단일 마크업 정책 — G5_IS_MOBILE 분기 제거. 데스크탑 chrome 만 사용.
+// g5se: 반응형 단일 마크업 정책 — 데스크탑 chrome 만 사용.
 include_once(G5_SHOP_PATH.'/shop.tail.php');

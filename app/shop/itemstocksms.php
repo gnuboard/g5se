@@ -17,11 +17,6 @@ if(!$it['it_soldout'] || !$it['it_stock_sms'])
 
 // add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
 add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 0);
-
-if (G5_IS_MOBILE) {
-    add_stylesheet('<link rel="stylesheet" href="'.G5_MSHOP_SKIN_URL.'/style.css">', 0);
-
-}
 ?>
 
 <div id="sit_sms_new" class="new_win">

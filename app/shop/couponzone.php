@@ -12,16 +12,11 @@ add_javascript('<script src="'.G5_JS_URL.'/shop.couponzone.js"></script>', 100);
 $g5['title'] = '쿠폰존';
 include_once(G5_SHOP_PATH.'/_head.php');
 
-if (!G5_IS_MOBILE && $is_admin)
+if ($is_admin)
     echo '<div class="sct_admin"><a href="'.G5_ADMIN_URL.'/shop_admin/couponzonelist.php" class="btn_admin btn"><span class="sound_only">쿠폰존 관리</span><i class="fa fa-cog fa-spin fa-fw"></i></a></div>';
 
-if(G5_IS_MOBILE) {
-    define('G5_SHOP_CSS_URL', G5_MSHOP_SKIN_URL);
-    $skin_file = G5_MSHOP_SKIN_PATH.'/couponzone.10.skin.php';
-} else {
-    define('G5_SHOP_CSS_URL', G5_SHOP_SKIN_URL);
-    $skin_file = G5_SHOP_SKIN_PATH.'/couponzone.10.skin.php';
-}
+define('G5_SHOP_CSS_URL', G5_SHOP_SKIN_URL);
+$skin_file = G5_SHOP_SKIN_PATH.'/couponzone.10.skin.php';
 
 if (is_file($skin_file)) {
     include_once($skin_file);

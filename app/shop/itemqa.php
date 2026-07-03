@@ -7,13 +7,8 @@ if( !isset($it) && !get_session("ss_tv_idx") ){
     if( !headers_sent() ){  //헤더를 보내기 전이면 검색엔진에서 제외합니다.
         echo '<meta name="robots" content="noindex, nofollow">';
     }
-    /*
-    if( !G5_IS_MOBILE ){    //PC 에서는 검색엔진 화면에 노출하지 않도록 수정
-        return;
-    }
-    */
 }
-
+
 
 include_once(G5_LIB_PATH.'/thumbnail.lib.php');
 
