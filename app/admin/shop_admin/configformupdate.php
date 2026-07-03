@@ -20,19 +20,14 @@ if (!$_POST['de_admin_company_owner']) goto_url("./configform.php");
 
 if (! empty($_POST['logo_img_del']))  @unlink(G5_DATA_PATH."/common/logo_img");
 if (! empty($_POST['logo_img_del2']))  @unlink(G5_DATA_PATH."/common/logo_img2");
-if (! empty($_POST['mobile_logo_img_del']))  @unlink(G5_DATA_PATH."/common/mobile_logo_img");
-if (! empty($_POST['mobile_logo_img_del2']))  @unlink(G5_DATA_PATH."/common/mobile_logo_img2");
 
 if ($_FILES['logo_img']['name']) upload_file($_FILES['logo_img']['tmp_name'], "logo_img", G5_DATA_PATH."/common");
 if ($_FILES['logo_img2']['name']) upload_file($_FILES['logo_img2']['tmp_name'], "logo_img2", G5_DATA_PATH."/common");
-if ($_FILES['mobile_logo_img']['name']) upload_file($_FILES['mobile_logo_img']['tmp_name'], "mobile_logo_img", G5_DATA_PATH."/common");
-if ($_FILES['mobile_logo_img2']['name']) upload_file($_FILES['mobile_logo_img2']['tmp_name'], "mobile_logo_img2", G5_DATA_PATH."/common");
 
 $de_kcp_mid = isset($_POST['de_kcp_mid']) ? substr($_POST['de_kcp_mid'], 0, 3) : '';
 $cf_icode_server_port = isset($cf_icode_server_port) ? preg_replace('/[^0-9]/', '', $cf_icode_server_port) : '7295';
 
 $de_shop_skin = isset($_POST['de_shop_skin']) ? preg_replace(array('#\.+(\/|\\\)#', '#[\'\"]#'), array('', ''), $_POST['de_shop_skin']) : 'basic';
-$de_shop_mobile_skin = isset($_POST['de_shop_mobile_skin']) ? preg_replace(array('#\.+(\/|\\\)#', '#[\'\"]#'), array('', ''), $_POST['de_shop_mobile_skin']) : 'basic';
 
 $skins = get_skin_dir('shop');
 
@@ -45,24 +40,9 @@ if(defined('G5_THEME_PATH') && $config['cf_theme']) {
     }
 }
 
-$mobile_skins = get_skin_dir('shop', G5_MOBILE_PATH.'/'.G5_SKIN_DIR);
-
-if(defined('G5_THEME_PATH') && $config['cf_theme']) {
-    $dirs = get_skin_dir('shop', G5_THEME_MOBILE_PATH.'/'.G5_SKIN_DIR);
-    if(!empty($dirs)) {
-        foreach($dirs as $dir) {
-            $mobile_skins[] = 'theme/'.$dir;
-        }
-    }
-}
-
 $de_shop_skin = in_array($de_shop_skin, $skins) ? $de_shop_skin : 'basic';
-// 삭제된 테마 모바일 스킨 디렉터리(G5_THEME_MOBILE_PATH) 때문에 theme/* 값이 목록에서 빠져
-// 강제 치환되는 것을 방지 — 대조 대상 디렉터리가 없으면 posted/stored 값 유지
-$mobile_theme_dir_missing = defined('G5_THEME_MOBILE_PATH') && !is_dir(G5_THEME_MOBILE_PATH);
-$de_shop_mobile_skin = (in_array($de_shop_mobile_skin, $mobile_skins) || ($mobile_theme_dir_missing && strncmp($de_shop_mobile_skin, 'theme/', 6) === 0)) ? $de_shop_mobile_skin : 'basic';
 
-$check_skin_keys = array('de_type1_list_skin', 'de_type2_list_skin', 'de_type3_list_skin', 'de_type4_list_skin', 'de_type5_list_skin', 'de_mobile_type1_list_skin', 'de_mobile_type2_list_skin', 'de_mobile_type3_list_skin', 'de_mobile_type4_list_skin', 'de_mobile_type5_list_skin', 'de_rel_list_skin', 'de_mobile_rel_list_skin', 'de_search_list_skin', 'de_mobile_search_list_skin', 'de_listtype_list_skin', 'de_mobile_listtype_list_skin');
+$check_skin_keys = array('de_type1_list_skin', 'de_type2_list_skin', 'de_type3_list_skin', 'de_type4_list_skin', 'de_type5_list_skin', 'de_rel_list_skin', 'de_search_list_skin', 'de_listtype_list_skin');
 
 foreach($check_skin_keys as $key){
     $$key = $_POST[$key] = isset($_POST[$key]) ? preg_replace(array('#\.+(\/|\\\)#', '#[\'\"]#'), array('', ''), strip_tags($_POST[$key])) : '';
@@ -127,26 +107,6 @@ $check_sanitize_keys = array(
 'de_type5_list_row',            //할인상품출력 줄수
 'de_type5_img_width',           //할인상품출력 이미지 폭
 'de_type5_img_height',          //할인상품출력 이미지 높이
-'de_mobile_type1_list_mod',     //모바일 히트상품출력 이미지수
-'de_mobile_type1_list_row',     //모바일 히트상품출력 줄수
-'de_mobile_type1_img_width',    //모바일 히트상품출력 이미지 폭
-'de_mobile_type1_img_height',   //모바일 히트상품출력 이미지 높이
-'de_mobile_type2_list_mod',     //모바일 추천상품출력 이미지수
-'de_mobile_type2_list_row',     //모바일 추천상품출력 줄수
-'de_mobile_type2_img_width',    //모바일 추천상품출력 이미지 폭
-'de_mobile_type2_img_height',   //모바일 추천상품출력 이미지 높이
-'de_mobile_type3_list_mod',     //모바일 최신상품출력 이미지수
-'de_mobile_type3_list_row',     //모바일 최신상품출력 줄수
-'de_mobile_type3_img_width',    //모바일 최신상품출력 이미지 폭
-'de_mobile_type3_img_height',   //모바일 최신상품출력 이미지 높이
-'de_mobile_type4_list_mod',     //모바일 인기상품출력 이미지수
-'de_mobile_type4_list_row',     //모바일 인기상품출력 줄수
-'de_mobile_type4_img_width',    //모바일 인기상품출력 이미지 폭
-'de_mobile_type4_img_height',   //모바일 인기상품출력 이미지 높이
-'de_mobile_type5_list_mod',     //모바일 할인상품출력 이미지수
-'de_mobile_type5_list_row',     //모바일 할인상품출력 줄수
-'de_mobile_type5_img_width',    //모바일 할인상품출력 이미지 폭
-'de_mobile_type5_img_height',   //모바일 할인상품출력 이미지 높이
 'de_bank_use',                  //무통장입금사용
 'de_bank_account',              //은행계좌번호
 'de_iche_use',                  //계좌이체 결제사용
@@ -203,25 +163,13 @@ $check_sanitize_keys = array(
 'de_rel_img_height',            //관련상품출력 이미지높이
 'de_rel_list_mod',              //관련상품출력 1줄당 이미지 수
 'de_rel_list_use',              //관련상품출력 출력여부
-'de_mobile_rel_img_width',      //모바일 관련상품출력 이미지폭
-'de_mobile_rel_img_height',     //모바일 관련상품출력 이미지높이
-'de_mobile_rel_list_mod',       //모바일 관련상품출력 1줄당 이미지 수
-'de_mobile_rel_list_use',       //모바일 관련상품출력 출력여부
 'de_search_img_width',          //검색상품출력 이미지폭
 'de_search_img_height',         //검색상품출력 이미지높이
 'de_search_list_mod',           //검색상품출력 1줄당 이미지 수
 'de_search_list_row',           //검색상품출력 출력할 줄 수
-'de_mobile_search_img_width',   //모바일 검색상품출력 이미지폭
-'de_mobile_search_img_height',  //모바일 검색상품출력 이미지높이
-'de_mobile_search_list_mod',    //모바일 검색상품출력 1줄당 이미지 수
-'de_mobile_search_list_row',    //모바일 검색상품출력 출력할 줄 수
 'de_listtype_img_width',        //유형별 상품리스트 이미지폭
 'de_listtype_list_mod',         //유형별 상품리스트 1줄당 이미지 수
 'de_listtype_list_row',         //유형별 상품리스트 출력할 줄 수
-'de_mobile_listtype_img_width', //모바일 유형별 상품리스트 이미지폭
-'de_mobile_listtype_img_height',//모바일 유형별 상품리스트 이미지높이
-'de_mobile_listtype_list_mod',  //모바일 유형별 상품리스트 1줄당 이미지 수
-'de_mobile_listtype_list_row',  //모바일 유형별 상품리스트 출력할 줄 수
 'de_simg_width',                //이미지(소) 폭
 'de_simg_height',               //이미지(소) 높이
 'de_mimg_width',                //이미지(중) 폭
@@ -294,7 +242,6 @@ $sql = " update {$g5['g5_shop_default_table']}
                 de_admin_info_name            = '{$de_admin_info_name}',
                 de_admin_info_email           = '{$de_admin_info_email}',
                 de_shop_skin                  = '{$de_shop_skin}',
-                de_shop_mobile_skin           = '{$de_shop_mobile_skin}',
                 de_type1_list_use             = '{$_POST['de_type1_list_use']}',
                 de_type1_list_skin            = '{$_POST['de_type1_list_skin']}',
                 de_type1_list_mod             = '{$de_type1_list_mod}',
@@ -325,66 +272,21 @@ $sql = " update {$g5['g5_shop_default_table']}
                 de_type5_list_row             = '{$de_type5_list_row}',
                 de_type5_img_width            = '{$de_type5_img_width}',
                 de_type5_img_height           = '{$de_type5_img_height}',
-                de_mobile_type1_list_use      = '{$de_mobile_type1_list_use}',
-                de_mobile_type1_list_skin     = '{$de_mobile_type1_list_skin}',
-                de_mobile_type1_list_mod      = '{$de_mobile_type1_list_mod}',
-                de_mobile_type1_list_row      = '{$de_mobile_type1_list_row}',
-                de_mobile_type1_img_width     = '{$de_mobile_type1_img_width}',
-                de_mobile_type1_img_height    = '{$de_mobile_type1_img_height}',
-                de_mobile_type2_list_use      = '{$de_mobile_type2_list_use}',
-                de_mobile_type2_list_skin     = '{$de_mobile_type2_list_skin}',
-                de_mobile_type2_list_mod      = '{$de_mobile_type2_list_mod}',
-                de_mobile_type2_list_row      = '{$de_mobile_type2_list_row}',
-                de_mobile_type2_img_width     = '{$de_mobile_type2_img_width}',
-                de_mobile_type2_img_height    = '{$de_mobile_type2_img_height}',
-                de_mobile_type3_list_use      = '{$de_mobile_type3_list_use}',
-                de_mobile_type3_list_skin     = '{$de_mobile_type3_list_skin}',
-                de_mobile_type3_list_mod      = '{$de_mobile_type3_list_mod}',
-                de_mobile_type3_list_row      = '{$de_mobile_type3_list_row}',
-                de_mobile_type3_img_width     = '{$de_mobile_type3_img_width}',
-                de_mobile_type3_img_height    = '{$de_mobile_type3_img_height}',
-                de_mobile_type4_list_use      = '{$de_mobile_type4_list_use}',
-                de_mobile_type4_list_skin     = '{$de_mobile_type4_list_skin}',
-                de_mobile_type4_list_mod      = '{$de_mobile_type4_list_mod}',
-                de_mobile_type4_list_row      = '{$de_mobile_type4_list_row}',
-                de_mobile_type4_img_width     = '{$de_mobile_type4_img_width}',
-                de_mobile_type4_img_height    = '{$de_mobile_type4_img_height}',
-                de_mobile_type5_list_use      = '{$de_mobile_type5_list_use}',
-                de_mobile_type5_list_skin     = '{$de_mobile_type5_list_skin}',
-                de_mobile_type5_list_mod      = '{$de_mobile_type5_list_mod}',
-                de_mobile_type5_list_row      = '{$de_mobile_type5_list_row}',
-                de_mobile_type5_img_width     = '{$de_mobile_type5_img_width}',
-                de_mobile_type5_img_height    = '{$de_mobile_type5_img_height}',
                 de_rel_list_use               = '{$de_rel_list_use}',
                 de_rel_list_skin              = '{$_POST['de_rel_list_skin']}',
                 de_rel_list_mod               = '{$de_rel_list_mod}',
                 de_rel_img_width              = '{$de_rel_img_width}',
                 de_rel_img_height             = '{$de_rel_img_height}',
-                de_mobile_rel_list_use        = '{$de_mobile_rel_list_use}',
-                de_mobile_rel_list_skin       = '{$_POST['de_mobile_rel_list_skin']}',
-                de_mobile_rel_list_mod        = '{$de_mobile_rel_list_mod}',
-                de_mobile_rel_img_width       = '{$de_mobile_rel_img_width}',
-                de_mobile_rel_img_height      = '{$de_mobile_rel_img_height}',
                 de_search_list_skin           = '{$_POST['de_search_list_skin']}',
                 de_search_list_mod            = '{$de_search_list_mod}',
                 de_search_list_row            = '{$de_search_list_row}',
                 de_search_img_width           = '{$de_search_img_width}',
                 de_search_img_height          = '{$de_search_img_height}',
-                de_mobile_search_list_skin    = '{$_POST['de_mobile_search_list_skin']}',
-                de_mobile_search_list_mod     = '{$de_mobile_search_list_mod}',
-                de_mobile_search_list_row     = '{$de_mobile_search_list_row}',
-                de_mobile_search_img_width    = '{$de_mobile_search_img_width}',
-                de_mobile_search_img_height   = '{$de_mobile_search_img_height}',
                 de_listtype_list_skin         = '{$_POST['de_listtype_list_skin']}',
                 de_listtype_list_mod          = '{$de_listtype_list_mod}',
                 de_listtype_list_row          = '{$de_listtype_list_row}',
                 de_listtype_img_width         = '{$de_listtype_img_width}',
                 de_listtype_img_height        = '{$_POST['de_listtype_img_height']}',
-                de_mobile_listtype_list_skin  = '{$_POST['de_mobile_listtype_list_skin']}',
-                de_mobile_listtype_list_mod   = '{$de_mobile_listtype_list_mod}',
-                de_mobile_listtype_list_row   = '{$de_mobile_listtype_list_row}',
-                de_mobile_listtype_img_width  = '{$de_mobile_listtype_img_width}',
-                de_mobile_listtype_img_height = '{$de_mobile_listtype_img_height}',
                 de_bank_use                   = '{$de_bank_use}',
                 de_bank_account               = '{$de_bank_account}',
                 de_card_test                  = '{$de_card_test}',

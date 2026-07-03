@@ -11,7 +11,6 @@ auth_check_menu($auth, $sub_menu, "w");
 $ca_id = isset($_GET['ca_id']) ? preg_replace('/[^0-9a-z]/i', '', $_GET['ca_id']) : '';
 $ca = array(
 'ca_skin_dir'=>'',
-'ca_mobile_skin_dir'=>'',
 'ca_name'=>'',
 'ca_order'=>'',
 'ca_mb_id'=>'',
@@ -79,16 +78,11 @@ if ($w == "")
         $ca['ca_explan_html'] = 1;
         $ca['ca_img_width']  = $default['de_simg_width'];
         $ca['ca_img_height'] = $default['de_simg_height'];
-        $ca['ca_mobile_img_width']  = $default['de_simg_width'];
-        $ca['ca_mobile_img_height'] = $default['de_simg_height'];
         $ca['ca_list_mod'] = 3;
         $ca['ca_list_row'] = 5;
-        $ca['ca_mobile_list_mod'] = 3;
-        $ca['ca_mobile_list_row'] = 5;
         $ca['ca_stock_qty'] = 99999;
     }
     $ca['ca_skin'] = "list.10.skin.php";
-    $ca['ca_mobile_skin'] = "list.10.skin.php";
 }
 else if ($w == "u")
 {
@@ -152,15 +146,6 @@ else {
         $g5_shop_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/shop/'.$match[1];
     else
         $g5_shop_skin_path  = G5_PATH.'/'.G5_SKIN_DIR.'/shop/'.$ca['ca_skin_dir'];
-}
-
-if(!$ca['ca_mobile_skin_dir'])
-    $g5_mshop_skin_path = G5_MSHOP_SKIN_PATH;
-else {
-    if(preg_match('#^theme/(.+)$#', $ca['ca_mobile_skin_dir'], $match))
-        $g5_mshop_skin_path = G5_THEME_MOBILE_PATH.'/'.G5_SKIN_DIR.'/shop/'.$match[1];
-    else
-        $g5_mshop_skin_path = G5_MOBILE_PATH.'/'.G5_SKIN_DIR.'/shop/'.$ca['ca_mobile_skin_dir'];
 }
 ?>
 
@@ -231,12 +216,6 @@ else {
             </td>
         </tr>
         <tr>
-            <th scope="row"><label for="ca_mobile_skin_dir">모바일용 스킨명</label></th>
-            <td>
-                <?php echo get_mobile_skin_select('shop', 'ca_mobile_skin_dir', 'ca_mobile_skin_dir', $ca['ca_mobile_skin_dir']); ?>
-            </td>
-        </tr>
-        <tr>
             <th scope="row">본인확인 체크</th>
             <td>
                 <input type="radio" name="ca_cert_use" value="1" id="ca_cert_use_yes" <?php if($ca['ca_cert_use']) echo 'checked="checked"'; ?>>
@@ -289,43 +268,6 @@ else {
             <td>
                 <?php echo help("한 페이지에 출력할 이미지 줄 수를 설정합니다.\n한 페이지에서 표시하는 상품수는 (1줄당 이미지 수 x 줄 수) 입니다."); ?>
                 <input type="text" name="ca_list_row" value='<?php echo $ca['ca_list_row']; ?>' id="ca_list_row" required class="required frm_input" size="3"> 줄
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="ca_mobile_skin">모바일 출력스킨</label></th>
-            <td>
-                <?php echo help('기본으로 제공하는 스킨은 '.str_replace(G5_PATH.'/', '', $g5_mshop_skin_path).'/list.*.skin.php 입니다.'); ?>
-                <select id="ca_mobile_skin" name="ca_mobile_skin" required class="required">
-                    <?php echo get_list_skin_options("^list.[0-9]+\.skin\.php", $g5_mshop_skin_path, $ca['ca_mobile_skin']); ?>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="ca_mobile_img_width">모바일 출력이미지 폭</label></th>
-            <td>
-                <?php echo help("쇼핑몰환경설정 &gt; 이미지(소) 넓이가 기본값으로 설정됩니다.\n".G5_SHOP_URL."/list.php에서 출력되는 이미지의 폭입니다."); ?>
-                <input type="text" name="ca_mobile_img_width" value="<?php echo $ca['ca_mobile_img_width']; ?>" id="ca_mobile_img_width" required class="required frm_input" size="5" > 픽셀
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="ca_mobile_img_height">모바일 출력이미지 높이</label></th>
-            <td>
-                <?php echo help("쇼핑몰환경설정 &gt; 이미지(소) 높이가 기본값으로 설정됩니다.\n".G5_SHOP_URL."/list.php에서 출력되는 이미지의 높이입니다."); ?>
-                <input type="text" name="ca_mobile_img_height"  value="<?php echo $ca['ca_mobile_img_height']; ?>" id="ca_mobile_img_height" required class="required frm_input" size="5" > 픽셀
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="ca_mobile_list_mod">모바일 1줄당 이미지 수</label></th>
-            <td>
-                <?php echo help("한 줄에 설정한 값만큼의 상품을 출력하지만 스킨에 따라 한 줄에 하나의 상품만 출력할 수도 있습니다."); ?>
-                <input type="text" name="ca_mobile_list_mod" value='<?php echo $ca['ca_mobile_list_mod']; ?>' id="ca_mobile_list_mod" required class="required frm_input" size="3"> 개
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="ca_mobile_list_row">모바일 이미지 줄 수</label></th>
-            <td>
-                <?php echo help("한 페이지에 출력할 이미지 줄 수를 설정합니다.\n한 페이지에서 표시하는 상품수는 (1줄당 이미지 수 x 줄 수) 입니다."); ?>
-                <input type="text" name="ca_mobile_list_row" value='<?php echo $ca['ca_mobile_list_row']; ?>' id="ca_mobile_list_row" required class="required frm_input" size="3"> 줄
             </td>
         </tr>
         <tr>

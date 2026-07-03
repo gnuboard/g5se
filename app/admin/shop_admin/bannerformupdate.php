@@ -25,7 +25,6 @@ $bn_id = isset($_REQUEST['bn_id']) ? preg_replace('/[^0-9]/', '', $_REQUEST['bn_
 $bn_bimg_del = (isset($_POST['bn_bimg_del']) && $_POST['bn_bimg_del']) ? preg_replace('/[^0-9]/', '', $_POST['bn_id']) : 0;
 $bn_url = isset($_POST['bn_url']) ? strip_tags(clean_xss_attributes($bn_url)) : '';
 $bn_alt = isset($_POST['bn_alt']) ? strip_tags(clean_xss_attributes($bn_alt)) : '';
-$bn_device = isset($_POST['bn_device']) ? clean_xss_tags($_POST['bn_device'], 1, 1) : '';
 $bn_position = isset($_POST['bn_position']) ? clean_xss_tags($_POST['bn_position'], 1, 1) : '';
 $bn_border = isset($_POST['bn_border']) ? (int) $_POST['bn_border'] : 0;
 $bn_new_win = isset($_POST['bn_new_win']) ? (int) $_POST['bn_new_win'] : 0;
@@ -57,7 +56,7 @@ if ($w=="")
     $sql = " insert into {$g5['g5_shop_banner_table']}
                 set bn_alt        = '$bn_alt',
                     bn_url        = '$bn_url',
-                    bn_device     = '$bn_device',
+                    bn_device     = 'both', /* 반응형 단일 UI: 항상 출력 (프런트 필터가 bn_device 를 읽음) */
                     bn_position   = '$bn_position',
                     bn_border     = '$bn_border',
                     bn_new_win    = '$bn_new_win',
@@ -75,7 +74,6 @@ else if ($w=="u")
     $sql = " update {$g5['g5_shop_banner_table']}
                 set bn_alt        = '$bn_alt',
                     bn_url        = '$bn_url',
-                    bn_device     = '$bn_device',
                     bn_position   = '$bn_position',
                     bn_border     = '$bn_border',
                     bn_new_win    = '$bn_new_win',

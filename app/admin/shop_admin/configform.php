@@ -30,7 +30,6 @@ $pg_anchor = '<ul class="anchor">
 <li><a href="#anc_scf_info">사업자정보</a></li>
 <li><a href="#anc_scf_skin">스킨설정</a></li>
 <li><a href="#anc_scf_index">쇼핑몰 초기화면</a></li>
-<li><a href="#anc_mscf_index">모바일 초기화면</a></li>
 <li><a href="#anc_scf_payment">결제설정</a></li>
 <li><a href="#anc_scf_delivery">배송설정</a></li>
 <li><a href="#anc_scf_etc">기타설정</a></li>
@@ -351,12 +350,6 @@ if(!$default['de_kakaopay_cancelpwd']){
                 <?php echo get_skin_select('shop', 'de_shop_skin', 'de_shop_skin', $default['de_shop_skin'], 'required'); ?>
             </td>
         </tr>
-        <tr>
-            <th scope="row"><label for="de_shop_mobile_skin">모바일용 스킨</label></th>
-            <td>
-                <?php echo get_mobile_skin_select('shop', 'de_shop_mobile_skin', 'de_shop_mobile_skin', $default['de_shop_mobile_skin'], 'required'); ?>
-            </td>
-        </tr>
         </tbody>
         </table>
     </div>
@@ -483,125 +476,6 @@ if(!$default['de_kakaopay_cancelpwd']){
 </section>
 
 <button type="button" class="shop_pc_index">테마설정 가져오기</button>
-
-<section id="anc_mscf_index">
-    <h2 class="h2_frm">모바일 쇼핑몰 초기화면 설정</h2>
-    <?php echo $pg_anchor; ?>
-    <div class="local_desc02 local_desc">
-        <p>
-            상품관리에서 선택한 상품의 타입대로 쇼핑몰 초기화면에 출력합니다. (상품 타입 히트/추천/최신/인기/할인)<br>
-            각 타입별로 선택된 상품이 없으면 쇼핑몰 초기화면에 출력하지 않습니다.
-        </p>
-    </div>
-
-    <div class="tbl_frm01 tbl_wrap">
-        <table>
-        <caption>모바일 쇼핑몰 초기화면 설정</caption>
-        <colgroup>
-            <col class="grid_4">
-            <col>
-        </colgroup>
-        <tbody>
-        <tr>
-            <th scope="row">히트상품출력</th>
-            <td>
-                <label for="de_mobile_type1_list_use">출력</label>
-                <input type="checkbox" name="de_mobile_type1_list_use" value="1" id="de_mobile_type1_list_use" <?php echo $default['de_mobile_type1_list_use']?"checked":""; ?>>
-                <label for="de_mobile_type1_list_skin">스킨</label>
-                <select name="de_mobile_type1_list_skin" id="de_mobile_type1_list_skin">
-                    <?php echo get_list_skin_options("^main.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_type1_list_skin']); ?>
-                </select>
-                <label for="de_mobile_type1_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_type1_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_type1_list_mod']); ?>" id="de_mobile_type1_list_mod" class="frm_input" size="3">
-                 <label for="de_mobile_type1_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_type1_list_row" value="<?php echo get_sanitize_input($default['de_mobile_type1_list_row']); ?>" id="de_mobile_type1_list_row" class="frm_input" size="3">
-                <label for="de_mobile_type1_img_width">이미지 폭</label>
-                <input type="text" name="de_mobile_type1_img_width" value="<?php echo get_sanitize_input($default['de_mobile_type1_img_width']); ?>" id="de_mobile_type1_img_width" class="frm_input" size="3">
-                <label for="de_mobile_type1_img_height">이미지 높이</label>
-                <input type="text" name="de_mobile_type1_img_height" value="<?php echo get_sanitize_input($default['de_mobile_type1_img_height']); ?>" id="de_mobile_type1_img_height" class="frm_input" size="3">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">추천상품출력</th>
-            <td>
-                <label for="de_mobile_type2_list_use">출력</label> <input type="checkbox" name="de_mobile_type2_list_use" value="1" id="de_mobile_type2_list_use" <?php echo $default['de_mobile_type2_list_use']?"checked":""; ?>>
-                <label for="de_mobile_type2_list_skin">스킨 </label>
-                <select name="de_mobile_type2_list_skin" id="de_mobile_type2_list_skin">
-                    <?php echo get_list_skin_options("^main.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_type2_list_skin']); ?>
-                </select>
-                <label for="de_mobile_type2_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_type2_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_type2_list_mod']); ?>" id="de_mobile_type2_list_mod" class="frm_input" size="3">
-                 <label for="de_mobile_type2_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_type2_list_row" value="<?php echo get_sanitize_input($default['de_mobile_type2_list_row']); ?>" id="de_mobile_type2_list_row" class="frm_input" size="3">
-                <label for="de_mobile_type2_img_width">이미지 폭</label>
-                <input type="text" name="de_mobile_type2_img_width" value="<?php echo get_sanitize_input($default['de_mobile_type2_img_width']); ?>" id="de_mobile_type2_img_width" class="frm_input" size="3">
-                <label for="de_mobile_type2_img_height">이미지 높이</label>
-                <input type="text" name="de_mobile_type2_img_height" value="<?php echo get_sanitize_input($default['de_mobile_type2_img_height']); ?>" id="de_mobile_type2_img_height" class="frm_input" size="3">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">최신상품출력</th>
-            <td>
-                <label for="de_mobile_type3_list_use">출력</label>
-                <input type="checkbox" name="de_mobile_type3_list_use" value="1" id="de_mobile_type3_list_use" <?php echo $default['de_mobile_type3_list_use']?"checked":""; ?>>
-                <label for="de_mobile_type3_list_skin">스킨</label>
-                <select name="de_mobile_type3_list_skin" id="de_mobile_type3_list_skin">
-                    <?php echo get_list_skin_options("^main.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_type3_list_skin']); ?>
-                </select>
-                <label for="de_mobile_type3_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_type3_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_type3_list_mod']); ?>" id="de_mobile_type3_list_mod" class="frm_input" size="3">
-                 <label for="de_mobile_type3_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_type3_list_row" value="<?php echo get_sanitize_input($default['de_mobile_type3_list_row']); ?>" id="de_mobile_type3_list_row" class="frm_input" size="3">
-                <label for="de_mobile_type3_img_width">이미지 폭</label>
-                <input type="text" name="de_mobile_type3_img_width" value="<?php echo get_sanitize_input($default['de_mobile_type3_img_width']); ?>" id="de_mobile_type3_img_width" class="frm_input" size="3">
-                <label for="de_mobile_type3_img_height">이미지 높이</label>
-                <input type="text" name="de_mobile_type3_img_height" value="<?php echo get_sanitize_input($default['de_mobile_type3_img_height']); ?>" id="de_mobile_type3_img_height" class="frm_input" size="3">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">인기상품출력</th>
-            <td>
-                <label for="de_mobile_type4_list_use">출력</label>
-                <input type="checkbox" name="de_mobile_type4_list_use" value="1" id="de_mobile_type4_list_use" <?php echo $default['de_mobile_type4_list_use']?"checked":""; ?>>
-                <label for="de_mobile_type4_list_skin">스킨</label>
-                <select name="de_mobile_type4_list_skin" id="de_mobile_type4_list_skin">
-                    <?php echo get_list_skin_options("^main.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_type4_list_skin']); ?>
-                </select>
-                <label for="de_mobile_type4_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_type4_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_type4_list_mod']); ?>" id="de_mobile_type4_list_mod" class="frm_input" size="3">
-                 <label for="de_mobile_type4_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_type4_list_row" value="<?php echo get_sanitize_input($default['de_mobile_type4_list_row']); ?>" id="de_mobile_type4_list_row" class="frm_input" size="3">
-                <label for="de_mobile_type4_img_width">이미지 폭</label>
-                <input type="text" name="de_mobile_type4_img_width" value="<?php echo get_sanitize_input($default['de_mobile_type4_img_width']); ?>" id="de_mobile_type4_img_width" class="frm_input" size="3">
-                <label for="de_mobile_type4_img_height">이미지 높이</label>
-                <input type="text" name="de_mobile_type4_img_height" value="<?php echo get_sanitize_input($default['de_mobile_type4_img_height']); ?>" id="de_mobile_type4_img_height" class="frm_input" size="3">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">할인상품출력</th>
-            <td>
-                <label for="de_mobile_type5_list_use">출력</label>
-                <input type="checkbox" name="de_mobile_type5_list_use" value="1" id="de_mobile_type5_list_use" <?php echo $default['de_mobile_type5_list_use']?"checked":""; ?>>
-                <label for="de_mobile_type5_list_skin">스킨</label>
-                <select id="de_mobile_type5_list_skin" name="de_mobile_type5_list_skin">
-                    <?php echo get_list_skin_options("^main.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_type5_list_skin']); ?>
-                </select>
-                <label for="de_mobile_type5_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_type5_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_type5_list_mod']); ?>" id="de_mobile_type5_list_mod" class="frm_input" size="3">
-                 <label for="de_mobile_type5_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_type5_list_row" value="<?php echo get_sanitize_input($default['de_mobile_type5_list_row']); ?>" id="de_mobile_type5_list_row" class="frm_input" size="3">
-                <label for="de_mobile_type5_img_width">이미지 폭</label>
-                <input type="text" name="de_mobile_type5_img_width" value="<?php echo get_sanitize_input($default['de_mobile_type5_img_width']); ?>" id="de_mobile_type5_img_width" class="frm_input" size="3">
-                <label for="de_mobile_type5_img_height">이미지 높이</label>
-                <input type="text" name="de_mobile_type5_img_height" value="<?php echo get_sanitize_input($default['de_mobile_type5_img_height']); ?>" id="de_mobile_type5_img_height" class="frm_input" size="3">
-            </td>
-        </tr>
-        </tbody>
-        </table>
-    </div>
-</section>
-
-<button type="button" class="shop_mobile_index">테마설정 가져오기</button>
 
 <section id ="anc_scf_payment">
     <h2 class="h2_frm">결제설정</h2>
@@ -1277,24 +1151,6 @@ if(!$default['de_kakaopay_cancelpwd']){
             </td>
         </tr>
         <tr>
-            <th scope="row">모바일 관련상품출력</th>
-            <td>
-                <?php echo help("관련상품의 경우 등록된 상품은 모두 출력하므로 '출력할 줄 수'는 설정하지 않습니다. 이미지높이를 0으로 설정하면 상품이미지를 이미지폭에 비례하여 생성합니다."); ?>
-                <label for="de_mobile_rel_list_skin">스킨</label>
-                <select name="de_mobile_rel_list_skin" id="de_mobile_rel_list_skin">
-                    <?php echo get_list_skin_options("^relation.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_rel_list_skin']); ?>
-                </select>
-                <label for="de_mobile_rel_img_width">이미지폭</label>
-                <input type="text" name="de_mobile_rel_img_width" value="<?php echo get_sanitize_input($default['de_mobile_rel_img_width']); ?>" id="de_mobile_rel_img_width" class="frm_input" size="3">
-                <label for="de_mobile_rel_img_height">이미지높이</label>
-                <input type="text" name="de_mobile_rel_img_height" value="<?php echo get_sanitize_input($default['de_mobile_rel_img_height']); ?>" id="de_mobile_rel_img_height" class="frm_input" size="3">
-                <label for="de_mobile_rel_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_rel_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_rel_list_mod']); ?>" id="de_mobile_rel_list_mod" class="frm_input" size="3">
-                <label for="de_mobile_rel_list_use">출력</label>
-                <input type="checkbox" name="de_mobile_rel_list_use" value="1" id="de_mobile_rel_list_use" <?php echo $default['de_mobile_rel_list_use']?"checked":""; ?>>
-            </td>
-        </tr>
-        <tr>
             <th scope="row">검색상품출력</th>
             <td>
                 <label for="de_search_list_skin">스킨</label>
@@ -1312,23 +1168,6 @@ if(!$default['de_kakaopay_cancelpwd']){
             </td>
         </tr>
         <tr>
-            <th scope="row">모바일 검색상품출력</th>
-            <td>
-                <label for="de_mobile_search_list_skin">스킨</label>
-                <select name="de_mobile_search_list_skin" id="de_mobile_search_list_skin">
-                    <?php echo get_list_skin_options("^list.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_search_list_skin']); ?>
-                </select>
-                <label for="de_mobile_search_img_width">이미지폭</label>
-                <input type="text" name="de_mobile_search_img_width" value="<?php echo get_sanitize_input($default['de_mobile_search_img_width']); ?>" id="de_mobile_search_img_width" class="frm_input" size="3">
-                <label for="de_mobile_search_img_height">이미지높이</label>
-                <input type="text" name="de_mobile_search_img_height" value="<?php echo get_sanitize_input($default['de_mobile_search_img_height']); ?>" id="de_mobile_search_img_height" class="frm_input" size="3">
-                <label for="de_mobile_search_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_search_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_search_list_mod']); ?>" id="de_mobile_search_list_mod" class="frm_input" size="3">
-                <label for="de_mobile_search_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_search_list_row" value="<?php echo get_sanitize_input($default['de_mobile_search_list_row']); ?>" id="de_mobile_search_list_row" class="frm_input" size="3">
-            </td>
-        </tr>
-        <tr>
             <th scope="row">유형별 상품리스트</th>
             <td>
                 <label for="de_listtype_list_skin">스킨</label>
@@ -1343,23 +1182,6 @@ if(!$default['de_kakaopay_cancelpwd']){
                 <input type="text" name="de_listtype_list_mod" value="<?php echo get_sanitize_input($default['de_listtype_list_mod']); ?>" id="de_listtype_list_mod" class="frm_input" size="3">
                 <label for="de_listtype_list_row">출력할 줄 수</label>
                 <input type="text" name="de_listtype_list_row" value="<?php echo get_sanitize_input($default['de_listtype_list_row']); ?>" id="de_listtype_list_row" class="frm_input" size="3">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">모바일 유형별 상품리스트</th>
-            <td>
-                <label for="de_mobile_listtype_list_skin">스킨</label>
-                <select name="de_mobile_listtype_list_skin" id="de_mobile_listtype_list_skin">
-                    <?php echo get_list_skin_options("^list.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $default['de_mobile_listtype_list_skin']); ?>
-                </select>
-                <label for="de_mobile_listtype_img_width">이미지폭</label>
-                <input type="text" name="de_mobile_listtype_img_width" value="<?php echo get_sanitize_input($default['de_mobile_listtype_img_width']); ?>" id="de_mobile_listtype_img_width" class="frm_input" size="3">
-                <label for="de_mobile_listtype_img_height">이미지높이</label>
-                <input type="text" name="de_mobile_listtype_img_height" value="<?php echo get_sanitize_input($default['de_mobile_listtype_img_height']); ?>" id="de_mobile_listtype_img_height" class="frm_input" size="3">
-                <label for="de_mobile_listtype_list_mod">1줄당 이미지 수</label>
-                <input type="text" name="de_mobile_listtype_list_mod" value="<?php echo get_sanitize_input($default['de_mobile_listtype_list_mod']); ?>" id="de_mobile_listtype_list_mod" class="frm_input" size="3">
-                <label for="de_mobile_listtype_list_row">출력할 줄 수</label>
-                <input type="text" name="de_mobile_listtype_list_row" value="<?php echo get_sanitize_input($default['de_mobile_listtype_list_row']); ?>" id="de_mobile_listtype_list_row" class="frm_input" size="3">
             </td>
         </tr>
         <tr>
@@ -1428,54 +1250,6 @@ if(!$default['de_kakaopay_cancelpwd']){
                 </div>
                 <script>
                 $('<button type="button" id="cf_logoimg2_view" class="btn_frmline scf_img_view">하단로고이미지 확인</button>').appendTo('.scf_img_logoimg2');
-                </script>
-                <?php } ?>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">모바일 상단로고이미지</th>
-            <td>
-                <?php echo help("모바일 쇼핑몰 상단로고를 직접 올릴 수 있습니다. 이미지 파일만 가능합니다."); ?>
-                <input type="file" name="mobile_logo_img" id="mobile_logo_img">
-                <?php
-                $mobile_logo_img = G5_DATA_PATH."/common/mobile_logo_img";
-                if (file_exists($mobile_logo_img))
-                {
-                    $size = getimagesize($mobile_logo_img);
-                ?>
-                <input type="checkbox" name="mobile_logo_img_del" value="1" id="mobile_logo_img_del">
-                <label for="mobile_logo_img_del"><span class="sound_only">모바일 상단로고이미지</span> 삭제</label>
-                <span class="scf_img_mobilelogoimg"></span>
-                <div id="mobilelogoimg" class="banner_or_img">
-                    <img src="<?php echo G5_DATA_URL; ?>/common/mobile_logo_img" alt="">
-                    <button type="button" class="sit_wimg_close">닫기</button>
-                </div>
-                <script>
-                $('<button type="button" id="cf_mobilelogoimg_view" class="btn_frmline scf_img_view">모바일 상단로고이미지 확인</button>').appendTo('.scf_img_mobilelogoimg');
-                </script>
-                <?php } ?>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">모바일 하단로고이미지</th>
-            <td>
-                <?php echo help("모바일 쇼핑몰 하단로고를 직접 올릴 수 있습니다. 이미지 파일만 가능합니다."); ?>
-                <input type="file" name="mobile_logo_img2" id="mobile_logo_img2">
-                <?php
-                $mobile_logo_img2 = G5_DATA_PATH."/common/mobile_logo_img2";
-                if (file_exists($mobile_logo_img2))
-                {
-                    $size = getimagesize($mobile_logo_img2);
-                ?>
-                <input type="checkbox" name="mobile_logo_img_del2" value="1" id="mobile_logo_img_del2">
-                <label for="mobile_logo_img_del2"><span class="sound_only">모바일 하단로고이미지</span> 삭제</label>
-                <span class="scf_img_mobilelogoimg2"></span>
-                <div id="mobilelogoimg2" class="banner_or_img">
-                    <img src="<?php echo G5_DATA_URL; ?>/common/mobile_logo_img2" alt="">
-                    <button type="button" class="sit_wimg_close">닫기</button>
-                </div>
-                <script>
-                $('<button type="button" id="cf_mobilelogoimg2_view" class="btn_frmline scf_img_view">모바일 하단로고이미지 확인</button>').appendTo('.scf_img_mobilelogoimg2');
                 </script>
                 <?php } ?>
             </td>
@@ -1558,7 +1332,7 @@ if(!$default['de_kakaopay_cancelpwd']){
 
 <button type="button" class="shop_etc">테마설정 가져오기</button>
 
-<?php if (file_exists($logo_img) || file_exists($logo_img2) || file_exists($mobile_logo_img) || file_exists($mobile_logo_img2)) { ?>
+<?php if (file_exists($logo_img) || file_exists($logo_img2)) { ?>
 <script>
 $(".banner_or_img").addClass("scf_img");
 $(function() {
@@ -1953,7 +1727,7 @@ $(function() {
                     return false;
                 }
 
-                var field = Array('de_shop_skin', 'de_shop_mobile_skin');
+                var field = Array('de_shop_skin');
                 var count = field.length;
                 var key;
 
@@ -1967,7 +1741,7 @@ $(function() {
         });
     });
 
-    $(".shop_pc_index, .shop_mobile_index, .shop_etc").on("click", function() {
+    $(".shop_pc_index, .shop_etc").on("click", function() {
         if(!confirm("현재 테마의 스킨, 이미지 사이즈 등의 설정을 적용하시겠습니까?"))
             return false;
 

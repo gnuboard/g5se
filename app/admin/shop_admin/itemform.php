@@ -14,7 +14,6 @@ $html_title = "상품 ";
 $it = array(
 'it_id'=>'',
 'it_skin'=>'',
-'it_mobile_skin'=>'',
 'it_name'=>'',
 'it_basic'=>'',
 'it_order'=>0,
@@ -311,18 +310,6 @@ if(!sql_query(" select it_skin from {$g5['g5_shop_item_table']} limit 1", false)
                 <label for="chk_ca_it_skin">분류적용</label>
                 <input type="checkbox" name="chk_all_it_skin" value="1" id="chk_all_it_skin">
                 <label for="chk_all_it_skin">전체적용</label>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="it_mobile_skin">모바일용 스킨</label></th>
-            <td>
-                <?php echo get_mobile_skin_select('shop', 'it_mobile_skin', 'it_mobile_skin', $it['it_mobile_skin']); ?>
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_ca_it_mobile_skin" value="1" id="chk_ca_it_mobile_skin">
-                <label for="chk_ca_it_mobile_skin">분류적용</label>
-                <input type="checkbox" name="chk_all_it_mobile_skin" value="1" id="chk_all_it_mobile_skin">
-                <label for="chk_all_it_mobile_skin">전체적용</label>
             </td>
         </tr>
         </tbody>

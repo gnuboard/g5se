@@ -11,7 +11,6 @@ $bn_id = isset($_REQUEST['bn_id']) ? preg_replace('/[^0-9]/', '', $_REQUEST['bn_
 $bn = array(
 'bn_id'=>0,
 'bn_alt'=>'',
-'bn_device'=>'',
 'bn_position'=>'',
 'bn_border'=>'',
 'bn_new_win'=>'',
@@ -101,17 +100,6 @@ admin_layout_start($g5["title"], "shop");
         <td>
             <?php echo help("배너클릭시 이동하는 주소입니다."); ?>
             <input type="text" name="bn_url" size="80" value="<?php echo get_sanitize_input($bn['bn_url']); ?>" id="bn_url" class="frm_input">
-        </td>
-    </tr>
-    <tr>
-        <th scope="row"><label for="bn_device">접속기기</label></th>
-        <td>
-            <?php echo help('배너를 표시할 접속기기를 선택합니다.'); ?>
-            <select name="bn_device" id="bn_device">
-                <option value="both"<?php echo get_selected($bn['bn_device'], 'both', true); ?>>PC와 모바일</option>
-                <option value="pc"<?php echo get_selected($bn['bn_device'], 'pc'); ?>>PC</option>
-                <option value="mobile"<?php echo get_selected($bn['bn_device'], 'mobile'); ?>>모바일</option>
-        </select>
         </td>
     </tr>
     <tr>

@@ -42,17 +42,12 @@ else
 {
     $html_title .= " 입력";
     $ev['ev_skin'] = 'list.10.skin.php';
-    $ev['ev_mobile_skin'] = 'list.10.skin.php';
     $ev['ev_use'] = 1;
 
     $ev['ev_img_width']  = 230;
     $ev['ev_img_height'] = 230;
     $ev['ev_list_mod'] = 3;
     $ev['ev_list_row'] = 5;
-    $ev['ev_mobile_img_width']  = 230;
-    $ev['ev_mobile_img_height'] = 230;
-    $ev['ev_mobile_list_mod'] = 3;
-    $ev['ev_mobile_list_row'] = 5;
 }
 
 // 분류리스트
@@ -120,15 +115,6 @@ admin_layout_start($g5["title"], "shop");
             <?php echo help('기본으로 제공하는 스킨은 '.str_replace(G5_PATH.'/', '', G5_SHOP_SKIN_PATH).'/list.*.skin.php 입니다.'.PHP_EOL.G5_SHOP_DIR.'/event.php?ev_id=1234567890&amp;skin=userskin.php 처럼 직접 만든 스킨을 사용할 수도 있습니다.'); ?>
             <select name="ev_skin" id="ev_skin">
                 <?php echo get_list_skin_options("^list.[0-9]+\.skin\.php", G5_SHOP_SKIN_PATH, $ev['ev_skin']); ?>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <th scope="row"><label for="ev_mobile_skin">모바일 출력스킨</label></th>
-        <td>
-            <?php echo help('기본으로 제공하는 스킨은 '.str_replace(G5_PATH.'/', '', G5_MSHOP_SKIN_PATH).'/list.*.skin.php 입니다.'.PHP_EOL.G5_SHOP_DIR.'/event.php?ev_id=1234567890&amp;skin=userskin.php 처럼 직접 만든 스킨을 사용할 수도 있습니다.'); ?>
-            <select name="ev_mobile_skin" id="ev_mobile_skin">
-                <?php echo get_list_skin_options("^list.[0-9]+\.skin\.php", G5_MSHOP_SKIN_PATH, $ev['ev_mobile_skin']); ?>
             </select>
         </td>
     </tr>

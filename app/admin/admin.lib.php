@@ -46,42 +46,6 @@ function get_skin_select($skin_gubun, $id, $name, $selected = '', $event = '')
     return $str;
 }
 
-// 모바일 스킨디렉토리를 SELECT 형식으로 얻음
-function get_mobile_skin_select($skin_gubun, $id, $name, $selected = '', $event = '')
-{
-    global $config;
-
-    $skins = array();
-
-    if (defined('G5_THEME_PATH') && $config['cf_theme']) {
-        $dirs = get_skin_dir($skin_gubun, G5_THEME_MOBILE_PATH . '/' . G5_SKIN_DIR);
-        if (!empty($dirs)) {
-            foreach ($dirs as $dir) {
-                $skins[] = 'theme/' . $dir;
-            }
-        }
-    }
-
-    $skins = array_merge($skins, get_skin_dir($skin_gubun, G5_MOBILE_PATH . '/' . G5_SKIN_DIR));
-
-    $str = "<select id=\"$id\" name=\"$name\" $event>\n";
-    for ($i = 0; $i < count($skins); $i++) {
-        if ($i == 0) {
-            $str .= "<option value=\"\">선택</option>";
-        }
-        if (preg_match('#^theme/(.+)$#', $skins[$i], $match)) {
-            $text = '(테마) ' . $match[1];
-        } else {
-            $text = $skins[$i];
-        }
-
-        $str .= option_selected($skins[$i], $selected, $text);
-    }
-    $str .= "</select>";
-    return $str;
-}
-
-
 // 스킨경로를 얻는다
 function get_skin_dir($skin, $skin_path = G5_SKIN_PATH)
 {

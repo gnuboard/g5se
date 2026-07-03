@@ -178,12 +178,11 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
         <th scope="col" rowspan="2" id="th_pc_title"><?php echo subject_sort_link('it_name', 'sca='.$sca); ?>상품명</a></th>
         <th scope="col" id="th_amt"><?php echo subject_sort_link('it_price', 'sca='.$sca); ?>판매가격</a></th>
         <th scope="col" id="th_camt"><?php echo subject_sort_link('it_cust_price', 'sca='.$sca); ?>시중가격</a></th>
-        <th scope="col" id="th_skin">PC스킨</th>
+        <th scope="col" id="th_skin" rowspan="2">스킨</th>
     </tr>
     <tr>
         <th scope="col" id="th_pt"><?php echo subject_sort_link('it_point', 'sca='.$sca); ?>포인트</a></th>
         <th scope="col" id="th_qty"><?php echo subject_sort_link('it_stock_qty', 'sca='.$sca); ?>재고</a></th>
-        <th scope="col" id="th_mskin">모바일스킨</th>
     </tr>
     </thead>
     <tbody>
@@ -253,8 +252,8 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
             <label for="cust_price_<?php echo $i; ?>" class="sound_only">시중가격</label>
             <input type="text" name="it_cust_price[<?php echo $i; ?>]" value="<?php echo $row['it_cust_price']; ?>" id="cust_price_<?php echo $i; ?>" class="tbl_input sit_camt" size="7">
         </td>
-        <td headers="th_skin" class="td_numbig td_input">
-            <label for="it_skin_<?php echo $i; ?>" class="sound_only">PC 스킨</label>
+        <td headers="th_skin" class="td_numbig td_input" rowspan="2">
+            <label for="it_skin_<?php echo $i; ?>" class="sound_only">스킨</label>
             <?php echo get_skin_select('shop', 'it_skin_'.$i, 'it_skin['.$i.']', $row['it_skin']); ?>
         </td>
     </tr>
@@ -263,10 +262,6 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
         <td headers="th_qty" class="td_numbig td_input">
             <label for="stock_qty_<?php echo $i; ?>" class="sound_only">재고</label>
             <input type="text" name="it_stock_qty[<?php echo $i; ?>]" value="<?php echo $row['it_stock_qty']; ?>" id="stock_qty_<?php echo $i; ?>" class="tbl_input sit_qty" size="7">
-        </td>
-        <td headers="th_mskin" class="td_numbig td_input">
-            <label for="it_mobile_skin_<?php echo $i; ?>" class="sound_only">모바일 스킨</label>
-            <?php echo get_mobile_skin_select('shop', 'it_mobile_skin_'.$i, 'it_mobile_skin['.$i.']', $row['it_mobile_skin']); ?>
         </td>
     </tr>
     <?php

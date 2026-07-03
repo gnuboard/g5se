@@ -8,7 +8,6 @@ auth_check_menu($auth, $sub_menu, 'r');
 auth_check_menu($auth, $sub_menu, "r");
 
 $bn_position = (isset($_GET['bn_position']) && in_array($_GET['bn_position'], array('메인', '왼쪽'))) ? $_GET['bn_position'] : '';
-$bn_device = (isset($_GET['bn_device']) && in_array($_GET['bn_device'], array('pc', 'mobile'))) ? $_GET['bn_device'] : 'both';
 $bn_time = (isset($_GET['bn_time']) && in_array($_GET['bn_time'], array('ing', 'end'))) ? $_GET['bn_time'] : '';
 
 $where = ' where ';
@@ -18,12 +17,6 @@ if ( $bn_position ){
     $sql_search .= " $where bn_position = '$bn_position' ";
     $where = ' and ';
     $qstr .= "&amp;bn_position=$bn_position";
-}
-
-if ( $bn_device && $bn_device !== 'both' ){
-    $sql_search .= " $where bn_device = '$bn_device' ";
-    $where = ' and ';
-    $qstr .= "&amp;bn_device=$bn_device";
 }
 
 if ( $bn_time ){
@@ -69,12 +62,6 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
         <option value="왼쪽"<?php echo get_selected($bn_position, '왼쪽', true); ?>>왼쪽</option>
     </select>
 
-    <select name="bn_device" id="bn_device">
-        <option value="both"<?php echo get_selected($bn_device, 'both', true); ?>>PC와 모바일</option>
-        <option value="pc"<?php echo get_selected($bn_device, 'pc'); ?>>PC</option>
-        <option value="mobile"<?php echo get_selected($bn_device, 'mobile'); ?>>모바일</option>
-    </select>
-
     <select name="bn_time" id="bn_time">
         <option value=""<?php echo get_selected($bn_time, '', true); ?>>배너 시간 전체</option>
         <option value="ing"<?php echo get_selected($bn_time, 'ing'); ?>>진행중인 배너</option>
@@ -97,7 +84,6 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
     <thead>
     <tr>
         <th scope="col" rowspan="2" id="th_id">ID</th>
-        <th scope="col" id="th_dvc">접속기기</th>
         <th scope="col" id="th_loc">위치</th>
         <th scope="col" id="th_st">시작일시</th>
         <th scope="col" id="th_end">종료일시</th>
@@ -106,7 +92,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
         <th scope="col" id="th_mng">관리</th>
     </tr>
     <tr>
-        <th scope="col" colspan="7" id="th_img">이미지</th>
+        <th scope="col" colspan="6" id="th_img">이미지</th>
     </tr>
     </thead>
     <tbody>
@@ -134,18 +120,6 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
             $bn_img .= '<img src="'.G5_DATA_URL.'/banner/'.$row['bn_id'].'?'.preg_replace('/[^0-9]/i', '', $row['bn_time']).'" width="'.$width.'" alt="'.get_text($row['bn_alt']).'">';
         }
 
-        switch($row['bn_device']) {
-            case 'pc':
-                $bn_device = 'PC';
-                break;
-            case 'mobile':
-                $bn_device = '모바일';
-                break;
-            default:
-                $bn_device = 'PC와 모바일';
-                break;
-        }
-
         $bn_begin_time = substr($row['bn_begin_time'], 2, 14);
         $bn_end_time   = substr($row['bn_end_time'], 2, 14);
 
@@ -154,7 +128,6 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
     <tr class="<?php echo $bg; ?>">
         <td headers="th_id" rowspan="2" class="td_num"><?php echo $row['bn_id']; ?></td>
-        <td headers="th_dvc"><?php echo $bn_device; ?></td>
         <td headers="th_loc"><?php echo $row['bn_position']; ?></td>
         <td headers="th_st" class="td_datetime"><?php echo $bn_begin_time; ?></td>
         <td headers="th_end" class="td_datetime"><?php echo $bn_end_time; ?></td>
@@ -166,7 +139,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
         </td>
     </tr>
     <tr class="<?php echo $bg; ?>">
-        <td headers="th_img" colspan="7" class="td_img_view sbn_img">
+        <td headers="th_img" colspan="6" class="td_img_view sbn_img">
             <div class="sbn_image"><?php echo $bn_img; ?></div>
             <button type="button" class="sbn_img_view btn_frmline">이미지확인</button>
         </td>
@@ -175,7 +148,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
     <?php
     }
     if ($i == 0) {
-    echo '<tr><td colspan="8" class="empty_table">자료가 없습니다.</td></tr>';
+    echo '<tr><td colspan="7" class="empty_table">자료가 없습니다.</td></tr>';
     }
     ?>
     </tbody>
