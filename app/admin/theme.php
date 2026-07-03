@@ -19,8 +19,8 @@ if ($is_admin !== 'super') {
     exit;
 }
 
-// cf_theme 컬럼 lazy migration
-if (!isset($config['cf_theme'])) {
+// cf_theme 컬럼 lazy migration — DB 원본 기준 (폴백이 $config['cf_theme'] 를 normalize 하므로)
+if (!isset($g5['cf_theme_db'])) {
     // DDL — placeholder 못 받음, sql_pdo_query 로 통일 (params 빈 배열)
     sql_pdo_query(" ALTER TABLE `{$g5['config_table']}` ADD `cf_theme` varchar(255) NOT NULL DEFAULT '' AFTER `cf_title` ", [], true);
 }
@@ -32,9 +32,10 @@ if ($config['cf_theme'] && in_array($config['cf_theme'], $theme)) {
 $theme = array_values(array_unique($theme));
 $total_count = count($theme);
 
-if ($config['cf_theme'] && !in_array($config['cf_theme'], $theme)) {
+// DB 에 존재하지 않는 테마명이 남아 있으면 리셋 (판정은 DB 원본 기준, 화면 표시용 $config['cf_theme'] 는 basic 유지)
+if (!empty($g5['cf_theme_db']) && !in_array($g5['cf_theme_db'], $theme)) {
     sql_pdo_query(" update {$g5['config_table']} set cf_theme = '' ");
-    $config['cf_theme'] = '';
+    $g5['cf_theme_db'] = '';
 }
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');

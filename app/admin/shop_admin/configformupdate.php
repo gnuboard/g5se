@@ -57,7 +57,10 @@ if(defined('G5_THEME_PATH') && $config['cf_theme']) {
 }
 
 $de_shop_skin = in_array($de_shop_skin, $skins) ? $de_shop_skin : 'basic';
-$de_shop_mobile_skin = in_array($de_shop_mobile_skin, $mobile_skins) ? $de_shop_mobile_skin : 'basic';
+// 삭제된 테마 모바일 스킨 디렉터리(G5_THEME_MOBILE_PATH) 때문에 theme/* 값이 목록에서 빠져
+// 강제 치환되는 것을 방지 — 대조 대상 디렉터리가 없으면 posted/stored 값 유지
+$mobile_theme_dir_missing = defined('G5_THEME_MOBILE_PATH') && !is_dir(G5_THEME_MOBILE_PATH);
+$de_shop_mobile_skin = (in_array($de_shop_mobile_skin, $mobile_skins) || ($mobile_theme_dir_missing && strncmp($de_shop_mobile_skin, 'theme/', 6) === 0)) ? $de_shop_mobile_skin : 'basic';
 
 $check_skin_keys = array('de_type1_list_skin', 'de_type2_list_skin', 'de_type3_list_skin', 'de_type4_list_skin', 'de_type5_list_skin', 'de_mobile_type1_list_skin', 'de_mobile_type2_list_skin', 'de_mobile_type3_list_skin', 'de_mobile_type4_list_skin', 'de_mobile_type5_list_skin', 'de_rel_list_skin', 'de_mobile_rel_list_skin', 'de_search_list_skin', 'de_mobile_search_list_skin', 'de_listtype_list_skin', 'de_mobile_listtype_list_skin');
 

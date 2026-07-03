@@ -49,8 +49,15 @@ $ev_mobile_skin = preg_replace(array('#\.+(\/|\\\)#', '#[\'\"]#'), array('', '')
 
 $skin_regex_patten = "^list.[0-9]+\.skin\.php";
 
-$ev_skin = (preg_match("/$skin_regex_patten/", $ev_skin) && file_exists(G5_SHOP_SKIN_PATH.'/'.$ev_skin)) ? $ev_skin : ''; 
-$ev_mobile_skin = (preg_match("/$skin_regex_patten/", $ev_mobile_skin) && file_exists(G5_MSHOP_SKIN_PATH.'/'.$ev_mobile_skin)) ? $ev_mobile_skin : ''; 
+$ev_skin = (preg_match("/$skin_regex_patten/", $ev_skin) && file_exists(G5_SHOP_SKIN_PATH.'/'.$ev_skin)) ? $ev_skin : '';
+// 모바일 스킨 디렉터리가 삭제된 환경에서는 검증으로 값을 파괴하지 않는다
+if (is_dir(G5_MSHOP_SKIN_PATH)) {
+    $ev_mobile_skin = (preg_match("/$skin_regex_patten/", $ev_mobile_skin) && file_exists(G5_MSHOP_SKIN_PATH.'/'.$ev_mobile_skin)) ? $ev_mobile_skin : '';
+} else if ($w == "u") {
+    // 수정: 기존 DB 값 유지 (신규 등록은 posted 값 그대로, 빈 값 허용)
+    $row = sql_fetch(" select ev_mobile_skin from {$g5['g5_shop_event_table']} where ev_id = '$ev_id' ");
+    $ev_mobile_skin = $row['ev_mobile_skin'];
+}
 $ev_subject = strip_tags($ev_subject);
 
 $sql_common = " set ev_skin             = '$ev_skin',

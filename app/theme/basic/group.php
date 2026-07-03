@@ -1,11 +1,6 @@
 <?php
 if (!defined('_GNUBOARD_')) exit;
 
-if (G5_IS_MOBILE) {
-    include_once(G5_THEME_MOBILE_PATH.'/group.php');
-    return;
-}
-
 if (!$is_admin && $group['gr_device'] == 'mobile')
     alert($group['gr_subject'].' 그룹은 모바일에서만 접근할 수 있습니다.');
 

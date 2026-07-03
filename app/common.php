@@ -905,6 +905,9 @@ else if (!empty($_SESSION['ss_theme_preview'])
     $config['cf_theme'] = $_SESSION['ss_theme_preview'];
 }
 
+// cf_theme DB 원본값 보존 — 폴백이 normalize 하기 전 (컬럼 자체가 없으면 null). admin/theme.php 의 lazy migration·스테일 정리 판정용
+$g5['cf_theme_db'] = isset($config['cf_theme']) ? $config['cf_theme'] : null;
+
 // cf_theme 미설정/유실 시 basic 테마로 폴백 — 레거시(테마 없음) 화면 차단
 $config['cf_theme'] = (isset($config['cf_theme']) && trim($config['cf_theme'])) ? trim($config['cf_theme']) : 'basic';
 if(!is_dir(G5_PATH.'/'.G5_THEME_DIR.'/'.$config['cf_theme']))

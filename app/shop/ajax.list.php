@@ -15,8 +15,8 @@ $ca = sql_fetch($sql);
 if (!$ca['ca_id'])
     die(json_encode($data['error'] = '등록된 분류가 없습니다.'));
 
-// 스킨경로
-$skin_dir = G5_MSHOP_SKIN_PATH;
+// 스킨경로 — 모바일 스킨 경로가 삭제됐으면 PC 스킨 경로로 폴백 (반응형 단일 UI)
+$skin_dir = is_dir(G5_MSHOP_SKIN_PATH) ? G5_MSHOP_SKIN_PATH : G5_SHOP_SKIN_PATH;
 
 if($ca['ca_mobile_skin_dir']) {
     $skin_dir = G5_MOBILE_PATH.'/'.G5_SKIN_DIR.'/shop/'.$ca['ca_mobile_skin_dir'];

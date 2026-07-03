@@ -165,11 +165,8 @@ if(is_file($skin_file)) {
 
     $stx = get_text(stripslashes($stx));
 
-    $is_dhtml_editor = false;
-    // 모바일에서는 DHTML 에디터 사용불가
-    if ($config['cf_editor'] && $qaconfig['qa_use_editor']) {
-        $is_dhtml_editor = true;
-    }
+    // DHTML 에디터: 에디터 설정 + Q&A 에디터 사용 시 활성화
+    $is_dhtml_editor = (bool) ($config['cf_editor'] && $qaconfig['qa_use_editor']);
     $editor_html = editor_html('qa_content', $content, $is_dhtml_editor);
     $editor_js = '';
     $editor_js .= get_editor_js('qa_content', $is_dhtml_editor);
