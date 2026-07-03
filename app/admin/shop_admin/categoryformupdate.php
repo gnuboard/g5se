@@ -77,8 +77,6 @@ foreach( $check_str_keys as $key=>$val ){
 
 $ca_head_html = isset($_POST['ca_head_html']) ? $_POST['ca_head_html'] : '';
 $ca_tail_html = isset($_POST['ca_tail_html']) ? $_POST['ca_tail_html'] : '';
-$ca_mobile_head_html = isset($_POST['ca_mobile_head_html']) ? $_POST['ca_mobile_head_html'] : '';
-$ca_mobile_tail_html = isset($_POST['ca_mobile_tail_html']) ? $_POST['ca_mobile_tail_html'] : '';
 
 if(!is_include_path_check($ca_include_head, 1)) {
     alert('상단 파일 경로에 포함시킬수 없는 문자열이 있습니다.');
@@ -139,8 +137,6 @@ $sql_common = " ca_order                = '$ca_order',
                 ca_explan_html          = '$ca_explan_html',
                 ca_head_html            = '$ca_head_html',
                 ca_tail_html            = '$ca_tail_html',
-                ca_mobile_head_html     = '$ca_mobile_head_html',
-                ca_mobile_tail_html     = '$ca_mobile_tail_html',
                 ca_include_head         = '$ca_include_head',
                 ca_include_tail         = '$ca_include_tail',
                 ca_mb_id                = '$ca_mb_id',

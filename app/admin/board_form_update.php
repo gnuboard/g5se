@@ -158,8 +158,6 @@ $bo_select_editor = isset($_POST['bo_select_editor']) ? clean_xss_tags(stripslas
 $bo_skin = isset($_POST['bo_skin']) ? clean_xss_tags(stripslashes($_POST['bo_skin']), 1, 1) : '';
 $bo_content_head = isset($_POST['bo_content_head']) ? stripslashes($_POST['bo_content_head']) : '';
 $bo_content_tail = isset($_POST['bo_content_tail']) ? stripslashes($_POST['bo_content_tail']) : '';
-$bo_mobile_content_head = isset($_POST['bo_mobile_content_head']) ? stripslashes($_POST['bo_mobile_content_head']) : '';
-$bo_mobile_content_tail = isset($_POST['bo_mobile_content_tail']) ? stripslashes($_POST['bo_mobile_content_tail']) : '';
 $bo_insert_content = isset($_POST['bo_insert_content']) ? stripslashes($_POST['bo_insert_content']) : '';
 $bo_gallery_cols = isset($_POST['bo_gallery_cols']) ? (int) $_POST['bo_gallery_cols'] : 0;
 $bo_gallery_width = isset($_POST['bo_gallery_width']) ? (int) $_POST['bo_gallery_width'] : 0;
@@ -285,16 +283,12 @@ if ($is_admin === 'super') {
     $sql_common .= " , bo_include_head        = :bo_include_head,
                       bo_include_tail        = :bo_include_tail,
                       bo_content_head        = :bo_content_head,
-                      bo_content_tail        = :bo_content_tail,
-                      bo_mobile_content_head = :bo_mobile_content_head,
-                      bo_mobile_content_tail = :bo_mobile_content_tail
+                      bo_content_tail        = :bo_content_tail
                     ";
     $common_params[':bo_include_head']        = $bo_include_head;
     $common_params[':bo_include_tail']        = $bo_include_tail;
     $common_params[':bo_content_head']        = $bo_content_head;
     $common_params[':bo_content_tail']        = $bo_content_tail;
-    $common_params[':bo_mobile_content_head'] = $bo_mobile_content_head;
-    $common_params[':bo_mobile_content_tail'] = $bo_mobile_content_tail;
 }
 
 $sql_common .= " , bo_insert_content   = :bo_insert_content,
@@ -436,7 +430,7 @@ $build_scope = function($scope) use (
     $bo_image_width, $bo_reply_order, $bo_sort_field, $bo_write_min, $bo_write_max,
     $bo_comment_min, $bo_comment_max, $bo_upload_count, $bo_upload_size,
     $is_admin, $bo_include_head, $bo_include_tail, $bo_content_head, $bo_content_tail,
-    $bo_mobile_content_head, $bo_mobile_content_tail, $bo_insert_content, $bo_use_search,
+    $bo_insert_content, $bo_use_search,
     $bo_order, $etcs
 ) {
     $fields = '';
@@ -509,8 +503,6 @@ $build_scope = function($scope) use (
         if (is_checked('chk_'.$scope.'_include_tail'))        $add('bo_include_tail',        $bo_include_tail);
         if (is_checked('chk_'.$scope.'_content_head'))        $add('bo_content_head',        $bo_content_head);
         if (is_checked('chk_'.$scope.'_content_tail'))        $add('bo_content_tail',        $bo_content_tail);
-        if (is_checked('chk_'.$scope.'_mobile_content_head')) $add('bo_mobile_content_head', $bo_mobile_content_head);
-        if (is_checked('chk_'.$scope.'_mobile_content_tail')) $add('bo_mobile_content_tail', $bo_mobile_content_tail);
     }
 
     if (is_checked('chk_'.$scope.'_insert_content')) $add('bo_insert_content', $bo_insert_content);

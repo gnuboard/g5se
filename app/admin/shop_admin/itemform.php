@@ -28,7 +28,6 @@ $it = array(
 'it_use'=>0,
 'it_nocoupon'=>0,
 'ec_mall_pid'=>'',
-'it_mobile_explan'=>'',
 'it_sell_email'=>'',
 'it_shop_memo'=>'',
 'it_info_gubun'=>'',
@@ -64,8 +63,6 @@ $it = array(
 'it_img10'=>'',
 'it_head_html'=>'',
 'it_tail_html'=>'',
-'it_mobile_head_html'=>'',
-'it_mobile_tail_html'=>'',
 );
 
 for($i=0;$i<=10;$i++){
@@ -501,10 +498,6 @@ if(!sql_query(" select it_skin from {$g5['g5_shop_item_table']} limit 1", false)
         <tr>
             <th scope="row">상품설명</th>
             <td colspan="2"> <?php echo editor_html('it_explan', get_text(html_purifier($it['it_explan']), 0)); ?></td>
-        </tr>
-        <tr>
-            <th scope="row">모바일 상품설명</th>
-            <td colspan="2"> <?php echo editor_html('it_mobile_explan', get_text(html_purifier($it['it_mobile_explan']), 0)); ?></td>
         </tr>
         <tr>
             <th scope="row"><label for="it_sell_email">판매자 e-mail</label></th>
@@ -1660,26 +1653,6 @@ $(function(){
                 <label for="chk_all_it_tail_html">전체적용</label>
             </td>
         </tr>
-        <tr>
-            <th scope="row">모바일 상품상단내용</th>
-            <td><?php echo help("모바일 상품상세설명 페이지 상단에 출력하는 HTML 내용입니다."); ?><?php echo editor_html('it_mobile_head_html', get_text(html_purifier($it['it_mobile_head_html']), 0)); ?></td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_ca_it_mobile_head_html" value="1" id="chk_ca_it_mobile_head_html">
-                <label for="chk_ca_it_mobile_head_html">분류적용</label>
-                <input type="checkbox" name="chk_all_it_mobile_head_html" value="1" id="chk_all_it_mobile_head_html">
-                <label for="chk_all_it_mobile_head_html">전체적용</label>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">모바일 상품하단내용</th>
-            <td><?php echo help("모바일 상품상세설명 페이지 하단에 출력하는 HTML 내용입니다."); ?><?php echo editor_html('it_mobile_tail_html', get_text(html_purifier($it['it_mobile_tail_html']), 0)); ?></td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_ca_it_mobile_tail_html" value="1" id="chk_ca_it_mobile_tail_html">
-                <label for="chk_ca_it_mobile_tail_html">분류적용</label>
-                <input type="checkbox" name="chk_all_it_mobile_tail_html" value="1" id="chk_all_it_mobile_tail_html">
-                <label for="chk_all_it_mobile_tail_html">전체적용</label>
-            </td>
-        </tr>
         </tbody>
         </table>
     </div>
@@ -1874,11 +1847,8 @@ function fitemformcheck(f)
     $("input[name=ev_list]").val(ev);
 
     <?php echo get_editor_js('it_explan'); ?>
-    <?php echo get_editor_js('it_mobile_explan'); ?>
     <?php echo get_editor_js('it_head_html'); ?>
     <?php echo get_editor_js('it_tail_html'); ?>
-    <?php echo get_editor_js('it_mobile_head_html'); ?>
-    <?php echo get_editor_js('it_mobile_tail_html'); ?>
 
     return true;
 }

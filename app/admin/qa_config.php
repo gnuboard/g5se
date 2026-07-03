@@ -300,18 +300,6 @@ if (!isset($qaconfig['qa_include_head'])) {
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="qa_mobile_content_head">모바일 상단 내용</label></th>
-                        <td>
-                            <?php echo editor_html("qa_mobile_content_head", get_text(html_purifier($qaconfig['qa_mobile_content_head']), 0)); ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="qa_mobile_content_tail">모바일 하단 내용</label></th>
-                        <td>
-                            <?php echo editor_html("qa_mobile_content_tail", get_text(html_purifier($qaconfig['qa_mobile_content_tail']), 0)); ?>
-                        </td>
-                    </tr>
-                    <tr>
                         <th scope="row"><label for="qa_insert_content">글쓰기 기본 내용</label></th>
                         <td>
                             <textarea id="qa_insert_content" name="qa_insert_content" rows="5"><?php echo html_purifier($qaconfig['qa_insert_content']); ?></textarea>
@@ -390,8 +378,6 @@ if (!isset($qaconfig['qa_include_head'])) {
     function fqaconfigform_submit(f) {
         <?php echo get_editor_js("qa_content_head"); ?>
         <?php echo get_editor_js("qa_content_tail"); ?>
-        <?php echo get_editor_js("qa_mobile_content_head"); ?>
-        <?php echo get_editor_js("qa_mobile_content_tail"); ?>
 
         if (captcha_chk) {
             <?php echo isset($captcha_js) ? $captcha_js : ''; // 캡챠 사용시 자바스크립트에서 입력된 캡챠를 검사함 ?>

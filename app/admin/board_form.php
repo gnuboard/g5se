@@ -131,8 +131,6 @@ $board_default = array(
 'bo_use_captcha'=>0,
 'bo_content_head'=>'',
 'bo_content_tail'=>'',
-'bo_mobile_content_head'=>'',
-'bo_mobile_content_tail'=>'',
 'bo_insert_content'=>'',
 'bo_sort_field'=>'',
 );
@@ -945,30 +943,6 @@ $pg_anchor = '<ul class="anchor">
                 <label for="chk_all_content_tail">전체적용</label>
             </td>
         </tr>
-        <tr>
-            <th scope="row"><label for="bo_mobile_content_head">모바일 상단 내용</label></th>
-            <td>
-                <?php echo editor_html("bo_mobile_content_head", get_text(html_purifier($board['bo_mobile_content_head']), 0)); ?>
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_content_head" value="1" id="chk_grp_mobile_content_head">
-                <label for="chk_grp_mobile_content_head">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_content_head" value="1" id="chk_all_mobile_content_head">
-                <label for="chk_all_mobile_content_head">전체적용</label>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="bo_mobile_content_tail">모바일 하단 내용</label></th>
-            <td>
-                <?php echo editor_html("bo_mobile_content_tail", get_text(html_purifier($board['bo_mobile_content_tail']), 0)); ?>
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_content_tail" value="1" id="chk_grp_mobile_content_tail">
-                <label for="chk_grp_mobile_content_tail">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_content_tail" value="1" id="chk_all_mobile_content_tail">
-                <label for="chk_all_mobile_content_tail">전체적용</label>
-            </td>
-        </tr>
         <?php }     //end if $is_admin === 'super' ?>
          <tr>
             <th scope="row"><label for="bo_insert_content">글쓰기 기본 내용</label></th>
@@ -1399,8 +1373,6 @@ function fboardform_submit(f)
 
     <?php echo get_editor_js("bo_content_head"); ?>
     <?php echo get_editor_js("bo_content_tail"); ?>
-    <?php echo get_editor_js("bo_mobile_content_head"); ?>
-    <?php echo get_editor_js("bo_mobile_content_tail"); ?>
 
     if (parseInt(f.bo_count_modify.value) < 0) {
         alert("원글 수정 불가 댓글수는 0 이상 입력하셔야 합니다.");
