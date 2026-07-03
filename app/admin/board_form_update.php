@@ -164,8 +164,6 @@ $bo_insert_content = isset($_POST['bo_insert_content']) ? stripslashes($_POST['b
 $bo_gallery_cols = isset($_POST['bo_gallery_cols']) ? (int) $_POST['bo_gallery_cols'] : 0;
 $bo_gallery_width = isset($_POST['bo_gallery_width']) ? (int) $_POST['bo_gallery_width'] : 0;
 $bo_gallery_height = isset($_POST['bo_gallery_height']) ? (int) $_POST['bo_gallery_height'] : 0;
-$bo_mobile_gallery_width = isset($_POST['bo_mobile_gallery_width']) ? (int) $_POST['bo_mobile_gallery_width'] : 0;
-$bo_mobile_gallery_height = isset($_POST['bo_mobile_gallery_height']) ? (int) $_POST['bo_mobile_gallery_height'] : 0;
 $bo_upload_count = isset($_POST['bo_upload_count']) ? (int) $_POST['bo_upload_count'] : 0;
 $bo_upload_size = isset($_POST['bo_upload_size']) ? (int) $_POST['bo_upload_size'] : 0;
 $bo_reply_order = isset($_POST['bo_reply_order']) ? (int) $_POST['bo_reply_order'] : 0;
@@ -303,8 +301,6 @@ $sql_common .= " , bo_insert_content   = :bo_insert_content,
                   bo_gallery_cols     = :bo_gallery_cols,
                   bo_gallery_width    = :bo_gallery_width,
                   bo_gallery_height   = :bo_gallery_height,
-                  bo_mobile_gallery_width  = :bo_mobile_gallery_width,
-                  bo_mobile_gallery_height = :bo_mobile_gallery_height,
                   bo_upload_count     = :bo_upload_count,
                   bo_upload_size      = :bo_upload_size,
                   bo_reply_order      = :bo_reply_order,
@@ -324,8 +320,6 @@ $common_params[':bo_insert_content']       = $bo_insert_content;
 $common_params[':bo_gallery_cols']         = $bo_gallery_cols;
 $common_params[':bo_gallery_width']        = $bo_gallery_width;
 $common_params[':bo_gallery_height']       = $bo_gallery_height;
-$common_params[':bo_mobile_gallery_width']  = $bo_mobile_gallery_width;
-$common_params[':bo_mobile_gallery_height'] = $bo_mobile_gallery_height;
 $common_params[':bo_upload_count']         = $bo_upload_count;
 $common_params[':bo_upload_size']          = $bo_upload_size;
 $common_params[':bo_reply_order']          = $bo_reply_order;
@@ -437,7 +431,7 @@ $build_scope = function($scope) use (
     $bo_use_ip_view, $bo_use_list_view, $bo_use_list_file, $bo_use_list_content,
     $bo_use_email, $bo_use_cert, $bo_use_sns, $bo_use_captcha, $bo_skin,
     $bo_gallery_cols, $bo_gallery_width, $bo_gallery_height,
-    $bo_mobile_gallery_width, $bo_mobile_gallery_height, $bo_table_width, $bo_page_rows,
+    $bo_table_width, $bo_page_rows,
     $bo_subject_len, $bo_new, $bo_hot,
     $bo_image_width, $bo_reply_order, $bo_sort_field, $bo_write_min, $bo_write_max,
     $bo_comment_min, $bo_comment_max, $bo_upload_count, $bo_upload_size,
@@ -495,8 +489,6 @@ $build_scope = function($scope) use (
     if (is_checked('chk_'.$scope.'_gallery_cols'))         $add('bo_gallery_cols',     $bo_gallery_cols);
     if (is_checked('chk_'.$scope.'_gallery_width'))        $add('bo_gallery_width',    $bo_gallery_width);
     if (is_checked('chk_'.$scope.'_gallery_height'))       $add('bo_gallery_height',   $bo_gallery_height);
-    if (is_checked('chk_'.$scope.'_mobile_gallery_width'))  $add('bo_mobile_gallery_width',  $bo_mobile_gallery_width);
-    if (is_checked('chk_'.$scope.'_mobile_gallery_height')) $add('bo_mobile_gallery_height', $bo_mobile_gallery_height);
     if (is_checked('chk_'.$scope.'_table_width'))          $add('bo_table_width',      $bo_table_width);
     if (is_checked('chk_'.$scope.'_page_rows'))            $add('bo_page_rows',        $bo_page_rows);
     if (is_checked('chk_'.$scope.'_subject_len'))          $add('bo_subject_len',      $bo_subject_len);

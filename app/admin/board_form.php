@@ -167,8 +167,6 @@ if ($w == '') {
     $board['bo_gallery_cols'] = 4;
     $board['bo_gallery_width'] = 202;
     $board['bo_gallery_height'] = 150;
-    $board['bo_mobile_gallery_width'] = 125;
-    $board['bo_mobile_gallery_height'] = 100;
     $board['bo_table_width'] = 100;
     $board['bo_page_rows'] = $config['cf_page_rows'];
     $board['bo_subject_len'] = 60;
@@ -1049,32 +1047,6 @@ $pg_anchor = '<ul class="anchor">
             </td>
         </tr>
         <tr>
-            <th scope="row"><label for="bo_mobile_gallery_width">모바일<br>갤러리 이미지 폭<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <?php echo help('모바일로 접속시 갤러리 형식의 게시판 목록에서 썸네일 이미지의 폭을 설정하는 값') ?>
-                <input type="text" name="bo_mobile_gallery_width" value="<?php echo $board['bo_mobile_gallery_width'] ?>" id="bo_mobile_gallery_width" required class="required numeric frm_input" size="4">
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_gallery_width" value="1" id="chk_grp_mobile_gallery_width">
-                <label for="chk_grp_mobile_gallery_width">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_gallery_width" value="1" id="chk_all_mobile_gallery_width">
-                <label for="chk_all_mobile_gallery_width">전체적용</label>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="bo_mobile_gallery_height">모바일<br>갤러리 이미지 높이<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <?php echo help('모바일로 접속시 갤러리 형식의 게시판 목록에서 썸네일 이미지의 높이를 설정하는 값') ?>
-                <input type="text" name="bo_mobile_gallery_height" value="<?php echo $board['bo_mobile_gallery_height'] ?>" id="bo_mobile_gallery_height" required class="required numeric frm_input" size="4">
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_gallery_height" value="1" id="chk_grp_mobile_gallery_height">
-                <label for="chk_grp_mobile_gallery_height">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_gallery_height" value="1" id="chk_all_mobile_gallery_height">
-                <label for="chk_all_mobile_gallery_height">전체적용</label>
-            </td>
-        </tr>
-        <tr>
             <th scope="row"><label for="bo_table_width">게시판 폭<strong class="sound_only">필수</strong></label></th>
             <td>
                 <?php echo help('100 이하는 %') ?>
@@ -1334,7 +1306,7 @@ $(function(){
                     return false;
                 }
 
-                var field = Array('bo_gallery_cols', 'bo_gallery_width', 'bo_gallery_height', 'bo_mobile_gallery_width', 'bo_mobile_gallery_height', 'bo_image_width');
+                var field = Array('bo_gallery_cols', 'bo_gallery_width', 'bo_gallery_height', 'bo_image_width');
                 var count = field.length;
                 var key;
 
