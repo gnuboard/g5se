@@ -12,14 +12,9 @@ function latest($skin_dir='', $bo_table='', $rows=10, $subject_len=40, $cache_ti
     
     $time_unit = 3600;  // 1시간으로 고정
 
-    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-        $latest_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/latest/'.$match[1];
-        $latest_skin_url = str_replace(G5_PATH, G5_URL, $latest_skin_path);
-        $skin_dir = $match[1];
-    } else {
-        $latest_skin_path = G5_SKIN_PATH.'/latest/'.$skin_dir;
-        $latest_skin_url  = G5_SKIN_URL.'/latest/'.$skin_dir;
-    }
+    $latest_skin_path = get_skin_path('latest', $skin_dir);
+    $latest_skin_url  = get_skin_url('latest', $skin_dir);
+    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) $skin_dir = $match[1]; // 캐시 파일명용 정규화
 
     $caches = false;
 

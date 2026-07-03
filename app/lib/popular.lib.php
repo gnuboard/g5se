@@ -23,14 +23,8 @@ function popular($skin_dir='basic', $pop_cnt=7, $date_cnt=3)
         //$list[$i]['pp_word'] = get_text($list[$i]['pp_word']);
     }
 
-    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-        $popular_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/popular/'.$match[1];
-        $popular_skin_url = str_replace(G5_PATH, G5_URL,$popular_skin_path);
-        $skin_dir = $match[1];
-    } else {
-        $popular_skin_path = G5_SKIN_PATH.'/popular/'.$skin_dir;
-        $popular_skin_url = G5_SKIN_URL.'/popular/'.$skin_dir;
-    }
+    $popular_skin_path = get_skin_path('popular', $skin_dir);
+    $popular_skin_url  = get_skin_url('popular', $skin_dir);
 
     ob_start();
     include_once ($popular_skin_path.'/popular.skin.php');

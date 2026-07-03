@@ -15,14 +15,9 @@ function poll($skin_dir='basic', $po_id=false)
     if(!$po_id)
         return;
 
-    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-        $poll_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/poll/'.$match[1];
-        $poll_skin_url = str_replace(G5_PATH, G5_URL, $poll_skin_path);
-        //$skin_dir = $match[1];
-    } else {
-        $poll_skin_path = G5_SKIN_PATH.'/poll/'.$skin_dir;
-        $poll_skin_url  = G5_SKIN_URL.'/poll/'.$skin_dir;
-    }
+    // $skin_dir 은 스킨 안에서 hidden 필드로 그대로 재사용되므로 정규화하지 않는다
+    $poll_skin_path = get_skin_path('poll', $skin_dir);
+    $poll_skin_url  = get_skin_url('poll', $skin_dir);
 
     $po = sql_pdo_fetch(" select * from {$g5['poll_table']} where po_id = :po_id and po_use = 1 ",
                         [':po_id' => $po_id]);

@@ -10,14 +10,8 @@ function connect($skin_dir='basic')
     $row = sql_pdo_fetch(" select sum(IF(mb_id<>'',1,0)) as mb_cnt, count(*) as total_cnt from {$g5['login_table']} where mb_id <> :admin_id ",
                          [':admin_id' => $config['cf_admin']]);
 
-    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-        $connect_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/connect/'.$match[1];
-        $connect_skin_url = str_replace(G5_PATH, G5_URL, $connect_skin_path);
-        $skin_dir = $match[1];
-    } else {
-        $connect_skin_path = G5_SKIN_PATH.'/connect/'.$skin_dir;
-        $connect_skin_url  = G5_SKIN_URL.'/connect/'.$skin_dir;
-    }
+    $connect_skin_path = get_skin_path('connect', $skin_dir);
+    $connect_skin_url  = get_skin_url('connect', $skin_dir);
 
     ob_start();
     include_once ($connect_skin_path.'/connect.skin.php');

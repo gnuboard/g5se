@@ -15,14 +15,8 @@ function outlogin($skin_dir='basic')
         $point = number_format($member['mb_point']);
     }
 
-    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-        $outlogin_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/outlogin/'.$match[1];
-        $outlogin_skin_url = str_replace(G5_PATH, G5_URL, $outlogin_skin_path);
-        $skin_dir = $match[1];
-    } else {
-        $outlogin_skin_path = G5_SKIN_PATH.'/outlogin/'.$skin_dir;
-        $outlogin_skin_url = G5_SKIN_URL.'/outlogin/'.$skin_dir;
-    }
+    $outlogin_skin_path = get_skin_path('outlogin', $skin_dir);
+    $outlogin_skin_url  = get_skin_url('outlogin', $skin_dir);
 
     // 읽지 않은 쪽지가 있다면
     if ($is_member) {

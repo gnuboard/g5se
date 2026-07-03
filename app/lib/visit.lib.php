@@ -18,14 +18,8 @@ function visit($skin_dir='basic')
     settype($visit[3], "integer");
     settype($visit[4], "integer");
 
-    if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-        $visit_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/visit/'.$match[1];
-        $visit_skin_url = str_replace(G5_PATH, G5_URL, $visit_skin_path);
-        $skin_dir = $match[1];
-    } else {
-        $visit_skin_path = G5_SKIN_PATH.'/visit/'.$skin_dir;
-        $visit_skin_url = G5_SKIN_URL.'/visit/'.$skin_dir;
-    }
+    $visit_skin_path = get_skin_path('visit', $skin_dir);
+    $visit_skin_url  = get_skin_url('visit', $skin_dir);
 
     ob_start();
     include_once ($visit_skin_path.'/visit.skin.php');

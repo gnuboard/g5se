@@ -92,14 +92,9 @@ for ($i=0; $row2=sql_fetch_array($result); $i++) {
     $list3[$i]['subject'] = cut_str($row2['po_subject'],60,"…");
 }
 
-if(preg_match('#^theme/(.+)$#', $skin_dir, $match)) {
-    $poll_skin_path = G5_THEME_PATH.'/'.G5_SKIN_DIR.'/poll/'.$match[1];
-    $poll_skin_url = str_replace(G5_PATH, G5_URL, $poll_skin_path);
-    //$skin_dir = $match[1];
-} else {
-    $poll_skin_path = G5_SKIN_PATH.'/poll/'.$skin_dir;
-    $poll_skin_url  = G5_SKIN_URL.'/poll/'.$skin_dir;
-}
+// $skin_dir 은 결과 스킨 안에서 hidden 필드/링크로 그대로 재사용되므로 정규화하지 않는다
+$poll_skin_path = get_skin_path('poll', $skin_dir);
+$poll_skin_url  = get_skin_url('poll', $skin_dir);
 
 include_once(G5_PATH.'/head.sub.php');
 
