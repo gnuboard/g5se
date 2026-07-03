@@ -92,7 +92,7 @@ if ($xpay->TX()) {
         //최종결제요청 결과 실패 DB처리
         //echo "최종결제요청 결과 실패 DB처리하시기 바랍니다.<br>";
 
-        if(G5_IS_MOBILE) {
+        if(is_mobile()) {
             if(isset($_POST['pp_id']) && $_POST['pp_id']) {
                 $page_return_url = G5_SHOP_URL.'/personalpayform.php?pp_id='.get_session('ss_personalpay_id');
             } else {

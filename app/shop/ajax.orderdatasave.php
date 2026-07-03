@@ -39,7 +39,7 @@ if(isset($_POST['pp_id']) && $_POST['pp_id']) {
         $cart_id = get_session('ss_cart_id');
     }
 
-    if( G5_IS_MOBILE && $default['de_pg_service'] == 'inicis' ){
+    if( is_mobile() && $default['de_pg_service'] == 'inicis' ){
         $_POST['post_cart_id'] = $cart_id;
     }
 }

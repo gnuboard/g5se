@@ -89,7 +89,7 @@ if ($result) {
         }
     } else {
 
-        if(G5_IS_MOBILE) {
+        if(is_mobile()) {
             if(isset($_POST['pp_id']) && $_POST['pp_id']) {
                 $page_return_url = G5_SHOP_URL.'/personalpayform.php?pp_id='.get_session('ss_personalpay_id');
             } else {

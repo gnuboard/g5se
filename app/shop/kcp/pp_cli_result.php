@@ -89,7 +89,7 @@ require_once(G5_SHOP_PATH.'/settle_kcp.inc.php');
 <meta charset="utf-8">
 <title>현금영수증발급 <?php echo $req_tx_name; ?> | <?php echo $config['cf_title']; ?></title>
 <?php
-echo '<link rel="stylesheet" href="'.G5_CSS_URL.'/'.(G5_IS_MOBILE?'mobile':'default').'_shop.css">'.PHP_EOL;
+echo '<link rel="stylesheet" href="'.G5_CSS_URL.'/default_shop.css">'.PHP_EOL;
 ?>
 <style>
 .tbl_head01 tbody th {padding-right:10px;text-align:right}
