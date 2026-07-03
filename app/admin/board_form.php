@@ -96,8 +96,6 @@ if (!array_key_exists('bo_select_editor', $board)) {
 }
 
 $board_default = array(
-'bo_mobile_subject'=>'',
-'bo_device'=>'',
 'bo_use_category'=>0,
 'bo_category_list'=>'',
 'bo_admin'=>'',
@@ -173,9 +171,7 @@ if ($w == '') {
     $board['bo_mobile_gallery_height'] = 100;
     $board['bo_table_width'] = 100;
     $board['bo_page_rows'] = $config['cf_page_rows'];
-    $board['bo_mobile_page_rows'] = $config['cf_page_rows'];
     $board['bo_subject_len'] = 60;
-    $board['bo_mobile_subject_len'] = 30;
     $board['bo_new'] = 24;
     $board['bo_hot'] = 100;
     $board['bo_image_width'] = 600;
@@ -184,7 +180,6 @@ if ($w == '') {
     $board['bo_reply_order'] = 1;
     $board['bo_use_search'] = 1;
     $board['bo_skin'] = 'basic';
-    $board['bo_mobile_skin'] = 'basic';
     $board['gr_id'] = $gr_id;
     $board['bo_use_secret'] = 0;
     $board['bo_include_head'] = '_head.php';
@@ -278,30 +273,6 @@ $pg_anchor = '<ul class="anchor">
             <th scope="row"><label for="bo_subject">게시판 제목<strong class="sound_only">필수</strong></label></th>
             <td colspan="2">
                 <input type="text" name="bo_subject" value="<?php echo get_text($board['bo_subject']) ?>" id="bo_subject" required class="required frm_input" size="80" maxlength="120">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="bo_mobile_subject">모바일 게시판 제목</label></th>
-            <td colspan="2">
-                <?php echo help("모바일에서 보여지는 게시판 제목이 다른 경우에 입력합니다. 입력이 없으면 기본 게시판 제목이 출력됩니다.") ?>
-                <input type="text" name="bo_mobile_subject" value="<?php echo get_text($board['bo_mobile_subject']) ?>" id="bo_mobile_subject" class="frm_input" size="80" maxlength="120">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="bo_device">접속기기</label></th>
-            <td>
-                <?php echo help("PC 와 모바일 사용을 구분합니다.") ?>
-                <select id="bo_device" name="bo_device">
-                    <option value="both"<?php echo get_selected($board['bo_device'], 'both'); ?>>PC와 모바일에서 모두 사용</option>
-                    <option value="pc"<?php echo get_selected($board['bo_device'], 'pc'); ?>>PC 전용</option>
-                    <option value="mobile"<?php echo get_selected($board['bo_device'], 'mobile'); ?>>모바일 전용</option>
-                </select>
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_device" value="1" id="chk_grp_device">
-                <label for="chk_grp_device">그룹적용</label>
-                <input type="checkbox" name="chk_all_device" value="1" id="chk_all_device">
-                <label for="chk_all_device">전체적용</label>
             </td>
         </tr>
         <tr>
@@ -911,18 +882,6 @@ $pg_anchor = '<ul class="anchor">
                 <label for="chk_all_skin">전체적용</label>
             </td>
         </tr>
-        <tr>
-            <th scope="row"><label for="bo_mobile_skin">모바일<br>스킨 디렉토리<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <?php echo get_mobile_skin_select('board', 'bo_mobile_skin', 'bo_mobile_skin', $board['bo_mobile_skin'], 'required'); ?>
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_skin" value="1" id="chk_grp_mobile_skin">
-                <label for="chk_grp_mobile_skin">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_skin" value="1" id="chk_all_mobile_skin">
-                <label for="chk_all_mobile_skin">전체적용</label>
-            </td>
-        </tr>
         <?php if ($is_admin === 'super') {   // 슈퍼관리자인 경우에만 수정 가능 ?>
         <tr>
             <th scope="row"><label for="bo_include_head">상단 파일 경로</label></th>
@@ -1039,19 +998,6 @@ $pg_anchor = '<ul class="anchor">
             </td>
         </tr>
         <tr>
-            <th scope="row"><label for="bo_mobile_subject_len">모바일 제목 길이<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <?php echo help('목록에서의 제목 글자수. 잘리는 글은 … 로 표시') ?>
-                <input type="text" name="bo_mobile_subject_len" value="<?php echo $board['bo_mobile_subject_len'] ?>" id="bo_mobile_subject_len" required class="required numeric frm_input" size="4">
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_subject_len" value="1" id="chk_grp_mobile_subject_len">
-                <label for="chk_grp_mobile_subject_len">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_subject_len" value="1" id="chk_all_mobile_subject_len">
-                <label for="chk_all_mobile_subject_len">전체적용</label>
-            </td>
-        </tr>
-        <tr>
             <th scope="row"><label for="bo_page_rows">페이지당 목록 수<strong class="sound_only">필수</strong></label></th>
             <td>
                 <input type="text" name="bo_page_rows" value="<?php echo $board['bo_page_rows'] ?>" id="bo_page_rows" required class="required numeric frm_input" size="4">
@@ -1061,18 +1007,6 @@ $pg_anchor = '<ul class="anchor">
                 <label for="chk_grp_page_rows">그룹적용</label>
                 <input type="checkbox" name="chk_all_page_rows" value="1" id="chk_all_page_rows">
                 <label for="chk_all_page_rows">전체적용</label>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="bo_mobile_page_rows">모바일 페이지당 목록 수<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <input type="text" name="bo_mobile_page_rows" value="<?php echo $board['bo_mobile_page_rows'] ?>" id="bo_mobile_page_rows" required class="required numeric frm_input" size="4">
-            </td>
-            <td class="td_grpset">
-                <input type="checkbox" name="chk_grp_mobile_page_rows" value="1" id="chk_grp_mobile_page_rows">
-                <label for="chk_grp_mobile_page_rows">그룹적용</label>
-                <input type="checkbox" name="chk_all_mobile_page_rows" value="1" id="chk_all_mobile_page_rows">
-                <label for="chk_all_mobile_page_rows">전체적용</label>
             </td>
         </tr>
         <tr>

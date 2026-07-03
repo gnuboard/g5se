@@ -71,13 +71,11 @@ if ($w == "u") {
         'co_id' => '',
         'co_subject' => '',
         'co_content' => '',
-        'co_mobile_content' => '',
         'co_include_head' => '',
         'co_include_tail' => '',
         'co_tag_filter_use' => 1,
         'co_html' => 2,
-        'co_skin' => 'basic',
-        'co_mobile_skin' => 'basic'
+        'co_skin' => 'basic'
     );
 }
 
@@ -121,19 +119,9 @@ admin_layout_start($g5['title'], 'content');
                     <td><?php echo editor_html('co_content', get_text(html_purifier($co['co_content']), 0)); ?></td>
                 </tr>
                 <tr>
-                    <th scope="row">모바일 내용</th>
-                    <td><?php echo editor_html('co_mobile_content', get_text(html_purifier($co['co_mobile_content']), 0)); ?></td>
-                </tr>
-                <tr>
                     <th scope="row"><label for="co_skin">스킨 디렉토리<strong class="sound_only">필수</strong></label></th>
                     <td>
                         <?php echo get_skin_select('content', 'co_skin', 'co_skin', $co['co_skin'], 'required'); ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="co_mobile_skin">모바일스킨 디렉토리<strong class="sound_only">필수</strong></label></th>
-                    <td>
-                        <?php echo get_mobile_skin_select('content', 'co_mobile_skin', 'co_mobile_skin', $co['co_mobile_skin'], 'required'); ?>
                     </td>
                 </tr>
                 <!--
@@ -298,7 +286,6 @@ admin_layout_start($g5['title'], 'content');
 
         <?php echo get_editor_js('co_content'); ?>
         <?php echo chk_editor_js('co_content'); ?>
-        <?php echo get_editor_js('co_mobile_content'); ?>
 
         check_field(f.co_id, "ID를 입력하세요.");
         check_field(f.co_subject, "제목을 입력하세요.");

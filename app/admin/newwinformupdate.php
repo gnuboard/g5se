@@ -28,7 +28,6 @@ $nw_subject = isset($_POST['nw_subject']) ? strip_tags(clean_xss_attributes($_PO
 $posts = array();
 
 $check_keys = array(
-    'nw_device' => 'str',
     'nw_division' => 'str',
     'nw_begin_time' => 'str',
     'nw_end_time' => 'str',
@@ -51,8 +50,7 @@ foreach ($check_keys as $key => $val) {
     }
 }
 
-$sql_common = " nw_device = :nw_device,
-                nw_division = :nw_division,
+$sql_common = " nw_division = :nw_division,
                 nw_begin_time = :nw_begin_time,
                 nw_end_time = :nw_end_time,
                 nw_disable_hours = :nw_disable_hours,
@@ -63,7 +61,6 @@ $sql_common = " nw_device = :nw_device,
                 nw_content_html = :nw_content_html ";
 
 $common_params = [
-    ':nw_device'        => $posts['nw_device'],
     ':nw_division'      => $posts['nw_division'],
     ':nw_begin_time'    => $posts['nw_begin_time'],
     ':nw_end_time'      => $posts['nw_end_time'],

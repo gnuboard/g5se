@@ -43,7 +43,7 @@ if ($stx !== '') {
 }
 
 // 정렬 컬럼/방향은 화이트리스트 매칭이라 안전 — placeholder 못 쓰는 식별자 영역이라 그대로 보간
-$allowed_sst = ['a.gr_id','bo_table','bo_skin','bo_mobile_skin','bo_subject','bo_use_sns','bo_use_search','bo_order','a.gr_id, a.bo_table'];
+$allowed_sst = ['a.gr_id','bo_table','bo_skin','bo_subject','bo_use_sns','bo_use_search','bo_order','a.gr_id, a.bo_table'];
 if (!$sst || !in_array($sst, $allowed_sst, true)) {
     $sst = 'a.gr_id, a.bo_table';
     $sod = 'asc';
@@ -136,7 +136,6 @@ admin_layout_start('게시판 관리', 'bbs_board');
                     <th class="px-3 py-2.5 text-left whitespace-nowrap"><?php echo $sort_link('a.gr_id') ?>그룹</a></th>
                     <th class="px-3 py-2.5 text-left whitespace-nowrap"><?php echo $sort_link('bo_table') ?>TABLE</a></th>
                     <th class="px-3 py-2.5 text-left whitespace-nowrap"><?php echo $sort_link('bo_skin','desc') ?>스킨</a></th>
-                    <th class="px-3 py-2.5 text-left whitespace-nowrap"><?php echo $sort_link('bo_mobile_skin','desc') ?>모바일</a></th>
                     <th class="px-3 py-2.5 text-left whitespace-nowrap min-w-[14rem]"><?php echo $sort_link('bo_subject') ?>제목</a></th>
                     <th class="px-3 py-2.5 text-center whitespace-nowrap" title="읽기 포인트">읽</th>
                     <th class="px-3 py-2.5 text-center whitespace-nowrap" title="쓰기 포인트">쓰</th>
@@ -145,7 +144,6 @@ admin_layout_start('게시판 관리', 'bbs_board');
                     <th class="px-3 py-2.5 text-center whitespace-nowrap"><?php echo $sort_link('bo_use_sns') ?>SNS</a></th>
                     <th class="px-3 py-2.5 text-center whitespace-nowrap"><?php echo $sort_link('bo_use_search') ?>검색</a></th>
                     <th class="px-3 py-2.5 text-center whitespace-nowrap"><?php echo $sort_link('bo_order') ?>순서</a></th>
-                    <th class="px-3 py-2.5 text-left whitespace-nowrap">접속</th>
                     <th class="px-3 py-2.5 text-right whitespace-nowrap">관리</th>
                 </tr>
             </thead>
@@ -176,9 +174,6 @@ admin_layout_start('게시판 관리', 'bbs_board');
                     <td class="px-3 py-2 whitespace-nowrap">
                         <?php echo str_replace('<select ', '<select class="'.$select_cls.'" ', get_skin_select('board', 'bo_skin_'.$i, "bo_skin[$i]", $row['bo_skin'])) ?>
                     </td>
-                    <td class="px-3 py-2 whitespace-nowrap">
-                        <?php echo str_replace('<select ', '<select class="'.$select_cls.'" ', get_mobile_skin_select('board', 'bo_mobile_skin_'.$i, "bo_mobile_skin[$i]", $row['bo_mobile_skin'])) ?>
-                    </td>
                     <td class="px-3 py-2">
                         <input type="text" name="bo_subject[<?php echo $i ?>]" value="<?php echo $h($row['bo_subject']) ?>" required class="<?php echo $input_cls ?>" maxlength="255">
                     </td>
@@ -189,13 +184,6 @@ admin_layout_start('게시판 관리', 'bbs_board');
                     <td class="px-3 py-2 text-center"><input type="checkbox" name="bo_use_sns[<?php echo $i ?>]"    value="1" <?php echo $row['bo_use_sns']?'checked':'' ?> class="rounded border-slate-300"></td>
                     <td class="px-3 py-2 text-center"><input type="checkbox" name="bo_use_search[<?php echo $i ?>]" value="1" <?php echo $row['bo_use_search']?'checked':'' ?> class="rounded border-slate-300"></td>
                     <td class="px-3 py-2"><input type="text" name="bo_order[<?php echo $i ?>]" value="<?php echo (int)$row['bo_order'] ?>" class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2 whitespace-nowrap">
-                        <select name="bo_device[<?php echo $i ?>]" class="<?php echo $select_cls ?>">
-                            <option value="both"   <?php echo $row['bo_device']==='both'  ?'selected':'' ?>>모두</option>
-                            <option value="pc"     <?php echo $row['bo_device']==='pc'    ?'selected':'' ?>>PC</option>
-                            <option value="mobile" <?php echo $row['bo_device']==='mobile'?'selected':'' ?>>모바일</option>
-                        </select>
-                    </td>
                     <td class="px-3 py-2 text-right whitespace-nowrap">
                         <a href="/admin/board_form?w=u&amp;bo_table=<?php echo urlencode($row['bo_table']) ?>" class="inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">수정</a>
                     </td>

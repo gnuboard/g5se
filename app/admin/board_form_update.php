@@ -16,7 +16,6 @@ check_admin_token();
 $gr_id              = isset($_POST['gr_id']) ? preg_replace('/[^a-z0-9_]/i', '', (string)$_POST['gr_id']) : '';
 $bo_admin           = isset($_POST['bo_admin']) ? preg_replace('/[^a-z0-9_\, \|\#]/i', '', $_POST['bo_admin']) : '';
 $bo_subject         = isset($_POST['bo_subject']) ? strip_tags(clean_xss_attributes($_POST['bo_subject'])) : '';
-$bo_mobile_subject  = isset($_POST['bo_mobile_subject']) ? strip_tags(clean_xss_attributes($_POST['bo_mobile_subject'])) : '';
 
 if (!$gr_id) {
     alert('그룹 ID는 반드시 선택하세요.');
@@ -131,9 +130,7 @@ $bo_use_sns = isset($_POST['bo_use_sns']) ? (int) $_POST['bo_use_sns'] : 0;
 $bo_use_captcha = isset($_POST['bo_use_captcha']) ? (int) $_POST['bo_use_captcha'] : 0;
 $bo_table_width = isset($_POST['bo_table_width']) ? (int) $_POST['bo_table_width'] : 0;
 $bo_subject_len = isset($_POST['bo_subject_len']) ? (int) $_POST['bo_subject_len'] : 0;
-$bo_mobile_subject_len = isset($_POST['bo_mobile_subject_len']) ? (int) $_POST['bo_mobile_subject_len'] : 0;
 $bo_page_rows = isset($_POST['bo_page_rows']) ? (int) $_POST['bo_page_rows'] : 0;
-$bo_mobile_page_rows = isset($_POST['bo_mobile_page_rows']) ? (int) $_POST['bo_mobile_page_rows'] : 0;
 $bo_use_rss_view = isset($_POST['bo_use_rss_view']) ? (int) $_POST['bo_use_rss_view'] : 0;
 $bo_use_secret = isset($_POST['bo_use_secret']) ? (int) $_POST['bo_use_secret'] : 0;
 $bo_use_file_content = isset($_POST['bo_use_file_content']) ? (int) $_POST['bo_use_file_content'] : 0;
@@ -142,7 +139,6 @@ $bo_hot = isset($_POST['bo_hot']) ? (int) $_POST['bo_hot'] : 0;
 $bo_image_width = isset($_POST['bo_image_width']) ? (int) $_POST['bo_image_width'] : 0;
 $bo_use_search = isset($_POST['bo_use_search']) ? (int) $_POST['bo_use_search'] : 0;
 $bo_use_cert = isset($_POST['bo_use_cert']) ? preg_replace('/[^0-9a-z_]/i', '', $_POST['bo_use_cert']) : '';
-$bo_device = isset($_POST['bo_device']) ? clean_xss_tags(stripslashes($_POST['bo_device']), 1, 1) : '';
 $bo_list_level = isset($_POST['bo_list_level']) ? (int) $_POST['bo_list_level'] : 0;
 $bo_read_level = isset($_POST['bo_read_level']) ? (int) $_POST['bo_read_level'] : 0;
 $bo_write_level = isset($_POST['bo_write_level']) ? (int) $_POST['bo_write_level'] : 0;
@@ -160,7 +156,6 @@ $bo_comment_point = isset($_POST['bo_comment_point']) ? (int) $_POST['bo_comment
 $bo_download_point = isset($_POST['bo_download_point']) ? (int) $_POST['bo_download_point'] : 0;
 $bo_select_editor = isset($_POST['bo_select_editor']) ? clean_xss_tags(stripslashes($_POST['bo_select_editor']), 1, 1) : '';
 $bo_skin = isset($_POST['bo_skin']) ? clean_xss_tags(stripslashes($_POST['bo_skin']), 1, 1) : '';
-$bo_mobile_skin = isset($_POST['bo_mobile_skin']) ? clean_xss_tags(stripslashes($_POST['bo_mobile_skin']), 1, 1) : '';
 $bo_content_head = isset($_POST['bo_content_head']) ? stripslashes($_POST['bo_content_head']) : '';
 $bo_content_tail = isset($_POST['bo_content_tail']) ? stripslashes($_POST['bo_content_tail']) : '';
 $bo_mobile_content_head = isset($_POST['bo_mobile_content_head']) ? stripslashes($_POST['bo_mobile_content_head']) : '';
@@ -181,7 +176,7 @@ $bo_comment_min = isset($_POST['bo_comment_min']) ? (int) $_POST['bo_comment_min
 $bo_comment_max = isset($_POST['bo_comment_max']) ? (int) $_POST['bo_comment_max'] : 0;
 $bo_sort_field = isset($_POST['bo_sort_field']) ? clean_xss_tags(stripslashes($_POST['bo_sort_field']), 1, 1) : '';
 
-if (strpbrk($bo_skin.$bo_mobile_skin, "?%*:|\"<>") !== false) {
+if (strpbrk($bo_skin, "?%*:|\"<>") !== false) {
     alert('스킨 디렉토리명 오류!');
 }
 
@@ -194,8 +189,6 @@ for ($i = 1; $i <= 10; $i++) {
 
 $sql_common = " gr_id               = :gr_id,
                 bo_subject          = :bo_subject,
-                bo_mobile_subject   = :bo_mobile_subject,
-                bo_device           = :bo_device,
                 bo_admin            = :bo_admin,
                 bo_list_level       = :bo_list_level,
                 bo_read_level       = :bo_read_level,
@@ -234,21 +227,16 @@ $sql_common = " gr_id               = :gr_id,
                 bo_use_captcha      = :bo_use_captcha,
                 bo_table_width      = :bo_table_width,
                 bo_subject_len      = :bo_subject_len,
-                bo_mobile_subject_len = :bo_mobile_subject_len,
                 bo_page_rows        = :bo_page_rows,
-                bo_mobile_page_rows = :bo_mobile_page_rows,
                 bo_new              = :bo_new,
                 bo_hot              = :bo_hot,
                 bo_image_width      = :bo_image_width,
-                bo_skin             = :bo_skin,
-                bo_mobile_skin      = :bo_mobile_skin
+                bo_skin             = :bo_skin
                 ";
 
 $common_params = [
     ':gr_id'                 => $gr_id,
     ':bo_subject'            => $bo_subject,
-    ':bo_mobile_subject'     => $bo_mobile_subject,
-    ':bo_device'             => $bo_device,
     ':bo_admin'              => $bo_admin,
     ':bo_list_level'         => $bo_list_level,
     ':bo_read_level'         => $bo_read_level,
@@ -287,14 +275,11 @@ $common_params = [
     ':bo_use_captcha'        => $bo_use_captcha,
     ':bo_table_width'        => $bo_table_width,
     ':bo_subject_len'        => $bo_subject_len,
-    ':bo_mobile_subject_len' => $bo_mobile_subject_len,
     ':bo_page_rows'          => $bo_page_rows,
-    ':bo_mobile_page_rows'   => $bo_mobile_page_rows,
     ':bo_new'                => $bo_new,
     ':bo_hot'                => $bo_hot,
     ':bo_image_width'        => $bo_image_width,
     ':bo_skin'               => $bo_skin,
-    ':bo_mobile_skin'        => $bo_mobile_skin,
 ];
 
 // 최고 관리자인 경우에만 수정가능
@@ -443,17 +428,17 @@ if ($w == '') {
 // g5se: chk_grp_* / chk_all_* 동일 옵션 적용을 placeholder/params 로 빌드.
 // $scope = 'grp' | 'all' — 양쪽 동일 매핑이므로 한 helper 로 처리.
 $build_scope = function($scope) use (
-    $bo_device, $bo_admin, $bo_list_level, $bo_read_level, $bo_write_level, $bo_reply_level,
+    $bo_admin, $bo_list_level, $bo_read_level, $bo_write_level, $bo_reply_level,
     $bo_comment_level, $bo_link_level, $bo_upload_level, $bo_download_level, $bo_html_level,
     $bo_count_modify, $bo_count_delete, $bo_read_point, $bo_write_point, $bo_comment_point,
     $bo_download_point, $str_bo_category_list, $bo_use_category, $bo_use_sideview,
     $bo_use_file_content, $bo_use_secret, $bo_use_dhtml_editor, $bo_select_editor,
     $bo_use_rss_view, $bo_use_good, $bo_use_nogood, $bo_use_name, $bo_use_signature,
     $bo_use_ip_view, $bo_use_list_view, $bo_use_list_file, $bo_use_list_content,
-    $bo_use_email, $bo_use_cert, $bo_use_sns, $bo_use_captcha, $bo_skin, $bo_mobile_skin,
+    $bo_use_email, $bo_use_cert, $bo_use_sns, $bo_use_captcha, $bo_skin,
     $bo_gallery_cols, $bo_gallery_width, $bo_gallery_height,
     $bo_mobile_gallery_width, $bo_mobile_gallery_height, $bo_table_width, $bo_page_rows,
-    $bo_mobile_page_rows, $bo_subject_len, $bo_mobile_subject_len, $bo_new, $bo_hot,
+    $bo_subject_len, $bo_new, $bo_hot,
     $bo_image_width, $bo_reply_order, $bo_sort_field, $bo_write_min, $bo_write_max,
     $bo_comment_min, $bo_comment_max, $bo_upload_count, $bo_upload_size,
     $is_admin, $bo_include_head, $bo_include_tail, $bo_content_head, $bo_content_tail,
@@ -468,7 +453,6 @@ $build_scope = function($scope) use (
         $params[$key] = $val;
     };
 
-    if (is_checked('chk_'.$scope.'_device'))               $add('bo_device',           $bo_device);
     if (is_checked('chk_'.$scope.'_admin'))                $add('bo_admin',            $bo_admin);
     if (is_checked('chk_'.$scope.'_list_level'))           $add('bo_list_level',       $bo_list_level);
     if (is_checked('chk_'.$scope.'_read_level'))           $add('bo_read_level',       $bo_read_level);
@@ -508,7 +492,6 @@ $build_scope = function($scope) use (
     if (is_checked('chk_'.$scope.'_use_sns'))              $add('bo_use_sns',          $bo_use_sns);
     if (is_checked('chk_'.$scope.'_use_captcha'))          $add('bo_use_captcha',      $bo_use_captcha);
     if (is_checked('chk_'.$scope.'_skin'))                 $add('bo_skin',             $bo_skin);
-    if (is_checked('chk_'.$scope.'_mobile_skin'))          $add('bo_mobile_skin',      $bo_mobile_skin);
     if (is_checked('chk_'.$scope.'_gallery_cols'))         $add('bo_gallery_cols',     $bo_gallery_cols);
     if (is_checked('chk_'.$scope.'_gallery_width'))        $add('bo_gallery_width',    $bo_gallery_width);
     if (is_checked('chk_'.$scope.'_gallery_height'))       $add('bo_gallery_height',   $bo_gallery_height);
@@ -516,9 +499,7 @@ $build_scope = function($scope) use (
     if (is_checked('chk_'.$scope.'_mobile_gallery_height')) $add('bo_mobile_gallery_height', $bo_mobile_gallery_height);
     if (is_checked('chk_'.$scope.'_table_width'))          $add('bo_table_width',      $bo_table_width);
     if (is_checked('chk_'.$scope.'_page_rows'))            $add('bo_page_rows',        $bo_page_rows);
-    if (is_checked('chk_'.$scope.'_mobile_page_rows'))     $add('bo_mobile_page_rows', $bo_mobile_page_rows);
     if (is_checked('chk_'.$scope.'_subject_len'))          $add('bo_subject_len',      $bo_subject_len);
-    if (is_checked('chk_'.$scope.'_mobile_subject_len'))   $add('bo_mobile_subject_len', $bo_mobile_subject_len);
     if (is_checked('chk_'.$scope.'_new'))                  $add('bo_new',              $bo_new);
     if (is_checked('chk_'.$scope.'_hot'))                  $add('bo_hot',              $bo_hot);
     if (is_checked('chk_'.$scope.'_image_width'))          $add('bo_image_width',      $bo_image_width);

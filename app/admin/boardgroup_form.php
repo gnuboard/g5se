@@ -20,7 +20,6 @@ $sound_only = '';
 if (!array_key_exists('gr_id', $group)) {
     $group['gr_id'] = '';
     $group['gr_subject'] = '';
-    $group['gr_device'] = '';
 }
 
 $gr = array('gr_use_access' => 0, 'gr_admin' => '');
@@ -92,17 +91,6 @@ admin_layout_start($g5['title'], 'boardgroup');
                             echo '<a href="'.G5_ADMIN_URL.'/board_form?gr_id=' . $gr_id . '" class="btn_frmline">게시판생성</a>';
                         }
                         ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="gr_device">접속기기</label></th>
-                    <td>
-                        <?php echo help("PC 와 모바일 사용을 구분합니다.") ?>
-                        <select id="gr_device" name="gr_device">
-                            <option value="both" <?php echo get_selected($group['gr_device'], 'both', true); ?>>PC와 모바일에서 모두 사용</option>
-                            <option value="pc" <?php echo get_selected($group['gr_device'], 'pc'); ?>>PC 전용</option>
-                            <option value="mobile" <?php echo get_selected($group['gr_device'], 'mobile'); ?>>모바일 전용</option>
-                        </select>
                     </td>
                 </tr>
                 <tr>

@@ -74,7 +74,7 @@ admin_layout_start($g5['title'], 'boardgroup');
 <div class="legacy-admin-content space-y-4">
 <?php
 
-$colspan = 10;
+$colspan = 9;
 ?>
 
 <div class="local_ov01 local_ov">
@@ -119,7 +119,6 @@ $colspan = 10;
                     <th scope="col">접근<br>사용</th>
                     <th scope="col">접근<br>회원수</th>
                     <th scope="col"><?php echo subject_sort_link('gr_order') ?>출력<br>순서</a></th>
-                    <th scope="col">접속기기</th>
                     <th scope="col">관리</th>
                 </tr>
             </thead>
@@ -167,14 +166,6 @@ $colspan = 10;
                         <td class="td_numsmall">
                             <label for="gr_order_<?php echo $i; ?>" class="sound_only">메인메뉴 출력순서</label>
                             <input type="text" name="gr_order[<?php echo $i ?>]" value="<?php echo $row['gr_order'] ?>" id="gr_order_<?php echo $i ?>" class="tbl_input" size="2">
-                        </td>
-                        <td class="td_mng">
-                            <label for="gr_device_<?php echo $i; ?>" class="sound_only">접속기기</label>
-                            <select name="gr_device[<?php echo $i ?>]" id="gr_device_<?php echo $i ?>">
-                                <option value="both" <?php echo get_selected($row['gr_device'], 'both'); ?>>모두</option>
-                                <option value="pc" <?php echo get_selected($row['gr_device'], 'pc'); ?>>PC</option>
-                                <option value="mobile" <?php echo get_selected($row['gr_device'], 'mobile'); ?>>모바일</option>
-                            </select>
                         </td>
                         <td class="td_mng td_mng_s"><?php echo $s_upd ?></td>
                     </tr>

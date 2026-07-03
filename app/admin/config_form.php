@@ -456,9 +456,6 @@ if (!isset($member['mb_marketing_agree'])) {
 if (!$config['cf_faq_skin']) {
     $config['cf_faq_skin'] = "basic";
 }
-if (!$config['cf_mobile_faq_skin']) {
-    $config['cf_mobile_faq_skin'] = "basic";
-}
 
 $g5['title'] = '환경설정';
 admin_layout_start($g5['title'], 'config');
@@ -612,60 +609,37 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_page_rows">한페이지당 라인수</label></th>
-                        <td>
+                        <td colspan="3">
                             <?php echo help('목록(리스트) 한페이지당 라인수') ?>
                             <input type="text" name="cf_page_rows" value="<?php echo (int) $config['cf_page_rows'] ?>" id="cf_page_rows" class="frm_input" autocomplete="off" size="3"> 라인
-                        </td>
-                        <th scope="row"><label for="cf_mobile_page_rows">모바일 한페이지당 라인수</label></th>
-                        <td>
-                            <?php echo help('모바일 목록 한페이지당 라인수') ?>
-                            <input type="text" name="cf_mobile_page_rows" value="<?php echo (int) $config['cf_mobile_page_rows'] ?>" id="cf_mobile_page_rows" class="frm_input" autocomplete="off" size="3"> 라인
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_write_pages">페이지 표시 수<strong class="sound_only">필수</strong></label></th>
-                        <td><input type="text" name="cf_write_pages" value="<?php echo (int) $config['cf_write_pages'] ?>" id="cf_write_pages" required class="required numeric frm_input" autocomplete="off" size="3"> 페이지씩 표시</td>
-                        <th scope="row"><label for="cf_mobile_pages">모바일 페이지 표시 수<strong class="sound_only">필수</strong></label></th>
-                        <td><input type="text" name="cf_mobile_pages" value="<?php echo (int) $config['cf_mobile_pages'] ?>" id="cf_mobile_pages" required class="required numeric frm_input" autocomplete="off" size="3"> 페이지씩 표시</td>
+                        <td colspan="3"><input type="text" name="cf_write_pages" value="<?php echo (int) $config['cf_write_pages'] ?>" id="cf_write_pages" required class="required numeric frm_input" autocomplete="off" size="3"> 페이지씩 표시</td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_new_skin">최근게시물 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
+                        <td colspan="3">
                             <?php echo get_skin_select('new', 'cf_new_skin', 'cf_new_skin', $config['cf_new_skin'], 'required'); ?>
-                        </td>
-                        <th scope="row"><label for="cf_mobile_new_skin">모바일<br>최근게시물 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
-                            <?php echo get_mobile_skin_select('new', 'cf_mobile_new_skin', 'cf_mobile_new_skin', $config['cf_mobile_new_skin'], 'required'); ?>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_search_skin">검색 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
+                        <td colspan="3">
                             <?php echo get_skin_select('search', 'cf_search_skin', 'cf_search_skin', $config['cf_search_skin'], 'required'); ?>
-                        </td>
-                        <th scope="row"><label for="cf_mobile_search_skin">모바일 검색 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
-                            <?php echo get_mobile_skin_select('search', 'cf_mobile_search_skin', 'cf_mobile_search_skin', $config['cf_mobile_search_skin'], 'required'); ?>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_connect_skin">접속자 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
+                        <td colspan="3">
                             <?php echo get_skin_select('connect', 'cf_connect_skin', 'cf_connect_skin', $config['cf_connect_skin'], 'required'); ?>
-                        </td>
-                        <th scope="row"><label for="cf_mobile_connect_skin">모바일 접속자 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
-                            <?php echo get_mobile_skin_select('connect', 'cf_mobile_connect_skin', 'cf_mobile_connect_skin', $config['cf_mobile_connect_skin'], 'required'); ?>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="cf_faq_skin">FAQ 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
+                        <td colspan="3">
                             <?php echo get_skin_select('faq', 'cf_faq_skin', 'cf_faq_skin', $config['cf_faq_skin'], 'required'); ?>
-                        </td>
-                        <th scope="row"><label for="cf_mobile_faq_skin">모바일 FAQ 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
-                            <?php echo get_mobile_skin_select('faq', 'cf_mobile_faq_skin', 'cf_mobile_faq_skin', $config['cf_mobile_faq_skin'], 'required'); ?>
                         </td>
                     </tr>
                     <tr>
@@ -897,12 +871,8 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                 <tbody>
                     <tr>
                         <th scope="row"><label for="cf_member_skin">회원 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
+                        <td colspan="3">
                             <?php echo get_skin_select('member', 'cf_member_skin', 'cf_member_skin', $config['cf_member_skin'], 'required'); ?>
-                        </td>
-                        <th scope="row"><label for="cf_mobile_member_skin">모바일<br>회원 스킨<strong class="sound_only">필수</strong></label></th>
-                        <td>
-                            <?php echo get_mobile_skin_select('member', 'cf_mobile_member_skin', 'cf_mobile_member_skin', $config['cf_mobile_member_skin'], 'required'); ?>
                         </td>
                     </tr>
                     <tr>
@@ -1687,7 +1657,7 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
                         return false;
                     }
 
-                    var field = Array('cf_member_skin', 'cf_mobile_member_skin', 'cf_new_skin', 'cf_mobile_new_skin', 'cf_search_skin', 'cf_mobile_search_skin', 'cf_connect_skin', 'cf_mobile_connect_skin', 'cf_faq_skin', 'cf_mobile_faq_skin');
+                    var field = Array('cf_member_skin', 'cf_new_skin', 'cf_search_skin', 'cf_connect_skin', 'cf_faq_skin');
                     var count = field.length;
                     var key;
 

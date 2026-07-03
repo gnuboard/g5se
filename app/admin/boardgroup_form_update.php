@@ -31,7 +31,6 @@ $posts = array();
 
 $check_keys = array(
     'gr_subject' => '',
-    'gr_device' => '',
     'gr_admin' => '',
 );
 
@@ -49,7 +48,6 @@ foreach ($check_keys as $key => $value) {
 }
 
 $sql_common = " gr_subject = '{$posts['gr_subject']}',
-                gr_device = '{$posts['gr_device']}',
                 gr_admin  = '{$posts['gr_admin']}',
                 gr_1_subj = '{$posts['gr_1_subj']}',
                 gr_2_subj = '{$posts['gr_2_subj']}',

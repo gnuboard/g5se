@@ -33,7 +33,6 @@ if ($w == "u") {
     }
 } else {
     $html_title .= " 입력";
-    $nw['nw_device'] = 'both';
     $nw['nw_disable_hours'] = 24;
     $nw['nw_left']   = 10;
     $nw['nw_top']    = 10;
@@ -80,17 +79,6 @@ admin_layout_start($g5['title'], 'newwin');
                                 <option value="both" <?php echo get_selected($nw['nw_division'], 'both', true); ?>>커뮤니티와 쇼핑몰</option>
                                 <option value="shop" <?php echo get_selected($nw['nw_division'], 'shop'); ?>>쇼핑몰</option>
                             <?php } ?>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="nw_device">접속기기</label></th>
-                    <td>
-                        <?php echo help("팝업레이어가 표시될 접속기기를 설정합니다."); ?>
-                        <select name="nw_device" id="nw_device">
-                            <option value="both" <?php echo get_selected($nw['nw_device'], 'both', true); ?>>PC와 모바일</option>
-                            <option value="pc" <?php echo get_selected($nw['nw_device'], 'pc'); ?>>PC</option>
-                            <option value="mobile" <?php echo get_selected($nw['nw_device'], 'mobile'); ?>>모바일</option>
                         </select>
                     </td>
                 </tr>

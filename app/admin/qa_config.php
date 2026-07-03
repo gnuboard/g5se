@@ -178,12 +178,6 @@ if (!isset($qaconfig['qa_include_head'])) {
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="qa_mobile_skin">모바일 스킨 디렉토리<strong class="sound_only">필수</strong></label></th>
-                        <td>
-                            <?php echo get_mobile_skin_select('qa', 'qa_mobile_skin', 'qa_mobile_skin', $qaconfig['qa_mobile_skin'], 'required'); ?>
-                        </td>
-                    </tr>
-                    <tr>
                         <th scope="row">이메일 입력</th>
                         <td>
                             <input type="checkbox" name="qa_use_email" value="1" id="qa_use_email" <?php echo $qaconfig['qa_use_email'] ? 'checked' : ''; ?>> <label for="qa_use_email">보이기</label>
@@ -246,22 +240,9 @@ if (!isset($qaconfig['qa_include_head'])) {
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="qa_mobile_subject_len">모바일 제목 길이<strong class="sound_only"> 필수</strong></label></th>
-                        <td>
-                            <?php echo help('목록에서의 제목 글자수') ?>
-                            <input type="text" name="qa_mobile_subject_len" value="<?php echo $qaconfig['qa_mobile_subject_len'] ?>" id="qa_mobile_subject_len" required class="required numeric frm_input" size="4">
-                        </td>
-                    </tr>
-                    <tr>
                         <th scope="row"><label for="qa_page_rows">페이지당 목록 수<strong class="sound_only"> 필수</strong></label></th>
                         <td>
                             <input type="text" name="qa_page_rows" value="<?php echo $qaconfig['qa_page_rows'] ?>" id="qa_page_rows" required class="required numeric frm_input" size="4">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="qa_mobile_page_rows">모바일 페이지당 목록 수<strong class="sound_only"> 필수</strong></label></th>
-                        <td>
-                            <input type="text" name="qa_mobile_page_rows" value="<?php echo $qaconfig['qa_mobile_page_rows'] ?>" id="qa_mobile_page_rows" required class="required numeric frm_input" size="4">
                         </td>
                     </tr>
                     <tr>
