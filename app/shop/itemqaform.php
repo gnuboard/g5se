@@ -5,7 +5,7 @@ $w     = isset($_REQUEST['w']) ? preg_replace('/[^0-9a-z]/i', '', trim($_REQUEST
 $it_id = isset($_REQUEST['it_id']) ? get_search_string(trim($_REQUEST['it_id'])) : '';
 $iq_id = isset($_REQUEST['iq_id']) ? preg_replace('/[^0-9]/', '', trim($_REQUEST['iq_id'])) : 0;
 $qa = array('iq_subject'=>'', 'iq_question'=>'');
-
+
 
 include_once(G5_EDITOR_LIB);
 
@@ -45,8 +45,8 @@ if ($w == "u")
 include_once(G5_PATH.'/head.sub.php');
 
 $is_dhtml_editor = false;
-// 모바일에서는 DHTML 에디터 사용불가
-if ($config['cf_editor'] && (!is_mobile() || defined('G5_IS_MOBILE_DHTML_USE') && G5_IS_MOBILE_DHTML_USE)) {
+// 에디터 사용 여부는 기기와 무관하게 사이트 설정으로만 결정 (반응형 UI라 모바일에서도 에디터 사용)
+if ($config['cf_editor']) {
     $is_dhtml_editor = true;
 }
 $editor_html = editor_html('iq_question', get_text(html_purifier($qa['iq_question']), 0), $is_dhtml_editor);

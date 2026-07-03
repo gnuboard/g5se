@@ -5,7 +5,7 @@ $w     = isset($_REQUEST['w']) ? preg_replace('/[^0-9a-z]/i', '', trim($_REQUEST
 $it_id = isset($_REQUEST['it_id']) ? get_search_string(trim($_REQUEST['it_id'])) : '';
 $is_id = isset($_REQUEST['is_id']) ? preg_replace('/[^0-9]/', '', trim($_REQUEST['is_id'])) : 0;
 $use = array('is_subject'=>'', 'is_content'=>'');
-
+
 
 include_once(G5_EDITOR_LIB);
 
@@ -41,8 +41,8 @@ if ($w == "") {
 include_once(G5_PATH.'/head.sub.php');
 
 $is_dhtml_editor = false;
-// 모바일에서는 DHTML 에디터 사용불가
-if ($config['cf_editor'] && (!is_mobile() || defined('G5_IS_MOBILE_DHTML_USE') && G5_IS_MOBILE_DHTML_USE)) {
+// 에디터 사용 여부는 기기와 무관하게 사이트 설정으로만 결정 (반응형 UI라 모바일에서도 에디터 사용)
+if ($config['cf_editor']) {
     $is_dhtml_editor = true;
 }
 $editor_html = editor_html('is_content', get_text(html_purifier($use['is_content']), 0), $is_dhtml_editor);
