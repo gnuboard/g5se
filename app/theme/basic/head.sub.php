@@ -61,7 +61,8 @@ var g5_url       = "<?php echo G5_URL ?>";
 var g5_bbs_url   = "<?php echo G5_BBS_URL ?>";
 var g5_is_member = "<?php echo isset($is_member)?$is_member:''; ?>";
 var g5_is_admin  = "<?php echo isset($is_admin)?$is_admin:''; ?>";
-var g5_is_mobile = "";
+<?php // 결제/본인인증 플로우용 실기기 신호 (모바일이면 1, 데스크톱은 '' — 데스크톱 출력 불변) ?>
+var g5_is_mobile = "<?php echo is_mobile() ? 1 : '' ?>";
 var g5_bo_table  = "<?php echo isset($bo_table)?$bo_table:''; ?>";
 var g5_sca       = "<?php echo isset($sca)?$sca:''; ?>";
 var g5_editor    = "<?php echo ($config['cf_editor'] && $board['bo_use_dhtml_editor'])?$config['cf_editor']:''; ?>";
