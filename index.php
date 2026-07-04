@@ -35,6 +35,26 @@ define('G5_HTTPS_BBS_URL',  G5_URL);
 define('G5_DATA_PATH',      __DIR__.'/data');
 define('G5_DATA_URL',       G5_URL.'/data');
 
+// 서브디렉토리 배포(/g5se 등) 안전망: `Location:` 리다이렉트에 base path 를 자동 보정.
+// HTML 의 href/src/action 은 아래 ob_start 필터가 base path 를 붙여주지만,
+// header('Location: /admin/setting') 같은 리다이렉트 헤더는 그 필터를 우회하므로
+// 루트상대(`/foo`) Location 을 여기서 설치 기준 경로(`/g5se/foo`) 로 끌어당긴다.
+//   - `//host`(프로토콜상대) · `http(s)://`(절대) · 이미 base 로 시작하는 것은 건드리지 않음.
+//   - header() 를 함수 안에서 다시 호출해 같은 이름 헤더를 교체(replace).
+if (G5SE_BASE_PATH !== '') {
+    header_register_callback(function () {
+        $base = G5SE_BASE_PATH;
+        foreach (headers_list() as $h) {
+            if (stripos($h, 'Location:') !== 0) continue;
+            $url = trim(substr($h, strlen('Location:')));
+            // 루트상대이면서(//·http 아님) 아직 base 로 시작하지 않을 때만 보정
+            if ($url === '' || $url[0] !== '/' || str_starts_with($url, '//')) continue;
+            if ($url === $base || str_starts_with($url, $base.'/')) continue;
+            header('Location: '.$base.$url, true);
+        }
+    });
+}
+
 require G5_PATH.'/router.php';
 
 $_g5se_request_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';

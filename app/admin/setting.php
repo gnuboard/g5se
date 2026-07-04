@@ -126,7 +126,7 @@ if ($_action === 'save' && isset($_schemas[$_post_key])) {
     } else {
         setting_put($_post_key, $values_to_put);
         $_SESSION['_setting_flash'] = ['type' => 'saved', 'key' => $_post_key];
-        header('Location: /admin/setting?key='.urlencode($_post_key), true, 303);
+        header('Location: '.G5_ADMIN_URL.'/setting?key='.urlencode($_post_key), true, 303);
         exit;
     }
 }
@@ -138,7 +138,7 @@ if ($_action === 'reset' && isset($_schemas[$_post_key])) {
         [$_post_key]
     );
     $_SESSION['_setting_flash'] = ['type' => 'reset', 'key' => $_post_key];
-    header('Location: /admin/setting?key='.urlencode($_post_key), true, 303);
+    header('Location: '.G5_ADMIN_URL.'/setting?key='.urlencode($_post_key), true, 303);
     exit;
 }
 
@@ -146,7 +146,7 @@ if ($_action === 'reset' && isset($_schemas[$_post_key])) {
 if ($_action === 'sync_schema') {
     $sync = setting_sync();
     $_SESSION['_setting_flash'] = ['type' => 'sync', 'sync' => $sync];
-    header('Location: /admin/setting', true, 303);
+    header('Location: '.G5_ADMIN_URL.'/setting', true, 303);
     exit;
 }
 
