@@ -31,8 +31,12 @@ $ajax_token = md5($tmp_str.$_SERVER['REMOTE_ADDR'].dirname(dirname(__FILE__).'/'
 
 $bool_ajax_token = (isset($_POST['ajax_token']) && ($ajax_token == $_POST['ajax_token'])) ? true : false;
 
-if (!($mysql_host && $mysql_user && $mysql_pass && $mysql_db && $table_prefix && $bool_ajax_token)) {
+if (!$bool_ajax_token) {
     die(install_json_msg('잘못된 요청입니다.'));
+}
+
+if (!($mysql_host && $mysql_user && $mysql_db && $table_prefix)) {
+    die(install_json_msg('MySQL 접속 정보를 모두 입력해 주십시오.'));
 }
 
 try {
