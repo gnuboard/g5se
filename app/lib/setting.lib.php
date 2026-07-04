@@ -190,13 +190,9 @@ function setting_sync(): array
     $table = G5_TABLE_PREFIX.'setting';
 
     // 1) 테이블 존재 확인 후 CREATE
-    $exists = false;
-    try {
-        sql_pdo_query("SELECT 1 FROM `".$table."` LIMIT 1");
-        $exists = true;
-    } catch (\Throwable) {
-        // 미존재 → CREATE
-    }
+    // sql_pdo_query() 는 실패해도 예외를 던지지 않고 false 를 반환하므로
+    // try/catch 로는 감지 불가 — SHOW TABLES 로 확인한다.
+    $exists = (bool) sql_pdo_fetch("SHOW TABLES LIKE '".$table."'", [], false);
     if (!$exists) {
         sql_pdo_query(
             "CREATE TABLE IF NOT EXISTS `".$table."` (
@@ -212,8 +208,10 @@ function setting_sync(): array
     // 2) 저장된 키 목록
     $saved = [];
     $rs = sql_pdo_query("SELECT s_key FROM `".$table."`");
-    while ($r = $rs->fetch(PDO::FETCH_ASSOC)) {
-        $saved[$r['s_key']] = true;
+    if ($rs) {
+        while ($r = $rs->fetch(PDO::FETCH_ASSOC)) {
+            $saved[$r['s_key']] = true;
+        }
     }
 
     // 3) schema 중 없는 그룹만 default 로 INSERT
