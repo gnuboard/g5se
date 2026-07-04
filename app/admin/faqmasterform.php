@@ -21,7 +21,7 @@ sql_pdo_query(" ALTER TABLE `{$g5['faq_master_table']}` ADD `fm_mobile_head_html
 $fm_default = ['fm_id'=>0, 'fm_subject'=>'', 'fm_order'=>0, 'fm_head_html'=>'', 'fm_tail_html'=>'', 'fm_mobile_head_html'=>'', 'fm_mobile_tail_html'=>''];
 
 if ($w === 'u') {
-    if (!$fm_id) { header('Location: /admin/faqmasterlist', true, 302); exit; }
+    if (!$fm_id) { header('Location: '.G5_ADMIN_URL.'/faqmasterlist', true, 302); exit; }
     $row = sql_pdo_fetch(" select * from {$g5['faq_master_table']} where fm_id = :fm_id ", [':fm_id' => $fm_id]);
     if (empty($row['fm_id'])) {
         admin_layout_start('FAQ 분류 수정', 'scf_faq');
