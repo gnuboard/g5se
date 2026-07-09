@@ -123,7 +123,7 @@ var char_max = parseInt(<?php echo $comment_max ?>);
 
         <div class="m-comment-textarea-wrap">
             <textarea id="wr_content" name="wr_content" maxlength="10000" required class="m-input m-comment-textarea" placeholder="댓글 내용을 입력해 주세요"
-                <?php if ($comment_min || $comment_max) { ?>onkeyup="check_byte('wr_content', 'char_count');"<?php } ?>><?php echo $c_wr_content ?? '' ?></textarea>
+                <?php if ($comment_min || $comment_max) { ?>onkeyup="check_byte('wr_content', 'char_count');"<?php } ?>><?php echo get_text($c_wr_content ?? '') ?></textarea>
             <?php if ($comment_min || $comment_max) { ?>
             <div id="char_cnt" class="m-comment-charcount"><span id="char_count"></span> 글자</div>
             <script>check_byte('wr_content', 'char_count');</script>
