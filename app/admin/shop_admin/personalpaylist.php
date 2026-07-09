@@ -30,6 +30,10 @@ if (!$sst) {
     $sst  = "pp_id";
     $sod = "desc";
 }
+// 정렬 컬럼/방향 화이트리스트 (ORDER BY 절 임의 값 삽입 차단)
+$allowed_sst = array('pp_id', 'od_id', 'pp_receipt_time');
+if ($sst && !in_array($sst, $allowed_sst)) $sst = 'pp_id';
+if ($sod && !in_array(strtolower($sod), array('asc', 'desc'))) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
 $sql = " select count(*) as cnt

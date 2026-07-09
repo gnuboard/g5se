@@ -27,6 +27,10 @@ if (!$sst) {
     $sst  = "od_id";
     $sod = "desc";
 }
+// 정렬 컬럼/방향 화이트리스트 (ORDER BY 절 임의 값 삽입 차단)
+$allowed_sst = array('od_id');
+if ($sst && !in_array($sst, $allowed_sst)) $sst = 'od_id';
+if ($sod && !in_array(strtolower($sod), array('asc', 'desc'))) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
 $sql = " select count(*) as cnt
