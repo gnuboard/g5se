@@ -345,7 +345,7 @@ run_event('bbs_move_update', $bo_table, $chk_bo_table, $wr_id_list, $opener_href
 ?>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <script>
-alert("<?php echo $msg; ?>");
+alert(<?php echo function_exists('get_js_safe_string') ? get_js_safe_string($msg) : '""'; ?>);
 opener.document.location.href = "<?php echo $opener_href1; ?>";
 window.close();
 </script>
