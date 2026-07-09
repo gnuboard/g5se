@@ -792,7 +792,7 @@ if($is_member) {
                 break;
             }
 
-            sql_pdo_query(" insert into {$g5['g5_shop_coupon_log_table']}
+            sql_pdo_query(" insert ignore into {$g5['g5_shop_coupon_log_table']}
                                 set cp_id = :cp_id, mb_id = :mb_id, od_id = :od_id,
                                     cp_price = :cp_price, cl_datetime = :cl_datetime ",
                           [
@@ -824,7 +824,7 @@ if($is_member) {
         if(is_used_coupon($member['mb_id'], $_POST['od_cp_id'])) {
             $coupon_duplicate = true;
         } else {
-            sql_pdo_query(" insert into {$g5['g5_shop_coupon_log_table']}
+            sql_pdo_query(" insert ignore into {$g5['g5_shop_coupon_log_table']}
                                 set cp_id = :cp_id, mb_id = :mb_id, od_id = :od_id,
                                     cp_price = :cp_price, cl_datetime = :cl_datetime ",
                           [
@@ -846,7 +846,7 @@ if($is_member) {
         if(is_used_coupon($member['mb_id'], $_POST['sc_cp_id'])) {
             $coupon_duplicate = true;
         } else {
-            sql_pdo_query(" insert into {$g5['g5_shop_coupon_log_table']}
+            sql_pdo_query(" insert ignore into {$g5['g5_shop_coupon_log_table']}
                                 set cp_id = :cp_id, mb_id = :mb_id, od_id = :od_id,
                                     cp_price = :cp_price, cl_datetime = :cl_datetime ",
                           [

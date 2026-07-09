@@ -749,9 +749,10 @@ if(isset($_SESSION['ss_cert_hash'])) unset($_SESSION['ss_cert_hash']);
 if(isset($_SESSION['ss_cert_birth'])) unset($_SESSION['ss_cert_birth']);
 if(isset($_SESSION['ss_cert_adult'])) unset($_SESSION['ss_cert_adult']);
 
-if ($msg)
+if ($msg) {
     $js_msg = function_exists('get_js_safe_string') ? get_js_safe_string($msg) : '"'.$msg.'"';
     echo '<script>alert('.$js_msg.');</script>';
+}
 
 run_event('register_form_update_after', $mb_id, $w);
 
