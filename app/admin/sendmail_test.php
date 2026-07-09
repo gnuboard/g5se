@@ -25,6 +25,8 @@ admin_layout_start($g5['title'], 'sendmail_test');
 <?php
 
 if (isset($_POST['email'])) {
+    check_admin_token();
+
     $_POST['email'] = strip_tags($_POST['email']);
     $email = explode(',', $_POST['email']);
 
@@ -73,6 +75,7 @@ if (isset($_POST['email'])) {
         </p>
     </div>
     <form name="fsendmailtest" method="post">
+    <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
     <fieldset id="fsendmailtest">
         <legend>테스트메일 발송</legend>
         <label for="email">받는 메일주소<strong class="sound_only"> 필수</strong></label>
