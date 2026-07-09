@@ -728,8 +728,50 @@ if(!$result) {
 }
 
 // 회원이면서 포인트를 사용했다면 테이블에 사용을 추가
-if ($is_member && $od_receipt_point)
-    insert_point($member['mb_id'], (-1) * $od_receipt_point, "주문번호 $od_id 결제");
+// 동시 주문 시 포인트 검증과 차감 사이의 race 를 회원 단위 락으로 직렬화하고,
+// 락 획득 후 잔액을 재조회한다. 잔액이 부족하면 결제를 취소한다.
+if ($is_member && $od_receipt_point) {
+    $point_lock_key = 'g5pt_order_'.md5($member['mb_id']);
+    $lock_row = sql_pdo_fetch(" select get_lock(:lock_key, 5) as lk ", [':lock_key' => $point_lock_key]);
+    $lock_acquired = !empty($lock_row['lk']);
+    $point_shortage = false;
+
+    if ($lock_acquired) {
+        $current_point = (int) get_point_sum($member['mb_id']);
+
+        if ($current_point >= $od_receipt_point) {
+            insert_point($member['mb_id'], (-1) * $od_receipt_point, "주문번호 $od_id 결제");
+        } else {
+            $point_shortage = true;
+        }
+
+        sql_pdo_query(" select release_lock(:lock_key) ", [':lock_key' => $point_lock_key]);
+    } else {
+        // 락 획득 실패 — 안전을 위해 결제 취소 처리
+        $point_shortage = true;
+    }
+
+    if ($point_shortage) {
+        // 잔액 부족 — PG 환불 + 장바구니 복구 + 주문 삭제
+        if ($tno) {
+            $cancel_msg = '포인트 잔액 부족으로 결제 취소 (동시 주문)';
+            include G5_SHOP_PATH.'/cancel_pg.inc.php';
+        }
+
+        // 장바구니 복구
+        sql_pdo_query(" update {$g5['g5_shop_cart_table']} set od_id = :tmp_cart_id, ct_status = :ct_status where od_id = :od_id ",
+                      [':tmp_cart_id' => $tmp_cart_id, ':ct_status' => '쇼핑', ':od_id' => $od_id], false);
+
+        // 주문 삭제
+        sql_pdo_query(" delete from {$g5['g5_shop_order_table']} where od_id = :od_id ", [':od_id' => $od_id]);
+
+        if (function_exists('add_order_post_log')) {
+            add_order_post_log("동시 주문으로 인한 포인트 잔액 부족. 주문 $od_id 취소.");
+        }
+
+        die('<p>회원님의 포인트 잔액이 부족하여 주문이 완료되지 않았습니다.</p><p>'.strtoupper($od_pg).'를 이용한 전자결제(신용카드, 계좌이체, 가상계좌 등)은 자동 취소되었습니다.</p>');
+    }
+}
 
 $od_memo = nl2br(htmlspecialchars2(stripslashes($od_memo))) . "&nbsp;";
 
