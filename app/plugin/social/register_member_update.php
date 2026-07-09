@@ -182,7 +182,8 @@ if($config['cf_cert_use']) {
     //===============================================================
 }
 // 회원정보 입력 — $sql_agree 는 외부 빌더 산물
-$sql = " insert into {$g5['member_table']} set
+// insert ignore — mb_id 는 UNIQUE 이므로 중복 시 예외 없이 affected_rows=0 이 된다.
+$sql = " insert ignore into {$g5['member_table']} set
             mb_id               = :mb_id,
             mb_password         = :mb_password,
             mb_name             = :mb_name,
@@ -225,8 +226,11 @@ $params = array_merge([
 ], $cert_params);
 $result = sql_pdo_query($sql, $params, false);
 
-if($result) {
-  
+// insert ignore 는 mb_id 중복 시에도 statement 를 반환하므로, 반환값이 아닌
+// affected_rows 로 신규 행 생성 여부를 판정한다. 신규 생성에 성공한(affected>0)
+// 요청만 이 블록에 진입하므로 축하쿠폰/포인트가 중복 발급되지 않는다.
+if(get_sql_affected_rows() > 0) {
+
     if($cert_type == 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$md5_cert_no)) { // 아이핀일때 hash 값 체크 hp미포함)
         insert_member_cert_history($mb_id, $mb_name, $mb_hp, get_session('ss_cert_birth'), get_session('ss_cert_type') ); // 본인인증 후 정보 수정 시 내역 기록
     }else if($cert_type != 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$mb_hp.$md5_cert_no)) { // 간편인증, 휴대폰일때 hash 값 체크 hp포함
