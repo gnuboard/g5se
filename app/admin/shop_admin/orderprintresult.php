@@ -122,7 +122,7 @@ if ($csv == 'csv')
 
         echo '"\''.$row['od_b_zip1'].$row['od_b_zip2'].'"\''.',';
         echo '"'.$pull_address.'"'.',';
-        echo '"'.$row['od_b_name'].'"'.',';
+        echo '"'.(function_exists('csv_safe_cell') ? csv_safe_cell($row['od_b_name']) : $row['od_b_name']).'"'.',';
         //echo '"'.multibyte_digit((string)$row[od_b_tel]).'"'.',';
         //echo '"'.multibyte_digit((string)$row[od_b_hp]).'"'.',';
         echo '"'.conv_telno($row['od_b_tel']) . '"'.',';
@@ -135,7 +135,7 @@ if ($csv == 'csv')
         echo '"\''.$row['od_id'].'\'"'.',';
         echo '"'.$row['od_invoice'].'"'.',';
         //echo '"'.preg_replace("/\"/", "&#034;", preg_replace("/\n/", "", $row[od_memo])).'"';
-        echo '"'.preg_replace("/\"/", "&#034;", $row['od_memo']).'"';
+        echo '"'.preg_replace("/\"/", "&#034;", (function_exists('csv_safe_cell') ? csv_safe_cell($row['od_memo']) : $row['od_memo'])).'"';
         echo "\n";
     }
     if ($i == 0)
@@ -235,6 +235,13 @@ if ($csv == 'xls')
         }
 
         $data = array_merge(array($headers), $rows);
+
+        // 각 셀 값을 문자열로 강제 (스프레드시트가 = 로 시작하는 값을 수식으로 평가하지 않도록)
+        if (function_exists('csv_safe_cell')) {
+            foreach ($data as $ri => $r) {
+                foreach ($r as $ci => $c) $data[$ri][$ci] = csv_safe_cell($c);
+            }
+        }
 
         $excel = new PHPExcel();
         $excel->setActiveSheetIndex(0)->getStyle( "A1:{$last_char}1" )->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB($header_bgcolor);

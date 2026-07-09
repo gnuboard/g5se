@@ -48,6 +48,13 @@ if(! function_exists('column_char')) {
 
     $data = array_merge(array($headers), $rows);
 
+    // 각 셀 값을 문자열로 강제 (스프레드시트가 = 로 시작하는 값을 수식으로 평가하지 않도록)
+    if (function_exists('csv_safe_cell')) {
+        foreach ($data as $ri => $r) {
+            foreach ($r as $ci => $c) $data[$ri][$ci] = csv_safe_cell($c);
+        }
+    }
+
     $excel = new PHPExcel();
     $excel->setActiveSheetIndex(0)->getStyle( "A1:{$last_char}1" )->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB($header_bgcolor);
     $excel->setActiveSheetIndex(0)->getStyle( "A:$last_char" )->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)->setWrapText(true);

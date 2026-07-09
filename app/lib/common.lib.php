@@ -4383,6 +4383,20 @@ function get_sql_affected_rows($link=null)
     return 0;
 }
 
+// 스프레드시트/CSV 출력용 셀 값 정규화.
+// 값이 = + - @ 또는 탭/캐리지리턴 으로 시작하면 앞에 작은따옴표(')를 붙여
+// 스프레드시트가 셀을 수식이 아닌 문자열로 취급하도록 강제한다.
+if (!function_exists('csv_safe_cell')) {
+    function csv_safe_cell($value)
+    {
+        $s = (string)$value;
+        if ($s !== '' && preg_match('/^[=+\-@\t\r]/', $s)) {
+            return "'".$s;
+        }
+        return $s;
+    }
+}
+
 // 불법접근을 막도록 토큰을 생성하면서 토큰값을 리턴
 function get_write_token($bo_table)
 {
