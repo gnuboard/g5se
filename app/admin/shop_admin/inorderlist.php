@@ -10,6 +10,10 @@ auth_check_menu($auth, $sub_menu, "r");
 $sql_common = " from {$g5['g5_shop_order_data_table']} ";
 
 $sql_search = " where cart_id <> '0' ";
+// 검색 컬럼 화이트리스트 — sfl 이 컬럼명으로 보간되므로 임의 값 차단
+$allowed_sfl = array('od_id');
+if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'od_id';
+
 if ($stx) {
     $sql_search .= " and ( ";
     switch ($sfl) {
