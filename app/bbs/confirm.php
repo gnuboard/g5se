@@ -26,7 +26,7 @@ check_url_host($url3);
 ?>
 
 <script>
-var conf = "<?php echo strip_tags($msg); ?>";
+var conf = <?php echo function_exists('get_js_safe_string') ? get_js_safe_string(strip_tags($msg)) : '""'; ?>;
 if (confirm(conf)) {
     document.location.replace("<?php echo $url1; ?>");
 } else {
