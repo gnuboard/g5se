@@ -229,7 +229,7 @@ $result = sql_pdo_query($sql, $params, false);
 // insert ignore 는 mb_id 중복 시에도 statement 를 반환하므로, 반환값이 아닌
 // affected_rows 로 신규 행 생성 여부를 판정한다. 신규 생성에 성공한(affected>0)
 // 요청만 이 블록에 진입하므로 축하쿠폰/포인트가 중복 발급되지 않는다.
-if(get_sql_affected_rows() > 0) {
+if($result && get_sql_affected_rows() > 0) {
 
     if($cert_type == 'ipin' && get_session('ss_cert_hash') == md5($mb_name.$cert_type.get_session('ss_cert_birth').$md5_cert_no)) { // 아이핀일때 hash 값 체크 hp미포함)
         insert_member_cert_history($mb_id, $mb_name, $mb_hp, get_session('ss_cert_birth'), get_session('ss_cert_type') ); // 본인인증 후 정보 수정 시 내역 기록
