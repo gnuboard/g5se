@@ -161,9 +161,9 @@ class   C_PAYPLUS_CLI_T
         {
           if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
           {
-            $bin_exe = $home_dir.'/bin/pp_cli_exe ';
+            $bin_exe = $home_dir.'/bin/pp_cli_exe';
 
-            $res_data = $this->mf_exec($bin_exe . "\"".
+            $res_data = $this->mf_exec($bin_exe,
                                     "site_cd="   . $site_cd             . "," .
                                     "site_key="  . $site_key            . "," .
                                     "tx_cd="     . $tx_cd               . "," .
@@ -181,8 +181,7 @@ class   C_PAYPLUS_CLI_T
                                                    $ordr_data           .
                                                    $rcvr_data           .
                                                    $escw_data           .
-                                                   $modx_data           .
-                                "\"") ;
+                                                   $modx_data) ;
           }
           else
           {
