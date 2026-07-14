@@ -13,11 +13,6 @@ $i = 0;
 
 $this->view_star = (method_exists($this, 'view_star')) ? $this->view_star : true;
 
-$list_mod = max(1, min(6, (int)$this->list_mod));
-// grid-template-columns 를 inline style 로 직접 — UnoCSS runtime 의 동적 클래스 미감지 회피.
-// 전 viewport 동일 N 열. 셀 폭은 viewport / N (자동 축소).
-$cols_style = 'grid-template-columns: repeat('.$list_mod.', minmax(0, 1fr));';
-
 foreach((array) $list as $row){
     if( empty($row) ) continue;
 
@@ -29,7 +24,9 @@ foreach((array) $list as $row){
     $wish_icon = $is_wished ? 'fa-heart' : 'fa-heart-o';
 
     if ($i === 0) {
-        echo '<ul class="sct grid gap-4 list-none p-0 m-0" style="'.$cols_style.'">'."\n";
+        // 열 수는 shop.head.php의 반응형 grid가 결정한다.
+        // 관리자 "1줄당 이미지 수"를 inline으로 넣으면 모바일까지 같은 열 수가 강제된다.
+        echo '<ul class="sct grid gap-4 list-none p-0 m-0">'."\n";
     }
     $i++;
 ?>

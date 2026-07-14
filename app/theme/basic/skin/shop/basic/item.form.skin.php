@@ -13,6 +13,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	<div id="sit_ov_wrap">
 	    <!-- 상품이미지 미리보기 시작 { -->
 	    <div id="sit_pvi">
+	        <h2 class="sit_title_mobile"><?php echo stripslashes($it['it_name']); ?></h2>
 	        <div id="sit_pvi_big">
 	        <?php
 	        $big_img_count = 0;
