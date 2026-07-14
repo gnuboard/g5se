@@ -415,6 +415,8 @@ $(function(){
     var pointers = new Map();
     var pinchDistance = 0;
     var pinchScale = 1;
+    var pointerDragged = false;
+    var clickTimer = null;
 
     function renderZoom() {
         if (!lightboxImage) return;
@@ -433,6 +435,16 @@ $(function(){
 
     function resetZoom() {
         setZoom(1, 0, 0);
+    }
+
+    function zoomAtPoint(scale, clientX, clientY) {
+        if (!lightboxViewport) return;
+        var rect = lightboxViewport.getBoundingClientRect();
+        var pointX = clientX - rect.left - rect.width / 2;
+        var pointY = clientY - rect.top - rect.height / 2;
+        var nextScale = Math.max(1, Math.min(4, scale));
+        var ratio = nextScale / imageScale;
+        setZoom(nextScale, pointX - (pointX - imageX) * ratio, pointY - (pointY - imageY) * ratio);
     }
 
     function show(index) {
@@ -518,17 +530,28 @@ $(function(){
     addSwipe(gallery.querySelector('.sit_gallery_stage'));
 
     if (lightboxViewport) {
-        lightboxViewport.addEventListener('dblclick', function () {
+        lightboxViewport.addEventListener('click', function (event) {
+            if (pointerDragged || event.detail > 1) return;
+            window.clearTimeout(clickTimer);
+            clickTimer = window.setTimeout(function () {
+                zoomAtPoint(imageScale + (event.shiftKey ? -.5 : .5), event.clientX, event.clientY);
+            }, 220);
+        });
+        lightboxViewport.addEventListener('dblclick', function (event) {
+            window.clearTimeout(clickTimer);
+            event.preventDefault();
             setZoom(imageScale > 1 ? 1 : 2, 0, 0);
         });
         lightboxViewport.addEventListener('wheel', function (event) {
             event.preventDefault();
-            setZoom(imageScale + (event.deltaY < 0 ? .25 : -.25), imageX, imageY);
+            zoomAtPoint(imageScale + (event.deltaY < 0 ? .25 : -.25), event.clientX, event.clientY);
         }, {passive: false});
         lightboxViewport.addEventListener('pointerdown', function (event) {
-            pointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
+            pointerDragged = false;
+            pointers.set(event.pointerId, {x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY});
             lightboxViewport.setPointerCapture(event.pointerId);
             if (pointers.size === 2) {
+                pointerDragged = true;
                 var points = Array.from(pointers.values());
                 pinchDistance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
                 pinchScale = imageScale;
@@ -537,7 +560,8 @@ $(function(){
         lightboxViewport.addEventListener('pointermove', function (event) {
             var previous = pointers.get(event.pointerId);
             if (!previous) return;
-            pointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
+            if (Math.hypot(event.clientX - previous.startX, event.clientY - previous.startY) > 6) pointerDragged = true;
+            pointers.set(event.pointerId, {x: event.clientX, y: event.clientY, startX: previous.startX, startY: previous.startY});
             if (pointers.size === 2) {
                 var points = Array.from(pointers.values());
                 var distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
@@ -551,6 +575,7 @@ $(function(){
         function releasePointer(event) {
             pointers.delete(event.pointerId);
             if (pointers.size < 2) pinchDistance = 0;
+            if (pointerDragged) window.setTimeout(function () { pointerDragged = false; }, 0);
         }
         lightboxViewport.addEventListener('pointerup', releasePointer);
         lightboxViewport.addEventListener('pointercancel', releasePointer);
