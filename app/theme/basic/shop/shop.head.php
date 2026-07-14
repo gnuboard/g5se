@@ -593,6 +593,65 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 }
 
 /* 홈 우측 인기상품 — main.50의 레거시 float/세로 슬라이더 대신 간결한 정적 목록 */
+.m-shop-popular-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.m-shop-popular-header h2 {
+    min-width: 0;
+    font-size: var(--m-text-md);
+}
+.m-shop-popular-header h2 a {
+    color: var(--m-text);
+    text-decoration: none;
+}
+.m-shop-popular-header h2 a:hover {
+    color: var(--m-primary);
+}
+.m-shop-popular-controls {
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 6px;
+}
+.m-shop-popular-controls[hidden] {
+    display: none;
+}
+.m-shop-popular-controls button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--m-border);
+    border-radius: 9px;
+    background: var(--m-surface-2);
+    color: var(--m-text-soft);
+    cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+.m-shop-popular-controls button:hover,
+.m-shop-popular-controls button:focus-visible {
+    border-color: var(--m-primary);
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+}
+.m-shop-popular-controls button:focus-visible {
+    outline: 2px solid var(--m-primary-soft);
+    outline-offset: 2px;
+}
+.m-shop-popular-controls svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 .m-shop-sidebar-products {
     display: flex;
     flex-direction: column;
@@ -622,6 +681,9 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 }
 .m-shop-sidebar-products > li:hover {
     background: var(--m-surface-2);
+}
+.m-shop-sidebar-products > li[hidden] {
+    display: none !important;
 }
 .m-shop-sidebar-products .sct_img {
     float: none;

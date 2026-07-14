@@ -18,14 +18,24 @@ $is_index = defined('_INDEX_') && _INDEX_;
             </section>
 
             <?php if($default['de_type4_list_use']) { ?>
-            <section class="m-card" style="padding: 16px;">
-                <h2 style="font-size: var(--m-text-md); margin-bottom: 10px;">
-                    <a href="<?php echo shop_type_url('4'); ?>" style="color: var(--m-text); text-decoration: none;">인기상품 →</a>
-                </h2>
+            <section class="m-card m-shop-popular-card" style="padding: 16px;">
+                <header class="m-shop-popular-header">
+                    <h2>
+                        <a href="<?php echo shop_type_url('4'); ?>">인기상품 <span aria-hidden="true">→</span></a>
+                    </h2>
+                    <div class="m-shop-popular-controls" aria-label="인기상품 이동">
+                        <button type="button" class="m-shop-popular-prev" aria-label="이전 인기상품">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button type="button" class="m-shop-popular-next" aria-label="다음 인기상품">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </header>
                 <?php
                 // 우측 사이드바는 작은 영역이므로 레거시 세로 슬라이더 대신
-                // 4개의 간결한 정적 상품 목록으로 출력한다.
-                $list = new item_list(G5_SHOP_SKIN_PATH.'/main.50.skin.php', 1, 4, 72, 72);
+                // 전용 컨트롤로 이동할 수 있는 간결한 상품 목록으로 출력한다.
+                $list = new item_list(G5_SHOP_SKIN_PATH.'/main.50.skin.php', 1, 8, 72, 72);
                 $list->set_type(4);
                 $list->set_css('m-shop-sidebar-products');
                 $list->set_view('it_id', false);
@@ -38,6 +48,41 @@ $is_index = defined('_INDEX_') && _INDEX_;
                 $list->set_view('star', true);
                 echo $list->run();
                 ?>
+                <script>
+                (function () {
+                    var script = document.currentScript;
+                    var card = script ? script.closest('.m-shop-popular-card') : null;
+                    if (!card) return;
+                    var items = Array.prototype.slice.call(card.querySelectorAll('.m-shop-sidebar-products > li'));
+                    var controls = card.querySelector('.m-shop-popular-controls');
+                    var prev = card.querySelector('.m-shop-popular-prev');
+                    var next = card.querySelector('.m-shop-popular-next');
+                    var visibleCount = 4;
+                    var start = 0;
+
+                    if (items.length <= visibleCount) {
+                        controls.hidden = true;
+                        return;
+                    }
+
+                    function render() {
+                        items.forEach(function (item, index) {
+                            var relative = (index - start + items.length) % items.length;
+                            item.hidden = relative >= visibleCount;
+                        });
+                    }
+
+                    prev.addEventListener('click', function () {
+                        start = (start - 1 + items.length) % items.length;
+                        render();
+                    });
+                    next.addEventListener('click', function () {
+                        start = (start + 1) % items.length;
+                        render();
+                    });
+                    render();
+                })();
+                </script>
             </section>
             <?php } ?>
 
