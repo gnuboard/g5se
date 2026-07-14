@@ -28,7 +28,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
         </a>
     </header>
 
-    <form name="fitemuse" method="post" action="<?php echo G5_SHOP_URL;?>/itemuseformupdate.php" onsubmit="return fitemuse_submit(this);" autocomplete="off">
+    <form name="fitemuse" method="post" action="<?php echo G5_SHOP_URL;?>/itemuseformupdate" onsubmit="return fitemuse_submit(this);" autocomplete="off">
     <input type="hidden" name="w" value="<?php echo $w; ?>">
     <input type="hidden" name="it_id" value="<?php echo $it_id; ?>">
     <input type="hidden" name="is_id" value="<?php echo $is_id; ?>">
@@ -36,11 +36,11 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
     <div class="new_win_con form_01">
         <ul class="review_write_fields">
             <li class="review_write_field">
-                <label for="is_subject">제목 <strong>필수</strong></label>
+                <label for="is_subject" class="sound_only">제목 필수</label>
                 <input type="text" name="is_subject" value="<?php echo get_text($use['is_subject']); ?>" id="is_subject" required class="required frm_input full_input"  maxlength="250" placeholder="제목">
             </li>
             <li class="review_write_field review_write_content">
-                <strong>내용</strong>
+                <strong class="sound_only">내용</strong>
                 <?php echo $editor_html; ?>
             </li>
             <li class="review_write_field review_write_score">
@@ -99,15 +99,17 @@ body {margin:0;padding:24px;font-family:system-ui,-apple-system,BlinkMacSystemFo
 .review_write_close:hover {background:var(--rw-surface-2);color:var(--rw-text)}
 .review_write_close svg {width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 #sit_use_write .new_win_con {margin:0;padding:24px;background:var(--rw-surface)}
-.review_write_fields {display:grid;gap:22px;margin:0;padding:0;list-style:none}
-.review_write_field {display:grid;gap:9px;margin:0}
+.review_write_fields {display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.review_write_field {display:grid;gap:7px;margin:0}
 .review_write_field>label,.review_write_field>strong {color:var(--rw-text);font-size:14px;font-weight:700}
 .review_write_field>label strong {color:var(--rw-primary);font-size:11px}
 #sit_use_write #is_subject,#sit_use_write textarea {width:100%;min-width:0;border:1px solid var(--rw-border);border-radius:12px;background:var(--rw-surface-2);color:var(--rw-text);font-size:15px;box-shadow:none}
 #sit_use_write #is_subject {height:48px;padding:0 14px}
+#sit_use_write textarea {min-height:140px !important;height:140px}
 #sit_use_write #is_subject:focus,#sit_use_write textarea:focus {border-color:var(--rw-primary);outline:3px solid var(--rw-primary-soft)}
 #sit_use_write .cke {overflow:hidden;border:1px solid var(--rw-border) !important;border-radius:12px;box-shadow:none !important}
 #sit_use_write .cke_top,#sit_use_write .cke_bottom {border-color:var(--rw-border) !important;background:var(--rw-surface-2) !important}
+#sit_use_write .cke_contents {height:140px !important}
 #sit_use_write_star {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
 #sit_use_write_star:after {display:none}
 #sit_use_write_star li {float:none;width:auto;margin:0;padding:0}
@@ -125,12 +127,17 @@ body {margin:0;padding:24px;font-family:system-ui,-apple-system,BlinkMacSystemFo
 @media (max-width:600px) {
     body {padding:0}
     #sit_use_write.new_win {width:100%;min-height:100vh;border:0;border-radius:0;box-shadow:none}
-    #sit_use_write .review_write_header {padding:18px 16px}
+    #sit_use_write .review_write_header {padding:14px 16px}
     #sit_use_write #win_title {font-size:20px}
-    #sit_use_write .new_win_con {padding:20px 16px}
-    #sit_use_write_star {grid-template-columns:repeat(2,minmax(0,1fr))}
-    #sit_use_write_star li:last-child {grid-column:1/-1}
-    #sit_use_write .win_btn {position:sticky;bottom:0;display:grid;grid-template-columns:1fr auto;margin:22px -16px -20px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--rw-surface)}
+    #sit_use_write .new_win_con {padding:16px}
+    #sit_use_write #is_subject {height:44px}
+    #sit_use_write textarea {min-height:110px !important;height:110px}
+    #sit_use_write .cke_contents {height:110px !important}
+    #sit_use_write_star {grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+    #sit_use_write_star li:last-child {grid-column:auto}
+    #sit_use_write_star label {min-height:54px;gap:5px;padding:6px 2px;font-size:9px}
+    #sit_use_write_star label img {width:46px}
+    #sit_use_write .win_btn {position:sticky;bottom:0;display:grid;grid-template-columns:1fr auto;margin:18px -16px -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--rw-surface)}
     #sit_use_write .win_btn .btn_submit {width:100%}
 }
 </style>

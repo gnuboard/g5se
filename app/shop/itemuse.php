@@ -52,8 +52,8 @@ function itemuse_page($write_pages, $cur_page, $total_page, $url, $add="")
 }
 
 $itemuse_list = G5_SHOP_URL."/itemuselist.php";
-$itemuse_form = G5_SHOP_URL."/itemuseform.php?it_id=".$it_id;
-$itemuse_formupdate = G5_SHOP_URL."/itemuseformupdate.php?it_id=".$it_id;
+$itemuse_form = G5_SHOP_URL."/itemuseform?it_id=".$it_id;
+$itemuse_formupdate = G5_SHOP_URL."/itemuseformupdate?it_id=".$it_id;
 
 $sql_common = " from `{$g5['g5_shop_item_use_table']}` where it_id = '{$it_id}' and is_confirm = '1' ";
 

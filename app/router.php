@@ -450,6 +450,13 @@ class Router
             exit;
         }
 
+        // 사용후기 작성창의 레거시 URL을 확장자 없는 주소로 정규화한다.
+        if (($method === 'GET' || $method === 'HEAD') && $path === '/shop/itemuseform.php') {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            header('Location: '.$location('/shop/itemuseform'.($qs ? '?'.$qs : '')), true, 301);
+            exit;
+        }
+
         // 3) `.php` 접미사로 들어왔으면 클린 URL 로 301 리다이렉트
         //    (단, GET/HEAD 만 — POST 폼이 .php 로 날아오면 데이터 유실 방지 위해 그대로 처리)
         //    (a) /name.php  → /name
