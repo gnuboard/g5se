@@ -23,8 +23,11 @@ $is_index = defined('_INDEX_') && _INDEX_;
                     <a href="<?php echo shop_type_url('4'); ?>" style="color: var(--m-text); text-decoration: none;">인기상품 →</a>
                 </h2>
                 <?php
-                $list = new item_list();
+                // 우측 사이드바는 작은 영역이므로 레거시 세로 슬라이더 대신
+                // 4개의 간결한 정적 상품 목록으로 출력한다.
+                $list = new item_list(G5_SHOP_SKIN_PATH.'/main.50.skin.php', 1, 4, 72, 72);
                 $list->set_type(4);
+                $list->set_css('m-shop-sidebar-products');
                 $list->set_view('it_id', false);
                 $list->set_view('it_name', true);
                 $list->set_view('it_basic', false);

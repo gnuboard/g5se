@@ -34,7 +34,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
    - 컨테이너에 cell 들이 들어가는 만큼 자동 컬럼 (auto-fit)
    - max-width 로 list_mod 컬럼 캡 적용 (4컬럼 설정인데 화면이 너무 넓어서
      5컬럼 잡히는 일을 방지) */
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products),
 .m-shop-grid > .smt_20 > ul.sct_ul {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(min(var(--m-img-width, 200px), 100%), 1fr));
@@ -49,7 +49,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
    뷰포트 기준 2열을 사용하고 300px 이하에서만 1열이 된다.
    관리자 ca_list_mod는 데스크톱 최대 열 수와 페이지당 상품 수에만 사용한다. */
 @media (max-width: 880px) {
-    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products),
     .m-shop-grid > .smt_20 > ul.sct_ul {
         grid-template-columns: repeat(2, minmax(0, calc((100vw - 52px) / 2))) !important;
         width: calc(100vw - 40px) !important;
@@ -60,19 +60,19 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     }
 }
 @media (max-width: 300px) {
-    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products),
     .m-shop-grid > .smt_20 > ul.sct_ul {
         grid-template-columns: minmax(0, 1fr);
     }
 }
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li,
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products) > li.sct_li,
 .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li {
     float: none !important;
     width: auto !important;
     margin: 0 !important;
     border-bottom: 0 !important;
 }
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li .sct_img img,
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products) > li.sct_li .sct_img img,
 .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li .sct_img img {
     width: 100%;
     height: auto;
@@ -81,7 +81,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 /* 긴 상품명 (영문/숫자 연속) 이 셀 폭을 침범하는 문제.
    grid item 의 기본 min-width:auto 가 unbreakable string 에 막혀 cell 이 늘어남
    → min-width:0 + overflow-wrap:anywhere 로 강제 wrap. */
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li,
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products) > li.sct_li,
 .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li {
     min-width: 0;
 }
@@ -114,7 +114,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     font-size: 13px !important;
 }
 /* modern product card */
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li {
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products) > li.sct_li {
     position: relative;
     border: 1px solid var(--m-border) !important;
     border-radius: 14px !important;
@@ -122,7 +122,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
     transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease !important;
 }
-.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li:hover {
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl):not(.m-shop-sidebar-products) > li.sct_li:hover {
     transform: translateY(-3px);
     border-color: var(--m-border-hover) !important;
     box-shadow: 0 12px 28px -16px rgba(15, 23, 42, 0.32) !important;
@@ -590,6 +590,91 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .smt_30 .sct_txt a,
 [data-theme="dark"] .smt_30 .sct_cost {
     color: var(--m-text) !important;
+}
+
+/* 홈 우측 인기상품 — main.50의 레거시 float/세로 슬라이더 대신 간결한 정적 목록 */
+.m-shop-sidebar-products {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+/* 상단 공통 상품 grid 규칙보다 구체적으로 지정해 72px max-width 상속을 차단한다. */
+.m-shop-grid > ul.m-shop-sidebar-products {
+    display: flex !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+.m-shop-sidebar-products > li {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: 88px;
+    padding: 8px;
+    border-radius: 12px;
+    background: transparent;
+    transition: background-color .15s ease;
+    width: 100%;
+}
+.m-shop-sidebar-products > li:hover {
+    background: var(--m-surface-2);
+}
+.m-shop-sidebar-products .sct_img {
+    float: none;
+    width: 72px;
+    height: 72px;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--m-bg);
+}
+.m-shop-sidebar-products .sct_img a,
+.m-shop-sidebar-products .sct_img img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+.m-shop-sidebar-products .sct_img img {
+    object-fit: cover;
+}
+.m-shop-sidebar-products .sct_cnt {
+    display: flex;
+    float: none;
+    min-width: 0;
+    max-width: none;
+    flex-direction: column;
+    gap: 4px;
+    line-height: 1.35;
+}
+.m-shop-sidebar-products .sit_star {
+    width: 72px;
+    height: auto;
+}
+.m-shop-sidebar-products .sct_txt,
+.m-shop-sidebar-products .sct_txt a {
+    min-width: 0;
+    color: var(--m-text) !important;
+    font-size: 14px !important;
+    font-weight: 700;
+    line-height: 1.4 !important;
+}
+.m-shop-sidebar-products .sct_txt a {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-decoration: none;
+}
+.m-shop-sidebar-products .sct_cost {
+    color: var(--m-text) !important;
+    font-size: 15px !important;
+    font-weight: 800;
+    line-height: 1.3;
+    white-space: nowrap;
 }
 /* 카테고리 박스: 외곽은 .m-card 가 그리므로 안쪽 #gnb 의 좌/우/하단 border 제거
    (원본 style.css 가 border-top:0 만 빼서 위만 비어 보이는 어색한 상태였음).
