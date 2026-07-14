@@ -97,12 +97,20 @@ if($i == 1) echo "<p class=\"sct_noitem\">등록된 상품이 없습니다.</p>\
 <!-- } 관련상품 10 끝 -->
 <script>
 $(document).ready(function(){
-    $('.scr_10').bxSlider({
-        slideWidth:175,
-        minSlides:6,
-        maxSlides:6,
-        slideMargin:20,
-        pager:false
+    var $related = $('.scr_10');
+    var relatedCount = $related.children('.sct_li').length;
+    var isMobile = window.matchMedia('(max-width:640px)').matches;
+    var visibleCount = Math.min(relatedCount, isMobile ? 2 : 6);
+
+    $related.bxSlider({
+        slideWidth:isMobile ? 175 : 200,
+        minSlides:visibleCount,
+        maxSlides:visibleCount,
+        slideMargin:isMobile ? 12 : 20,
+        pager:false,
+        infiniteLoop:false,
+        hideControlOnEnd:true,
+        controls:relatedCount > visibleCount
     });
 });
 </script>
