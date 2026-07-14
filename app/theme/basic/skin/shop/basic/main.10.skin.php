@@ -47,11 +47,11 @@ foreach((array) $list as $row){
             <div class="sct_id text-xs text-slate-400">&lt;<?php echo stripslashes($row['it_id']); ?>&gt;</div>
         <?php } ?>
 
-        <?php if ($this->view_star && $star_score) { ?>
-            <div class="sct_star flex items-center gap-0.5 text-xs text-amber-500">
-                <span class="sound_only">고객평점</span>
+        <?php if ($this->view_star) { ?>
+            <div class="sct_star flex min-h-3.5 items-center gap-0.5 text-xs text-amber-500">
+                <span class="sound_only"><?php echo $star_score ? '고객평점 별 '.$star_score.'개' : '고객평점 평가 없음'; ?></span>
                 <?php for ($s=1; $s<=5; $s++) { ?>
-                    <i class="fa fa-star<?php echo ($s <= $star_score) ? '' : '-o'; ?>" aria-hidden="true"></i>
+                    <i class="fa fa-star<?php echo ($star_score && $s <= $star_score) ? '' : '-o'; ?>" aria-hidden="true"></i>
                 <?php } ?>
             </div>
         <?php } ?>
