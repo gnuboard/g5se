@@ -62,6 +62,11 @@ if (preg_match("/[^0-9a-z_]+/i", $admin_id)) {
 
 $g5_install = isset($_POST['g5_install']) ? (int) $_POST['g5_install'] : 0;
 $g5_shop_prefix = isset($_POST['g5_shop_prefix']) ? safe_install_string_check($_POST['g5_shop_prefix']) : 'yc5_';
+
+// 쇼핑몰 접두사는 영문자/숫자/_ 만 허용 — dbconfig 문자열 삽입을 통한 코드 주입 차단
+if (preg_match("/[^0-9a-z_]+/i", $g5_shop_prefix)) {
+    die('<div class="ins_inner"><p>쇼핑몰 TABLE명 접두사는 영문자, 숫자, _ 만 입력하세요.</p><div class="inner_btn"><a href="./install_config.php">뒤로가기</a></div></div>');
+}
 $g5_shop_install = isset($_POST['g5_shop_install']) ? (int) $_POST['g5_shop_install'] : 0;
 
 $dblink = sql_connect($mysql_host, $mysql_user, $mysql_pass, $mysql_db);

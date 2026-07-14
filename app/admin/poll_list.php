@@ -12,6 +12,10 @@ auth_check_menu($auth, $sub_menu, 'r');
 $sql_common = " from {$g5['poll_table']} ";
 
 $sql_search = " where (1) ";
+// 검색 컬럼 화이트리스트 — sfl 이 컬럼명으로 보간되므로 임의 값 차단
+$allowed_sfl = array('po_subject');
+if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'po_subject';
+
 if ($stx) {
     $sql_search .= " and ( ";
     switch ($sfl) {

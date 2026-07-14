@@ -6,6 +6,7 @@ require_once __DIR__.'/../_layout.php';
 admin_require_login();
 auth_check_menu($auth, $sub_menu, 'w');
 auth_check_menu($auth, $sub_menu, "w");
+check_admin_token();
 
 $tax_mny = isset($_POST['mod_tax_mny']) ? preg_replace('/[^0-9]/', '', $_POST['mod_tax_mny']) : 0;
 $free_mny = isset($_POST['mod_free_mny']) ? preg_replace('/[^0-9]/', '', $_POST['mod_free_mny']) : 0;
@@ -45,7 +46,7 @@ include_once(G5_PATH.'/head.sub.php');
 ?>
 
 <script>
-alert("<?php echo $od['od_settle_case']; ?> 부분취소 처리됐습니다.");
+alert(<?php echo function_exists('get_js_safe_string') ? get_js_safe_string($od['od_settle_case'].' 부분취소 처리됐습니다.') : '""'; ?>);
 opener.document.location.reload();
 self.close();
 </script>

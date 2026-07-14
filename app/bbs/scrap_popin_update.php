@@ -8,7 +8,8 @@ $scrap_url = G5_URL.'/scrap';
 if (!$is_member)
 {
     $href = G5_URL.'/login?'.$qstr.'&amp;url='.urlencode(get_pretty_url($bo_table, $wr_id));
-    echo '<script> alert(\'회원만 접근 가능합니다.\'); top.location.href = \''.str_replace('&amp;', '&', $href).'\'; </script>';
+    $js_href = function_exists('get_js_safe_string') ? get_js_safe_string(str_replace('&amp;', '&', $href)) : '"'.str_replace('&amp;', '&', $href).'"';
+    echo '<script> alert(\'회원만 접근 가능합니다.\'); top.location.href = '.$js_href.'; </script>';
     exit;
 }
 

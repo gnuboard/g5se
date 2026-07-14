@@ -11,6 +11,8 @@ auth_check_menu($auth, $sub_menu, 'r');
 
 // 체크된 자료 삭제
 if (isset($_POST['chk']) && is_array($_POST['chk'])) {
+    check_admin_token();
+
     for ($i = 0; $i < count($_POST['chk']); $i++) {
         $pp_id = (int) $_POST['chk'][$i];
         sql_pdo_query(" delete from {$g5['popular_table']} where pp_id = :pp_id ", [':pp_id' => $pp_id]);
@@ -106,7 +108,7 @@ $colspan = 4;
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
     <input type="hidden" name="stx" value="<?php echo $stx ?>">
     <input type="hidden" name="page" value="<?php echo $page ?>">
-    <input type="hidden" name="token" value="<?php echo isset($token) ? $token : ''; ?>">
+    <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
 
     <div class="tbl_head01 tbl_wrap">
         <table>

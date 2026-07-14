@@ -105,15 +105,16 @@ if(isset($sfl) && $sfl && !in_array($sfl, array('vi_ip','vi_date','vi_time','vi_
         $title = "";
         if ($row['vi_referer']) {
 
-            $referer = get_text(cut_str($row['vi_referer'], 255, ""));
-            $referer = urldecode($referer);
+            // referer 는 URL-인코딩된 페이로드를 담을 수 있으므로 디코딩을 먼저 한 뒤
+            // 마지막에 이스케이프한다(get_text 가 따옴표까지 이스케이프하여 속성 컨텍스트에서 안전).
+            $referer = urldecode($row['vi_referer']);
 
             if (!is_utf8($referer)) {
                 $referer = iconv('euc-kr', 'utf-8', $referer);
             }
 
-            $title = str_replace(array("<", ">"), array("&lt;", "&gt;"), $referer);
-            $link = '<a href="'.get_text($row['vi_referer']).'" target="_blank" title="'.$title.'">';
+            $title = get_text(cut_str($referer, 255, ""));
+            $link = '<a href="'.get_text($referer).'" target="_blank" title="'.$title.'">';
         }
 
         if ($is_admin == 'super')
