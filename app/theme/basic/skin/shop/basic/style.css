@@ -1088,6 +1088,15 @@ box-shadow:0px 1px 6px 0 #dedede
 #sit_tab .tab_tit li .selected:after {display:none}
 #sit_tab .item_use_count,#sit_tab .item_qa_count {min-width:20px;height:20px;margin-left:4px;padding:0 5px;background:var(--m-surface-2);color:var(--m-text-soft);font-size:11px;line-height:20px}
 #sit_tab .tab_con {margin:0;padding:24px;background:var(--m-surface);list-style:none}
+#sit_inf {color:var(--m-text)}
+#sit_inf_basic,#sit_inf_explan {width:auto !important;margin:0 0 18px;padding:16px;border:1px solid var(--m-border);border-radius:13px;background:var(--m-surface-2);color:var(--m-text);font-size:14px;line-height:1.75;overflow:hidden}
+#sit_inf_basic:empty,#sit_inf_explan:empty {display:none}
+#sit_inf_basic img,#sit_inf_explan img {max-width:100%;height:auto;border-radius:10px}
+#sit_inf_open {width:100%;border:1px solid var(--m-border);border-radius:13px;border-collapse:separate;border-spacing:0;background:var(--m-surface);overflow:hidden}
+#sit_inf_open tr:last-child th,#sit_inf_open tr:last-child td {border-bottom:0}
+#sit_inf_open th,#sit_inf_open td {padding:14px 16px;border:0;border-bottom:1px solid var(--m-border);font-size:14px;line-height:1.55;text-align:left;vertical-align:middle;overflow-wrap:anywhere}
+#sit_inf_open th {width:34%;background:var(--m-surface-2);color:var(--m-text);font-weight:700}
+#sit_inf_open td {background:var(--m-surface);color:var(--m-text-soft)}
 .sit_use_top,#sit_qa_wbtn {min-height:0;margin:0 0 20px;padding:18px;gap:12px;border:1px solid var(--m-border);border-radius:14px;background:var(--m-surface-2)}
 #sit_use_wbtn {gap:8px}
 #sit_use_wbtn a,#sit_qa_wbtn a {height:44px;padding:0 18px;border-radius:10px;font-size:14px;line-height:44px;white-space:nowrap}
@@ -1160,6 +1169,11 @@ box-shadow:0px 1px 6px 0 #dedede
     #sit_tab .tab_tit li button {display:flex;align-items:center;justify-content:center;gap:3px;min-width:0;padding:11px 2px;font-size:12px}
     #sit_tab .item_use_count,#sit_tab .item_qa_count {position:static;flex:0 0 auto;min-width:14px;height:14px;margin:0;padding:0 3px;font-size:9px;line-height:14px}
     #sit_tab .tab_con {padding:14px 12px 20px}
+    #sit_inf_basic,#sit_inf_explan {margin-bottom:12px;padding:13px 14px;border-radius:11px;font-size:13px;line-height:1.7}
+    #sit_inf_open {display:block;border-radius:11px}
+    #sit_inf_open tbody {display:block}
+    #sit_inf_open tr {display:grid;grid-template-columns:minmax(0,42%) minmax(0,58%)}
+    #sit_inf_open th,#sit_inf_open td {width:auto;padding:12px;font-size:13px;line-height:1.5}
     .sit_use_top,#sit_qa_wbtn {align-items:stretch;flex-direction:column;padding:12px}
     #sit_use_wbtn {display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;margin:0}
     #sit_use_wbtn a,#sit_qa_wbtn a {width:auto;height:42px;padding:0 15px;font-size:13px;line-height:42px}
