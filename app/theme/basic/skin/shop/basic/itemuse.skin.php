@@ -31,8 +31,10 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
         $is_star    = get_star($row['is_score']);
         $is_name    = get_text($row['is_name']);
         $is_subject = conv_subject($row['is_subject'],50,"…");
-        $is_content = get_view_thumbnail(conv_content($row['is_content'], 1), $thumbnail_width);
-        $is_thumbnail = $row['is_content'] ? get_itemuse_thumb($row['is_content'], 100, 100) : '';
+        // PDO 전환 이전의 공통 입력 이스케이프가 남은 후기 HTML도 정상 출력한다.
+        $is_content_raw = stripslashes($row['is_content']);
+        $is_content = get_view_thumbnail(conv_content($is_content_raw, 1), $thumbnail_width);
+        $is_thumbnail = $is_content_raw ? get_itemuse_thumb($is_content_raw, 100, 100, true) : '';
         $is_reply_name = !empty($row['is_reply_name']) ? get_text($row['is_reply_name']) : '';
         $is_reply_subject = !empty($row['is_reply_subject']) ? conv_subject($row['is_reply_subject'],50,"…") : '';
         $is_reply_content = !empty($row['is_reply_content']) ? get_view_thumbnail(conv_content($row['is_reply_content'], 1), $thumbnail_width) : '';

@@ -2529,7 +2529,8 @@ function get_itemuse_thumb($contents, $thumb_width, $thumb_height, $is_create=fa
         else
             $data_path = $p['path'];
 
-        $srcfile = G5_PATH.$data_path;
+        $data_relative_path = preg_replace('#^/'.preg_quote(G5_DATA_DIR, '#').'#', '', $data_path);
+        $srcfile = G5_DATA_PATH.$data_relative_path;
 
         if(preg_match("/\.({$config['cf_image_extension']})$/i", $srcfile) && is_file($srcfile)) {
             $size = @getimagesize($srcfile);

@@ -9,11 +9,11 @@ if (!$is_member) {
 }
 
 $it_id       = isset($_REQUEST['it_id']) ? safe_replace_regex($_REQUEST['it_id'], 'it_id') : '';
-$is_subject  = isset($_POST['is_subject']) ? trim($_POST['is_subject']) : '';
-$is_content  = isset($_POST['is_content']) ? trim($_POST['is_content']) : '';
+$is_subject  = isset($_POST['is_subject']) ? trim(stripslashes($_POST['is_subject'])) : '';
+$is_content  = isset($_POST['is_content']) ? trim(stripslashes($_POST['is_content'])) : '';
 $is_content = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $is_content);
-$is_name     = isset($_POST['is_name']) ? trim($_POST['is_name']) : '';
-$is_password = isset($_POST['is_password']) ? trim($_POST['is_password']) : '';
+$is_name     = isset($_POST['is_name']) ? trim(stripslashes($_POST['is_name'])) : '';
+$is_password = isset($_POST['is_password']) ? trim(stripslashes($_POST['is_password'])) : '';
 $is_score    = isset($_POST['is_score']) ? (int) $_POST['is_score'] : 0;
 $is_score    = ($is_score > 5 || $is_score < 1) ? 1 : $is_score;
 $get_editor_img_mode = $config['cf_editor'] ? false : true;

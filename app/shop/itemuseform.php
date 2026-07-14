@@ -32,6 +32,7 @@ if ($w == "") {
 
     $it_id    = $use['it_id'];
     $is_score = $use['is_score'];
+    $use['is_content'] = stripslashes($use['is_content']);
 
     if (!$is_admin && $use['mb_id'] != $member['mb_id']) {
         alert_close("자신의 사용후기만 수정이 가능합니다.");
