@@ -406,7 +406,7 @@ class item_list
 
         if ($this->list_skin == "") {
             return $this->count."번 item_list() 의 스킨파일이 지정되지 않았습니다.";
-        } else if (!file_exists($file)) {
+        } else if (!is_file($file)) {
             return $file." 파일을 찾을 수 없습니다.";
         } else {
             ob_start();

@@ -44,6 +44,27 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     padding: 0;
     list-style: none;
 }
+
+/* 모바일은 별도의 "1줄당 이미지 수" 설정을 요구하지 않는다.
+   뷰포트 기준 2열을 사용하고 300px 이하에서만 1열이 된다.
+   관리자 ca_list_mod는 데스크톱 최대 열 수와 페이지당 상품 수에만 사용한다. */
+@media (max-width: 880px) {
+    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+    .m-shop-grid > .smt_20 > ul.sct_ul {
+        grid-template-columns: repeat(2, minmax(0, calc((100vw - 52px) / 2))) !important;
+        width: calc(100vw - 40px) !important;
+        max-width: calc(100vw - 40px) !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        gap: 12px;
+    }
+}
+@media (max-width: 300px) {
+    .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl),
+    .m-shop-grid > .smt_20 > ul.sct_ul {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
 .m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li,
 .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li {
     float: none !important;
@@ -71,6 +92,108 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     overflow-wrap: anywhere;
     word-break: break-word;
     min-width: 0;
+}
+/* 상품 카드 타이포그래피 — 모바일 2열과 데스크톱 다열 모두 읽기 쉬운 크기로 통일. */
+.m-shop-grid .sct_star {
+    font-size: 14px !important;
+}
+.m-shop-grid .sct_txt,
+.m-shop-grid .sct_txt a {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+}
+.m-shop-grid .sct_basic {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+}
+.m-shop-grid .sct_cost > span:first-child {
+    font-size: 18px !important;
+    line-height: 1.35 !important;
+}
+.m-shop-grid .sct_cost .sct_dict {
+    font-size: 13px !important;
+}
+/* modern product card */
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li {
+    position: relative;
+    border: 1px solid var(--m-border) !important;
+    border-radius: 14px !important;
+    background: var(--m-surface) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease !important;
+}
+.m-shop-grid > ul:not(.owl-carousel):not(.smt_30):not(.sctrl) > li.sct_li:hover {
+    transform: translateY(-3px);
+    border-color: var(--m-border-hover) !important;
+    box-shadow: 0 12px 28px -16px rgba(15, 23, 42, 0.32) !important;
+}
+.m-shop-grid .sct_img {
+    border-radius: 13px 13px 0 0;
+}
+.m-shop-grid .sct_img img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+.m-shop-grid .sct_ct_wrap {
+    position: static;
+    gap: 8px !important;
+    padding: 16px !important;
+}
+.m-shop-grid .sct_star {
+    line-height: 1;
+    letter-spacing: 1px;
+}
+.m-shop-grid .sct_txt,
+.m-shop-grid .sct_txt a {
+    color: var(--m-text) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+}
+.m-shop-grid .sct_basic {
+    color: var(--m-text-muted) !important;
+}
+.m-shop-grid .sct_bottom {
+    width: 100%;
+    margin-top: auto !important;
+    padding-top: 14px !important;
+    border-top: 1px solid var(--m-border);
+}
+.m-shop-grid .sct_cost {
+    gap: 1px;
+}
+.m-shop-grid .sct_cost > span:first-child {
+    font-weight: 800 !important;
+    letter-spacing: -0.025em;
+}
+.m-shop-grid .sct_cost .sct_dict {
+    color: var(--m-text-faint) !important;
+}
+.m-shop-grid .sct_op_btn .btn_wish {
+    width: 34px !important;
+    height: 34px !important;
+    border: 1px solid var(--m-border);
+    background: var(--m-surface-2);
+    color: var(--m-text-muted) !important;
+}
+.m-shop-grid .sct_op_btn .btn_wish:hover,
+.m-shop-grid .sct_op_btn .btn_wish.is_active {
+    border-color: rgba(244, 63, 94, .28);
+    background: rgba(244, 63, 94, .1);
+    color: #f43f5e !important;
+}
+/* 추천/할인/인기 배지는 내용 높이에 영향을 주지 않고 이미지 위에 표시한다. */
+.m-shop-grid .sit_icon_li {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 0 !important;
+}
+@media (max-width: 600px) {
+    .m-shop-grid .sct_ct_wrap {padding: 12px !important}
+    .m-shop-grid .sit_icon_li {top: 8px;left: 8px}
+    .m-shop-grid .sct_bottom {padding-top: 12px !important}
 }
 /* 옛날 UX 정리:
    - .sctrl: main.20 의 ▶◾ (수직 롤링 효과재생/정지) — list_row>=2 + stacked-ul 일 때만
@@ -135,6 +258,182 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     border-color: var(--m-border) !important;
     color: var(--m-text) !important;
 }
+/* 홈 히트상품은 owl-carousel이 중간 wrapper를 추가하므로 직계 자식 규칙이 닿지 않는다. */
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_li {
+    background: var(--m-surface) !important;
+    border-color: var(--m-border) !important;
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_txt,
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_txt a,
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_cost,
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_cost > span {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_img,
+[data-theme="dark"] .m-shell .m-shop-grid .owl-carousel .sct_img a {
+    background: var(--m-surface-2) !important;
+}
+
+/* 쇼핑 홈 이벤트 — legacy float 목록을 반응형 event/product card로 재구성 */
+.m-shell #sev {
+    margin: 48px 0 20px;
+    text-align: left;
+}
+.m-shell #sev header {
+    margin: 0 0 18px;
+}
+.m-shell #sev h2 {
+    float: none;
+    margin: 0;
+    color: var(--m-text);
+    font-size: var(--m-text-2xl);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+}
+.m-shell #sev > ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(520px, 100%), 1fr));
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.m-shell #sev .ev_li {
+    float: none;
+    width: auto;
+    padding: 0;
+}
+.m-shell #sev .ev_li_wr {
+    overflow: hidden;
+    padding: 20px;
+    border: 1px solid var(--m-border);
+    border-radius: 16px;
+    background: var(--m-surface);
+    box-shadow: var(--m-shadow);
+}
+.m-shell #sev .sev_text {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 16px;
+    color: var(--m-text);
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.4;
+    text-decoration: none;
+}
+.m-shell #sev .sev_text:hover {
+    color: var(--m-primary);
+}
+.m-shell #sev .ev_prd {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    list-style: none;
+    text-align: left;
+}
+.m-shell #sev .ev_prd > li {
+    display: flex;
+    min-width: 0;
+    padding: 0 0 14px;
+    overflow: hidden;
+    flex-direction: column;
+    border: 1px solid var(--m-border);
+    border-radius: 12px;
+    background: var(--m-surface-2);
+}
+.m-shell #sev .ev_prd_img {
+    display: block;
+    float: none;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--m-bg);
+}
+.m-shell #sev .ev_prd_img img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+.m-shell #sev .ev_txt_wr {
+    float: none;
+    max-width: none;
+    margin: 0;
+    padding: 12px 12px 0;
+}
+.m-shell #sev .ev_prd .ev_prd_tit {
+    min-height: 2.8em;
+    margin: 0 0 8px;
+    color: var(--m-text);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+.m-shell #sev .ev_prd .ev_prd_price {
+    margin: 0;
+    color: var(--m-text);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+.m-shell #sev .ev_prd > li:has(.sev_more) {
+    grid-column: 1 / -1;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+.m-shell #sev .ev_prd .sev_more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid var(--m-border);
+    border-radius: 10px;
+    background: var(--m-surface-2);
+    color: var(--m-text-soft);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.m-shell #sev .ev_prd .sev_more:hover {
+    border-color: var(--m-primary);
+    background: var(--m-primary-soft);
+    color: var(--m-primary);
+}
+@media (max-width: 640px) {
+    .m-shell #sev {margin-top: 36px}
+    .m-shell #sev h2 {font-size: 20px}
+    .m-shell #sev .ev_li_wr {padding: 14px;border-radius: 14px}
+    .m-shell #sev .sev_text {margin-bottom: 12px;font-size: 16px}
+    .m-shell #sev .ev_prd {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+    }
+    .m-shell #sev .ev_prd::-webkit-scrollbar {display:none}
+    .m-shell #sev .ev_prd > li {
+        flex: 0 0 150px;
+        scroll-snap-align: start;
+    }
+    .m-shell #sev .ev_prd > li:has(.sev_more) {
+        flex-basis: 84px;
+        display: flex;
+        align-items: stretch;
+    }
+    .m-shell #sev .ev_prd .sev_more {padding: 0 14px}
+}
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_img,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_img a,
 [data-theme="dark"] .m-shop-grid > .smt_20 > ul.sct_ul > li.sct_li .sct_img,
@@ -145,6 +444,9 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_txt a,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_basic,
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_cost {
+    color: var(--m-text) !important;
+}
+[data-theme="dark"] .m-shop-grid .sct_cost > span:first-child {
     color: var(--m-text) !important;
 }
 [data-theme="dark"] .m-shop-grid > ul > li.sct_li .sct_id,
@@ -220,6 +522,9 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     align-items: center;
     gap: 8px;
     white-space: nowrap;
+}
+.m-shell #sct_location .sct-location-path {
+    display: contents;
 }
 /* admin 톱니가 h1 안 인라인으로 들어왔을 때 — 제목 뒤에 약간 떨어져 작은 카드로 */
 .m-shell main.m-container > h1 > .sct_admin,
@@ -384,6 +689,115 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-primary) !important;  /* 원본 #ff3600 도 다크에서 보이지만 테마와 일관 */
 }
 
+/* 상품 분류 목록 모바일 정리 — legacy absolute breadcrumb와 20% float 열을 해제한다. */
+@media (max-width: 880px) {
+    /* 현재 분류는 상단 통합 카테고리 바가 표시한다. h1은 접근성용으로만 유지한다. */
+    .m-shell main.m-container > h1.m-shop-category-page-title {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: -1px !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+    .m-shell main.m-container > h1 {
+        font-size: var(--m-text-xl) !important;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+    /* 1단계 분류는 상단 가로 메뉴에서 이미 제공하므로 중복 경로 UI를 숨긴다. */
+    .m-shell #sct_location {
+        display: none !important;
+    }
+    .m-shell #sct_ct_1 {
+        display: none;
+    }
+
+    .m-shell #sct_sortlst {
+        display: flex;
+        align-items: stretch;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        overflow: visible;
+    }
+    /* 이벤트 페이지는 목록 툴바 wrapper가 없으므로 정렬 셀렉트 자체에 간격을 둔다. */
+    .m-shell #sct_sortlst.m-event-sort {
+        margin-bottom: 16px;
+    }
+    .m-shell #sct_sort {
+        float: none;
+        width: auto;
+        min-width: 0;
+        flex: 1;
+    }
+    .m-shell #sct_sort ul {
+        display: none;
+    }
+    .m-shell #sct_sort #sct-sort-mobile {
+        display: block;
+        width: 100%;
+        height: 36px;
+        margin: 0;
+        padding: 0 28px 0 10px;
+        border: 1px solid var(--m-border);
+        border-radius: var(--m-radius);
+        background-color: var(--m-surface-2);
+        color: var(--m-text);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        color-scheme: light dark;
+    }
+    .m-shell #sct_sort #sct-sort-mobile:focus {
+        border-color: var(--m-primary);
+        outline: 3px solid var(--m-primary-soft);
+    }
+    .m-shell #sct_lst {
+        display: none;
+    }
+    .m-shell .m-shop-list-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 6px 0 12px;
+    }
+    .m-shell .m-shop-list-count {
+        flex: 0 0 auto;
+        color: var(--m-text-muted);
+        font-size: var(--m-text-sm);
+        white-space: nowrap;
+    }
+    .m-shell .m-shop-list-count strong {
+        color: var(--m-text);
+        font-size: var(--m-text-md);
+    }
+    .m-shell .m-shop-list-toolbar #sct_sortlst {
+        width: min(156px, 46vw);
+    }
+}
+
+.m-shell .m-shop-list-count {
+    display: none;
+}
+@media (max-width: 880px) {
+    .m-shell .m-shop-list-count {
+        display: inline;
+    }
+}
+
+/* 상품 정렬 셀렉트는 모바일 전용이다. */
+@media (min-width: 881px) {
+    .m-shell #sct_sort #sct-sort-mobile {
+        display: none !important;
+    }
+}
+
 /* 설문조사 (poll) — shop_basic skin */
 [data-theme="dark"] #poll {
     background: var(--m-surface) !important;
@@ -437,6 +851,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     color: var(--m-text) !important;
 }
 [data-theme="dark"] #sit_star_sns span,
+[data-theme="dark"] #sit_desc,
 [data-theme="dark"] .sit_option label,
 [data-theme="dark"] .sit_side_option label {
     color: var(--m-text-soft) !important;
@@ -1738,6 +2153,93 @@ body > #NAX_BLOCK iframe,
     }
 }
 
+/* 모바일 쇼핑 카테고리 — 데스크톱 레이아웃은 유지하고, 숨겨진 메뉴 대신
+   1차 상품분류를 상단에서 바로 탐색할 수 있게 한다. */
+.m-shop-mobile-categories {
+    display: none;
+}
+@media (max-width: 880px) {
+    .m-shop-mobile-categories {
+        display: block;
+        flex: 0 0 auto;
+        overflow-x: auto;
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--m-border);
+        background: var(--m-surface);
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        cursor: grab;
+        user-select: none;
+        touch-action: pan-x;
+    }
+    .m-shop-mobile-categories.is-dragging {
+        cursor: grabbing;
+    }
+    .m-shop-mobile-categories::-webkit-scrollbar {
+        display: none;
+    }
+    .m-shop-mobile-categories-list {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: max-content;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .m-shop-mobile-category-link {
+        display: block;
+        padding: 8px 12px;
+        border: 1px solid var(--m-border);
+        border-radius: 999px;
+        background: var(--m-bg);
+        color: var(--m-text-soft);
+        font-size: var(--m-text-sm);
+        font-weight: 600;
+        line-height: 1.2;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .m-shop-mobile-category-home {
+        border-color: transparent;
+        background: transparent;
+        color: var(--m-text-muted);
+    }
+    .m-shop-mobile-category-separator {
+        flex: 0 0 auto;
+        color: var(--m-text-muted);
+        font-size: 18px;
+        line-height: 1;
+    }
+    .m-shop-mobile-category-select {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 180px;
+        height: 36px;
+        margin: 0;
+        padding: 0 32px 0 11px;
+        border: 1px solid var(--m-border);
+        border-radius: 999px;
+        background-color: var(--m-bg);
+        color: var(--m-text);
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        color-scheme: light dark;
+    }
+    .m-shop-mobile-category-select:focus {
+        border-color: var(--m-primary);
+        outline: 3px solid var(--m-primary-soft);
+    }
+    .m-shop-mobile-category-link:hover,
+    .m-shop-mobile-category-link:focus-visible,
+    .m-shop-mobile-category-link.is-active {
+        border-color: var(--m-primary);
+        background: var(--m-primary-soft);
+        color: var(--m-primary);
+    }
+}
+
 </style>
 
 <script>
@@ -1786,18 +2288,132 @@ body > #NAX_BLOCK iframe,
 
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
+    <?php
+    // 모바일 카테고리 바: 홈에서는 1단계 전체, 분류 화면에서는 현재 경로와 다음 단계를 한 줄에 노출한다.
+    $_shop_categories = get_shop_category_array(true);
+    if (!empty($_shop_categories)) {
+        $_mobile_ca_id = !empty($ca_id) ? preg_replace('/[^0-9a-z]/i', '', $ca_id) : '';
+        if (!$_mobile_ca_id && isset($it['ca_id'])) {
+            $_mobile_ca_id = preg_replace('/[^0-9a-z]/i', '', $it['ca_id']);
+        }
+    ?>
+    <nav class="m-shop-mobile-categories<?php echo $_mobile_ca_id ? ' has-current-category' : ''; ?>" aria-label="쇼핑몰 카테고리">
+        <div class="m-shop-mobile-categories-list">
+            <a href="<?php echo G5_SHOP_URL; ?>/" class="m-shop-mobile-category-link m-shop-mobile-category-home">홈</a>
+
+            <?php if (!$_mobile_ca_id) { ?>
+                <?php foreach ($_shop_categories as $_shop_category) {
+                    if (empty($_shop_category['text'])) continue;
+                    $_shop_category_data = $_shop_category['text'];
+                ?>
+                <a href="<?php echo $_shop_category_data['url']; ?>" class="m-shop-mobile-category-link"><?php echo get_text($_shop_category_data['ca_name']); ?></a>
+                <?php } ?>
+            <?php } else {
+                $_root_id = substr($_mobile_ca_id, 0, 2);
+                $_root = isset($_shop_categories[$_root_id]['text']) ? $_shop_categories[$_root_id]['text'] : null;
+                if ($_root) {
+            ?>
+                <span class="m-shop-mobile-category-separator" aria-hidden="true">›</span>
+                <a href="<?php echo $_root['url']; ?>" class="m-shop-mobile-category-link is-active"><?php echo get_text($_root['ca_name']); ?></a>
+            <?php
+                }
+
+                $_current_depth = min(5, intdiv(strlen($_mobile_ca_id), 2));
+                for ($_depth = 2; $_depth <= min(5, $_current_depth + 1); $_depth++) {
+                    $_length = $_depth * 2;
+                    $_parent_id = substr($_mobile_ca_id, 0, $_length - 2);
+                    $_selected_id = strlen($_mobile_ca_id) >= $_length ? substr($_mobile_ca_id, 0, $_length) : '';
+                    $_category_options = array();
+                    $_category_result = sql_pdo_query(
+                        " select ca_id, ca_name from {$g5['g5_shop_category_table']}
+                            where ca_use = '1' and length(ca_id) = {$_length} and ca_id like :parent_id
+                            order by ca_order, ca_id ",
+                        array(':parent_id' => $_parent_id.'%')
+                    );
+                    while ($_category_row = sql_fetch_array($_category_result)) {
+                        $_category_options[] = $_category_row;
+                    }
+                    if (!$_category_options) continue;
+                    $_selected_name = '';
+                    if ($_selected_id) {
+                        foreach ($_category_options as $_category_option) {
+                            if ($_selected_id === $_category_option['ca_id']) {
+                                $_selected_name = $_category_option['ca_name'];
+                                break;
+                            }
+                        }
+                    }
+            ?>
+                <span class="m-shop-mobile-category-separator" aria-hidden="true">›</span>
+                <select class="m-shop-mobile-category-select" aria-label="<?php echo $_depth; ?>단계 상품 분류" onchange="if (this.value) window.location.href = this.value;">
+                    <?php if (!$_selected_id) { ?><option value="">하위 분류</option><?php } ?>
+                    <?php if ($_selected_name !== '') { ?><option value="" selected hidden><?php echo get_text($_selected_name); ?></option><?php } ?>
+                    <?php foreach ($_category_options as $_category_option) { ?>
+                    <option value="<?php echo shop_category_url($_category_option['ca_id']); ?>"><?php echo get_text($_category_option['ca_name']); ?></option>
+                    <?php } ?>
+                </select>
+            <?php
+                }
+            } ?>
+        </div>
+    </nav>
+    <script>
+    (function () {
+        var scroller = document.querySelector('.m-shop-mobile-categories');
+        if (!scroller) return;
+        var startX = 0, startScroll = 0, dragging = false, moved = false;
+        scroller.addEventListener('pointerdown', function (event) {
+            if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('select')) return;
+            dragging = true;
+            moved = false;
+            startX = event.clientX;
+            startScroll = scroller.scrollLeft;
+            scroller.setPointerCapture(event.pointerId);
+            scroller.classList.add('is-dragging');
+        });
+        scroller.addEventListener('pointermove', function (event) {
+            if (!dragging) return;
+            var distance = event.clientX - startX;
+            if (Math.abs(distance) > 4) moved = true;
+            scroller.scrollLeft = startScroll - distance;
+        });
+        function stopDragging(event) {
+            if (!dragging) return;
+            dragging = false;
+            scroller.classList.remove('is-dragging');
+            if (scroller.hasPointerCapture(event.pointerId)) scroller.releasePointerCapture(event.pointerId);
+        }
+        scroller.addEventListener('pointerup', stopDragging);
+        scroller.addEventListener('pointercancel', stopDragging);
+        scroller.addEventListener('click', function (event) {
+            if (moved) {
+                event.preventDefault();
+                event.stopPropagation();
+                moved = false;
+            }
+        }, true);
+        if (scroller.classList.contains('has-current-category')) {
+            requestAnimationFrame(function () {
+                scroller.scrollLeft = scroller.scrollWidth - scroller.clientWidth;
+            });
+        }
+    })();
+    </script>
+    <?php } ?>
+
     <?php if(defined('_INDEX_')) { include G5_BBS_PATH.'/newwin.inc.php'; } ?>
 
     <?php
         // 콘텐츠 분류 — 홈/검색/상품 페이지에 따라 다른 레이아웃
         $is_index = defined('_INDEX_') && _INDEX_;
+        $is_shop_category_page = !empty($ca_id) && !(isset($it_id) && isset($it) && isset($it['it_id']) && $it_id === $it['it_id']);
         // 우측 사이드바 사용 페이지 — 홈일 때만 (검색/리스트/상품 본문은 풀폭이 깔끔)
         $use_sidebar = $is_index;
     ?>
 
     <main class="m-container <?php echo $use_sidebar ? 'm-with-sidebar' : ''; ?>" style="padding: 24px 20px 48px;">
         <?php if (!$use_sidebar && !empty($g5['title']) && (!isset($bo_table) || !$bo_table || (isset($w) && $w == 's'))) { ?>
-            <h1 style="font-size: var(--m-text-2xl); margin: 0 0 18px; letter-spacing: -0.01em;"><?php echo $g5['title'] ?></h1>
+            <h1<?php echo $is_shop_category_page ? ' class="m-shop-category-page-title"' : ''; ?> style="font-size: var(--m-text-2xl); margin: 0 0 18px; letter-spacing: -0.01em;"><?php echo $g5['title'] ?></h1>
         <?php } ?>
 
         <div class="m-main-col">

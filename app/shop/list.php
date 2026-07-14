@@ -109,20 +109,6 @@ var itemlist_ca_id = "<?php echo $ca_id; ?>";
     $skin_file = ($ca_skin_file && is_include_path_check($ca_skin_file) && is_file($ca_skin_file)) ? $ca_skin_file : $skin_dir.'/list.10.skin.php';
 
     if (file_exists($skin_file)) {
-
-		echo '<div id="sct_sortlst">';
-        $sort_skin = $skin_dir.'/list.sort.skin.php';
-        if(!is_file($sort_skin))
-            $sort_skin = G5_SHOP_SKIN_PATH.'/list.sort.skin.php';
-        include $sort_skin;
-
-        // 상품 보기 타입 변경 버튼
-        $sub_skin = $skin_dir.'/list.sub.skin.php';
-        if(!is_file($sub_skin))
-            $sub_skin = G5_SHOP_SKIN_PATH.'/list.sub.skin.php';
-        include $sub_skin;
-        echo '</div>';
-
         // 총몇개 = 한줄에 몇개 * 몇줄
         $items = $ca['ca_list_mod'] * $ca['ca_list_row'];
         // 페이지가 없으면 첫 페이지 (1 페이지)
@@ -145,12 +131,31 @@ var itemlist_ca_id = "<?php echo $ca_id; ?>";
         $list->set_view('it_price', true);
         $list->set_view('it_icon', true);
         $list->set_view('sns', true);
-        echo $list->run();
+        $list_html = $list->run();
 
         // where 된 전체 상품수
         $total_count = $list->total_count;
         // 전체 페이지 계산
         $total_page  = ceil($total_count / $items);
+
+        // 상품 목록 바로 위에서 개수와 정렬을 함께 보여준다.
+        echo '<div class="m-shop-list-toolbar">';
+        echo '<span class="m-shop-list-count">상품 <strong>'.number_format($total_count).'</strong>개</span>';
+		echo '<div id="sct_sortlst">';
+        $sort_skin = $skin_dir.'/list.sort.skin.php';
+        if(!is_file($sort_skin))
+            $sort_skin = G5_SHOP_SKIN_PATH.'/list.sort.skin.php';
+        include $sort_skin;
+
+        // 상품 보기 타입 변경 버튼
+        $sub_skin = $skin_dir.'/list.sub.skin.php';
+        if(!is_file($sub_skin))
+            $sub_skin = G5_SHOP_SKIN_PATH.'/list.sub.skin.php';
+        include $sub_skin;
+        echo '</div>';
+        echo '</div>';
+
+        echo $list_html;
     }
     else
     {
