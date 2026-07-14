@@ -632,8 +632,10 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
 .sit_btn_cart {background:#fff;border-radius:3px;border:1px solid #98a3b3;color:#000}
 .sit_btn_cart:hover {background:#f3f3f3}
 #sit_btn_alm {float:left;display:inline-block;width:186px;height:50px;margin-left:5px;line-height:50px;margin-bottom:10px;font-weight:bold;font-size:1.25em;background:#d50c0c;border-radius:3px;color:#fff;border:0;text-align:center}
-.sit_btn_wish {flex:0 0 65px;float:none;display:inline-block;width:65px;height:50px;margin-bottom:10px;line-height:50px;color:#8c9195;font-size:1.6em;border:1px solid #98a3b3;text-align:center;border-radius:3px;font-weight:bold}
-.sit_btn_wish:hover {color:red}
+.sit_btn_wish {flex:0 0 50px;float:none;display:inline-grid;place-items:center;width:50px;height:50px;margin-bottom:10px;color:var(--m-text-soft);border:1px solid var(--m-border);background:var(--m-surface);text-align:center;border-radius:12px}
+.sit_btn_wish svg {width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sit_btn_wish:hover {border-color:#fb7185;background:rgba(244,63,94,.08);color:#f43f5e}
+.sit_btn_wish:focus-visible {outline:3px solid rgba(244,63,94,.16);outline-offset:2px}
 
 @media (max-width: 1100px) {
     #sit_ov_wrap {grid-template-columns:1fr;gap:32px;padding:32px 20px}
@@ -681,20 +683,21 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
     #sit_btn_opt button {height:36px;padding:0 10px;font-size:12px}
     #sit_btn_opt button svg {width:17px;height:17px}
     #sit_ov_btn {flex-wrap:wrap}
-    #sit_ov_btn button {flex-basis:calc(50% - 4px)}
-    .sit_btn_wish {flex:1 0 100%;width:auto}
+    #sit_ov_btn button {flex:1 1 0;flex-basis:0}
+    .sit_btn_wish {flex:0 0 46px;width:46px;border-radius:12px}
 }
 
 /* 상품 상세보기 - 다른 상품 보기 */
-#sit_siblings {clear:both;width:100%;border-top:1px solid #f1f3f6;background:#fff;text-align:center;position:relative}
-#sit_siblings:after {display:block;visibility:hidden;clear:both;content:""}
+#sit_siblings {clear:both;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:20px 0;border-top:1px solid var(--m-border);background:var(--m-surface);position:relative}
 #sit_siblings h2 {position:absolute;font-size:0;text-indent:-9999em;line-height:0;overflow:hidden}
-#sit_siblings a {display:block;position:relative;padding:0;margin: 15px;line-height:35px;color:#999}
-#sit_siblings a#siblings_prev {float:left;padding-left:20px}
-#sit_siblings a#siblings_prev:after {content:"";background:url('img/sit_siblings.jpg') no-repeat;position:absolute;left:0;top:10px;width:10px;height:15px;display:inline-block}
-#sit_siblings a#siblings_next {float:right;padding-right:20px}
-#sit_siblings a#siblings_next:after {content:"";background:url('img/sit_siblings.jpg') -14px 0px no-repeat;position:absolute;right:0;top:10px;width:10px;height:15px;display:inline-block}
-#sit_siblings a span {position:absolute;font-size:0;text-indent:-9999em;line-height:0;overflow:hidden}
+#sit_siblings a {display:flex;min-width:0;flex-direction:column;gap:5px;padding:13px 14px;border:1px solid var(--m-border);border-radius:12px;background:var(--m-surface);color:var(--m-text);text-decoration:none;transition:border-color .16s ease,background .16s ease,transform .16s ease}
+#sit_siblings a:hover {border-color:var(--m-primary);background:var(--m-primary-soft);transform:translateY(-1px)}
+#sit_siblings a#siblings_prev {grid-column:1;text-align:left}
+#sit_siblings a#siblings_next {grid-column:2;text-align:right}
+#sit_siblings .siblings_direction {display:flex;align-items:center;gap:4px;color:var(--m-text-soft);font-size:12px;font-weight:700}
+#sit_siblings #siblings_next .siblings_direction {justify-content:flex-end}
+#sit_siblings .siblings_direction svg {width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#sit_siblings .siblings_name {overflow:hidden;color:var(--m-text);font-size:14px;font-weight:700;line-height:1.35;text-overflow:ellipsis;white-space:nowrap}
 
 #sit_info {display:block;position:relative;width:100%;min-height:0;margin-top:20px;margin-bottom:30px;border:1px solid #e8e8e8;background:#fff}
 #sit_info:after {display:block;visibility:hidden;clear:both;content:""}

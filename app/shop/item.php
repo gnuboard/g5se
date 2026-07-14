@@ -146,7 +146,7 @@ $row = sql_pdo_fetch(" select it_id, it_name from {$g5['g5_shop_item_table']}
                         order by it_id asc limit 1 ",
                     [':it_id' => $it_id, ':ca_prefix' => substr($it['ca_id'], 0, 4)]);
 if (isset($row['it_id']) && $row['it_id']) {
-    $prev_title = '이전상품<span class="sound_only"> '.$row['it_name'].'</span>';
+    $prev_title = '<span class="siblings_direction"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>이전 상품</span><span class="siblings_name">'.get_text($row['it_name']).'</span>';
     $prev_href = '<a href="'.get_pretty_url('shop', $row['it_id']).'" id="siblings_prev">';
     $prev_href2 = '</a>'.PHP_EOL;
 } else {
@@ -161,7 +161,7 @@ $row = sql_pdo_fetch(" select it_id, it_name from {$g5['g5_shop_item_table']}
                         order by it_id desc limit 1 ",
                     [':it_id' => $it_id, ':ca_prefix' => substr($it['ca_id'], 0, 4)]);
 if (isset($row['it_id']) && $row['it_id']) {
-    $next_title = '다음 상품<span class="sound_only"> '.$row['it_name'].'</span>';
+    $next_title = '<span class="siblings_direction">다음 상품<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="siblings_name">'.get_text($row['it_name']).'</span>';
     $next_href = '<a href="'.get_pretty_url('shop', $row['it_id']).'" id="siblings_next">';
     $next_href2 = '</a>'.PHP_EOL;
 } else {
