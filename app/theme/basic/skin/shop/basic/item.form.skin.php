@@ -69,11 +69,18 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	            <button type="button" class="sit_gallery_lightbox_backdrop" aria-label="확대 보기 닫기"></button>
 	            <div class="sit_gallery_lightbox_panel">
 	                <button type="button" class="sit_gallery_lightbox_close" aria-label="확대 보기 닫기"><i class="fa fa-times" aria-hidden="true"></i></button>
-	                <img src="" alt="<?php echo get_text(stripslashes($it['it_name'])); ?> 확대 이미지">
+	                <div class="sit_gallery_lightbox_viewport">
+	                    <img src="" alt="<?php echo get_text(stripslashes($it['it_name'])); ?> 확대 이미지" draggable="false">
+	                </div>
 	                <?php if ($gallery_count > 1) { ?>
 	                <button type="button" class="sit_gallery_lightbox_nav sit_gallery_lightbox_prev" aria-label="이전 확대 이미지"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
 	                <button type="button" class="sit_gallery_lightbox_nav sit_gallery_lightbox_next" aria-label="다음 확대 이미지"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
 	                <?php } ?>
+	                <div class="sit_gallery_zoom_controls" aria-label="이미지 확대 조절">
+	                    <button type="button" class="sit_gallery_zoom_out" aria-label="축소"><i class="fa fa-minus" aria-hidden="true"></i></button>
+	                    <button type="button" class="sit_gallery_zoom_reset" aria-label="원래 크기로">100%</button>
+	                    <button type="button" class="sit_gallery_zoom_in" aria-label="확대"><i class="fa fa-plus" aria-hidden="true"></i></button>
+	                </div>
 	                <span class="sit_gallery_lightbox_count"><b>1</b> / <?php echo $gallery_count; ?></span>
 	            </div>
 	        </div>
@@ -397,10 +404,36 @@ $(function(){
     var count = gallery.querySelector('.sit_gallery_count b');
     var lightbox = document.getElementById('sit_gallery_lightbox');
     var lightboxImage = lightbox ? lightbox.querySelector('img') : null;
+    var lightboxViewport = lightbox ? lightbox.querySelector('.sit_gallery_lightbox_viewport') : null;
     var lightboxCount = lightbox ? lightbox.querySelector('.sit_gallery_lightbox_count b') : null;
     var shell = document.querySelector('.m-shell');
     var current = 0;
     var lastFocus = null;
+    var imageScale = 1;
+    var imageX = 0;
+    var imageY = 0;
+    var pointers = new Map();
+    var pinchDistance = 0;
+    var pinchScale = 1;
+
+    function renderZoom() {
+        if (!lightboxImage) return;
+        lightboxImage.style.transform = 'translate3d(' + imageX + 'px,' + imageY + 'px,0) scale(' + imageScale + ')';
+        lightboxImage.classList.toggle('is-zoomed', imageScale > 1);
+        var reset = lightbox ? lightbox.querySelector('.sit_gallery_zoom_reset') : null;
+        if (reset) reset.textContent = Math.round(imageScale * 100) + '%';
+    }
+
+    function setZoom(scale, x, y) {
+        imageScale = Math.max(1, Math.min(4, scale));
+        imageX = imageScale === 1 ? 0 : x;
+        imageY = imageScale === 1 ? 0 : y;
+        renderZoom();
+    }
+
+    function resetZoom() {
+        setZoom(1, 0, 0);
+    }
 
     function show(index) {
         if (!slides.length) return;
@@ -422,6 +455,7 @@ $(function(){
     function syncLightbox() {
         if (!lightboxImage || !slides[current]) return;
         lightboxImage.src = slides[current].getAttribute('data-large-src');
+        resetZoom();
         if (lightboxCount) lightboxCount.textContent = current + 1;
     }
 
@@ -464,6 +498,9 @@ $(function(){
         var lightboxNext = lightbox.querySelector('.sit_gallery_lightbox_next');
         if (lightboxPrev) lightboxPrev.addEventListener('click', function () { show(current - 1); });
         if (lightboxNext) lightboxNext.addEventListener('click', function () { show(current + 1); });
+        lightbox.querySelector('.sit_gallery_zoom_in').addEventListener('click', function () { setZoom(imageScale + .5, imageX, imageY); });
+        lightbox.querySelector('.sit_gallery_zoom_out').addEventListener('click', function () { setZoom(imageScale - .5, imageX, imageY); });
+        lightbox.querySelector('.sit_gallery_zoom_reset').addEventListener('click', resetZoom);
     }
 
     function addSwipe(element) {
@@ -479,7 +516,45 @@ $(function(){
         }, {passive: true});
     }
     addSwipe(gallery.querySelector('.sit_gallery_stage'));
-    addSwipe(lightbox ? lightbox.querySelector('.sit_gallery_lightbox_panel') : null);
+
+    if (lightboxViewport) {
+        lightboxViewport.addEventListener('dblclick', function () {
+            setZoom(imageScale > 1 ? 1 : 2, 0, 0);
+        });
+        lightboxViewport.addEventListener('wheel', function (event) {
+            event.preventDefault();
+            setZoom(imageScale + (event.deltaY < 0 ? .25 : -.25), imageX, imageY);
+        }, {passive: false});
+        lightboxViewport.addEventListener('pointerdown', function (event) {
+            pointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
+            lightboxViewport.setPointerCapture(event.pointerId);
+            if (pointers.size === 2) {
+                var points = Array.from(pointers.values());
+                pinchDistance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+                pinchScale = imageScale;
+            }
+        });
+        lightboxViewport.addEventListener('pointermove', function (event) {
+            var previous = pointers.get(event.pointerId);
+            if (!previous) return;
+            pointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
+            if (pointers.size === 2) {
+                var points = Array.from(pointers.values());
+                var distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+                setZoom(pinchScale * distance / Math.max(pinchDistance, 1), imageX, imageY);
+            } else if (imageScale > 1) {
+                imageX += event.clientX - previous.x;
+                imageY += event.clientY - previous.y;
+                renderZoom();
+            }
+        });
+        function releasePointer(event) {
+            pointers.delete(event.pointerId);
+            if (pointers.size < 2) pinchDistance = 0;
+        }
+        lightboxViewport.addEventListener('pointerup', releasePointer);
+        lightboxViewport.addEventListener('pointercancel', releasePointer);
+    }
 
     document.addEventListener('keydown', function (event) {
         if (!lightbox || lightbox.hidden) return;
