@@ -105,7 +105,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	            <span class="sound_only">별<?php echo $star_score?>개</span> 
 	            <?php } ?>
 
-	            <button type="button" class="sit_review_summary">사용후기 <?php echo $it['it_use_cnt']; ?>개</button>
+	            <button type="button" class="sit_review_summary">사용후기 <?php echo $item_use_count; ?>개</button>
 
 	            <div id="sit_btn_opt">
 	                <button type="button" id="btn_wish" onclick="item_wish(document.fitem, '<?php echo $it['it_id']; ?>');" aria-label="찜 목록에 담기">

@@ -124,11 +124,9 @@ else if ($w == "d")
     $alert_msg = "사용후기를 삭제 하였습니다.";
 }
 
-//쇼핑몰 설정에서 사용후기가 즉시 출력일 경우
-if( ! $default['de_item_use_use'] ){
-    update_use_cnt($it_id);
-    update_use_avg($it_id);
-}
+// 승인 여부를 기준으로 상품의 사용후기 캐시를 항상 동기화한다.
+update_use_cnt($it_id);
+update_use_avg($it_id);
 
 if($w == 'd')
     alert($alert_msg, $url);
