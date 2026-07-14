@@ -11,9 +11,11 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
 <section id="sit_qa_list">
     <h3>등록된 상품문의</h3>
 
-    <div id="sit_qa_wbtn">
-        <a href="<?php echo $itemqa_form; ?>" class="btn02 itemqa_form">상품문의 쓰기<span class="sound_only">새 창</span></a>
-        <a href="<?php echo $itemqa_list; ?>" id="itemqa_list" class="btn01">더보기</a>
+    <div class="sit_qa_top">
+        <div id="sit_qa_wbtn">
+            <a href="<?php echo $itemqa_form; ?>" class="btn02 itemqa_form">상품문의 쓰기<span class="sound_only">새 창</span></a>
+            <a href="<?php echo $itemqa_list; ?>" id="itemqa_list" class="btn01">더보기</a>
+        </div>
     </div>
 
     <?php
