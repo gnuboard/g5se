@@ -14,50 +14,70 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	    <!-- 상품이미지 미리보기 시작 { -->
 	    <div id="sit_pvi">
 	        <h2 class="sit_title_mobile"><?php echo stripslashes($it['it_name']); ?></h2>
-	        <div id="sit_pvi_big">
 	        <?php
-	        $big_img_count = 0;
-	        $thumbnails = array();
+	        $gallery_images = array();
 	        for($i=1; $i<=10; $i++) {
 	            if(!$it['it_img'.$i])
 	                continue;
-	
+
 	            $img = get_it_thumbnail($it['it_img'.$i], $default['de_mimg_width'], $default['de_mimg_height']);
-	
+
 	            if($img) {
-	                // 썸네일
-	                $thumb = get_it_thumbnail($it['it_img'.$i], 70, 70);
-	                $thumbnails[] = $thumb;
-	                $big_img_count++;
-	
-	                echo '<a href="'.G5_SHOP_URL.'/largeimage.php?it_id='.$it['it_id'].'&amp;no='.$i.'" target="_blank" class="popup_item_image">'.$img.'</a>';
+	                $gallery_images[] = array(
+	                    'display' => $img,
+	                    'thumb' => get_it_thumbnail($it['it_img'.$i], 80, 80),
+	                    'large' => run_replace('get_item_image_url', G5_DATA_URL.'/item/'.$it['it_img'.$i], $it, $i),
+	                    'no' => $i,
+	                );
 	            }
 	        }
-	
-	        if($big_img_count == 0) {
-	            echo '<img src="'.G5_SHOP_URL.'/img/no_image.gif" alt="">';
-	        }
+	        $gallery_count = count($gallery_images);
 	        ?>
-	        <a href="<?php echo G5_SHOP_URL; ?>/largeimage.php?it_id=<?php echo $it['it_id']; ?>&amp;no=1" target="_blank" id="popup_item_image" class="popup_item_image"><i class="fa fa-search-plus" aria-hidden="true"></i><span class="sound_only">확대보기</span></a>
+	        <div id="sit_pvi_big" class="sit_gallery_stage">
+	            <?php if ($gallery_count) { ?>
+	                <?php foreach ($gallery_images as $gallery_index => $gallery_image) { ?>
+	                <button type="button" class="sit_gallery_slide<?php echo $gallery_index === 0 ? ' is-active' : ''; ?>" data-gallery-index="<?php echo $gallery_index; ?>" data-large-src="<?php echo htmlspecialchars($gallery_image['large'], ENT_QUOTES); ?>" aria-label="<?php echo ($gallery_index + 1); ?>번째 상품 이미지 크게 보기"<?php echo $gallery_index === 0 ? '' : ' hidden'; ?>>
+	                    <?php echo $gallery_image['display']; ?>
+	                </button>
+	                <?php } ?>
+
+	                <?php if ($gallery_count > 1) { ?>
+	                <button type="button" class="sit_gallery_nav sit_gallery_prev" aria-label="이전 상품 이미지"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+	                <button type="button" class="sit_gallery_nav sit_gallery_next" aria-label="다음 상품 이미지"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	                <?php } ?>
+	                <span class="sit_gallery_count" aria-live="polite"><b>1</b> / <?php echo $gallery_count; ?></span>
+	                <button type="button" class="sit_gallery_zoom" aria-label="현재 상품 이미지 확대"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
+	            <?php } else { ?>
+	                <img src="<?php echo G5_SHOP_URL; ?>/img/no_image.gif" alt="등록된 상품 이미지가 없습니다">
+	            <?php } ?>
 	        </div>
-	        <?php
-	        // 썸네일
-	        $thumb1 = true;
-	        $thumb_count = 0;
-	        $total_count = count($thumbnails);
-	        if($total_count > 0) {
-	            echo '<ul id="sit_pvi_thumb">';
-	            foreach($thumbnails as $val) {
-	                $thumb_count++;
-	                $sit_pvi_last ='';
-	                if ($thumb_count % 5 == 0) $sit_pvi_last = 'class="li_last"';
-	                    echo '<li '.$sit_pvi_last.'>';
-	                    echo '<a href="'.G5_SHOP_URL.'/largeimage.php?it_id='.$it['it_id'].'&amp;no='.$thumb_count.'" target="_blank" class="popup_item_image img_thumb">'.$val.'<span class="sound_only"> '.$thumb_count.'번째 이미지 새창</span></a>';
-	                    echo '</li>';
-	            }
-	            echo '</ul>';
-	        }
-	        ?>
+
+	        <?php if ($gallery_count > 1) { ?>
+	        <ul id="sit_pvi_thumb" aria-label="상품 이미지 선택">
+	            <?php foreach ($gallery_images as $gallery_index => $gallery_image) { ?>
+	            <li>
+	                <button type="button" class="img_thumb<?php echo $gallery_index === 0 ? ' is-active' : ''; ?>" data-gallery-index="<?php echo $gallery_index; ?>" aria-label="<?php echo ($gallery_index + 1); ?>번째 이미지 보기" aria-pressed="<?php echo $gallery_index === 0 ? 'true' : 'false'; ?>">
+	                    <?php echo $gallery_image['thumb']; ?>
+	                </button>
+	            </li>
+	            <?php } ?>
+	        </ul>
+	        <?php } ?>
+
+	        <?php if ($gallery_count) { ?>
+	        <div id="sit_gallery_lightbox" class="sit_gallery_lightbox" role="dialog" aria-modal="true" aria-label="상품 이미지 확대 보기" hidden>
+	            <button type="button" class="sit_gallery_lightbox_backdrop" aria-label="확대 보기 닫기"></button>
+	            <div class="sit_gallery_lightbox_panel">
+	                <button type="button" class="sit_gallery_lightbox_close" aria-label="확대 보기 닫기"><i class="fa fa-times" aria-hidden="true"></i></button>
+	                <img src="" alt="<?php echo get_text(stripslashes($it['it_name'])); ?> 확대 이미지">
+	                <?php if ($gallery_count > 1) { ?>
+	                <button type="button" class="sit_gallery_lightbox_nav sit_gallery_lightbox_prev" aria-label="이전 확대 이미지"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+	                <button type="button" class="sit_gallery_lightbox_nav sit_gallery_lightbox_next" aria-label="다음 확대 이미지"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	                <?php } ?>
+	                <span class="sit_gallery_lightbox_count"><b>1</b> / <?php echo $gallery_count; ?></span>
+	            </div>
+	        </div>
+	        <?php } ?>
 	    </div>
 	    <!-- } 상품이미지 미리보기 끝 -->
 	
@@ -369,26 +389,106 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 
 <script>
 $(function(){
-    // 상품이미지 첫번째 링크
-    $("#sit_pvi_big a:first").addClass("visible");
+    var gallery = document.getElementById('sit_pvi');
+    if (!gallery) return;
 
-    // 상품이미지 미리보기 (썸네일에 마우스 오버시)
-    $("#sit_pvi .img_thumb").bind("mouseover focus", function(){
-        var idx = $("#sit_pvi .img_thumb").index($(this));
-        $("#sit_pvi_big a.visible").removeClass("visible");
-        $("#sit_pvi_big a:eq("+idx+")").addClass("visible");
+    var slides = Array.prototype.slice.call(gallery.querySelectorAll('.sit_gallery_slide'));
+    var thumbs = Array.prototype.slice.call(gallery.querySelectorAll('.img_thumb'));
+    var count = gallery.querySelector('.sit_gallery_count b');
+    var lightbox = document.getElementById('sit_gallery_lightbox');
+    var lightboxImage = lightbox ? lightbox.querySelector('img') : null;
+    var lightboxCount = lightbox ? lightbox.querySelector('.sit_gallery_lightbox_count b') : null;
+    var shell = document.querySelector('.m-shell');
+    var current = 0;
+    var lastFocus = null;
+
+    function show(index) {
+        if (!slides.length) return;
+        current = (index + slides.length) % slides.length;
+        slides.forEach(function (slide, slideIndex) {
+            var active = slideIndex === current;
+            slide.hidden = !active;
+            slide.classList.toggle('is-active', active);
+        });
+        thumbs.forEach(function (thumb, thumbIndex) {
+            var active = thumbIndex === current;
+            thumb.classList.toggle('is-active', active);
+            thumb.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        if (count) count.textContent = current + 1;
+        if (lightbox && !lightbox.hidden) syncLightbox();
+    }
+
+    function syncLightbox() {
+        if (!lightboxImage || !slides[current]) return;
+        lightboxImage.src = slides[current].getAttribute('data-large-src');
+        if (lightboxCount) lightboxCount.textContent = current + 1;
+    }
+
+    function openLightbox() {
+        if (!lightbox) return;
+        lastFocus = document.activeElement;
+        syncLightbox();
+        lightbox.hidden = false;
+        if (shell) shell.style.overflowY = 'hidden';
+        lightbox.querySelector('.sit_gallery_lightbox_close').focus();
+    }
+
+    function closeLightbox() {
+        if (!lightbox || lightbox.hidden) return;
+        lightbox.hidden = true;
+        if (shell) shell.style.overflowY = '';
+        if (lastFocus) lastFocus.focus();
+    }
+
+    thumbs.forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+            show(parseInt(thumb.getAttribute('data-gallery-index'), 10));
+        });
+    });
+    slides.forEach(function (slide) {
+        slide.addEventListener('click', openLightbox);
     });
 
-    // 상품이미지 크게보기
-    $(".popup_item_image").click(function() {
-        var url = $(this).attr("href");
-        var top = 10;
-        var left = 10;
-        var opt = 'scrollbars=yes,top='+top+',left='+left;
-        popup_window(url, "largeimage", opt);
+    var prev = gallery.querySelector('.sit_gallery_prev');
+    var next = gallery.querySelector('.sit_gallery_next');
+    var zoom = gallery.querySelector('.sit_gallery_zoom');
+    if (prev) prev.addEventListener('click', function () { show(current - 1); });
+    if (next) next.addEventListener('click', function () { show(current + 1); });
+    if (zoom) zoom.addEventListener('click', openLightbox);
 
-        return false;
+    if (lightbox) {
+        lightbox.querySelector('.sit_gallery_lightbox_close').addEventListener('click', closeLightbox);
+        lightbox.querySelector('.sit_gallery_lightbox_backdrop').addEventListener('click', closeLightbox);
+        var lightboxPrev = lightbox.querySelector('.sit_gallery_lightbox_prev');
+        var lightboxNext = lightbox.querySelector('.sit_gallery_lightbox_next');
+        if (lightboxPrev) lightboxPrev.addEventListener('click', function () { show(current - 1); });
+        if (lightboxNext) lightboxNext.addEventListener('click', function () { show(current + 1); });
+    }
+
+    function addSwipe(element) {
+        if (!element || slides.length < 2) return;
+        var startX = 0;
+        element.addEventListener('touchstart', function (event) {
+            startX = event.changedTouches[0].clientX;
+        }, {passive: true});
+        element.addEventListener('touchend', function (event) {
+            var distance = event.changedTouches[0].clientX - startX;
+            if (Math.abs(distance) < 45) return;
+            show(current + (distance < 0 ? 1 : -1));
+        }, {passive: true});
+    }
+    addSwipe(gallery.querySelector('.sit_gallery_stage'));
+    addSwipe(lightbox ? lightbox.querySelector('.sit_gallery_lightbox_panel') : null);
+
+    document.addEventListener('keydown', function (event) {
+        if (!lightbox || lightbox.hidden) return;
+        if (event.key === 'Escape') closeLightbox();
+        if (event.key === 'ArrowLeft') show(current - 1);
+        if (event.key === 'ArrowRight') show(current + 1);
     });
+
+    show(0);
 });
 
 function fsubmit_check(f)
