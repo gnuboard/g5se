@@ -104,26 +104,54 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	            <img src="<?php echo G5_SHOP_URL; ?>/img/s_star<?php echo $star_score?>.png" alt="" class="sit_star" width="100">
 	            <span class="sound_only">별<?php echo $star_score?>개</span> 
 	            <?php } ?>
-	            
-	            <span class="">사용후기 <?php echo $it['it_use_cnt']; ?> 개</span>
-	            
+
+	            <span class="sit_review_summary">사용후기 <?php echo $it['it_use_cnt']; ?>개</span>
+
 	            <div id="sit_btn_opt">
-	            	<span id="btn_wish"><i class="fa fa-heart-o" aria-hidden="true"></i><span class="sound_only">위시리스트</span><span class="btn_wish_num"><?php echo get_wishlist_count_by_item($it['it_id']); ?></span></span>
-	            	<button type="button" class="btn_sns_share"><i class="fa fa-share-alt" aria-hidden="true"></i><span class="sound_only">sns 공유</span></button>
-	            	<div class="sns_area">
-	            		<?php echo $sns_share_links; ?>
-	            		<a href="javascript:popup_item_recommend('<?php echo $it['it_id']; ?>');" id="sit_btn_rec"><i class="fa fa-envelope-o" aria-hidden="true"></i><span class="sound_only">추천하기</span></a>
-	            	</div>
-	        	</div>
+	                <button type="button" id="btn_wish" onclick="item_wish(document.fitem, '<?php echo $it['it_id']; ?>');" aria-label="찜 목록에 담기">
+	                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+	                    <span>찜</span><span class="btn_wish_num"><?php echo get_wishlist_count_by_item($it['it_id']); ?></span>
+	                </button>
+	                <button type="button" class="btn_sns_share" aria-label="상품 링크 공유">
+	                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M13.4 10.6a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1M8.5 15.5l7-7"/></svg>
+	                    <span class="share_label">공유</span>
+	                </button>
+	            </div>
 	        </div>
 	        <script>
-	        $(".btn_sns_share").click(function(){
-	            $(".sns_area").show();
-	        });
-	        $(document).mouseup(function (e){
-	            var container = $(".sns_area");
-	            if( container.has(e.target).length === 0)
-	            container.hide();
+	        $(".btn_sns_share").click(async function(){
+	            var button = this;
+	            var label = button.querySelector('.share_label');
+	            var shareData = {
+	                title: <?php echo json_encode(get_text(stripslashes($it['it_name'])), JSON_UNESCAPED_UNICODE); ?>,
+	                url: window.location.href
+	            };
+
+	            try {
+	                if (navigator.share) {
+	                    await navigator.share(shareData);
+	                    return;
+	                }
+	                if (navigator.clipboard && window.isSecureContext) {
+	                    await navigator.clipboard.writeText(shareData.url);
+	                } else {
+	                    var input = document.createElement('textarea');
+	                    input.value = shareData.url;
+	                    input.style.position = 'fixed';
+	                    input.style.opacity = '0';
+	                    document.body.appendChild(input);
+	                    input.select();
+	                    document.execCommand('copy');
+	                    input.remove();
+	                }
+	                label.textContent = '복사됨';
+	                window.setTimeout(function(){ label.textContent = '공유'; }, 1600);
+	            } catch (error) {
+	                if (error.name !== 'AbortError') {
+	                    label.textContent = '다시 시도';
+	                    window.setTimeout(function(){ label.textContent = '공유'; }, 1600);
+	                }
+	            }
 	        });
 	        </script>
 	        
