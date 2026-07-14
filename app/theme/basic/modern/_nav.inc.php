@@ -73,7 +73,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
             <?php /* 장바구니 아이콘 — shop 활성 시 항상 노출, 아이템 수 badge */
             if (defined('G5_USE_SHOP') && G5_USE_SHOP) { ?>
-            <a href="<?php echo G5_SHOP_URL ?>/cart" class="m-nav-cart-link" aria-label="장바구니" title="장바구니">
+            <a href="<?php echo G5_SHOP_URL ?>/cart" class="m-nav-cart-link m-nav-shop-cart<?php echo strpos($_cur_path, '/shop') === 0 ? ' is-current-shop' : ''; ?>" aria-label="장바구니" title="장바구니">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 <?php
                 // 카트 아이템 수 (세션에 저장된 ss_cart_id 의 ct 카운트)
@@ -446,6 +446,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     .m-nav-segment { display: none; }     /* 커뮤니티/쇼핑몰 토글도 드로어로 */
     .m-nav-utility { display: none; }     /* FAQ/Q&A/새글/접속자 도 드로어로 */
     .m-nav-search-icon-btn { margin-left: auto; }
+    .m-nav-shop-cart:not(.is-current-shop) { display: none; }
     .m-nav-actions { display: none; }  /* 로그인/회원가입 버튼은 드로어로 흡수, 다크모드 토글은 우하단 .m-float-actions 로 이동 */
     .m-nav-mobile-toggle { display: inline-flex; }
     /* 사이드바(outlogin) 도 모바일에선 숨김 — 동일 정보를 드로어가 노출 */
@@ -453,9 +454,10 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 }
 
 @media (max-width: 560px) {
-    .m-nav-row-inner { gap: 10px; padding: 12px 14px; }
-    .m-brand { max-width: calc(100vw - 128px); }
+    .m-nav-row-inner { gap: 4px; padding: 12px 14px; }
+    .m-brand { max-width: calc(100vw - 180px); }
     .m-nav-cart-link { display: none; }
+    .m-nav-shop-cart.is-current-shop { display: inline-flex; }
 }
 
 /* 모바일 드로어 — 우측 슬라이드 인 패널 */
