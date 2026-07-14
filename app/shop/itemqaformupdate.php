@@ -10,10 +10,10 @@ if (!$is_member) {
 
 $it_id       = isset($_REQUEST['it_id']) ? safe_replace_regex($_REQUEST['it_id'], 'it_id') : '';
 $iq_id = isset($_REQUEST['iq_id']) ? (int) $_REQUEST['iq_id'] : 0;
-$iq_subject = isset($_POST['iq_subject']) ? trim($_POST['iq_subject']) : '';
-$iq_question = isset($_POST['iq_question']) ? trim($_POST['iq_question']) : '';
+$iq_subject = isset($_POST['iq_subject']) ? trim(stripslashes($_POST['iq_subject'])) : '';
+$iq_question = isset($_POST['iq_question']) ? trim(stripslashes($_POST['iq_question'])) : '';
 $iq_question = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $iq_question);
-$iq_answer = isset($_POST['iq_answer']) ? trim($_POST['iq_answer']) : '';
+$iq_answer = isset($_POST['iq_answer']) ? trim(stripslashes($_POST['iq_answer'])) : '';
 $hash = isset($_REQUEST['hash']) ? trim($_REQUEST['hash']) : '';
 $get_editor_img_mode = $config['cf_editor'] ? false : true;
 
@@ -122,7 +122,8 @@ else if ($w == "d")
 
         if( preg_match('/(gif|jpe?g|bmp|png)$/i', strtolower(end(explode('.', $data_path))) ) ){
 
-            $destfile = ( ! preg_match('/\w+\/\.\.\//', $data_path) ) ? G5_PATH.$data_path : '';
+            $data_relative_path = preg_replace('#^/'.preg_quote(G5_DATA_DIR, '#').'#', '', $data_path);
+            $destfile = ( ! preg_match('/\w+\/\.\.\//', $data_path) ) ? G5_DATA_PATH.$data_relative_path : '';
 
             if ($destfile && preg_match('/\/data\/editor\/[A-Za-z0-9_]{1,20}\//', $destfile) && is_file($destfile)) {
                 delete_item_thumbnail(dirname($destfile), basename($destfile));
@@ -144,7 +145,8 @@ else if ($w == "d")
 
         if( preg_match('/(gif|jpe?g|bmp|png)$/i', strtolower(end(explode('.', $data_path))) ) ){
 
-            $destfile = ( ! preg_match('/\w+\/\.\.\//', $data_path) ) ? G5_PATH.$data_path : '';
+            $data_relative_path = preg_replace('#^/'.preg_quote(G5_DATA_DIR, '#').'#', '', $data_path);
+            $destfile = ( ! preg_match('/\w+\/\.\.\//', $data_path) ) ? G5_DATA_PATH.$data_relative_path : '';
 
             if ($destfile && preg_match('/\/data\/editor\/[A-Za-z0-9_]{1,20}\//', $destfile) && is_file($destfile)) {
                 delete_item_thumbnail(dirname($destfile), basename($destfile));

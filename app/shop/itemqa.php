@@ -52,8 +52,8 @@ function itemqa_page($write_pages, $cur_page, $total_page, $url, $add="")
 }
 
 $itemqa_list = G5_SHOP_URL."/itemqalist.php";
-$itemqa_form = G5_SHOP_URL."/itemqaform.php?it_id=".$it_id;
-$itemqa_formupdate = G5_SHOP_URL."/itemqaformupdate.php?it_id=".$it_id;
+$itemqa_form = G5_SHOP_URL."/itemqaform?it_id=".$it_id;
+$itemqa_formupdate = G5_SHOP_URL."/itemqaformupdate?it_id=".$it_id;
 
 $sql_common = " from `{$g5['g5_shop_item_qa_table']}` where it_id = '{$it_id}' ";
 
