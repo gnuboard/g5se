@@ -1050,3 +1050,36 @@ box-shadow:0px 1px 6px 0 #dedede
 .couponzone_list ul li .coupon_btn .disabled {background:#c6c6c6;border:1px;color:#fff;border-color:#c6c6c6}
 .couponzone_list ul li .coupon_btn .disabled:hover {background:#c6c6c6;border:1px;color:#fff;border-color:#c6c6c6}
 .couponzone_list .no_coupon {position:relative;padding:100px 0;text-align:center;color:#999}
+
+/* 상품 상세 탭 — 카드형 액션과 모바일 가로 탐색 */
+#sit_info {overflow:hidden;border-color:var(--m-border);border-radius:16px;background:var(--m-surface)}
+#sit_tab .tab_tit {display:flex;align-items:center;gap:4px;margin:0;padding:6px;overflow-x:auto;border-bottom:1px solid var(--m-border);background:var(--m-surface-2);list-style:none;scrollbar-width:none}
+#sit_tab .tab_tit::-webkit-scrollbar {display:none}
+#sit_tab .tab_tit:after {display:none}
+#sit_tab .tab_tit li {float:none;display:block;flex:1 0 auto;margin:0}
+#sit_tab .tab_tit li button {min-width:100%;padding:12px 14px;border:0;border-radius:10px;background:transparent;color:var(--m-text-soft);font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;transition:background .16s ease,color .16s ease,box-shadow .16s ease}
+#sit_tab .tab_tit li button:hover {background:var(--m-surface);color:var(--m-text)}
+#sit_tab .tab_tit li button:focus-visible {outline:3px solid var(--m-primary-soft);outline-offset:-2px}
+#sit_tab .tab_tit li .selected {background:var(--m-surface);color:var(--m-primary);font-weight:700;box-shadow:var(--m-shadow)}
+#sit_tab .tab_tit li .selected:after {display:none}
+#sit_tab .item_use_count,#sit_tab .item_qa_count {min-width:20px;height:20px;margin-left:4px;padding:0 5px;background:var(--m-surface-2);color:var(--m-text-soft);font-size:11px;line-height:20px}
+#sit_tab .tab_con {margin:0;padding:24px;background:var(--m-surface);list-style:none}
+.sit_use_top,#sit_qa_wbtn {min-height:0;margin:0 0 20px;padding:18px;gap:12px;border:1px solid var(--m-border);border-radius:14px;background:var(--m-surface-2)}
+#sit_use_wbtn {gap:8px}
+#sit_use_wbtn a,#sit_qa_wbtn a {height:44px;padding:0 18px;border-radius:10px;font-size:14px;line-height:44px;white-space:nowrap}
+#sit_use_wbtn a.itemuse_form,#sit_qa_wbtn a.itemqa_form {min-width:0;border-color:var(--m-primary);background:var(--m-primary);color:#fff}
+#sit_use_wbtn a.itemuse_list,#sit_qa_wbtn a#itemqa_list {min-width:0;border-color:var(--m-border);background:var(--m-surface);color:var(--m-text)}
+#sit_use_list .sit_empty {padding:56px 16px;color:var(--m-text-soft);text-align:center}
+
+@media (max-width:640px) {
+    #sit_info {margin-top:14px;border-radius:14px}
+    #sit_tab .tab_tit {padding:6px;scroll-snap-type:x proximity}
+    #sit_tab .tab_tit li {flex:0 0 auto;scroll-snap-align:start}
+    #sit_tab .tab_tit li button {min-width:96px;padding:11px 12px;font-size:13px}
+    #sit_tab .tab_con {padding:14px 12px 20px}
+    .sit_use_top,#sit_qa_wbtn {align-items:stretch;flex-direction:column;padding:12px}
+    #sit_use_wbtn {display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;margin:0}
+    #sit_use_wbtn a,#sit_qa_wbtn a {width:auto;height:42px;padding:0 15px;font-size:13px;line-height:42px}
+    #sit_use_wbtn a.itemuse_form {min-width:0}
+    #sit_use_wbtn a.itemuse_list {min-width:72px}
+}
