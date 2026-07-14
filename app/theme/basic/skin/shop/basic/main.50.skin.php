@@ -39,15 +39,18 @@ foreach((array) $list as $row){
 	
 	echo "<div class=\"sct_cnt\">\n"; 
 	
-	// 사용후기 평점표시 — 평가가 없어도 빈 별 5개를 출력해 목록 높이를 일정하게 유지한다.
+	// 사용후기 평점표시 — 미평가 상품은 빈 별 대신 명확한 안내 문구를 사용한다.
 	if ($this->view_star) {
-        $star_label = $star_score ? '고객평점 별 '.$star_score.'개' : '고객평점 평가 없음';
-        echo "<span class=\"sound_only\">{$star_label}</span>\n";
-        echo "<span class=\"sct_star\" aria-hidden=\"true\">\n";
-        for ($star = 1; $star <= 5; $star++) {
-            echo '<i class="fa fa-star'.(($star_score && $star <= $star_score) ? '' : '-o').'"></i>';
+        if ($star_score) {
+            echo '<span class="sound_only">고객평점 별 '.$star_score.'개</span>';
+            echo "<span class=\"sct_star\" aria-hidden=\"true\">\n";
+            for ($star = 1; $star <= 5; $star++) {
+                echo '<i class="fa fa-star'.(($star <= $star_score) ? '' : '-o').'"></i>';
+            }
+            echo "</span>\n";
+        } else {
+            echo '<span class="sct_star is-empty"><i class="fa fa-minus-circle" aria-hidden="true"></i> 평가 없음</span>';
         }
-        echo "</span>\n";
     }
        
     if ($this->href) {

@@ -721,6 +721,12 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     font-size: 12px !important;
     line-height: 1;
 }
+.m-shop-sidebar-products .sct_star.is-empty {
+    color: var(--m-text-faint);
+    font-size: 11px !important;
+    font-weight: 600;
+    letter-spacing: 0;
+}
 .m-shop-sidebar-products .sct_txt,
 .m-shop-sidebar-products .sct_txt a {
     min-width: 0;

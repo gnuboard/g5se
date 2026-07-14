@@ -48,10 +48,15 @@ foreach((array) $list as $row){
         <?php } ?>
 
         <?php if ($this->view_star) { ?>
-            <div class="sct_star flex min-h-3.5 items-center gap-0.5 text-xs text-amber-500">
-                <span class="sound_only"><?php echo $star_score ? '고객평점 별 '.$star_score.'개' : '고객평점 평가 없음'; ?></span>
-                <?php for ($s=1; $s<=5; $s++) { ?>
-                    <i class="fa fa-star<?php echo ($star_score && $s <= $star_score) ? '' : '-o'; ?>" aria-hidden="true"></i>
+            <div class="sct_star<?php echo $star_score ? '' : ' is-empty'; ?> flex min-h-3.5 items-center gap-0.5 text-xs<?php echo $star_score ? ' text-amber-500' : ' text-slate-400 dark:text-slate-500'; ?>">
+                <?php if ($star_score) { ?>
+                    <span class="sound_only">고객평점 별 <?php echo $star_score; ?>개</span>
+                    <?php for ($s=1; $s<=5; $s++) { ?>
+                        <i class="fa fa-star<?php echo ($s <= $star_score) ? '' : '-o'; ?>" aria-hidden="true"></i>
+                    <?php } ?>
+                <?php } else { ?>
+                    <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                    <span>평가 없음</span>
                 <?php } ?>
             </div>
         <?php } ?>
