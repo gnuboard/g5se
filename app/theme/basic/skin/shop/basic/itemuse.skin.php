@@ -32,6 +32,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
         $is_name    = get_text($row['is_name']);
         $is_subject = conv_subject($row['is_subject'],50,"…");
         $is_content = get_view_thumbnail(conv_content($row['is_content'], 1), $thumbnail_width);
+        $is_thumbnail = $row['is_content'] ? get_itemuse_thumb($row['is_content'], 100, 100) : '';
         $is_reply_name = !empty($row['is_reply_name']) ? get_text($row['is_reply_name']) : '';
         $is_reply_subject = !empty($row['is_reply_subject']) ? conv_subject($row['is_reply_subject'],50,"…") : '';
         $is_reply_content = !empty($row['is_reply_content']) ? get_view_thumbnail(conv_content($row['is_reply_content'], 1), $thumbnail_width) : '';
@@ -42,8 +43,10 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
         if ($i == 0) echo '<ol id="sit_use_ol">';
     ?>
 
-        <li class="sit_use_li">
-			<span class="sit_thum"><?php echo get_itemuselist_thumbnail($row['it_id'], $row['is_content'], 100, 100); ?></span> 
+        <li class="sit_use_li<?php echo $is_thumbnail ? ' has-thumbnail' : ''; ?>">
+            <?php if ($is_thumbnail) { ?>
+            <span class="sit_thum"><?php echo $is_thumbnail; ?></span>
+            <?php } ?>
             <dl class="sit_use_dl">
                 <dt>평점<dt>
                 <dd class="sit_use_star"><img src="<?php echo G5_SHOP_URL; ?>/img/s_star<?php echo $is_star; ?>.png" alt="별<?php echo $is_star; ?>개" width="85"></dd>
