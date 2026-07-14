@@ -49,7 +49,8 @@ foreach((array) $list as $row){
             }
             echo "</span>\n";
         } else {
-            echo '<span class="sct_star is-empty"><i class="fa fa-minus-circle" aria-hidden="true"></i> 평가 없음</span>';
+            // 미평가 상품은 내용 없이 별점 영역 높이만 유지한다.
+            echo '<span class="sct_star is-empty" aria-hidden="true"></span>';
         }
     }
        

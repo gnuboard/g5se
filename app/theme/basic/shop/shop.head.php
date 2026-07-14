@@ -722,10 +722,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     line-height: 1;
 }
 .m-shop-sidebar-products .sct_star.is-empty {
-    color: var(--m-text-faint);
-    font-size: 11px !important;
-    font-weight: 600;
-    letter-spacing: 0;
+    visibility: hidden;
 }
 .m-shop-sidebar-products .sct_txt,
 .m-shop-sidebar-products .sct_txt a {

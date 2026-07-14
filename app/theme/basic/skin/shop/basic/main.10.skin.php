@@ -54,9 +54,6 @@ foreach((array) $list as $row){
                     <?php for ($s=1; $s<=5; $s++) { ?>
                         <i class="fa fa-star<?php echo ($s <= $star_score) ? '' : '-o'; ?>" aria-hidden="true"></i>
                     <?php } ?>
-                <?php } else { ?>
-                    <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                    <span>평가 없음</span>
                 <?php } ?>
             </div>
         <?php } ?>
