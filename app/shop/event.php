@@ -52,11 +52,19 @@ if ($skin) {
 define('G5_SHOP_CSS_URL', G5_SHOP_SKIN_URL);
 
 // 리스트 유형별로 출력
-$list_file = G5_SHOP_SKIN_PATH."/{$ev['ev_skin']}";
-if (file_exists($list_file))
+$event_skin = trim((string) $ev['ev_skin']);
+$list_file = $event_skin !== '' ? G5_SHOP_SKIN_PATH.'/'.$event_skin : '';
+
+// 예전 데이터에 출력스킨이 비어 있으면 디렉터리 자체를 include하려 하므로 기본 스킨으로 보정한다.
+if (!$list_file || !is_file($list_file)) {
+    $event_skin = 'list.10.skin.php';
+    $list_file = G5_SHOP_SKIN_PATH.'/'.$event_skin;
+}
+
+if (is_file($list_file))
 {
     
-    echo '<div id="sct_sortlst">';
+    echo '<div id="sct_sortlst" class="m-event-sort">';
     include G5_SHOP_SKIN_PATH.'/list.sort.skin.php';
 
     // 상품 보기 타입 변경 버튼
@@ -71,7 +79,7 @@ if (file_exists($list_file))
     // 시작 레코드 구함
     $from_record = ($page - 1) * $items;
 
-    $list = new item_list(G5_SHOP_SKIN_PATH.'/'.$ev['ev_skin'], $ev['ev_list_mod'], $ev['ev_list_row'], $ev['ev_img_width'], $ev['ev_img_height']);
+    $list = new item_list($list_file, $ev['ev_list_mod'], $ev['ev_list_row'], $ev['ev_img_width'], $ev['ev_img_height']);
     $list->set_event($ev['ev_id']);
     $list->set_is_page(true);
     $list->set_order_by($order_by);
@@ -92,7 +100,7 @@ if (file_exists($list_file))
 }
 else
 {
-    echo '<div align="center">'.$ev['ev_skin'].' 파일을 찾을 수 없습니다.<br>관리자에게 알려주시면 감사하겠습니다.</div>';
+    echo '<div align="center">'.$event_skin.' 파일을 찾을 수 없습니다.<br>관리자에게 알려주시면 감사하겠습니다.</div>';
 }
 ?>
 
