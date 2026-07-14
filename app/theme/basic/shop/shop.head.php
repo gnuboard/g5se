@@ -712,9 +712,14 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
     gap: 4px;
     line-height: 1.35;
 }
-.m-shop-sidebar-products .sit_star {
-    width: 72px;
-    height: auto;
+.m-shop-sidebar-products .sct_star {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 14px;
+    color: #f59e0b;
+    font-size: 12px !important;
+    line-height: 1;
 }
 .m-shop-sidebar-products .sct_txt,
 .m-shop-sidebar-products .sct_txt a {

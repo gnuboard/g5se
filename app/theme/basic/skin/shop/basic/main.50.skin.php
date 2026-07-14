@@ -39,9 +39,15 @@ foreach((array) $list as $row){
 	
 	echo "<div class=\"sct_cnt\">\n"; 
 	
-	// 사용후기 평점표시
-	if ($this->view_star && $star_score) {
-        echo "<span class=\"sound_only\">고객평점</span><img src=\"".G5_SHOP_URL."/img/s_star".$star_score.".png\" alt=\"별 ".$star_score."개\" class=\"sit_star\" width=\"100\">\n";
+	// 사용후기 평점표시 — 평가가 없어도 빈 별 5개를 출력해 목록 높이를 일정하게 유지한다.
+	if ($this->view_star) {
+        $star_label = $star_score ? '고객평점 별 '.$star_score.'개' : '고객평점 평가 없음';
+        echo "<span class=\"sound_only\">{$star_label}</span>\n";
+        echo "<span class=\"sct_star\" aria-hidden=\"true\">\n";
+        for ($star = 1; $star <= 5; $star++) {
+            echo '<i class="fa fa-star'.(($star_score && $star <= $star_score) ? '' : '-o').'"></i>';
+        }
+        echo "</span>\n";
     }
        
     if ($this->href) {

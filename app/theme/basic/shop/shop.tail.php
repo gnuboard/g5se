@@ -45,9 +45,8 @@ $is_index = defined('_INDEX_') && _INDEX_;
                 $list->set_view('it_price', true);
                 $list->set_view('it_icon', false);
                 $list->set_view('sns', false);
-                // 좁은 사이드바에서는 별점 유무로 행 높이가 달라지므로 생략한다.
-                // 별점은 일반 상품 목록과 상세 화면에서 계속 노출된다.
-                $list->set_view('star', false);
+                // 평가가 없어도 빈 별 5개를 표시해 모든 행의 높이를 일정하게 유지한다.
+                $list->set_view('star', true);
                 echo $list->run();
                 ?>
                 <script>
