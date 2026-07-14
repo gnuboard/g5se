@@ -5,6 +5,17 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 0);
 ?>
 
+<script>
+(function(){
+    try {
+        var theme = localStorage.getItem('m-theme');
+        if (!theme && window.opener && window.opener.document) theme = window.opener.document.documentElement.dataset.theme;
+        if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+})();
+</script>
+
 <!-- 상품문의 쓰기 시작 { -->
 <div id="sit_qa_write" class="new_win">
     <div class="qa_write_header">
