@@ -254,6 +254,19 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
 <script>
 (function(){
+    var nav = document.querySelector('.m-nav');
+    var shell = nav ? nav.closest('.m-shell') : null;
+    function syncNavHeight(){
+        if (!nav || !shell) return;
+        shell.style.setProperty('--m-nav-height', Math.ceil(nav.getBoundingClientRect().height) + 'px');
+    }
+    syncNavHeight();
+    if (nav && window.ResizeObserver) {
+        new ResizeObserver(syncNavHeight).observe(nav);
+    } else {
+        window.addEventListener('resize', syncNavHeight);
+    }
+
     var drawer = document.getElementById('m-nav-drawer');
     var toggle = document.querySelector('.m-nav-mobile-toggle');
     if (!drawer || !toggle) return;

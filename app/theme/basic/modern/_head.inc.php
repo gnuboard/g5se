@@ -164,7 +164,14 @@ html, body {
     align-items: start;
 }
 .m-main-col { min-width: 0; }   /* grid item 의 자식이 overflow 나지 않도록 */
-.m-side-col { position: sticky; top: 80px; display: flex; flex-direction: column; gap: 16px; }
+.m-side-col {
+    position: sticky;
+    /* 2단 헤더의 실제 높이는 _nav.inc.php에서 동기화한다. */
+    top: calc(var(--m-nav-height, 96px) + 16px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 .m-side-card { display: block; }
 @media (max-width: 880px) {
     .m-with-sidebar { grid-template-columns: 1fr; }
