@@ -802,9 +802,21 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 /* 닫힌 상태의 트리거 (.category_title) + 그 안의 ▼ 아이콘 — JS 가 .category_title.current
    안에 텍스트 + <i class="fa fa-chevron-circle-down"> 를 박음. 기본 색이 inherit 라
    다크모드 부모 색에 따라 흐려짐. 명시 토큰 적용. */
-[data-theme="dark"] .shop_select_to_html .category_title,
-[data-theme="dark"] .shop_select_to_html .category_title i {
+[data-theme="dark"] .shop_select_to_html .category_title {
     color: var(--m-text) !important;
+}
+/* 분류 드롭다운 아이콘은 텍스트보다 한 단계 낮은 대비로 표시한다. */
+.shop_select_to_html .category_title i.fa-chevron-circle-down {
+    margin-left: 6px;
+    color: var(--m-text-faint) !important;
+    font-size: .72em;
+    opacity: .55;
+    transition: color .15s ease, opacity .15s ease;
+}
+.shop_select_to_html:hover .category_title i.fa-chevron-circle-down,
+.shop_select_to_html:focus-within .category_title i.fa-chevron-circle-down {
+    color: var(--m-primary) !important;
+    opacity: .9;
 }
 [data-theme="dark"] .shop_select_to_html .menulist {
     background-color: var(--m-surface) !important;
