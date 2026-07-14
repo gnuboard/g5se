@@ -81,9 +81,27 @@ jQuery(function($){
             window.location.href = url;
         });
 
-        // 모바일은 5단계 경로가 줄바꿈되므로 안정적인 native select를 사용한다.
-        if (!window.matchMedia('(max-width: 880px)').matches) {
-		    $("select.shop_hover_selectbox").shop_select_to_html();
+        // 화면 크기가 바뀌어도 모바일 native select와 데스크톱 드롭다운을 즉시 맞춘다.
+        var categoryMedia = window.matchMedia('(max-width: 880px)');
+        var syncCategoryNavigation = function() {
+            $("select.shop_hover_selectbox").each(function() {
+                var $select = $(this);
+                var $desktopDropdown = $select.next('.shop_select_to_html');
+
+                if (categoryMedia.matches) {
+                    $desktopDropdown.remove();
+                    $select.show();
+                } else if (!$desktopDropdown.length) {
+                    $select.shop_select_to_html();
+                }
+            });
+        };
+
+        syncCategoryNavigation();
+        if (categoryMedia.addEventListener) {
+            categoryMedia.addEventListener('change', syncCategoryNavigation);
+        } else {
+            categoryMedia.addListener(syncCategoryNavigation);
         }
     });
 });
