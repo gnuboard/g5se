@@ -29,8 +29,8 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	<div id="sit_tab">
 	    <ul class="tab_tit">
 	        <li><button type="button" id="btn_sit_inf" rel="#sit_inf" class="selected">상품정보</button></li>
-	        <li><button type="button" id="btn_sit_use" rel="#sit_use">사용후기 <span class="item_use_count"><?php echo $item_use_count; ?></span></button></li>
-	        <li><button type="button" id="btn_sit_qa" rel="#sit_qa">상품문의  <span class="item_qa_count"><?php echo $item_qa_count; ?></span></button></li>
+	        <li><button type="button" id="btn_sit_use" rel="#sit_use">사용후기<?php if ($item_use_count > 0) { ?> <span class="item_use_count"><?php echo $item_use_count; ?></span><?php } ?></button></li>
+	        <li><button type="button" id="btn_sit_qa" rel="#sit_qa">상품문의<?php if ($item_qa_count > 0) { ?> <span class="item_qa_count"><?php echo $item_qa_count; ?></span><?php } ?></button></li>
 	        <li><button type="button" id="btn_sit_dvex" rel="#sit_dex">배송/교환</button></li>
 	    </ul>
 	    <ul class="tab_con">
