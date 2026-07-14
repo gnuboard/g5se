@@ -105,7 +105,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	            <span class="sound_only">별<?php echo $star_score?>개</span> 
 	            <?php } ?>
 
-	            <span class="sit_review_summary">사용후기 <?php echo $it['it_use_cnt']; ?>개</span>
+	            <button type="button" class="sit_review_summary">사용후기 <?php echo $it['it_use_cnt']; ?>개</button>
 
 	            <div id="sit_btn_opt">
 	                <button type="button" id="btn_wish" onclick="item_wish(document.fitem, '<?php echo $it['it_id']; ?>');" aria-label="찜 목록에 담기">
@@ -119,6 +119,16 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 	            </div>
 	        </div>
 	        <script>
+	        $(".sit_review_summary").click(function(){
+	            var reviewTab = document.getElementById('btn_sit_use');
+	            var reviewSection = document.getElementById('sit_tab');
+	            if (reviewTab) reviewTab.click();
+	            if (reviewSection) {
+	                window.setTimeout(function(){
+	                    reviewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	                }, 0);
+	            }
+	        });
 	        $(".btn_sns_share").click(async function(){
 	            var button = this;
 	            var label = button.querySelector('.share_label');

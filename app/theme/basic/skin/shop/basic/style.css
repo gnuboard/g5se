@@ -573,7 +573,9 @@
 #sit_star_sns {position:relative;padding-right:170px;min-height:40px;display:flex;align-items:center;gap:8px}
 #sit_star_sns span {display:inline-block;margin:0 5px 0 0;color:#666;letter-spacing:0}
 #sit_star_sns .sit_star {position:relative;top:-2px;margin:0 5px 0 0}
-#sit_star_sns .sit_review_summary {margin:0;color:var(--m-text-soft);font-size:14px;font-weight:600}
+#sit_star_sns .sit_review_summary {margin:0;padding:3px 0;border:0;border-bottom:1px solid transparent;background:transparent;color:var(--m-text-soft);font-size:14px;font-weight:600;line-height:1.4;cursor:pointer;transition:color .16s ease,border-color .16s ease}
+#sit_star_sns .sit_review_summary:hover {border-bottom-color:currentColor;color:var(--m-primary)}
+#sit_star_sns .sit_review_summary:focus-visible {border-radius:4px;outline:3px solid var(--m-primary-soft);outline-offset:2px}
 
 #sit_btn_opt {display:flex;align-items:center;gap:8px;position:absolute;right:0;top:0;bottom:auto}
 #sit_btn_opt button {display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 12px;border:1px solid var(--m-border);border-radius:999px;background:var(--m-surface);color:var(--m-text-soft);font-size:13px;font-weight:700;line-height:1;cursor:pointer;transition:border-color .16s ease,background .16s ease,color .16s ease,transform .16s ease}
