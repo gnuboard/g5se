@@ -250,7 +250,8 @@ function member_export_get_data($params)
     while ($row = sql_fetch_array($result)) {
         $rowData = [];
         foreach ($fields as $field) {
-            $rowData[] = isset($row[$field]) ? $row[$field] : '';
+            $val = isset($row[$field]) ? $row[$field] : '';
+            $rowData[] = function_exists('csv_safe_cell') ? csv_safe_cell($val) : $val;
         }
         $excelData[] = $rowData;
     }

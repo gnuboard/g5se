@@ -170,7 +170,17 @@ $bo_write_min = isset($_POST['bo_write_min']) ? (int) $_POST['bo_write_min'] : 0
 $bo_write_max = isset($_POST['bo_write_max']) ? (int) $_POST['bo_write_max'] : 0;
 $bo_comment_min = isset($_POST['bo_comment_min']) ? (int) $_POST['bo_comment_min'] : 0;
 $bo_comment_max = isset($_POST['bo_comment_max']) ? (int) $_POST['bo_comment_max'] : 0;
-$bo_sort_field = isset($_POST['bo_sort_field']) ? clean_xss_tags(stripslashes($_POST['bo_sort_field']), 1, 1) : '';
+// 정렬 필드는 허용 목록(관리자 드롭다운과 동일)으로만 저장 — 목록 조회 ORDER BY 절에 임의 표현식 유입 차단
+$bo_sort_field = isset($_POST['bo_sort_field']) ? trim(stripslashes($_POST['bo_sort_field'])) : '';
+$bo_allowed_sort_field = array('');
+if (function_exists('get_board_sort_fields')) {
+    foreach (get_board_sort_fields(isset($board) ? $board : array()) as $bo_sort_v) {
+        $bo_allowed_sort_field[] = $bo_sort_v[0];
+    }
+}
+if (!in_array($bo_sort_field, $bo_allowed_sort_field, true)) {
+    $bo_sort_field = '';
+}
 
 if (strpbrk($bo_skin, "?%*:|\"<>") !== false) {
     alert('스킨 디렉토리명 오류!');

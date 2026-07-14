@@ -25,6 +25,10 @@ if ($is_admin != 'super') {
     $sql_search .= " and (gr_admin = '{$member['mb_id']}') ";
 }
 
+// 검색 컬럼 화이트리스트 — sfl 이 컬럼명으로 보간되므로 임의 값 차단
+$allowed_sfl = array('gr_subject', 'gr_id', 'gr_admin');
+if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'gr_subject';
+
 if ($stx) {
     $sql_search .= " and ( ";
     switch ($sfl) {

@@ -42,6 +42,16 @@ if ($post_act_button == "선택수정") {
         $p_it_order = (isset($_POST['it_order']) && is_array($_POST['it_order'])) ? strip_tags($_POST['it_order'][$k]) : '';
         $p_it_id = isset($_POST['it_id'][$k]) ? preg_replace('/[^a-z0-9_\-]/i', '', $_POST['it_id'][$k]) : '';
 
+        // 상품 스킨은 스킨 디렉토리명만 저장 — 경로 탈출/스트림 wrapper 차단
+        if (!empty($p_it_skin)) {
+            if (preg_match('#\.+(\/|\\\)#', $p_it_skin)) {
+                alert('스킨 폴더명에 포함될수 없는 문자가 들어있습니다.');
+            }
+            if (! is_include_path_check($p_it_skin, 1)) {
+                alert('오류 : 데이터폴더가 포함된 path 또는 잘못된 path 를 포함할수 없습니다.');
+            }
+        }
+
         if ($is_admin != 'super') {     // 최고관리자가 아니면 체크
             $sql = "select a.it_id, b.ca_mb_id from {$g5['g5_shop_item_table']} a , {$g5['g5_shop_category_table']} b where (a.ca_id = b.ca_id) and a.it_id = '$p_it_id'";
             $checks = sql_fetch($sql);

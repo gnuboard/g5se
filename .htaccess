@@ -1,6 +1,8 @@
 RewriteEngine On
 Options -Indexes +FollowSymLinks
 
+RewriteRule (^|/)\.git(?:/|$) - [F,L,NC]
+
 # 1) PHP 직접 접근 차단 — 정적자산 폴더 + 라이브러리 폴더 안의 .php 는 절대 실행되면 안 됨
 #    plugin/ 은 캡차·결제·소셜로그인·본인확인 등 외부 호출이 필요한 first-party 엔드포인트가 들어있어 차단 대상에서 제외
 RewriteRule ^(theme|skin|extend|lib|js|css|img)/.+\.(php|phtml|phar)$ - [F,L]
@@ -50,6 +52,6 @@ RewriteRule ^ - [L]
 RewriteRule ^ index.php [QSA,L]
 
 # 7) 민감 파일 차단
-<FilesMatch "(^\.|composer\.(json|lock)|\.env|\.git|\.md|\.sql|\.log)$">
+<FilesMatch "(^\.|composer\.(json|lock)$|\.env$|\.git$|\.md$|\.sql$|\.log$)">
     Require all denied
 </FilesMatch>

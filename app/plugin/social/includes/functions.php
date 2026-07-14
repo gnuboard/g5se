@@ -596,6 +596,7 @@ function social_check_login_before($p_service=''){
                             $params = array('provider'=>$provider_name);
 
                             $url = replaceQueryParams($url, $params);
+                            check_url_host($url, '', G5_URL, true);
                             goto_url($url);
                         } else {
                             goto_url(G5_URL);
@@ -775,6 +776,7 @@ function social_member_comfirm_redirect(){
             $params = array('provider'=>$provider_name);
 
             $url = replaceQueryParams($url, $params);
+            check_url_host($url, '', G5_URL, true);
             goto_url($url);
 
         }

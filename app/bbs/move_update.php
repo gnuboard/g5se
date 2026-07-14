@@ -41,6 +41,20 @@ while ($row = sql_fetch_array($result))
         // 존재하지 않다면
         if( !$move_board['bo_table'] ) continue;
 
+        // 대상 게시판 권한 재검증 — 원본 게시판 기준 권한만으로 타 게시판 이동/복사가 되지 않도록.
+        if ($is_admin !== 'super') {
+            $is_target_admin = false;
+            if ($is_admin === 'board' && isset($move_board['bo_admin']) && $move_board['bo_admin'] !== '' && $move_board['bo_admin'] === $member['mb_id']) {
+                $is_target_admin = true;
+            } else if ($is_admin === 'group' && isset($move_board['gr_id']) && $move_board['gr_id'] !== '') {
+                $move_group = sql_pdo_fetch(" select gr_admin from {$g5['group_table']} where gr_id = :gr_id ", [':gr_id' => $move_board['gr_id']]);
+                if (!empty($move_group['gr_admin']) && $move_group['gr_admin'] === $member['mb_id']) {
+                    $is_target_admin = true;
+                }
+            }
+            if (!$is_target_admin) continue;
+        }
+
         $move_write_table = $g5['write_prefix'] . $move_bo_table;
 
         $src_dir = G5_DATA_PATH.'/file/'.$bo_table; // 원본 디렉토리
@@ -331,7 +345,7 @@ run_event('bbs_move_update', $bo_table, $chk_bo_table, $wr_id_list, $opener_href
 ?>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <script>
-alert("<?php echo $msg; ?>");
+alert(<?php echo function_exists('get_js_safe_string') ? get_js_safe_string($msg) : '""'; ?>);
 opener.document.location.href = "<?php echo $opener_href1; ?>";
 window.close();
 </script>

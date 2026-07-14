@@ -158,7 +158,14 @@ $td_width = (int)(100 / $bo_gallery_cols);
 // 인덱스 필드가 아니면 정렬에 사용하지 않음
 //if (!$sst || ($sst && !(strstr($sst, 'wr_id') || strstr($sst, "wr_datetime")))) {
 if (!$sst) {
-    if ($board['bo_sort_field']) {
+    // bo_sort_field 는 따옴표로 감싸지 않아 escape 로 막히지 않으므로 허용 목록으로 검증
+    $bo_allowed_sort_field = array();
+    if (function_exists('get_board_sort_fields')) {
+        foreach (get_board_sort_fields($board) as $bo_sort_v) {
+            $bo_allowed_sort_field[] = $bo_sort_v[0];
+        }
+    }
+    if ($board['bo_sort_field'] && in_array($board['bo_sort_field'], $bo_allowed_sort_field, true)) {
         $sst = $board['bo_sort_field'];
     } else {
         $sst  = "wr_num, wr_reply";

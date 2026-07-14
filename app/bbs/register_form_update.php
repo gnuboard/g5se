@@ -224,7 +224,9 @@ if ($config['cf_cert_use'] && $cert_type && $md5_cert_no) {
 }
 //===============================================================
 if ($w == '') {
-    $sql = " insert into {$g5['member_table']} set
+    // insert ignore — mb_id 는 UNIQUE 이므로 중복 시 예외 없이 affected_rows=0 이 된다.
+    // 동일 아이디로 동시에 도착한 요청 중 실제로 행을 생성한 1건만 아래 검사를 통과한다.
+    $sql = " insert ignore into {$g5['member_table']} set
                 mb_id           = :mb_id,
                 mb_password     = :mb_password,
                 mb_name         = :mb_name,
@@ -344,6 +346,15 @@ if ($w == '') {
     }
 
     sql_pdo_query($sql, $params);
+
+    // 회원 INSERT 로 신규 행이 실제로 생성됐는지 확인한 뒤에만 이후 처리를 진행한다.
+    // exist_mb_id() 검사와 INSERT 사이에는 락이 없어, 동일 아이디로 동시에 도착한
+    // 다수 요청이 모두 "미사용"으로 판정될 수 있다. mb_id 는 UNIQUE 이므로 계정은
+    // 1개만 생성되지만, 성공 여부를 확인하지 않으면 진 요청도 그대로 진행되어
+    // 가입 포인트/축하쿠폰이 중복 발급된다. 여기서 즉시 중단하여 이를 막는다.
+    if (get_sql_affected_rows() <= 0) {
+        alert('이미 존재하는 회원아이디 입니다.');
+    }
 
     // 회원가입 포인트 부여
     insert_point($mb_id, $config['cf_register_point'], '회원가입 축하', '@member', $mb_id, '회원가입');
@@ -738,8 +749,10 @@ if(isset($_SESSION['ss_cert_hash'])) unset($_SESSION['ss_cert_hash']);
 if(isset($_SESSION['ss_cert_birth'])) unset($_SESSION['ss_cert_birth']);
 if(isset($_SESSION['ss_cert_adult'])) unset($_SESSION['ss_cert_adult']);
 
-if ($msg)
-    echo '<script>alert(\''.$msg.'\');</script>';
+if ($msg) {
+    $js_msg = function_exists('get_js_safe_string') ? get_js_safe_string($msg) : '"'.$msg.'"';
+    echo '<script>alert('.$js_msg.');</script>';
+}
 
 run_event('register_form_update_after', $mb_id, $w);
 

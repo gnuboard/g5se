@@ -17,6 +17,10 @@ require_once __DIR__.'/admin.lib.php';
 $sql_common = " from {$g5['auth_table']} a left join {$g5['member_table']} b on (a.mb_id=b.mb_id) ";
 
 $sql_search = " where (1) ";
+// 검색 컬럼 화이트리스트 — sfl 이 컬럼명으로 보간되므로 임의 값 차단
+$allowed_sfl = array('a.mb_id');
+if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'a.mb_id';
+
 if ($stx) {
     $sql_search .= " and ( ";
     switch ($sfl) {

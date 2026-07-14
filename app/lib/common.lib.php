@@ -4383,6 +4383,53 @@ function get_sql_affected_rows($link=null)
     return 0;
 }
 
+// 스프레드시트/CSV 출력용 셀 값 정규화.
+// 값이 = + - @ 또는 탭/캐리지리턴 으로 시작하면 앞에 작은따옴표(')를 붙여
+// 스프레드시트가 셀을 수식이 아닌 문자열로 취급하도록 강제한다.
+if (!function_exists('csv_safe_cell')) {
+    function csv_safe_cell($value)
+    {
+        $s = (string)$value;
+        if ($s !== '' && preg_match('/^[=+\-@\t\r]/', $s)) {
+            return "'".$s;
+        }
+        return $s;
+    }
+}
+
+// JavaScript 문자열 컨텍스트에 삽입할 값을 안전하게 이스케이프하여 따옴표를 포함한 JS 리터럴로 반환.
+// json_encode 의 HEX 플래그를 사용하고, 사용할 수 없는 환경에서는 직접 치환으로 폴백한다.
+if (!function_exists('get_js_safe_string')) {
+    function get_js_safe_string($s)
+    {
+        $s = (string)$s;
+        if (defined('JSON_HEX_TAG')) {
+            $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+            if (defined('JSON_UNESCAPED_UNICODE')) {
+                $flags |= JSON_UNESCAPED_UNICODE;
+            }
+            $encoded = @json_encode($s, $flags);
+            if ($encoded !== false && $encoded !== null) {
+                return $encoded;
+            }
+        }
+        return '"' . strtr($s, array(
+            '\\' => '\\\\',
+            '"'  => '\\"',
+            "'"  => '\\u0027',
+            '/'  => '\\/',
+            "\r" => '\\r',
+            "\n" => '\\n',
+            "\t" => '\\t',
+            '<'  => '\\u003C',
+            '>'  => '\\u003E',
+            '&'  => '\\u0026',
+            "\xE2\x80\xA8" => '\\u2028',
+            "\xE2\x80\xA9" => '\\u2029',
+        )) . '"';
+    }
+}
+
 // 불법접근을 막도록 토큰을 생성하면서 토큰값을 리턴
 function get_write_token($bo_table)
 {

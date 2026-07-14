@@ -4,6 +4,7 @@ require_once __DIR__.'/_common.php';
 require_once __DIR__.'/../_layout.php';
 admin_require_login();
 auth_check_menu($auth, $sub_menu, 'w');
+check_admin_token();
 include_once('./admin.shop.lib.php');
 include_once(G5_LIB_PATH.'/mailer.lib.php');
 
