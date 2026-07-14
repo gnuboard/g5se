@@ -580,6 +580,7 @@
 #sit_btn_opt button:hover {border-color:var(--m-primary);background:var(--m-primary-soft);color:var(--m-primary);transform:translateY(-1px)}
 #sit_btn_opt button:focus-visible {outline:3px solid var(--m-primary-soft);outline-offset:2px}
 #sit_btn_opt button svg {width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#sit_star_sns #sit_btn_opt span {margin:0}
 #btn_wish .btn_wish_num {min-width:18px;margin:0;padding:2px 5px;border-radius:999px;background:var(--m-surface-2);color:var(--m-text);font-size:11px;line-height:1.2;text-align:center}
 #btn_wish:hover .btn_wish_num {background:var(--m-primary);color:#fff}
 
@@ -672,7 +673,11 @@ background:url('img/select_arrow.png') no-repeat 96% 50%/* 화살표 아이콘 �
     #sit_title {display:none}
     #sit_ov {padding-bottom:8px}
     #sit_desc {margin-bottom:12px;font-size:14px;line-height:1.55}
-    #sit_star_sns {min-height:34px;padding-bottom:12px;border-bottom:1px solid #e2e2e2}
+    #sit_star_sns {min-height:0;padding:0 0 14px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--m-border)}
+    #sit_star_sns .sit_review_summary {flex:0 0 auto;white-space:nowrap}
+    #sit_btn_opt {position:static;margin-left:auto;gap:6px}
+    #sit_btn_opt button {height:36px;padding:0 10px;font-size:12px}
+    #sit_btn_opt button svg {width:17px;height:17px}
     #sit_ov_btn {flex-wrap:wrap}
     #sit_ov_btn button {flex-basis:calc(50% - 4px)}
     .sit_btn_wish {flex:1 0 100%;width:auto}
