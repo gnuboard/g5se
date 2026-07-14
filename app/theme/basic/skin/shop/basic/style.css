@@ -1073,9 +1073,10 @@ box-shadow:0px 1px 6px 0 #dedede
 
 @media (max-width:640px) {
     #sit_info {margin-top:14px;border-radius:14px}
-    #sit_tab .tab_tit {padding:6px;scroll-snap-type:x proximity}
-    #sit_tab .tab_tit li {flex:0 0 auto;scroll-snap-align:start}
-    #sit_tab .tab_tit li button {min-width:96px;padding:11px 12px;font-size:13px}
+    #sit_tab .tab_tit {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px;overflow:visible}
+    #sit_tab .tab_tit li {min-width:0}
+    #sit_tab .tab_tit li button {min-width:0;padding:11px 3px;font-size:12px}
+    #sit_tab .item_use_count,#sit_tab .item_qa_count {position:absolute;top:3px;right:3px;min-width:16px;height:16px;margin:0;padding:0 3px;font-size:10px;line-height:16px}
     #sit_tab .tab_con {padding:14px 12px 20px}
     .sit_use_top,#sit_qa_wbtn {align-items:stretch;flex-direction:column;padding:12px}
     #sit_use_wbtn {display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;margin:0}
