@@ -44,29 +44,17 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
                 <?php echo $editor_html; ?>
             </li>
             <li class="review_write_field review_write_score">
-                <strong>평점</strong>
-                <ul id="sit_use_write_star" class="chk_box">
-                    <li>
-                        <input type="radio" name="is_score" value="5" id="is_score5" <?php echo ($is_score==5)?'checked="checked"':''; ?>>
-                        <label for="is_score5"><span>매우만족</span><img src="<?php echo G5_URL; ?>/shop/img/s_star5.png" alt="별 5개"></label>
-                    </li>
-                    <li>
-                        <input type="radio" name="is_score" value="4" id="is_score4" <?php echo ($is_score==4)?'checked="checked"':''; ?>>
-                        <label for="is_score4"><span>만족</span><img src="<?php echo G5_URL; ?>/shop/img/s_star4.png" alt="별 4개"></label>
-                    </li>
-                    <li>
-                        <input type="radio" name="is_score" value="3" id="is_score3" <?php echo ($is_score==3)?'checked="checked"':''; ?>>
-                        <label for="is_score3"><span>보통</span><img src="<?php echo G5_URL; ?>/shop/img/s_star3.png" alt="별 3개"></label>
-                    </li>
-                    <li>
-                        <input type="radio" name="is_score" value="2" id="is_score2" <?php echo ($is_score==2)?'checked="checked"':''; ?>>
-                        <label for="is_score2"><span>불만</span><img src="<?php echo G5_URL; ?>/shop/img/s_star2.png" alt="별 2개"></label>
-                    </li>
-                    <li>
-                        <input type="radio" name="is_score" value="1" id="is_score1" <?php echo ($is_score==1)?'checked="checked"':''; ?>>
-                        <label for="is_score1"><span>매우불만</span><img src="<?php echo G5_URL; ?>/shop/img/s_star1.png" alt="별 1개"></label>
-                    </li>
-                </ul>
+                <label for="is_score">평점</label>
+                <div class="review_score_select">
+                    <select name="is_score" id="is_score" required>
+                        <option value="5" <?php echo ($is_score==5)?'selected="selected"':''; ?>>★★★★★ 매우 만족</option>
+                        <option value="4" <?php echo ($is_score==4)?'selected="selected"':''; ?>>★★★★☆ 만족</option>
+                        <option value="3" <?php echo ($is_score==3)?'selected="selected"':''; ?>>★★★☆☆ 보통</option>
+                        <option value="2" <?php echo ($is_score==2)?'selected="selected"':''; ?>>★★☆☆☆ 불만</option>
+                        <option value="1" <?php echo ($is_score==1)?'selected="selected"':''; ?>>★☆☆☆☆ 매우 불만</option>
+                    </select>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+                </div>
             </li>
         </ul>
 
@@ -105,21 +93,16 @@ body {margin:0;padding:12px;font-family:system-ui,-apple-system,BlinkMacSystemFo
 .review_write_field>label strong {color:var(--rw-primary);font-size:11px}
 #sit_use_write #is_subject,#sit_use_write textarea {width:100%;min-width:0;border:1px solid var(--rw-border);border-radius:12px;background:var(--rw-surface-2);color:var(--rw-text);font-size:15px;box-shadow:none}
 #sit_use_write #is_subject {height:42px;padding:0 12px}
-#sit_use_write textarea {min-height:90px !important;height:90px}
+#sit_use_write textarea {min-height:150px !important;height:150px}
 #sit_use_write #is_subject:focus,#sit_use_write textarea:focus {border-color:var(--rw-primary);outline:3px solid var(--rw-primary-soft)}
 #sit_use_write .cke {overflow:hidden;border:1px solid var(--rw-border) !important;border-radius:12px;box-shadow:none !important}
 #sit_use_write .cke_top,#sit_use_write .cke_bottom {border-color:var(--rw-border) !important;background:var(--rw-surface-2) !important}
-#sit_use_write .cke_contents {height:90px !important}
-#sit_use_write_star {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
-#sit_use_write_star:after {display:none}
-#sit_use_write_star li {float:none;width:auto;margin:0;padding:0}
-#sit_use_write_star input {position:absolute;z-index:0;width:1px;height:1px;opacity:0;clip-path:inset(50%)}
-#sit_use_write_star label {display:flex;min-height:54px;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:7px 4px;border:1px solid var(--rw-border);border-radius:10px;background:var(--rw-surface-2);color:var(--rw-soft);font-size:11px;font-weight:700;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
-#sit_use_write_star label span {position:static;width:auto;height:auto;border:0;border-radius:0;background:transparent;color:inherit}
-#sit_use_write_star label span:before {display:none !important}
-#sit_use_write_star label img {width:62px;max-width:100%;height:auto}
-#sit_use_write_star input:checked+label {border-color:var(--rw-primary);background:var(--rw-primary-soft);color:var(--rw-primary);box-shadow:inset 0 0 0 1px var(--rw-primary)}
-#sit_use_write_star input:focus-visible+label {outline:3px solid var(--rw-primary-soft);outline-offset:2px}
+#sit_use_write .cke_contents {height:150px !important}
+.review_score_select {position:relative}
+.review_score_select select {width:100%;height:46px;padding:0 42px 0 14px;border:1px solid var(--rw-border);border-radius:12px;appearance:none;background:var(--rw-surface-2);color:var(--rw-text);font-size:14px;font-weight:700;box-shadow:none;cursor:pointer}
+.review_score_select select:focus {border-color:var(--rw-primary);outline:3px solid var(--rw-primary-soft)}
+.review_score_select svg {position:absolute;top:50%;right:14px;width:18px;height:18px;transform:translateY(-50%);fill:none;stroke:var(--rw-soft);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+[data-theme="dark"] .review_score_select option {background:var(--rw-surface);color:var(--rw-text)}
 #sit_use_write .win_btn {display:flex;justify-content:flex-end;gap:8px;margin:12px 0 0;padding:12px 0 0;border-top:1px solid var(--rw-border)}
 #sit_use_write .win_btn .btn_submit,#sit_use_write .win_btn .btn_close {display:inline-flex;align-items:center;justify-content:center;width:auto;height:46px;margin:0;padding:0 22px;border-radius:11px;font-size:14px;font-weight:700;line-height:46px;text-decoration:none}
 #sit_use_write .win_btn .btn_submit {border:1px solid var(--rw-primary);background:var(--rw-primary);color:#fff}
@@ -131,12 +114,9 @@ body {margin:0;padding:12px;font-family:system-ui,-apple-system,BlinkMacSystemFo
     #sit_use_write #win_title {font-size:20px}
     #sit_use_write .new_win_con {padding:12px 14px}
     #sit_use_write #is_subject {height:40px}
-    #sit_use_write textarea {min-height:80px !important;height:80px}
-    #sit_use_write .cke_contents {height:80px !important}
-    #sit_use_write_star {grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
-    #sit_use_write_star li:last-child {grid-column:auto}
-    #sit_use_write_star label {min-height:46px;gap:3px;padding:4px 2px;font-size:9px}
-    #sit_use_write_star label img {width:42px}
+    #sit_use_write textarea {min-height:140px !important;height:140px}
+    #sit_use_write .cke_contents {height:140px !important}
+    .review_score_select select {height:44px;font-size:13px}
     #sit_use_write .win_btn {position:sticky;bottom:0;display:grid;grid-template-columns:1fr auto;margin:10px -14px -12px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--rw-surface)}
     #sit_use_write .win_btn .btn_submit {width:100%}
 }
