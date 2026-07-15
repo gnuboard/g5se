@@ -752,6 +752,9 @@ box-shadow: 1px 2px 2px #eee;}
 #sod_frm_taker .tbl_frm01 td .ad_choice input {width:auto}
 
 #sod_frm_orderer, #sod_frm_taker {margin:0 0 30px;border:1px solid #e3e5e8;background:#fff}
+.orderer-member-save {display:flex;align-items:center;gap:8px;padding:14px 20px 4px;color:var(--m-text-soft)}
+.orderer-member-save input[type="checkbox"] {position:static;width:18px;height:18px;margin:0;opacity:1;accent-color:var(--m-primary);cursor:pointer}
+.orderer-member-save label {margin:0;color:inherit;cursor:pointer}
 #sod_frm section h2 {border-bottom:1px solid #e2e4e7;font-size:1.167em;padding:20px}
 #sod_frm_orderer #od_addr_jibeon,
 #sod_frm_taker #od_b_addr_jibeon {display:inline-block;margin:5px 0 0}
@@ -1173,6 +1176,8 @@ box-shadow: 1px 2px 2px #eee;}
 #sod_fin_pay li>strong {margin-right:10px;width:50px}
 #sod_fin_pay li>span {width:238px}
 #sod_fin_pay li .letter-2px{letter-spacing:-2px}
+#sod_fin_pay .receipt-print-link {display:inline-flex;align-items:center;gap:5px;color:var(--m-primary,#3a8afd);font-weight:800;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;transition:color .15s,background-color .15s}
+#sod_fin_pay .receipt-print-link:hover,#sod_fin_pay .receipt-print-link:focus-visible {color:var(--m-primary-hover,#2563eb);background:var(--m-primary-soft,rgba(58,138,253,.12));outline:2px solid transparent;border-radius:4px}
 a.btn_frmline.is-long-text{height:auto;width:160px}
 
 #sod_fin_orderer, #sod_fin_receiver, #sod_fin_dvr {margin:0 0 20px}
@@ -1197,20 +1202,23 @@ a.btn_frmline.is-long-text{height:auto;width:160px}
 #sod_fin_tot #alrdy .right .title{position:absolute;left:0;padding-left:8px}
 #sod_fin_tot strong {float:right}
 
-#sod_fin_cancel {text-align:center}
-#sod_fin_cancel .sod_fin_c_btn {height:50px;border:1px solid #bababa;border-radius:3px;font-weight:bold;width:100%;background:none;color:#5e6b6f}
-#sod_fin_cancel .sod_fin_c_btn:hover {background:#fff}
+#sod_fin_cancel {display:flex;justify-content:flex-end;margin-top:14px;text-align:right}
+#sod_fin_cancel .sod_fin_c_btn {width:auto;height:auto;padding:6px 2px;border:0;background:transparent;color:var(--m-text-muted);font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+#sod_fin_cancel .sod_fin_c_btn:hover,#sod_fin_cancel .sod_fin_c_btn:focus-visible {background:transparent;color:var(--m-text);outline:none}
 #sod_fin_cancel h2 {padding:15px;border-bottom:1px solid #e8e8e8;text-align:left}
 #sod_fin_cancel p {text-align:center;background:#ffe0e0;border:2px solid #d50c0c;padding:15px;color:#d50c0c;font-size:1.167em;font-weight:bold}
 
 #sod_cancel_pop {display:none;width:100%;height:100%;position:fixed;top:0;left:0;z-index:999}
-#sod_fin_cancelfrm {position:absolute;top:50%;left:50%;background:#fff;text-align:center;width:245px;max-height:300px;margin-left:-125px;margin-top:-180px;overflow-y:auto;border-radius:5px;-webkit-box-shadow:1px 1px 18px rgba(0,0,0,0.2);-moz-box-shadow:1px 1px 18px rgba(0,0,0,0.2);box-shadow:1px 1px 18px rgba(0,0,0,0.2);border:1px solid #dde7e9;background:#fff;border-radius:3px}  
-#sod_fin_cancelfrm form {padding:20px}
+#sod_fin_cancelfrm {position:absolute;top:50%;left:50%;width:min(500px,calc(100% - 32px));max-height:80vh;margin:0;overflow-y:auto;transform:translate(-50%,-50%);border:1px solid var(--m-border);border-radius:14px;background:var(--m-surface);color:var(--m-text);text-align:left;box-shadow:var(--m-shadow-md)}
+#sod_fin_cancelfrm form {display:grid;gap:8px;padding:24px}
 .sod_fin_bg {background:rgba(0,0,0,0.1);width:100%;height:100%}
 .sod_cls_btn {position:absolute;right:0;top:0;color:#b5b8bb;border:0;padding:12px 15px;font-size:16px;background:#fff}
 
-#sod_fin_cancelfrm .frm_input {background:#fff;margin:0 0 5px;width:100%}
-#sod_fin_cancelfrm .btn_frmline {background:#5e6b6f;color:#fff;border:0;padding:10px;width:100%;cursor:pointer}
+#sod_fin_cancelfrm form label {color:var(--m-text-soft);font-size:13px;font-weight:700;text-align:left}
+#sod_fin_cancelfrm .frm_input {width:100%;margin:0 0 6px;border:1px solid var(--m-border);border-radius:10px;background:var(--m-surface-2);color:var(--m-text)}
+#sod_fin_cancelfrm select.frm_input {height:46px;padding:0 12px}
+#sod_fin_cancelfrm input.frm_input {height:46px;padding:0 12px}
+#sod_fin_cancelfrm .btn_frmline {height:46px;border:0;border-radius:10px;background:var(--m-primary);color:#fff;padding:10px;width:100%;cursor:pointer;font-weight:700}
 #sod_fin_test {padding:10px}
 
 /* 주문상세내역 중 현금영수증 발급 */
@@ -1510,6 +1518,40 @@ html.no-overflowscrolling #sc_coupon_frm, html.no-overflowscrolling #od_coupon_f
 [data-theme="dark"] #sod_frm_paysel input[type="radio"]:checked + .lb_icon {
     border-color: var(--m-primary) !important;
     color: var(--m-text) !important;
+}
+
+/* 선택된 결제수단을 배경·테두리·체크 표시로 명확하게 구분 */
+#od_pay_sl .lb_icon {transition:border-color .16s,background-color .16s,color .16s,box-shadow .16s,transform .16s}
+#od_pay_sl .lb_icon:hover {border-color:var(--m-border-hover);background-color:var(--m-surface-2)}
+#od_pay_sl input[type="radio"]:checked + .lb_icon {
+    z-index:4;
+    border-color:var(--m-primary) !important;
+    background-color:var(--m-primary-soft) !important;
+    color:var(--m-primary) !important;
+    font-weight:800;
+    box-shadow:inset 0 0 0 2px var(--m-primary),0 0 0 3px var(--m-primary-soft),var(--m-shadow-md);
+    transform:translateY(-1px);
+}
+#od_pay_sl input[type="radio"]:checked + .lb_icon::after {
+    content:"✓";
+    position:absolute;
+    top:8px;
+    right:10px;
+    display:grid;
+    width:22px;
+    height:22px;
+    place-items:center;
+    border-radius:999px;
+    background:var(--m-primary);
+    color:#fff;
+    font-size:13px;
+    font-weight:900;
+    line-height:1;
+    text-indent:0;
+}
+[data-theme="dark"] #od_pay_sl input[type="radio"]:checked + .lb_icon {
+    background-color:var(--m-primary-soft) !important;
+    color:#fff !important;
 }
 .chk_box input[type="radio"]:checked + label {color:#305af9}
 .chk_box input[type="radio"]:checked + label span:before {width:7px;height:7px;background:#305af9;content:'';position:absolute;top:3px;left:3px;border-radius:50%}
