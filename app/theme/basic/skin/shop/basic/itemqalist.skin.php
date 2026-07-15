@@ -3,13 +3,14 @@ if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 
 // add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
 add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 0);
+$itemqalist_url = G5_SHOP_URL.'/itemqalist';
 ?>
 
 <script src="<?php echo G5_JS_URL; ?>/viewimageresize.js"></script>
 
 <!-- 전체 상품 문의 목록 시작 { -->
 
-<form method="get" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>">
+<form method="get" action="<?php echo $itemqalist_url; ?>">
 <div id="sqa_sch">
     <label for="sfl" class="sound_only">검색항목 필수</label>
     <select name="sfl" id="sfl" required>
@@ -26,7 +27,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
     	<input type="text" name="stx" value="<?php echo $stx; ?>" id="stx" required class="sch_input">
     	<button type="submit" value="검색" class="sch_btn"><i class="fa fa-search" aria-hidden="true"></i><span class="sound_only">검색</span></button>
     </div>
-    <a href="<?php echo $_SERVER['SCRIPT_NAME']; ?>">전체보기</a>
+    <a href="<?php echo $itemqalist_url; ?>">전체보기</a>
 </div>
 </form>
 
@@ -118,7 +119,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
     ?>
 </div>
 
-<?php echo get_paging($config['cf_write_pages'], $page, $total_page, "{$_SERVER['SCRIPT_NAME']}?$qstr&amp;page="); ?>
+<?php echo get_paging($config['cf_write_pages'], $page, $total_page, "{$itemqalist_url}?$qstr&amp;page="); ?>
 
 <script>
 $(function(){

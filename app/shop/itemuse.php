@@ -51,7 +51,7 @@ function itemuse_page($write_pages, $cur_page, $total_page, $url, $add="")
         return "";
 }
 
-$itemuse_list = G5_SHOP_URL."/itemuselist.php";
+$itemuse_list = G5_SHOP_URL."/itemuselist";
 $itemuse_form = G5_SHOP_URL."/itemuseform?it_id=".$it_id;
 $itemuse_formupdate = G5_SHOP_URL."/itemuseformupdate?it_id=".$it_id;
 

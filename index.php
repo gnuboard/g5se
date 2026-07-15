@@ -272,6 +272,9 @@ ob_start(function ($html) {
     // 13) shop 쿠폰: /shop/coupon.php → /shop/coupon
     $html = preg_replace('#/shop/coupon\.php(?![a-zA-Z0-9])#', '/shop/coupon', $html);
 
+    // 13.5) shop 사용후기·상품문의 목록
+    $html = preg_replace('#/shop/(itemuselist|itemqalist)\.php(?![a-zA-Z0-9])#', '/shop/$1', $html);
+
     // 14) 설문조사: /bbs/poll_(result|update|etc_update|etc_update_mail).php → /poll_*
     $html = preg_replace('#/bbs/(poll_(?:result|update|etc_update_mail|etc_update))\.php(?![a-zA-Z0-9])#', '/$1', $html);
 

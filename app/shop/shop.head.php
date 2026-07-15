@@ -41,8 +41,8 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 	            <li><a href="<?php echo G5_BBS_URL ?>/faq.php">FAQ</a></li>
 	            <li><a href="<?php echo G5_BBS_URL ?>/qalist.php">1:1문의</a></li>
 	            <li><a href="<?php echo G5_SHOP_URL ?>/personalpay.php">개인결제</a></li>
-	            <li><a href="<?php echo G5_SHOP_URL ?>/itemuselist.php">사용후기</a></li> 
-	            <li><a href="<?php echo G5_SHOP_URL ?>/itemqalist.php">상품문의</a></li>
+	            <li><a href="<?php echo G5_SHOP_URL ?>/itemuselist">사용후기</a></li>
+	            <li><a href="<?php echo G5_SHOP_URL ?>/itemqalist">상품문의</a></li>
 	        </ul>
 		</div>
 	</div>
@@ -122,8 +122,8 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_JS_URL.'/owlcarousel/owl.carou
 					<li><a href="<?php echo G5_BBS_URL ?>/faq.php">FAQ</a></li>
 		            <li><a href="<?php echo G5_BBS_URL ?>/qalist.php">1:1문의</a></li>
 		            <li><a href="<?php echo G5_SHOP_URL ?>/personalpay.php">개인결제</a></li>
-		            <li><a href="<?php echo G5_SHOP_URL ?>/itemuselist.php">사용후기</a></li>
-		            <li><a href="<?php echo G5_SHOP_URL ?>/itemqalist.php">상품문의</a></li>
+		            <li><a href="<?php echo G5_SHOP_URL ?>/itemuselist">사용후기</a></li>
+		            <li><a href="<?php echo G5_SHOP_URL ?>/itemqalist">상품문의</a></li>
 		            <li><a href="<?php echo G5_SHOP_URL; ?>/couponzone.php">쿠폰존</a></li>
 		        </ul>
 	        	<?php // include_once(G5_SHOP_SKIN_PATH.'/boxcommunity.skin.php'); // 커뮤니티 ?>

@@ -407,6 +407,13 @@ class Router
             header('Location: '.$location($url), true, 301);
             exit;
         }
+        // 사용후기·상품문의 목록: 확장자 없는 공개 URL로 통일한다.
+        if (($method === 'GET' || $method === 'HEAD')
+            && preg_match('#^/shop/(itemuselist|itemqalist)\.php$#', $path, $m)) {
+            $qs = parse_url($requestUri, PHP_URL_QUERY);
+            header('Location: '.$location('/shop/'.$m[1].($qs ? '?'.$qs : '')), true, 301);
+            exit;
+        }
         // 주문조회: orderinquiry / orderinquiryview / orderinquirycancel — query 보존 (od_id, uid 등)
         if (($method === 'GET' || $method === 'HEAD')
             && preg_match('#^/shop/(orderinquiry(?:view|cancel)?)\.php$#', $path, $m)) {
