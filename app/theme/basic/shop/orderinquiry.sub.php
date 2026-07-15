@@ -43,21 +43,23 @@ $_status_map = [
 .m-oq-status {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 4px 10px;
+    border: 1px solid transparent;
     border-radius: 999px;
     font-size: var(--m-text-xs); font-weight: 700;
     line-height: 1;
     justify-self: end;
 }
-.m-oq-status.is-pending   { background: rgba(245,158,11,0.14); color: #d97706; }
-.m-oq-status.is-paid      { background: rgba(59,130,246,0.14); color: var(--m-primary); }
-.m-oq-status.is-preparing { background: rgba(139,92,246,0.14); color: #7c3aed; }
-.m-oq-status.is-shipping  { background: rgba(20,184,166,0.14); color: #0d9488; }
-.m-oq-status.is-done      { background: rgba(16,185,129,0.14); color: #059669; }
-.m-oq-status.is-cancel    { background: rgba(239,68,68,0.14);  color: #ef4444; }
-[data-theme="dark"] .m-oq-status.is-pending   { color: #fbbf24; }
-[data-theme="dark"] .m-oq-status.is-preparing { color: #a78bfa; }
-[data-theme="dark"] .m-oq-status.is-shipping  { color: #2dd4bf; }
-[data-theme="dark"] .m-oq-status.is-done      { color: #34d399; }
+.m-oq-status.is-pending   { border-color:#64748b; background:rgba(100,116,139,.14); color:#475569; }
+.m-oq-status.is-paid      { border-color:#0284c7; background:rgba(14,165,233,.14); color:#0369a1; }
+.m-oq-status.is-preparing { border-color:#ef4444; background:rgba(239,68,68,.16); color:#dc2626; }
+.m-oq-status.is-shipping  { border-color:#d97706; background:rgba(245,158,11,.15); color:#b45309; }
+.m-oq-status.is-done      { border-color:#059669; background:rgba(16,185,129,.15); color:#047857; }
+.m-oq-status.is-cancel    { border-color:#ef4444; background:rgba(239,68,68,.14); color:#ef4444; }
+[data-theme="dark"] .m-oq-status.is-pending   { color:#cbd5e1; }
+[data-theme="dark"] .m-oq-status.is-paid      { color:#7dd3fc; }
+[data-theme="dark"] .m-oq-status.is-preparing { border-color:#fb7185; background:rgba(239,68,68,.2); color:#fda4af; }
+[data-theme="dark"] .m-oq-status.is-shipping  { color:#fcd34d; }
+[data-theme="dark"] .m-oq-status.is-done      { color:#6ee7b7; }
 
 .m-oq-product {
     display: flex; align-items: center; gap: 6px;

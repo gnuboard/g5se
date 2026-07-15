@@ -415,6 +415,14 @@ box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 #sod_fin_tot #alrdy .right p {position:relative;color:#333;margin:5px 0}
 #sod_fin_tot #alrdy .right .title {position:absolute;left:0;padding-left:8px}
 #sod_fin_tot strong {float:right}
+#sod_fin_tot #alrdy > span,
+#sod_bsk_tot2 #alrdy > span {color:#047857 !important;font-weight:800}
+#sod_fin_tot #alrdy .payment-amount,
+#sod_bsk_tot2 #alrdy .payment-amount {color:#047857 !important;font-size:1.2em;font-weight:900}
+[data-theme="dark"] #sod_fin_tot #alrdy > span,
+[data-theme="dark"] #sod_bsk_tot2 #alrdy > span,
+[data-theme="dark"] #sod_fin_tot #alrdy .payment-amount,
+[data-theme="dark"] #sod_bsk_tot2 #alrdy .payment-amount {color:#5ee6c4 !important}
 
 #sod_fin_cancel {display:flex;justify-content:flex-end;margin:10px;text-align:right}
 #sod_fin_cancel h2 {position:absolute;border:0;font-size:0;line-height:0;content:""}
@@ -556,6 +564,20 @@ box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     background: var(--m-surface);
     color: var(--m-text);
 }
+.order-status-cell {white-space:normal}
+.order-status {display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:4px 9px;border:1px solid transparent;border-radius:999px;font-size:13px;font-weight:800;line-height:1.2;white-space:nowrap}
+.order-status + .order-status {margin-left:4px}
+.order-status.status-order {border-color:#64748b;background:rgba(100,116,139,.14);color:#475569}
+.order-status.status-paid {border-color:#0284c7;background:rgba(14,165,233,.14);color:#0369a1}
+.order-status.status-ready {border-color:#ef4444;background:rgba(239,68,68,.16);color:#dc2626}
+.order-status.status-shipping {border-color:#d97706;background:rgba(245,158,11,.15);color:#b45309}
+.order-status.status-complete {border-color:#059669;background:rgba(16,185,129,.15);color:#047857}
+.order-status.status-etc {border-color:var(--m-border);background:var(--m-surface-2);color:var(--m-text-soft)}
+[data-theme="dark"] .order-status.status-order {color:#cbd5e1}
+[data-theme="dark"] .order-status.status-paid {color:#7dd3fc}
+[data-theme="dark"] .order-status.status-ready {border-color:#fb7185;background:rgba(239,68,68,.2);color:#fda4af}
+[data-theme="dark"] .order-status.status-shipping {color:#fcd34d}
+[data-theme="dark"] .order-status.status-complete {color:#6ee7b7}
 #sod_fin_view h3,
 #sod_fin_pay h3 {
     border-color: var(--m-border);

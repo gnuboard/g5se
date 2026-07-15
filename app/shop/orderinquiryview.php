@@ -72,6 +72,10 @@ if($od['od_pg'] == 'lg') {
         <?php
         $st_count1 = $st_count2 = 0;
         $custom_cancel = false;
+        $order_status_class = array(
+            '주문' => 'order', '입금' => 'paid', '준비' => 'ready',
+            '배송' => 'shipping', '완료' => 'complete',
+        );
 
         $result = sql_pdo_query(" select it_id, it_name, ct_send_cost, it_sc_type
                                     from {$g5['g5_shop_cart_table']}
@@ -160,7 +164,7 @@ if($od['od_pg'] == 'lg') {
                 <td headers="th_itsum" class="td_numbig text_right"><?php echo number_format($sell_price); ?></td>
                 <td headers="th_itpt" class="td_numbig text_right"><?php echo number_format($point); ?></td>
                 <td headers="th_itsd" class="td_dvr"><?php echo $ct_send_cost; ?></td>
-                <td headers="th_itst" class="td_mngsmall"><?php echo $opt['ct_status']; ?></td>
+                <td headers="th_itst" class="td_mngsmall order-status-cell"><span class="order-status status-<?php echo isset($order_status_class[$opt['ct_status']]) ? $order_status_class[$opt['ct_status']] : 'etc'; ?>"><?php echo get_text($opt['ct_status']); ?></span></td>
             </tr>
             <?php
                     $tot_point       += $point;
@@ -184,15 +188,15 @@ if($od['od_pg'] == 'lg') {
             <button type="button" id="sod_sts_explan_open" class="btn_frmline">상태설명보기</button>
             <div id="sod_sts_explan">
                 <dl id="sod_fin_legend">
-                    <dt>주문</dt>
+                    <dt><span class="order-status status-order">주문</span></dt>
                     <dd>주문이 접수되었습니다.
-                    <dt>입금</dt>
+                    <dt><span class="order-status status-paid">입금</span></dt>
                     <dd>입금(결제)이 완료 되었습니다.
-                    <dt>준비</dt>
+                    <dt><span class="order-status status-ready">준비</span></dt>
                     <dd>상품 준비 중입니다.
-                    <dt>배송</dt>
+                    <dt><span class="order-status status-shipping">배송</span></dt>
                     <dd>상품 배송 중입니다.
-                    <dt>완료</dt>
+                    <dt><span class="order-status status-complete">완료</span></dt>
                     <dd>상품 배송이 완료 되었습니다.
                 </dl>
                 <button type="button" id="sod_sts_explan_close" class="btn_frmline">상태설명닫기</button>
@@ -213,17 +217,8 @@ if($od['od_pg'] == 'lg') {
         $cancel_price   = $od['od_cancel_price'];
         $is_order_cancelled = ($od['od_status'] === '취소' || $cancel_price > 0);
 
-        $misu = true;
         $misu_price = $tot_price - $receipt_price;
-
-        if ($misu_price == 0 && ($od['od_cart_price'] > $od['od_cancel_price'])) {
-            $wanbul = " (완불)";
-            $misu = false; // 미수금 없음
-        }
-        else
-        {
-            $wanbul = display_price($receipt_price);
-        }
+        $paid_price = display_price($receipt_price);
 
         // 결제정보처리
         if($od['od_receipt_price'] > 0)
@@ -651,7 +646,7 @@ if($od['od_pg'] == 'lg') {
                 ?>
                 <li id="alrdy">
                     결제액
-                    <strong><?php echo $wanbul; ?></strong>
+                    <strong class="payment-amount"><?php echo $paid_price; ?></strong>
                     <?php if( $od['od_receipt_point'] ){    //포인트로 결제한 내용이 있으면 ?>
                     <div class="right">
                         <p><span class="title"><i class="fa fa-angle-right" aria-hidden="true"></i> 포인트 결제</span><?php echo number_format($od['od_receipt_point']); ?> 점</p>
