@@ -219,12 +219,8 @@ if($od['od_pg'] == 'lg') {
                     <td><?php echo get_text($od['od_name']); ?></td>
                 </tr>
                 <tr>
-                    <th scope="row">전화번호</th>
-                    <td><?php echo get_text($od['od_tel']); ?></td>
-                </tr>
-                <tr>
-                    <th scope="row">핸드폰</th>
-                    <td><?php echo get_text($od['od_hp']); ?></td>
+                    <th scope="row">연락처</th>
+                    <td><?php echo get_text($od['od_hp'] ?: $od['od_tel']); ?></td>
                 </tr>
                 <tr>
                     <th scope="row">주 소</th>
@@ -251,12 +247,8 @@ if($od['od_pg'] == 'lg') {
                     <td><?php echo get_text($od['od_b_name']); ?></td>
                 </tr>
                 <tr>
-                    <th scope="row">전화번호</th>
-                    <td><?php echo get_text($od['od_b_tel']); ?></td>
-                </tr>
-                <tr>
-                    <th scope="row">핸드폰</th>
-                    <td><?php echo get_text($od['od_b_hp']); ?></td>
+                    <th scope="row">연락처</th>
+                    <td><?php echo get_text($od['od_b_hp'] ?: $od['od_b_tel']); ?></td>
                 </tr>
                 <tr>
                     <th scope="row">주 소</th>
@@ -472,7 +464,7 @@ if($od['od_pg'] == 'lg') {
 	                            $hp_receipt_script = 'window.open(\''.G5_BILL_RECEIPT_URL.'mcash_bill&tno='.$od['od_tno'].'&order_no='.$od['od_id'].'&trade_mony='.$od['od_receipt_price'].'\', \'winreceipt\', \'width=500,height=690,scrollbars=yes,resizable=yes\');';
 	                        }
 	                    ?>
-	                    <a href="javascript:;" onclick="<?php echo $hp_receipt_script; ?>">영수증 출력</a>
+	                    <a href="javascript:;" onclick="<?php echo $hp_receipt_script; ?>" class="receipt-print-link">영수증 출력</a>
 	                    <?php
 	                    }
 	
@@ -495,7 +487,7 @@ if($od['od_pg'] == 'lg') {
 	                            $card_receipt_script = 'window.open(\''.G5_BILL_RECEIPT_URL.'card_bill&tno='.$od['od_tno'].'&order_no='.$od['od_id'].'&trade_mony='.$od['od_receipt_price'].'\', \'winreceipt\', \'width=470,height=815,scrollbars=yes,resizable=yes\');';
 	                        }
 	                    ?>
-	                    <a href="javascript:;" onclick="<?php echo $card_receipt_script; ?>">영수증 출력</a>
+	                    <a href="javascript:;" onclick="<?php echo $card_receipt_script; ?>" class="receipt-print-link">영수증 출력</a>
 	                    <?php
 	                    }
 	
@@ -504,7 +496,7 @@ if($od['od_pg'] == 'lg') {
 	                        //$card_receipt_script = 'window.open(\'https://mms.cnspay.co.kr/trans/retrieveIssueLoader.do?TID='.$od['od_tno'].'&type=0\', \'popupIssue\', \'toolbar=no,location=no,directories=no,status=yes,menubar=no,scrollbars=yes,resizable=yes,width=420,height=540\');';
                             $card_receipt_script = 'window.open(\'https://iniweb.inicis.com/DefaultWebApp/mall/cr/cm/mCmReceipt_head.jsp?noTid='.$od['od_tno'].'&noMethod=1\',\'receipt\',\'width=430,height=700\');';
 	                    ?>
-	                    <a href="javascript:;" onclick="<?php echo $card_receipt_script; ?>">영수증 출력</a>
+	                    <a href="javascript:;" onclick="<?php echo $card_receipt_script; ?>" class="receipt-print-link">영수증 출력</a>
 	                    <?php
 	                    }
 	                    ?>
@@ -597,7 +589,7 @@ if($od['od_pg'] == 'lg') {
             if (!$is_order_cancelled) {
                 if ($custom_cancel) {
             ?>
-            <button type="button" class="sod_fin_c_btn">주문 취소하기</button>
+            <button type="button" class="sod_fin_c_btn">주문취소</button>
 			<div id="sod_cancel_pop">	
 	            <div id="sod_fin_cancelfrm">
 	            	<h2>주문취소</h2>
@@ -605,8 +597,21 @@ if($od['od_pg'] == 'lg') {
 	                <input type="hidden" name="od_id" value="<?php echo $od['od_id']; ?>">
 	                <input type="hidden" name="token" value="<?php echo $token; ?>">
 	
-	                <label for="cancel_memo" class="sound_only">취소사유</label>
-	                <input type="text" name="cancel_memo" id="cancel_memo" required class="frm_input required" size="40" maxlength="100" placeholder="취소사유">
+	                <label for="cancel_reason">취소 사유</label>
+	                <select name="cancel_reason" id="cancel_reason" required class="frm_input required">
+	                    <option value="">사유를 선택해 주세요</option>
+	                    <option value="change_mind">상품이 필요하지 않게 되었어요</option>
+	                    <option value="wrong_order">상품이나 옵션을 잘못 선택했어요</option>
+	                    <option value="delivery_change">배송 정보를 변경하고 싶어요</option>
+	                    <option value="payment_change">다른 결제수단으로 다시 주문할게요</option>
+	                    <option value="out_of_stock">재고 부족 안내를 받았어요</option>
+	                    <option value="delivery_delay">배송이 예상보다 늦어졌어요</option>
+	                    <option value="product_mismatch">안내받은 상품 정보가 달라요</option>
+	                    <option value="seller_agreement">판매자와 취소를 협의했어요</option>
+	                    <option value="other">다른 사유가 있어요</option>
+	                </select>
+	                <label for="cancel_detail">상세 사유</label>
+	                <input type="text" name="cancel_detail" id="cancel_detail" required class="frm_input required" maxlength="60" placeholder="상세 사유를 입력해 주세요">
 	                <input type="submit" value="확인" class="btn_frmline">
 	                </form>
 	                <button class="sod_cls_btn"><span class="sound_only">닫기</span><i class="fa fa-times" aria-hidden="true"></i></button>
@@ -617,6 +622,10 @@ if($od['od_pg'] == 'lg') {
 			$(function (){
 				$(".sod_fin_c_btn").on("click", function() {
 			        $("#sod_cancel_pop").show();
+			    });
+			    $("#cancel_reason").on("change", function() {
+			        var reason = this.value ? $(this).find("option:selected").text() : "";
+			        $("#cancel_detail").val(reason);
 			    });
 			    $(".sod_cls_btn").on("click", function() {
 			        $("#sod_cancel_pop").hide();
@@ -703,17 +712,19 @@ $(function() {
 
 function fcancel_check(f)
 {
-    if(!confirm("주문을 정말 취소하시겠습니까?"))
+    if (!f.cancel_reason.value) {
+        alert("취소 사유를 선택해 주세요.");
+        f.cancel_reason.focus();
         return false;
-
-    var memo = f.cancel_memo.value;
-    if(memo == "") {
-        alert("취소사유를 입력해 주십시오.");
+    }
+    if (!f.cancel_detail.value.trim()) {
+        alert("상세 사유를 입력해 주세요.");
+        f.cancel_detail.focus();
         return false;
     }
 
-    return true;
-}		
+    return confirm("주문을 정말 취소하시겠습니까?");
+}
 </script>
 
 <?php

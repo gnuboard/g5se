@@ -3,6 +3,28 @@ include_once('./_common.php');
 
 $od_id = isset($_REQUEST['od_id']) ? safe_replace_regex($_REQUEST['od_id'], 'od_id') : '';
 
+$cancel_reasons = [
+    'change_mind'      => ['구매자 사유', '상품이 필요하지 않게 됨', '상품이 필요하지 않게 되었어요'],
+    'wrong_order'      => ['구매자 사유', '상품 또는 옵션을 잘못 선택함', '상품이나 옵션을 잘못 선택했어요'],
+    'delivery_change'  => ['구매자 사유', '배송 정보 변경 필요', '배송 정보를 변경하고 싶어요'],
+    'payment_change'   => ['구매자 사유', '결제수단 변경 후 재주문', '다른 결제수단으로 다시 주문할게요'],
+    'out_of_stock'     => ['판매자 사유', '재고 부족 안내', '재고 부족 안내를 받았어요'],
+    'delivery_delay'   => ['판매자 사유', '배송 지연', '배송이 예상보다 늦어졌어요'],
+    'product_mismatch' => ['판매자 사유', '안내된 상품 정보 불일치', '안내받은 상품 정보가 달라요'],
+    'seller_agreement' => ['협의 취소', '판매자와 취소 협의', '판매자와 취소를 협의했어요'],
+    'other'            => ['기타 사유', '기타', '다른 사유가 있어요'],
+];
+$cancel_reason = isset($_POST['cancel_reason']) ? $_POST['cancel_reason'] : '';
+$cancel_detail = isset($_POST['cancel_detail']) ? trim(strip_tags($_POST['cancel_detail'])) : '';
+if (!isset($cancel_reasons[$cancel_reason]) || $cancel_detail === '') {
+    alert('취소 사유와 상세 사유를 입력해 주세요.');
+}
+$cancel_detail = mb_substr($cancel_detail, 0, 60, 'UTF-8');
+$cancel_memo = '['.$cancel_reasons[$cancel_reason][0].'] '.$cancel_reasons[$cancel_reason][1];
+if ($cancel_detail !== $cancel_reasons[$cancel_reason][2]) {
+    $cancel_memo .= ' - '.$cancel_detail;
+}
+
 // 세션에 저장된 토큰과 폼으로 넘어온 토큰을 비교하여 틀리면 에러
 if ($token && get_session("ss_token") == $token) {
     // 맞으면 세션을 지워 다시 입력폼을 통해서 들어오도록 한다.
