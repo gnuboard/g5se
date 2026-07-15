@@ -554,6 +554,13 @@ if($default['de_tax_flag_use']) {
     $od_free_mny = isset($_POST['comm_free_mny']) ? (int) $_POST['comm_free_mny'] : 0;
 }
 
+$od_contact       = trim(isset($od_hp) && $od_hp !== '' ? $od_hp : $od_tel);
+$od_b_contact     = trim(isset($od_b_hp) && $od_b_hp !== '' ? $od_b_hp : $od_b_tel);
+$od_tel           = $od_contact;
+$od_hp            = $od_contact;
+$od_b_tel         = $od_b_contact;
+$od_b_hp          = $od_b_contact;
+
 $od_email         = get_email_address($od_email);
 $od_name          = clean_xss_tags(stripslashes($od_name));
 $od_tel           = clean_xss_tags(stripslashes($od_tel));
@@ -688,6 +695,26 @@ if(! $result || ! (isset($exists_order['od_id']) && $od_id && $exists_order['od_
 
     if(function_exists('add_order_post_log')) add_order_post_log($cancel_msg ?? '');
     die('<p>고객님의 주문 정보를 처리하는 중 오류가 발생해서 주문이 완료되지 않았습니다.</p><p>'.strtoupper($od_pg).'를 이용한 전자결제(신용카드, 계좌이체, 가상계좌 등)은 자동 취소되었습니다.');
+}
+
+// 회원이 선택한 경우에만 주문자 연락처와 주소를 다음 주문의 기본값으로 저장한다.
+// 이름과 이메일은 본인확인·중복 정책이 있는 회원정보 수정 화면에서만 변경한다.
+if ($is_member && !empty($_POST['save_orderer_to_member'])) {
+    sql_pdo_query(" update {$g5['member_table']}
+                       set mb_hp = :mb_hp,
+                           mb_zip1 = :mb_zip1, mb_zip2 = :mb_zip2,
+                           mb_addr1 = :mb_addr1, mb_addr2 = :mb_addr2,
+                           mb_addr3 = :mb_addr3, mb_addr_jibeon = :mb_addr_jibeon
+                     where mb_id = :mb_id ", [
+        ':mb_hp'          => $od_hp,
+        ':mb_zip1'        => $od_zip1,
+        ':mb_zip2'        => $od_zip2,
+        ':mb_addr1'       => $od_addr1,
+        ':mb_addr2'       => $od_addr2,
+        ':mb_addr3'       => $od_addr3,
+        ':mb_addr_jibeon' => $od_addr_jibeon,
+        ':mb_id'          => $member['mb_id'],
+    ]);
 }
 
 // 장바구니 상태변경

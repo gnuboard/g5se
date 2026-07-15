@@ -185,7 +185,7 @@ if(isset($data['pp_id']) && !empty($data['pp_id'])) {
     $P_CARD_ISSUER = $_POST['P_CARD_ISSUER'] = (isset($PAY['P_CARD_ISSUER_CODE']) && isset($CARD_CODE[$PAY['P_CARD_ISSUER_CODE']])) ? $CARD_CODE[$PAY['P_CARD_ISSUER_CODE']] : '';
     $P_UNAME = $_POST['P_UNAME'] = iconv_utf8($PAY['P_UNAME']);
 
-    $check_keys = array('od_name', 'od_tel', 'od_pwd', 'od_hp', 'od_zip', 'od_addr1', 'od_addr2', 'od_addr3', 'od_addr_jibeon', 'od_email', 'ad_default', 'ad_subject', 'od_hope_date', 'od_b_name', 'od_b_tel', 'od_b_hp', 'od_b_zip', 'od_b_addr1', 'od_b_addr2', 'od_b_addr3', 'od_b_addr_jibeon', 'od_memo', 'od_settle_case', 'max_temp_point', 'od_temp_point', 'od_send_cost', 'od_send_cost2', 'od_bank_account', 'od_deposit_name', 'od_test', 'od_ip');
+    $check_keys = array('od_name', 'od_tel', 'od_pwd', 'od_hp', 'od_zip', 'od_addr1', 'od_addr2', 'od_addr3', 'od_addr_jibeon', 'od_email', 'ad_default', 'ad_subject', 'od_hope_date', 'od_b_name', 'od_b_tel', 'od_b_hp', 'od_b_zip', 'od_b_addr1', 'od_b_addr2', 'od_b_addr3', 'od_b_addr_jibeon', 'od_memo', 'od_settle_case', 'max_temp_point', 'od_temp_point', 'od_send_cost', 'od_send_cost2', 'od_bank_account', 'od_deposit_name', 'od_test', 'od_ip', 'save_orderer_to_member');
 
     foreach($check_keys as $key){
         $$key = isset($params[$key]) ? $params[$key] : '';
