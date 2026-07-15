@@ -7,6 +7,8 @@ admin_require_login();
 auth_check_menu($auth, $sub_menu, 'w');
 auth_check_menu($auth, $sub_menu, 'w');
 
+if (function_exists('check_request_origin')) check_request_origin(G5_ADMIN_URL);
+
 $_POST = array_map('trim', $_POST);
 
 if(!$_POST['pp_name'])
