@@ -423,7 +423,6 @@ box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 [data-theme="dark"] #sod_bsk_tot2 #alrdy > span,
 [data-theme="dark"] #sod_fin_tot #alrdy .payment-amount,
 [data-theme="dark"] #sod_bsk_tot2 #alrdy .payment-amount {color:#5ee6c4 !important}
-
 #sod_fin_cancel {display:flex;justify-content:flex-end;margin:10px;text-align:right}
 #sod_fin_cancel h2 {position:absolute;border:0;font-size:0;line-height:0;content:""}
 #sod_fin_cancel h2 {position:absolute;font-size:0;line-height:0;overflow:hidden}
