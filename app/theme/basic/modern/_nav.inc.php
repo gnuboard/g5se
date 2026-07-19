@@ -165,7 +165,7 @@ $_cur_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
                     </span>
                     <div class="m-nav-drawer-me-text">
                         <div class="m-nav-drawer-nick"><?php echo $_drawer_nick ?> 님</div>
-                        <a href="/member_confirm" class="m-nav-drawer-edit">정보 수정 →</a>
+                        <a href="<?php echo G5_BBS_URL ?>/member_confirm.php?url=<?php echo urlencode(G5_BBS_URL.'/register_form.php'); ?>" class="m-nav-drawer-edit">정보 수정 →</a>
                     </div>
                 </div>
                 <ul class="m-nav-drawer-stats">

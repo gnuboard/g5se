@@ -17,6 +17,12 @@ if( function_exists('social_member_comfirm_redirect') && (! $url || $url === 're
 
 $url = run_replace('member_confirm_next_url', $url);
 
+// 다음 경로 없이 직접 접근한 경우에도 회원정보 수정 확인 흐름으로 이어간다.
+// 빈 action 으로 현재 페이지에 다시 POST되면 비밀번호 검증이 실행되지 않는다.
+if (!$url) {
+    $url = G5_BBS_URL.'/register_form.php';
+}
+
 $g5['title'] = '회원 비밀번호 확인';
 include_once('./_head.sub.php');
 
