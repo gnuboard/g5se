@@ -99,8 +99,8 @@ $is_index = defined('_INDEX_') && _INDEX_;
         <?php } ?>
     </main>
 
-    <!-- g5se: 통합 footer — community 와 shop 동일 (_footer.inc.php). 사이트 정보 + 공지 + 접속자 (현재/오늘/어제/최대/전체) -->
-    <?php require_once(G5_THEME_PATH.'/modern/_footer.inc.php'); ?>
+    <!-- g5se: 통합 footer — community 와 shop 동일 (_tail.inc.php). 사이트 정보 + 공지 + 접속자 (현재/오늘/어제/최대/전체) -->
+    <?php require_once(G5_THEME_PATH.'/modern/_tail.inc.php'); ?>
 
     <?php /* g5se: shop 전용 floating quick action (장바구니/위시/최근본/위로) 제거 — top nav 의 카트 + 마이페이지 아이콘 + 통합 /mypage hub 로 대체 */ ?>
 

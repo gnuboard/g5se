@@ -6,8 +6,8 @@ $exists = false;
 
 $depth2_ca_id = substr($ca_id, 0, 2);
 
-$sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like '{$depth2_ca_id}%' and length(ca_id) = 4 and ca_use = '1' order by ca_order, ca_id ";
-$result = sql_query($sql);
+$sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like :ca_pattern and length(ca_id) = 4 and ca_use = '1' order by ca_order, ca_id ";
+$result = sql_pdo_query($sql, [':ca_pattern' => $depth2_ca_id.'%']);
 while ($row=sql_fetch_array($result)) {
     if (preg_match("/^{$row['ca_id']}/", $ca_id))
         $sct_ct_here = 'sct_ct_here';

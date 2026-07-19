@@ -7,11 +7,15 @@ $ca_id_len = strlen($ca_id);
 $len2 = $ca_id_len + 2;
 $len4 = $ca_id_len + 4;
 
-$sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like '$ca_id%' and length(ca_id) = $len2 and ca_use = '1' order by ca_order, ca_id ";
-$result = sql_query($sql);
+$sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like :ca_pattern and length(ca_id) = :ca_length and ca_use = '1' order by ca_order, ca_id ";
+$result = sql_pdo_query($sql, [':ca_pattern' => $ca_id.'%', ':ca_length' => $len2]);
 while ($row=sql_fetch_array($result)) {
 
-    $row2 = sql_fetch(" select count(*) as cnt from {$g5['g5_shop_item_table']} where (ca_id like '{$row['ca_id']}%' or ca_id2 like '{$row['ca_id']}%' or ca_id3 like '{$row['ca_id']}%') and it_use = '1'  ");
+    $category_pattern = $row['ca_id'].'%';
+    $row2 = sql_pdo_fetch(
+        " select count(*) as cnt from {$g5['g5_shop_item_table']} where (ca_id like :ca_id1 or ca_id2 like :ca_id2 or ca_id3 like :ca_id3) and it_use = '1' ",
+        [':ca_id1' => $category_pattern, ':ca_id2' => $category_pattern, ':ca_id3' => $category_pattern]
+    );
 
     $categories[] = array(
         'url' => shop_category_url($row['ca_id']),

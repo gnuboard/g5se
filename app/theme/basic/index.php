@@ -54,7 +54,7 @@ include_once(G5_PATH.'/head.sub.php');
                         where bo_device <> 'mobile'
                         ".($is_admin ? '' : "and bo_use_cert = ''")."
                         order by bo_order, bo_table limit 6";
-                $rs = sql_query($sql);
+                $rs = sql_pdo_query($sql);
                 $_widgets = [];
                 while ($row = sql_fetch_array($rs)) {
                     // bo_skin 에 'gallery' 또는 'pic' 들어가면 갤러리형, 그 외는 게시판형
@@ -95,7 +95,7 @@ include_once(G5_PATH.'/head.sub.php');
         </aside>
     </main>
 
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 
 </div>
 

@@ -30,10 +30,10 @@ if($od['od_pg'] == 'lg') {
 
         $sql = " select it_id, it_name, ct_price, ct_send_cost, it_sc_type
                     from {$g5['g5_shop_cart_table']}
-                    where od_id = '$od_id'
+                    where od_id = :od_id
                     group by it_id
                     order by ct_id ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql, [':od_id' => $od_id]);
         ?>
         
         <div class="tbl_head03 tbl_wrap">
@@ -59,9 +59,9 @@ if($od['od_pg'] == 'lg') {
 	                                SUM(ct_point * ct_qty) as point,
 	                                SUM(ct_qty) as qty
 	                            from {$g5['g5_shop_cart_table']}
-	                            where it_id = '{$row['it_id']}'
-	                              and od_id = '$od_id' ";
-	                $sum = sql_fetch($sql);
+	                            where it_id = :it_id
+	                              and od_id = :od_id ";
+	                $sum = sql_pdo_fetch($sql, [':it_id' => $row['it_id'], ':od_id' => $od_id]);
 	                $it_options = print_item_options($row['it_id'], $od_id);
 	
 	                // 배송비
@@ -89,10 +89,10 @@ if($od['od_pg'] == 'lg') {
 	                $status_items = array();
 	                $status_sql = " select ct_status
 	                                from {$g5['g5_shop_cart_table']}
-	                                where od_id = '$od_id'
-	                                  and it_id = '{$row['it_id']}'
+	                                where od_id = :od_id
+	                                  and it_id = :it_id
 	                                order by io_type asc, ct_id asc ";
-	                $status_result = sql_query($status_sql);
+	                $status_result = sql_pdo_query($status_sql, [':od_id' => $od_id, ':it_id' => $row['it_id']]);
 	                while($status = sql_fetch_array($status_result)) {
 	                    $st_count1++;
 	                    if($status['ct_status'] == '주문')

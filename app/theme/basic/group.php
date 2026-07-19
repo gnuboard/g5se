@@ -15,12 +15,15 @@ include_once(G5_LIB_PATH.'/latest.lib.php');
 // 그룹에 속한 게시판 카운트
 $sql_boards = " select bo_table, bo_subject, bo_count_write
                 from {$g5['board_table']}
-                where gr_id = '{$gr_id}'
-                  and bo_list_level <= '{$member['mb_level']}'
+                where gr_id = :gr_id
+                  and bo_list_level <= :mb_level
                   and bo_device <> 'mobile' ";
 if (!$is_admin) $sql_boards .= " and bo_use_cert = '' ";
 $sql_boards .= " order by bo_order ";
-$boards_result = sql_query($sql_boards);
+$boards_result = sql_pdo_query($sql_boards, [
+    ':gr_id' => $gr_id,
+    ':mb_level' => $member['mb_level'],
+]);
 $boards = [];
 while ($row = sql_fetch_array($boards_result)) $boards[] = $row;
 $board_count = count($boards);
@@ -64,7 +67,7 @@ $board_count = count($boards);
         </aside>
     </main>
 
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>
 
 <style>

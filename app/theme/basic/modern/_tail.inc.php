@@ -1,7 +1,7 @@
 <?php
 /*
  * 모던 footer — 모든 페이지 하단 일관된 디자인 제공.
- * 사용: require G5_THEME_PATH.'/modern/_footer.inc.php';
+ * 사용: require G5_THEME_PATH.'/modern/_tail.inc.php';
  *
  * 4-column 레이아웃:
  *   1) 사이트 메뉴 (회사소개·약관·개인정보 등 정적 페이지 링크)
@@ -18,9 +18,9 @@ global $config, $g5, $default;
 // 공지사항 최근 5건 (notice 게시판이 있으면)
 $_ft_notices = [];
 $notice_table = $g5['write_prefix'].'notice';
-$notice_check = sql_fetch(" SHOW TABLES LIKE '{$notice_table}' ");
+$notice_check = sql_pdo_fetch(" SHOW TABLES LIKE :notice_table ", [':notice_table' => $notice_table]);
 if ($notice_check) {
-    $rs = sql_query(" SELECT wr_id, wr_subject FROM `{$notice_table}` WHERE wr_is_comment = 0 ORDER BY wr_num, wr_reply LIMIT 5 ");
+    $rs = sql_pdo_query(" SELECT wr_id, wr_subject FROM `{$notice_table}` WHERE wr_is_comment = 0 ORDER BY wr_num, wr_reply LIMIT 5 ");
     while ($r = sql_fetch_array($rs)) $_ft_notices[] = $r;
 }
 

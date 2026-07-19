@@ -72,6 +72,6 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             <a href="<?php echo G5_URL ?>/" class="m-btn m-btn-primary">메인으로</a>
         </div>
     </main>
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>
 <!-- } 회원가입 완료 끝 -->

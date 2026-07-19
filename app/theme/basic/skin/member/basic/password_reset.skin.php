@@ -58,7 +58,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 
         </div>
     </main>
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>
 
 <script>

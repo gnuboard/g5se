@@ -8,10 +8,14 @@ include_once('./_head.php');
 $cp_count = 0;
 $sql = " select cp_id
             from {$g5['g5_shop_coupon_table']}
-            where mb_id IN ( '{$member['mb_id']}', '전체회원' )
-              and cp_start <= '".G5_TIME_YMD."'
-              and cp_end >= '".G5_TIME_YMD."' ";
-$res = sql_query($sql);
+            where mb_id IN ( :mb_id, '전체회원' )
+              and cp_start <= :start_date
+              and cp_end >= :end_date ";
+$res = sql_pdo_query($sql, [
+    ':mb_id' => $member['mb_id'],
+    ':start_date' => G5_TIME_YMD,
+    ':end_date' => G5_TIME_YMD,
+]);
 
 for($k=0; $cp=sql_fetch_array($res); $k++) {
     if(!is_used_coupon($member['mb_id'], $cp['cp_id']))
@@ -107,17 +111,17 @@ for($k=0; $cp=sql_fetch_array($res); $k++) {
                 $sql = " select *
                            from {$g5['g5_shop_wish_table']} a,
                                 {$g5['g5_shop_item_table']} b
-                          where a.mb_id = '{$member['mb_id']}'
+                          where a.mb_id = :mb_id
                             and a.it_id  = b.it_id
                           order by a.wi_id desc
                           limit 0, 8 ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql, [':mb_id' => $member['mb_id']]);
                 for ($i=0; $row = sql_fetch_array($result); $i++)
                 {
                     $image = get_it_image($row['it_id'], 100, 100, true);
 
-                    $sql = " select count(*) as cnt from {$g5['g5_shop_item_option_table']} where it_id = '{$row['it_id']}' and io_type = '0' ";
-                    $tmp = sql_fetch($sql);
+                    $sql = " select count(*) as cnt from {$g5['g5_shop_item_option_table']} where it_id = :it_id and io_type = '0' ";
+                    $tmp = sql_pdo_fetch($sql, [':it_id' => $row['it_id']]);
                     $out_cd = (isset($tmp['cnt']) && $tmp['cnt']) ? 'no' : '';
                 ?>
 

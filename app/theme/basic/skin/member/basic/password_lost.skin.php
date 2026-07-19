@@ -99,7 +99,7 @@ $has_cert = $config['cf_cert_use'] != 0 && $config['cf_cert_find'] != 0
 
         </div>
     </main>
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>
 
 <style>

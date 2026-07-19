@@ -134,7 +134,7 @@ $_use_shop = defined('G5_USE_SHOP') && G5_USE_SHOP;
         </div>
     </main>
 
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>
 
 <style>

@@ -67,7 +67,7 @@ include_once('./head.sub.php');
     <main class="m-container">
         <!-- 페이지 본문 -->
     </main>
-    <?php require G5_THEME_PATH.'/modern/_footer.inc.php'; ?>
+    <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>
 <?php include_once('./tail.sub.php');
 ```

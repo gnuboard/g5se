@@ -18,12 +18,12 @@ if (!$exists) {
     $len4 = $tmp_ca_id_len + 4;
 
     // 차차기 분류의 건수를 얻음
-    $sql = " select count(*) as cnt from {$g5['g5_shop_category_table']} where ca_id like '$tmp_ca_id%' and ca_use = '1' and length(ca_id) = $len4 ";
-    $row = sql_fetch($sql);
+    $sql = " select count(*) as cnt from {$g5['g5_shop_category_table']} where ca_id like :ca_pattern and ca_use = '1' and length(ca_id) = :ca_length ";
+    $row = sql_pdo_fetch($sql, [':ca_pattern' => $tmp_ca_id.'%', ':ca_length' => $len4]);
     $cnt = $row['cnt'];
 
-    $sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like '$tmp_ca_id%' and ca_use = '1' and length(ca_id) = $len2 order by ca_order, ca_id ";
-    $result = sql_query($sql);
+    $sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like :ca_pattern and ca_use = '1' and length(ca_id) = :ca_length order by ca_order, ca_id ";
+    $result = sql_pdo_query($sql, [':ca_pattern' => $tmp_ca_id.'%', ':ca_length' => $len2]);
     while ($row=sql_fetch_array($result)) {
         $sct_ct_here = '';
         if ($ca_id == $row['ca_id']) // 활성 분류 표시
@@ -32,8 +32,8 @@ if (!$exists) {
         $str .= '<li>';
         if ($cnt) {
             $str .= '<a href="'.shop_category_url($row['ca_id']).'" class="sct_ct_parent '.$sct_ct_here.'">'.$row['ca_name'].'</a>';
-            $sql2 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like '{$row['ca_id']}%' and ca_use = '1' and length(ca_id) = $len4 order by ca_order, ca_id ";
-            $result2 = sql_query($sql2);
+            $sql2 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like :ca_pattern and ca_use = '1' and length(ca_id) = :ca_length order by ca_order, ca_id ";
+            $result2 = sql_pdo_query($sql2, [':ca_pattern' => $row['ca_id'].'%', ':ca_length' => $len4]);
             $k=0;
             while ($row2=sql_fetch_array($result2)) {
                 $str .= '<a href="'.shop_category_url($row2['ca_id']).'">'.$row2['ca_name'].'</a>';

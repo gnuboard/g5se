@@ -3,7 +3,7 @@ if (!defined("_GNUBOARD_")) exit; // 개별 페이지 접근 불가
 
 // 이벤트 정보
 $hsql = " select ev_id, ev_subject, ev_subject_strong from {$g5['g5_shop_event_table']} where ev_use = '1' order by ev_id desc limit 3";
-$hresult = sql_query($hsql);
+$hresult = sql_pdo_query($hsql);
 
 if(sql_num_rows($hresult)) {
     // add_stylesheet('css 구문', 출력순서); 숫자가 작을 수록 먼저 출력됨
@@ -35,10 +35,10 @@ if(sql_num_rows($hresult)) {
         // 이벤트 상품
         $sql2 = " select b.*
             from `{$g5['g5_shop_event_item_table']}` a left join `{$g5['g5_shop_item_table']}` b on (a.it_id = b.it_id)
-            where a.ev_id = '{$row['ev_id']}'
+            where a.ev_id = :ev_id
             order by it_id desc
             limit 0, 3 ";
-        $result2 = sql_query($sql2);
+        $result2 = sql_pdo_query($sql2, [':ev_id' => $row['ev_id']]);
         for($k=1; $row2=sql_fetch_array($result2); $k++) {
             if($k == 1) {
                 echo '<ul class="ev_prd">'.PHP_EOL;

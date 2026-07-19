@@ -2,8 +2,9 @@
 include_once('./_common.php');
 
 $sql_common = " from {$g5['g5_shop_coupon_zone_table']}
-                where cz_start <= '".G5_TIME_YMD."'
-                  and cz_end >= '".G5_TIME_YMD."' ";
+                where cz_start <= :start_date
+                  and cz_end >= :end_date ";
+$sql_params = [':start_date' => G5_TIME_YMD, ':end_date' => G5_TIME_YMD];
 
 $sql_order  = " order by cz_id desc ";
 
