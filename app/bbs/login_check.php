@@ -37,7 +37,7 @@ if (!$is_need_not_password && (! (isset($mb['mb_id']) && $mb['mb_id']) || !login
 
     run_event('password_is_wrong', 'login', $mb);
 
-    alert('가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.');
+    alert("가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\n비밀번호는 대소문자를 구분합니다.");
 }
 
 // 차단된 아이디인가?

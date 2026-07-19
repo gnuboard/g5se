@@ -33,7 +33,8 @@ include_once(G5_PATH.'/head.sub.php');
 // 공백이 없어야 합니다.
 
 $msg = isset($msg) ? strip_tags($msg) : '';
-$msg2 = str_replace("\\n", "<br>", $msg);
+$msg = str_replace("\\n", "\n", $msg);
+$msg2 = nl2br($msg);
 
 $url = isset($url) ? clean_xss_tags($url, 1) : '';
 if (!$url) $url = isset($_SERVER['HTTP_REFERER']) ? clean_xss_tags($_SERVER['HTTP_REFERER'], 1) : '';
