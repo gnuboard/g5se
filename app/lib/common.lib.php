@@ -1958,9 +1958,10 @@ function sql_data_seek($result, $offset=0)
 // PDO 기반 query — 결과는 PDOStatement (또는 실패 시 false).
 // raw SQL 만 받음 (시그니처 보존). 변수 바인딩이 필요한 신규 코드는
 // sql_pdo_query() / sql_pdo_fetch() 사용 (lib/sql_pdo.lib.php).
-// Legacy API disabled. The nested declaration is intentionally never executed.
+// Archived raw-query implementation. Kept unreachable temporarily for reference;
+// the public sql_query() compatibility wrapper is defined below and delegates to PDO.
 if (false) {
-function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
+function legacy_raw_sql_query_disabled($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 {
     global $g5, $g5_debug;
 
