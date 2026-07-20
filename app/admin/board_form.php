@@ -903,22 +903,6 @@ $pg_anchor = '<ul class="anchor">
                 <label for="chk_all_include_tail">전체적용</label>
             </td>
         </tr>
-        <tr id="admin_captcha_box" style="display:none;">
-            <th scope="row">자동등록방지</th>
-            <td>
-                <?php
-                echo help("파일 경로를 입력 또는 수정시 캡챠를 반드시 입력해야 합니다.");
-
-                include_once G5_CAPTCHA_PATH.'/captcha.lib.php';
-                $captcha_html = captcha_html();
-                $captcha_js   = chk_captcha_js();
-                echo $captcha_html;
-                ?>
-                <script>
-                jQuery("#captcha_key").removeAttr("required").removeClass("required");
-                </script>
-            </td>
-        </tr>
         <tr>
             <th scope="row"><label for="bo_content_head">상단 내용</label></th>
             <td>
@@ -1309,53 +1293,6 @@ function set_point(f) {
     }
 }
 
-var captcha_chk = false;
-
-function use_captcha_check(){
-    $.ajax({
-        type: "POST",
-        url: g5_admin_url+"/ajax.use_captcha.php",
-        data: { admin_use_captcha: "1" },
-        cache: false,
-        async: false,
-        dataType: "json",
-        success: function(data) {
-        }
-    });
-}
-
-var bo_include_head = jQuery.trim(jQuery("#bo_include_head").val()),
-    bo_include_tail = jQuery.trim(jQuery("#bo_include_tail").val());
-
-function frm_check_file(){
-    var head = jQuery.trim(jQuery("#bo_include_head").val());
-    var tail = jQuery.trim(jQuery("#bo_include_tail").val());
-
-    if(bo_include_head !== head || bo_include_tail !== tail){
-        // 캡챠를 사용합니다.
-        jQuery("#admin_captcha_box").show();
-        captcha_chk = true;
-
-        use_captcha_check();
-
-        return false;
-    } else {
-        // jQuery("#admin_captcha_box").hide();
-    }
-
-    return true;
-}
-
-jQuery(function($){
-    if( window.self !== window.top ){   // frame 또는 iframe을 사용할 경우 체크
-        use_captcha_check();
-    }
-    
-    $("#bo_include_head, #bo_include_tail").on("change paste keyup", function(e) {
-        frm_check_file();
-    });
-});
-
 function fboardform_submit(f)
 {
     <?php
@@ -1386,14 +1323,6 @@ function fboardform_submit(f)
         return false;
     }
 
-    if (frm_check_file() == false) {
-        jQuery(window).scrollTop($('#bo_include_tail').offset().top - 30);
-    }
-    
-    if( captcha_chk ) {
-        <?php echo isset($captcha_js) ? $captcha_js : ''; // 캡챠 사용시 자바스크립트에서 입력된 캡챠를 검사함  ?>
-    }
-    
     return true;
 }
 </script>

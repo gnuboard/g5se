@@ -38,32 +38,6 @@ if ($w == '' && in_array($bo_table, get_bo_table_banned_word())) {
 $bo_include_head = isset($_POST['bo_include_head']) ? preg_replace(array("#[\\\]+$#", "#(<\?php|<\?)#i"), "", substr($_POST['bo_include_head'], 0, 255)) : '';
 $bo_include_tail = isset($_POST['bo_include_tail']) ? preg_replace(array("#[\\\]+$#", "#(<\?php|<\?)#i"), "", substr($_POST['bo_include_tail'], 0, 255)) : '';
 
-$check_captcha = false;
-
-// 관리자가 자동등록방지 CAPTCHA를 사용해야 할 경우
-// 최고 관리자인 경우에만 수정가능
-if ($is_admin === 'super') {
-    if ($w === 'u') {
-        if (isset($board['bo_include_head'], $board['bo_include_tail']) &&
-            ($board['bo_include_head'] !== $bo_include_head || $board['bo_include_tail'] !== $bo_include_tail)) {
-            $check_captcha = true;
-        }
-    } elseif ($w === '') {
-        if ($bo_include_head !== '_head.php' || $bo_include_tail !== '_tail.php') {
-            $check_captcha = true;
-        }
-    }
-}
-
-// 실제 CAPTCHA 검증
-if ($check_captcha) {
-    include_once(G5_CAPTCHA_PATH . '/captcha.lib.php');
-    
-    if (!chk_captcha()) {
-        alert('자동등록방지 숫자가 틀렸습니다.');
-    }
-}
-
 if ($file = $bo_include_head) {
     $file_ext = pathinfo($file, PATHINFO_EXTENSION);
 
@@ -542,10 +516,6 @@ if ($all_fields) {
 }
 
 delete_cache_latest($bo_table);
-
-if (function_exists('get_admin_captcha_by')) {
-    get_admin_captcha_by('remove');
-}
 
 run_event('admin_board_form_update', $bo_table, $w);
 
