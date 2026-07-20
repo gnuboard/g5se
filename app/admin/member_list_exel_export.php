@@ -12,7 +12,7 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 require_once __DIR__.'/admin.lib.php';
 require_once __DIR__.'/member_list_exel.lib.php'; // 회원관리파일 공통 라이브러리 (상수, 검색 옵션 설정, SQL WHERE 등)
-include_once(G5_LIB_PATH.'/PHPExcel.php');
+require_once dirname(__DIR__, 2).'/vendor/autoload.php';
 
 if (function_exists('check_demo')) {
     check_demo();
@@ -266,41 +266,26 @@ function member_export_create_excel($data, $fileName, $index = 0)
 {
     $config = member_export_get_config();
     
-    if (!class_exists('PHPExcel')) {
-        error_log('[Member Export Error] PHPExcel 라이브러리를 찾을 수 없습니다.');
-        throw new Exception('파일 생성 중 내부 오류가 발생했습니다: PHPExcel 라이브러리를 찾을 수 없습니다.');
-    }
-
-    // 현재 설정값 백업
-    $currentCache = PHPExcel_Settings::getCacheStorageMethod();
-    
-    // 캐싱 모드 설정 (엑셀 생성 전용)
-    $cacheMethods = [
-        PHPExcel_CachedObjectStorageFactory::cache_to_discISAM,
-        PHPExcel_CachedObjectStorageFactory::cache_in_memory_serialized
-    ];
-
-    foreach ($cacheMethods as $method) {
-        if (PHPExcel_Settings::setCacheStorageMethod($method)) {
-            break;
-        }
+    if (!class_exists('PhpOffice\PhpSpreadsheet\Spreadsheet')) {
+        error_log('[Member Export Error] PhpSpreadsheet 라이브러리를 찾을 수 없습니다.');
+        throw new Exception('파일 생성 중 내부 오류가 발생했습니다: PhpSpreadsheet 라이브러리를 찾을 수 없습니다.');
     }
 
     try {
-        $excel = new PHPExcel();
+        $excel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $excel->setActiveSheetIndex(0);
         
         // 헤더 스타일 적용
         $last_char = member_export_column_char(count($config['headers']) - 1);
         $sheet->getStyle("A2:{$last_char}2")->applyFromArray([
             'fill' => [
-                'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'startcolor' => ['rgb' => 'D9E1F2'], // 연파랑 배경
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'D9E1F2'], // 연파랑 배경
             ],
         ]);
         
         // 셀 정렬 및 줄바꿈 설정
-        $sheet->getStyle("A:{$last_char}")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)->setWrapText(true);
+        $sheet->getStyle("A:{$last_char}")->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
         
         // 컬럼 너비 설정
         foreach ($config['widths'] as $i => $width) {
@@ -319,7 +304,7 @@ function member_export_create_excel($data, $fileName, $index = 0)
         $filePath = MEMBER_EXPORT_DIR . "/" . $filename;
 
         // 파일 저장
-        $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($excel, 'Xlsx');
         $writer->setPreCalculateFormulas(false);
         $writer->save($filePath);
 
@@ -328,13 +313,6 @@ function member_export_create_excel($data, $fileName, $index = 0)
     catch (Exception $e) 
     {
         throw new Exception("엑셀 파일 생성에 실패하였습니다: " . $e->getMessage());
-    } 
-    finally 
-    {
-        // 캐싱 모드 원래 상태로 복원
-        if ($currentCache) {
-            PHPExcel_Settings::setCacheStorageMethod($currentCache);
-        }
     }
     
     return $filename;

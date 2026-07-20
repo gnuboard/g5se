@@ -171,7 +171,7 @@ if ($csv == 'xls')
     if (!$cnt)
         alert("출력할 내역이 없습니다.");
 
-        include_once(G5_LIB_PATH.'/PHPExcel.php');
+        require_once dirname(__DIR__, 3).'/vendor/autoload.php';
 
         $headers = array('우편번호', '주소', '이름', '전화1', '전화2', '상품명', '수량', '선택사항', '배송비', '상품코드', '주문번호', '운송장번호', '전하실말씀');
         $widths  = array(10, 30, 10, 15, 15, 15, 10, 10, 20, 15, 20, 20, 50);
@@ -243,9 +243,9 @@ if ($csv == 'xls')
             }
         }
 
-        $excel = new PHPExcel();
-        $excel->setActiveSheetIndex(0)->getStyle( "A1:{$last_char}1" )->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB($header_bgcolor);
-        $excel->setActiveSheetIndex(0)->getStyle( "A:$last_char" )->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)->setWrapText(true);
+        $excel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $excel->setActiveSheetIndex(0)->getStyle( "A1:{$last_char}1" )->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB($header_bgcolor);
+        $excel->setActiveSheetIndex(0)->getStyle( "A:$last_char" )->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
         foreach($widths as $i => $w) $excel->setActiveSheetIndex(0)->getColumnDimension( column_char($i) )->setWidth($w);
         $excel->getActiveSheet()->fromArray($data,NULL,'A1');
 
@@ -253,7 +253,7 @@ if ($csv == 'xls')
         header("Content-Disposition: attachment; filename=\"orderlist-".date("ymd", time()).".xls\"");
         header("Cache-Control: max-age=0");
 
-        $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($excel, 'Xls');
         $writer->save('php://output');
 }
 

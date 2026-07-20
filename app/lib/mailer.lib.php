@@ -1,7 +1,9 @@
 <?php
 if (!defined('_GNUBOARD_')) exit;
 
-include_once(G5_PHPMAILER_PATH.'/PHPMailerAutoload.php');
+require_once dirname(__DIR__, 2).'/vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
 
 // 메일 보내기 (파일 여러개 첨부 가능)
 // type : text=0, html=1, text+html=2
@@ -64,8 +66,7 @@ function mailer($fname, $fmail, $to, $subject, $content, $type=0, $file="", $cc=
                 $mail->SMTPAutoTLS = (bool) G5_SMTP_AUTO_TLS;
         }
         $mail->CharSet = 'UTF-8';
-        $mail->From = $fmail;
-        $mail->FromName = $fname;
+        $mail->setFrom($fmail, $fname);
         $mail->Subject = $subject;
         $mail->AltBody = ""; // optional, comment out and test
         $mail->msgHTML($content);
@@ -89,7 +90,7 @@ function mailer($fname, $fmail, $to, $subject, $content, $type=0, $file="", $cc=
             throw new Exception($mail->ErrorInfo);
         }
         
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         error_log("Mail sending error: " . $e->getMessage());
     }
 

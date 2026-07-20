@@ -18,10 +18,10 @@ $sms_messages = array();
 if(isset($_FILES['excelfile']['tmp_name']) && $_FILES['excelfile']['tmp_name']) {
     $file = $_FILES['excelfile']['tmp_name'];
 
-    include_once(G5_LIB_PATH.'/PHPExcel/IOFactory.php');
+    require_once dirname(__DIR__, 3).'/vendor/autoload.php';
 
-    $objPHPExcel = PHPExcel_IOFactory::load($file);
-    $sheet = $objPHPExcel->getSheet(0);
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+    $sheet = $spreadsheet->getSheet(0);
 
     $num_rows = $sheet->getHighestRow();
     $highestColumn = $sheet->getHighestColumn();
