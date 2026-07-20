@@ -105,7 +105,7 @@ admin_layout_start('현재 접속자', 'mb_connect');
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             <?php
             $i = 0;
-            while ($row = sql_fetch_array($result)):
+            while ($row = sql_pdo_fetch_array($result)):
                 $is_member = !empty($row['mb_id']);
                 $loc = trim($row['lo_location']) ?: '—';
                 $url = trim($row['lo_url']) ?: '—';

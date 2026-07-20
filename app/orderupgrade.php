@@ -20,11 +20,11 @@ if(!sql_pdo_query(" select it_sc_type from {$g5['g5_shop_cart_table']} limit 1 "
     $sql = " select ct_id, it_id from {$g5['g5_shop_cart_table']} order by ct_id ";
     $result = sql_pdo_query($sql);
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $sql = " select it_id, it_sc_type, it_sc_method, it_sc_price, it_sc_minimum, it_sc_qty
                     from {$g5['g5_shop_item_table']}
                     where it_id = '{$row['it_id']}' ";
-        $it = sql_fetch($sql);
+        $it = sql_pdo_fetch($sql);
 
         if(!$it['it_id'])
             continue;
@@ -65,7 +65,7 @@ if(!sql_pdo_query(" DESCRIBE {$g5['g5_shop_inicis_log_table']} ", false)) {
 }
 
 // cart 테이블 index 추가
-if(!sql_fetch(" show keys from {$g5['g5_shop_cart_table']} where Key_name = 'ct_status' ")) {
+if(!sql_pdo_fetch(" show keys from {$g5['g5_shop_cart_table']} where Key_name = 'ct_status' ")) {
     sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_cart_table']}`
                     ADD INDEX `it_id` (`it_id`),
                     ADD INDEX `ct_status` (`ct_status`) ", true);

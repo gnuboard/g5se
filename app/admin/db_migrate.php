@@ -84,7 +84,7 @@ if ($_action === 'charset_all') {
         [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
     );
     $_done = 0; $_fail = 0;
-    while ($r = sql_fetch_array($_rs)) {
+    while ($r = sql_pdo_fetch_array($_rs)) {
         $_t = preg_replace('/[^a-zA-Z0-9_]/', '', $r['tbl']);
         if (!$_t) continue;
         try {
@@ -123,7 +123,7 @@ if ($_action === 'zerodate_all') {
         [':db' => $_db_name, ':pfx' => G5_TABLE_PREFIX]
     );
     $_done = 0; $_fail = 0; $_total_rows = 0;
-    while ($r = sql_fetch_array($_rs)) {
+    while ($r = sql_pdo_fetch_array($_rs)) {
         $_t = preg_replace('/[^a-zA-Z0-9_]/', '', $r['tbl']);
         $_c = preg_replace('/[^a-zA-Z0-9_]/', '', $r['col']);
         $_type = strtoupper(preg_replace('/[^A-Za-z]/', '', $r['type']));
@@ -159,7 +159,7 @@ $_charset_rows = sql_pdo_query(
 );
 $_tables_utf8mb3 = [];
 $_tables_utf8mb4 = [];
-while ($r = sql_fetch_array($_charset_rows)) {
+while ($r = sql_pdo_fetch_array($_charset_rows)) {
     if (stripos($r['coll'], 'utf8mb4') === 0) {
         $_tables_utf8mb4[] = $r;
     } else {
@@ -189,7 +189,7 @@ $_zd_rows = sql_pdo_query(
 );
 $_zd_pending  = [];
 $_zd_complete = [];
-while ($r = sql_fetch_array($_zd_rows)) {
+while ($r = sql_pdo_fetch_array($_zd_rows)) {
     $needs = ($r['nullable'] === 'NO') || in_array($r['def'], ['0000-00-00', '0000-00-00 00:00:00'], true);
     if ($needs) {
         $_zd_pending[] = $r;

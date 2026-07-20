@@ -34,7 +34,7 @@ if($post_naverpay_form == 'cart.php') {
                                    order by ct_id asc ",
                                [':od_id' => $s_cart_id, ':it_id' => $it_id]);
 
-        for($k=0; $row=sql_fetch_array($result); $k++) {
+        for($k=0; $row=sql_pdo_fetch_array($result); $k++) {
             $_POST['io_id'][$it_id][] = $row['io_id'];
             $_POST['io_type'][$it_id][] = $row['io_type'];
             $_POST['ct_qty'][$it_id][] = $row['ct_qty'];
@@ -140,7 +140,7 @@ for($i=0; $i<$count; $i++) {
     $result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']} where it_id = :it_id order by io_no asc ",
                            [':it_id' => $it_id]);
     $lst_count = 0;
-    for($k=0; $row=sql_fetch_array($result); $k++) {
+    for($k=0; $row=sql_pdo_fetch_array($result); $k++) {
         $opt_list[$row['io_type']][$row['io_id']]['id'] = $row['io_id'];
         $opt_list[$row['io_type']][$row['io_id']]['use'] = $row['io_use'];
         $opt_list[$row['io_type']][$row['io_id']]['price'] = $row['io_price'];

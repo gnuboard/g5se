@@ -102,7 +102,7 @@ if ($w == '') {
 // 가장 큰 투표번호를 기본환경설정에 저장하여
 // 투표번호를 넘겨주지 않았을 경우
 // 가장 큰 투표번호를 구해야 하는 쿼리를 대체한다
-$row = sql_fetch(" select max(po_id) as max_po_id from {$g5['poll_table']} ");
+$row = sql_pdo_fetch(" select max(po_id) as max_po_id from {$g5['poll_table']} ");
 sql_pdo_query(" update {$g5['config_table']} set cf_max_po_id = '{$row['max_po_id']}' ");
 
 if ($w == 'd') {

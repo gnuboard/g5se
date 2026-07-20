@@ -55,7 +55,7 @@ if($config['cf_leave_day'] > 0) {
                 where (TO_DAYS(:now) - TO_DAYS(mb_leave_date)) > :days
                   and mb_memo not regexp '^[0-9]{8}.*삭제함' ",
                 [':now' => G5_TIME_YMDHIS, ':days' => (int) $config['cf_leave_day']]);
-    while ($row=sql_fetch_array($result))
+    while ($row=sql_pdo_fetch_array($result))
     {
         // 회원자료 삭제
         member_delete($row['mb_id']);

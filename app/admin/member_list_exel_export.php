@@ -247,7 +247,7 @@ function member_export_get_data($params)
 
     $excelData = [$config['title'], $config['headers']];
 
-    while ($row = sql_fetch_array($result)) {
+    while ($row = sql_pdo_fetch_array($result)) {
         $rowData = [];
         foreach ($fields as $field) {
             $val = isset($row[$field]) ? $row[$field] : '';

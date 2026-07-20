@@ -113,7 +113,7 @@ function get_shop_category_array($is_cache=false){
 
     $result = sql_pdo_query(get_shop_category_sql('', 2));
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
 
         $row['url'] = shop_category_url($row['ca_id']);
         $categories[$row['ca_id']]['text'] = $row;
@@ -121,14 +121,14 @@ function get_shop_category_array($is_cache=false){
         if( $row['ca_id'] ){
             $result2 = sql_pdo_query(get_shop_category_sql($row['ca_id'], 4));
 
-            for($j=0; $row2=sql_fetch_array($result2); $j++) {
+            for($j=0; $row2=sql_pdo_fetch_array($result2); $j++) {
 
                 $row2['url'] = shop_category_url($row2['ca_id']);
                 $categories[$row['ca_id']][$row2['ca_id']]['text'] = $row2;
 
                 if( $row2['ca_id'] ){
                     $result3 = sql_pdo_query(get_shop_category_sql($row2['ca_id'], 6));
-                    for($k=0; $row3=sql_fetch_array($result3); $k++) {
+                    for($k=0; $row3=sql_pdo_fetch_array($result3); $k++) {
 
                         $row3['url'] = shop_category_url($row3['ca_id']);
                         $categories[$row['ca_id']][$row2['ca_id']][$row3['ca_id']]['text'] = $row3;
@@ -181,7 +181,7 @@ function get_shop_member_coupon_count($mb_id='', $is_cache=false){
                   and cp_end >= :today ",
                 [':mb_id' => $mb_id, ':today' => G5_TIME_YMD]);
 
-    for($k=0; $cp=sql_fetch_array($res); $k++) {
+    for($k=0; $cp=sql_pdo_fetch_array($res); $k++) {
         if(!is_used_coupon($mb_id, $cp['cp_id']))
             $cp_count++;
     }
@@ -212,7 +212,7 @@ function get_shop_item_options($it_id, $subject, $no)
         $options = array();
 
         // 옵션항목 배열에 저장
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             $opt_id = explode(chr(30), $row['io_id']);
 
             for($k=0; $k<$subj_count; $k++) {
@@ -254,7 +254,7 @@ function get_shop_item_options($it_id, $subject, $no)
 
         $select = '<select id="it_option_1" class="it_option">'.PHP_EOL;
         $select .= '<option value="">선택</option>'.PHP_EOL;
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             if($row['io_price'] >= 0)
                 $price = '&nbsp;&nbsp;+ '.number_format($row['io_price']).'원';
             else

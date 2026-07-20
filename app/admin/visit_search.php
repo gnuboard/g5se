@@ -74,7 +74,7 @@ if(isset($sfl) && $sfl && !in_array($sfl, array('vi_ip','vi_date','vi_time','vi_
     $sql = " select count(*) as cnt
                 {$sql_common}
                 {$sql_search} ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     $total_count = $row['cnt'];
 
     $rows = $config['cf_page_rows'];
@@ -89,7 +89,7 @@ if(isset($sfl) && $sfl && !in_array($sfl, array('vi_ip','vi_date','vi_time','vi_
                 limit {$from_record}, {$rows} ";
     $result = sql_pdo_query($sql);
 
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $brow = $row['vi_browser'];
         if(!$brow)
             $brow = get_brow($row['vi_agent']);

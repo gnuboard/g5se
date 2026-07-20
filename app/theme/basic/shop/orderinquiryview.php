@@ -51,7 +51,7 @@ if($od['od_pg'] == 'lg') {
 	            </thead>
 	            <tbody>
 	            <?php
-	            for($i=0; $row=sql_fetch_array($result); $i++) {
+	            for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
 	                $image = get_it_image($row['it_id'], 160, 160);
 	
 	                // 합계금액 계산
@@ -93,7 +93,7 @@ if($od['od_pg'] == 'lg') {
 	                                  and it_id = :it_id
 	                                order by io_type asc, ct_id asc ";
 	                $status_result = sql_pdo_query($status_sql, [':od_id' => $od_id, ':it_id' => $row['it_id']]);
-	                while($status = sql_fetch_array($status_result)) {
+	                while($status = sql_pdo_fetch_array($status_result)) {
 	                    $st_count1++;
 	                    if($status['ct_status'] == '주문')
 	                        $st_count2++;

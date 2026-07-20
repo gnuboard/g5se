@@ -29,7 +29,7 @@ $arr = array();
 
 $result = sql_pdo_query(" select * from {$g5['visit_table']} where vi_date between :fr_date and :to_date ",
                        [':fr_date' => $fr_date, ':to_date' => $to_date]);
-while ($row=sql_fetch_array($result)) {
+while ($row=sql_pdo_fetch_array($result)) {
     $s = $row['vi_device'];
     if(!$s)
         $s = '기타';

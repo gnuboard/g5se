@@ -60,7 +60,7 @@ $result = sql_pdo_query(" select a.*, b.mb_open
            left join {$g5['member_table']} b on (a.mb_id = b.mb_id)
           where po_id = :po_id order by pc_id desc ",
           [':po_id' => $po_id]);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $list2[$i]['pc_name']  = get_text($row['pc_name']);
     $list2[$i]['name']     = get_sideview($row['mb_id'], get_text(cut_str($row['pc_name'],10)), '', '', $row['mb_open']);
     $list2[$i]['idea']     = get_text(cut_str($row['pc_idea'], 255));
@@ -86,7 +86,7 @@ $list3 = array();
 
 // 다른투표
 $result = sql_pdo_query(" select po_id, po_subject, po_date from {$g5['poll_table']} order by po_id desc ");
-for ($i=0; $row2=sql_fetch_array($result); $i++) {
+for ($i=0; $row2=sql_pdo_fetch_array($result); $i++) {
     $list3[$i]['po_id'] = $row2['po_id'];
     $list3[$i]['date'] = substr($row2['po_date'],2,8);
     $list3[$i]['subject'] = cut_str($row2['po_subject'],60,"…");

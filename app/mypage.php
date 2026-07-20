@@ -58,7 +58,7 @@ if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
     ", [':mb_id' => $_my['mb_id'], ':today' => G5_TIME_YMD]);
     $_cp_total = 0;
     if ($_r) {
-        while ($_cp = sql_fetch_array($_r)) {
+        while ($_cp = sql_pdo_fetch_array($_r)) {
             if (function_exists('is_used_coupon') && !is_used_coupon($_my['mb_id'], $_cp['cp_id']))
                 $_cp_total++;
         }

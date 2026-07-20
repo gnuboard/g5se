@@ -20,7 +20,7 @@ if (function_exists('check_demo')) {
 }
 
 $sql = " select * from {$g5['config_table']} limit 1";
-$ori_config = sql_fetch($sql);
+$ori_config = sql_pdo_fetch($sql);
 
 $cf_title = isset($_POST['cf_title']) ? strip_tags(clean_xss_attributes($_POST['cf_title'])) : '';
 $cf_admin = isset($_POST['cf_admin']) ? clean_xss_tags($_POST['cf_admin'], 1, 1) : '';

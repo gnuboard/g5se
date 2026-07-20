@@ -10,7 +10,7 @@ auth_check_menu($auth, $sub_menu, "r");
 $od_id = isset($_POST['od_id']) ? safe_replace_regex($_POST['od_id'], 'od_id') : 0;
 
 $sql = " select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-$od = sql_fetch($sql);
+$od = sql_pdo_fetch($sql);
 
 if(! ($od['od_id'] && $od['od_id']))
     die('<div>주문정보가 존재하지 않습니다.</div>');
@@ -50,7 +50,7 @@ $result = sql_pdo_query($sql);
         </thead>
         <tbody>
         <?php
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             // 상품이미지
             $image = get_it_image($row['it_id'], 50, 50);
 
@@ -86,7 +86,7 @@ $result = sql_pdo_query($sql);
                            from {$g5['g5_shop_cart_table']}
                           where it_id = '{$row['it_id']}'
                          and od_id = '$od_id' ";
-                $sum = sql_fetch($sql);
+                $sum = sql_pdo_fetch($sql);
 
                 $sendcost = get_item_sendcost($row['it_id'], $sum['price'], $sum['qty'], $od_id);
 
@@ -96,7 +96,7 @@ $result = sql_pdo_query($sql);
                 $save_it_id = $row['it_id'];
             }
 
-            for($k=0; $opt=sql_fetch_array($res); $k++) {
+            for($k=0; $opt=sql_pdo_fetch_array($res); $k++) {
                 if($opt['io_type'])
                     $opt_price = $opt['io_price'];
                 else

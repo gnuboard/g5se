@@ -175,7 +175,7 @@ $result = sql_pdo_query(
     $inquiry_params
 );
 $_orders = [];
-while ($row = sql_fetch_array($result)) $_orders[] = $row;
+while ($row = sql_pdo_fetch_array($result)) $_orders[] = $row;
 $_total_visible = count($_orders);
 
 // 페이지 합계 — 현재 페이지에 보이는 주문들의 주문금액/미입금액 합
@@ -196,7 +196,7 @@ if ($_total_visible > 0) {
                             from {$g5['g5_shop_cart_table']}
                            where od_id IN ($_in_ph)
                            group by od_id ", $_od_ids);
-    while ($_row = sql_fetch_array($_r)) {
+    while ($_row = sql_pdo_fetch_array($_r)) {
         $_order_items[$_row['od_id']]['count'] = (int)$_row['ic'];
     }
     // 주문별 가장 빠른 ct_id 의 it_name (대표 상품)
@@ -208,7 +208,7 @@ if ($_total_visible > 0) {
                                  where od_id IN ($_in_ph)
                                  group by od_id
                             ) m on m.od_id = c.od_id and m.min_ct = c.ct_id ", $_od_ids);
-    while ($_row = sql_fetch_array($_r)) {
+    while ($_row = sql_pdo_fetch_array($_r)) {
         $_order_items[$_row['od_id']]['name'] = $_row['it_name'];
     }
 }

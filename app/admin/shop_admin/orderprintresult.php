@@ -79,7 +79,7 @@ if ($csv == 'csv')
     echo iconv('utf-8', 'euc-kr', "우편번호,주소,이름,전화1,전화2,상품명,수량,선택사항,배송비,상품코드,주문번호,운송장번호,전하실말씀\n");
 
     $save_it_id = '';
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $pull_address = iconv('UTF-8', 'UHC', print_address($row['od_b_addr1'], $row['od_b_addr2'], $row['od_b_addr3'], $row['od_b_addr_jibeon']));
 
@@ -92,7 +92,7 @@ if ($csv == 'csv')
                         from {$g5['g5_shop_cart_table']}
                         where it_id = '{$row['it_id']}'
                           and od_id = '{$row['od_id']}' ";
-            $sum = sql_fetch($sql);
+            $sum = sql_pdo_fetch($sql);
 
             switch($row['ct_send_cost'])
             {
@@ -178,7 +178,7 @@ if ($csv == 'xls')
         $header_bgcolor = 'FFABCDEF';
         $last_char = column_char(count($headers) - 1);
 
-        for($i=1; $row=sql_fetch_array($result); $i++) {
+        for($i=1; $row=sql_pdo_fetch_array($result); $i++) {
 
             $pull_address = print_address($row['od_b_addr1'], $row['od_b_addr2'], $row['od_b_addr3'], $row['od_b_addr_jibeon']);
             
@@ -191,7 +191,7 @@ if ($csv == 'xls')
                             from {$g5['g5_shop_cart_table']}
                             where it_id = '{$row['it_id']}'
                               and od_id = '{$row['od_id']}' ";
-                $sum = sql_fetch($sql);
+                $sum = sql_pdo_fetch($sql);
 
                 switch($row['ct_send_cost'])
                 {
@@ -263,7 +263,7 @@ function get_order($od_id)
     global $g5;
 
     $sql = " select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-    return sql_fetch($sql);
+    return sql_pdo_fetch($sql);
 }
 
 $g5['title'] = "주문내역";
@@ -309,10 +309,10 @@ if (sql_num_rows($result) == 0)
     $mod = 10;
     $tot_total_price = 0;
     $save_it_id = '';
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $sql1 = " select * from {$g5['g5_shop_order_table']} where od_id = '{$row['od_id']}' ";
-        $row1 = sql_fetch($sql1);
+        $row1 = sql_pdo_fetch($sql1);
 
         // 1.03.02
         $row1['od_addr'] = '('.$row1['od_zip1'].$row1['od_zip2'].') '.print_address($row1['od_addr1'], $row1['od_addr2'], $row1['od_addr3'], $row1['od_addr_jibeon']);
@@ -386,7 +386,7 @@ if (sql_num_rows($result) == 0)
             $cnt = $sub_tot_qty = $sub_tot_price = 0;
             $save_it_id = '';
 
-            while ($row2 = sql_fetch_array($res2))
+            while ($row2 = sql_pdo_fetch_array($res2))
             {
                 if($row2['io_type']) {
                     $it_price = $row2['io_price'];
@@ -425,7 +425,7 @@ if (sql_num_rows($result) == 0)
                                 from {$g5['g5_shop_cart_table']}
                                 where it_id = '{$row2['it_id']}'
                                   and od_id = '{$row2['od_id']}' ";
-                    $sum = sql_fetch($sql);
+                    $sum = sql_pdo_fetch($sql);
 
                     // 조건부무료
                     if($row2['it_sc_type'] == 2) {

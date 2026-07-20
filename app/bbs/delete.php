@@ -66,7 +66,7 @@ if ($row['cnt'] >= $board['bo_count_delete'] && !$is_admin)
 // 나라오름님 수정 : 원글과 코멘트수가 정상적으로 업데이트 되지 않는 오류를 잡아 주셨습니다.
 $result = sql_pdo_query(" select wr_id, mb_id, wr_is_comment, wr_content from $write_table where wr_parent = :wr_parent order by wr_id ",
                         [':wr_parent' => $write['wr_id']]);
-while ($row = sql_fetch_array($result))
+while ($row = sql_pdo_fetch_array($result))
 {
     // 원글이라면
     if (!$row['wr_is_comment'])
@@ -78,7 +78,7 @@ while ($row = sql_fetch_array($result))
         // 업로드된 파일이 있다면 파일삭제
         $result2 = sql_pdo_query(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id ",
                                  [':bo_table' => $bo_table, ':wr_id' => $row['wr_id']]);
-        while ($row2 = sql_fetch_array($result2)) {
+        while ($row2 = sql_pdo_fetch_array($result2)) {
 
             $delete_file = run_replace('delete_file_path', G5_DATA_PATH.'/file/'.$bo_table.'/'.str_replace('../', '', $row2['bf_file']), $row2);
             if( file_exists($delete_file) ){

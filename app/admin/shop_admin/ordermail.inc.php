@@ -7,7 +7,7 @@ if (!defined("_ORDERMAIL_")) exit;
 // 주문자님께 메일발송 체크를 했다면
 if ($od_send_mail)
 {
-    $od = sql_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
+    $od = sql_pdo_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
 
     $addmemo = isset($addmemo) ? nl2br(stripslashes($addmemo)) : '';
 
@@ -22,7 +22,7 @@ if ($od_send_mail)
               where od_id = '{$od['od_id']}'
               order by ct_id ";
     $result = sql_pdo_query($sql);
-    for ($j=0; $ct=sql_fetch_array($result); $j++) {
+    for ($j=0; $ct=sql_pdo_fetch_array($result); $j++) {
         $cart_list[$j]['it_id']   = $ct['it_id'];
         $cart_list[$j]['it_name'] = $ct['it_name'];
         $cart_list[$j]['it_opt']  = $ct['ct_option'];

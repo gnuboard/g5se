@@ -28,7 +28,7 @@ $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search}
             {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -93,7 +93,7 @@ $colspan = 9;
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         switch($row['cz_type']) {
             case '1':
                 $cz_type = '포인트쿠폰';
@@ -111,7 +111,7 @@ $colspan = 9;
                 break;
             case '1':
                 $sql3 = " select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$row['cp_target']}' ";
-                $row3 = sql_fetch($sql3);
+                $row3 = sql_pdo_fetch($sql3);
                 $cp_method = '카테고리할인';
                 $cp_target = get_text($row3['ca_name']);
                 break;

@@ -20,13 +20,13 @@ if(preg_match('/[^0-9]/', $_POST['pp_price']))
 
 if($_POST['od_id']) {
     $sql = " select od_id from {$g5['g5_shop_order_table']} where od_id = '{$_POST['od_id']}' ";
-    $od = sql_fetch($sql);
+    $od = sql_pdo_fetch($sql);
     if(!$od['od_id'])
         alert('입력하신 주문번호는 존재하지 않습니다.');
 }
 
 $sql = " select * from {$g5['g5_shop_personalpay_table']} where pp_id = '$pp_id' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 if(!$row['pp_id'])
     alert_close('복사하시려는 개인결제 정보가 존재하지 않습니다.');

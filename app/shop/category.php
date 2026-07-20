@@ -22,7 +22,7 @@ function get_mshop_category($ca_id, $len)
     <div class="ct_wr">
         <?php
         $mshop_ca_res1 = sql_pdo_query(get_mshop_category('', 2));
-        for($i=0; $mshop_ca_row1=sql_fetch_array($mshop_ca_res1); $i++) {
+        for($i=0; $mshop_ca_row1=sql_pdo_fetch_array($mshop_ca_res1); $i++) {
             if($i == 0)
                 echo '<ul class="cate">'.PHP_EOL;
         ?>
@@ -31,7 +31,7 @@ function get_mshop_category($ca_id, $len)
                 <?php
                 $mshop_ca_res2 = sql_pdo_query(get_mshop_category($mshop_ca_row1['ca_id'], 4));
 
-                for($j=0; $mshop_ca_row2=sql_fetch_array($mshop_ca_res2); $j++) {
+                for($j=0; $mshop_ca_row2=sql_pdo_fetch_array($mshop_ca_res2); $j++) {
                     if($j == 0)
                         echo '<ul class="sub_cate sub_cate1">'.PHP_EOL;
                 ?>

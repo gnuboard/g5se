@@ -44,7 +44,7 @@ $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search}
             {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -116,7 +116,7 @@ $colspan = 5;
             <tbody>
                 <?php
                 $count = 0;
-                for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                     $is_continue = false;
                     // 회원아이디가 없는 메뉴는 삭제함
                     if ($row['mb_id'] == '' && $row['mb_nick'] == '') {

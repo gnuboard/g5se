@@ -48,7 +48,7 @@ $vnum = $total_count - (($page-1) * $page_size);
 
 $group = array();
 $qry = sql_pdo_query("select * from {$g5['sms5_form_group_table']} where fg_member = 1 order by fg_name");
-while ($res = sql_fetch_array($qry)) array_push($group, $res);
+while ($res = sql_pdo_fetch_array($qry)) array_push($group, $res);
 
 $res = sql_pdo_fetch("select count(*) as cnt from {$g5['sms5_form_table']} where fg_no = 0");
 $no_count = $res['cnt'];
@@ -57,7 +57,7 @@ $count = 1;
 $qry = sql_pdo_query("select * from {$g5['sms5_form_table']} where fg_member = 1 $sql_group $sql_search order by fo_no desc limit $page_start, $page_size_i", $params);
 $list_text = array();
 
-for($k=0;$res = sql_fetch_array($qry);$k++)
+for($k=0;$res = sql_pdo_fetch_array($qry);$k++)
 {
     $tmp = sql_pdo_fetch("select fg_name from {$g5['sms5_form_group_table']} where fg_no = :fg_no",
                          [':fg_no' => $res['fg_no']]);

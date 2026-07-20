@@ -17,7 +17,7 @@ function popular($skin_dir='basic', $pop_cnt=7, $date_cnt=3)
                               where pp_date between :date_gap and :today
                               group by pp_word order by cnt desc, pp_word limit 0, {$pop_cnt_i} ",
                             [':date_gap' => $date_gap, ':today' => G5_TIME_YMD]);
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $list[$i] = $row;
         // 스크립트등의 실행금지
         //$list[$i]['pp_word'] = get_text($list[$i]['pp_word']);

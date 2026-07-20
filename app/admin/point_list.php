@@ -127,7 +127,7 @@ admin_layout_start('포인트 내역', 'mb_point');
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             <?php
             $i = 0;
-            while ($row = sql_fetch_array($result)):
+            while ($row = sql_pdo_fetch_array($result)):
                 $linkable = !preg_match('/^@/', $row['po_rel_table']) && $row['po_rel_table'];
                 $is_expired = (int)$row['po_expired'] === 1;
                 ?>

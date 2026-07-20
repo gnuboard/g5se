@@ -38,7 +38,7 @@ $count = sql_num_rows($result);
             </thead>
             <tbody>
             <?php
-            for($i=0; $row=sql_fetch_array($result); $i++) {
+            for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
                 // 사용한 쿠폰인지 체크
                 if(is_used_coupon($member['mb_id'], $row['cp_id']))
                     continue;

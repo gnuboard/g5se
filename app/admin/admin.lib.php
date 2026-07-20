@@ -206,7 +206,7 @@ function get_member_id_select($name, $level, $selected = "", $event = "")
     $sql = " select mb_id from {$g5['member_table']} where mb_level >= '{$level}' ";
     $result = sql_pdo_query($sql);
     $str = '<select id="' . $name . '" name="' . $name . '" ' . $event . '><option value="">선택안함</option>';
-    for ($i = 0; $row = sql_fetch_array($result); $i++) {
+    for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
         $str .= '<option value="' . $row['mb_id'] . '"';
         if ($row['mb_id'] == $selected) {
             $str .= ' selected';
@@ -628,7 +628,7 @@ if (!$member['mb_id']) {
     $auth = array();
     $sql = " select au_menu, au_auth from {$g5['auth_table']} where mb_id = '{$member['mb_id']}' ";
     $result = sql_pdo_query($sql);
-    for ($i = 0; $row = sql_fetch_array($result); $i++) {
+    for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
         $auth[$row['au_menu']] = $row['au_auth'];
     }
 

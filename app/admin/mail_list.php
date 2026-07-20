@@ -13,7 +13,7 @@ $sql_common = " from {$g5['mail_table']} ";
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select COUNT(*) as cnt {$sql_common} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $page = 1;
@@ -60,7 +60,7 @@ $colspan = 7;
             </thead>
             <tbody>
                 <?php
-                for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                     $s_vie = '<a href="'.G5_ADMIN_URL.'/mail_preview?ma_id=' . $row['ma_id'] . '" target="_blank" class="btn btn_03">미리보기</a>';
 
                     $num = number_format($total_count - ($page - 1) * $config['cf_page_rows'] - $i);

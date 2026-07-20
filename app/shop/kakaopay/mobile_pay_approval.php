@@ -51,7 +51,7 @@ if(isset($data['pp_id']) && $data['pp_id']) {
                                 from {$g5['g5_shop_cart_table']}
                                where od_id = :od_id and ct_select = '1' ",
                            [':od_id' => $tmp_cart_id]);
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         // 상품에 대한 현재고수량
         if($row['io_id']) {

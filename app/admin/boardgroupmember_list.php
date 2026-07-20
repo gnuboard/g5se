@@ -126,7 +126,7 @@ admin_layout_start('그룹 접근 회원 — '.$gr['gr_subject'], 'groups');
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             <?php
             $i = 0;
-            while ($row = sql_fetch_array($result)):
+            while ($row = sql_pdo_fetch_array($result)):
                 $row2 = sql_pdo_fetch(" select count(*) as cnt from {$g5['group_member_table']} where mb_id = :mb_id ", [':mb_id' => $row['mb_id']]);
                 $cnt = (int)$row2['cnt'];
                 ?>

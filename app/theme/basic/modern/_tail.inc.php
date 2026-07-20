@@ -24,7 +24,7 @@ $notice_table = $g5['write_prefix'].'notice';
 $notice_check = sql_pdo_fetch(" SHOW TABLES LIKE :notice_table ", [':notice_table' => $notice_table]);
 if ($notice_check) {
     $rs = sql_pdo_query(" SELECT wr_id, wr_subject FROM `{$notice_table}` WHERE wr_is_comment = 0 ORDER BY wr_num, wr_reply LIMIT 5 ");
-    while ($r = sql_fetch_array($rs)) $_ft_notices[] = $r;
+    while ($r = sql_pdo_fetch_array($rs)) $_ft_notices[] = $r;
 }
 
 // 접속자 통계 — gnuboard 는 g5_config.cf_visit 에 "오늘:N,어제:N,최대:N,전체:N" 문자열로 저장.

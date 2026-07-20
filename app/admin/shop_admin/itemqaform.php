@@ -14,7 +14,7 @@ $sql = " select *
            from {$g5['g5_shop_item_qa_table']} a
            left join {$g5['member_table']} b on (a.mb_id = b.mb_id)
           where iq_id = '$iq_id' ";
-$iq = sql_fetch($sql);
+$iq = sql_pdo_fetch($sql);
 if (! (isset($iq['iq_id']) && $iq['iq_id'])) alert('등록된 자료가 없습니다.');
 
 $name = get_sideview($iq['mb_id'], get_text($iq['iq_name']), $iq['mb_email'], $iq['mb_homepage']);

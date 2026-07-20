@@ -16,7 +16,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
     $coupon = '';
     $coupon_info_class = '';
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if(!$row['cz_file'])
             continue;
 
@@ -108,7 +108,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
     $coupon = '';
     $coupon_info_class = '';
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if(!$row['cz_file'])
             continue;
 

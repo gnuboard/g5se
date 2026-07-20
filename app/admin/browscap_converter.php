@@ -42,7 +42,7 @@ $sql_order  = " order by vi_id desc ";
 $sql_limit  = " limit 0, " . strval($rows) . " ";
 
 $sql = " select count(vi_id) as cnt $sql_common ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $sql = " select vi_id, vi_agent, vi_browser, vi_os, vi_device
@@ -52,7 +52,7 @@ $sql = " select vi_id, vi_agent, vi_browser, vi_os, vi_device
 $result = sql_pdo_query($sql);
 
 $cnt = 0;
-for ($i = 0; $row = sql_fetch_array($result); $i++) {
+for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
     $info = $browscap->getBrowser($row['vi_agent']);
 
     $brow = $row['vi_browser'];

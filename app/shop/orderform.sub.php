@@ -73,7 +73,7 @@ if($is_kakaopay_use) {
         // 토스페이먼츠 escrowProducts 배열 생성
         $escrow_products = array();
 
-        for ($i=0; $row=sql_fetch_array($result); $i++)
+        for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
         {
             // 합계금액 계산
             $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
@@ -156,7 +156,7 @@ if($is_kakaopay_use) {
                                         ':ca_id3'     => $row['ca_id3'],
                                     ]);
 
-                for($k=0; $cp=sql_fetch_array($res); $k++) {
+                for($k=0; $cp=sql_pdo_fetch_array($res); $k++) {
                     if(is_used_coupon($member['mb_id'], $cp['cp_id']))
                         continue;
 
@@ -371,7 +371,7 @@ if($is_kakaopay_use) {
                                                where mb_id = :mb_id and ad_default = '0'
                                                order by ad_id desc limit 1 ",
                                            [':mb_id' => $member['mb_id']]);
-                    for($i=0; $row=sql_fetch_array($result); $i++) {
+                    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
                         $val1 = $row['ad_name'].$sep.$row['ad_tel'].$sep.$row['ad_hp'].$sep.$row['ad_zip1'].$sep.$row['ad_zip2'].$sep.$row['ad_addr1'].$sep.$row['ad_addr2'].$sep.$row['ad_addr3'].$sep.$row['ad_jibeon'].$sep.$row['ad_subject'];
                         $val2 = '<label for="ad_sel_addr_'.($i+1).'">최근배송지('.($row['ad_subject'] ? get_text($row['ad_subject']) : get_text($row['ad_name'])).')</label>';
                         $addr_list .= '<input type="radio" name="ad_sel_addr" value="'.get_text($val1).'" id="ad_sel_addr_'.($i+1).'"> '.PHP_EOL.$val2.PHP_EOL;
@@ -485,7 +485,7 @@ if($is_kakaopay_use) {
                                       and cp_minimum <= :tot ",
                                 [':mb_id' => $member['mb_id'], ':today' => G5_TIME_YMD, ':tot' => $tot_sell_price]);
 
-            for($k=0; $cp=sql_fetch_array($res); $k++) {
+            for($k=0; $cp=sql_pdo_fetch_array($res); $k++) {
                 if(is_used_coupon($member['mb_id'], $cp['cp_id']))
                     continue;
 
@@ -501,7 +501,7 @@ if($is_kakaopay_use) {
                                           and cp_minimum <= :tot ",
                                     [':mb_id' => $member['mb_id'], ':today' => G5_TIME_YMD, ':tot' => $tot_sell_price]);
 
-                for($k=0; $cp=sql_fetch_array($res); $k++) {
+                for($k=0; $cp=sql_pdo_fetch_array($res); $k++) {
                     if(is_used_coupon($member['mb_id'], $cp['cp_id']))
                         continue;
 

@@ -26,10 +26,10 @@ $sql .= " order by ca_id, it_name ";
 $result = sql_pdo_query($sql);
 
 $list = '';
-for($i=0;$row=sql_fetch_array($result);$i++) {
+for($i=0;$row=sql_pdo_fetch_array($result);$i++) {
     if($w == 'u') {
         $sql2 = " select count(*) as cnt from {$g5['g5_shop_event_item_table']} where ev_id = '$ev_id' and it_id = '{$row['it_id']}' ";
-        $row2 = sql_fetch($sql2);
+        $row2 = sql_pdo_fetch($sql2);
         if ($row2['cnt'])
             continue;
     }

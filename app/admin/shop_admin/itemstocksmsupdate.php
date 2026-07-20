@@ -30,7 +30,7 @@ if ($_POST['act_button'] == "선택SMS전송") {
         $sql = " select a.ss_id, a.ss_hp, a.ss_send, b.it_id, b.it_name
                     from {$g5['g5_shop_item_stocksms_table']} a left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id )
                     where a.ss_id = '$ss_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
 
         if(!$row['ss_id'] || !$row['it_id'] || $row['ss_send'])
             continue;

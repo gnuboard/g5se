@@ -15,7 +15,7 @@ if(sql_num_rows($hresult)) {
     </header>
     <ul>
     <?php
-    for ($i=0; $row=sql_fetch_array($hresult); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($hresult); $i++)
     {
         echo '<li class="ev_li"><div class="ev_li_wr">';
         $href = G5_SHOP_URL.'/event.php?ev_id='.$row['ev_id'];
@@ -39,7 +39,7 @@ if(sql_num_rows($hresult)) {
             order by it_id desc
             limit 0, 3 ";
         $result2 = sql_pdo_query($sql2);
-        for($k=1; $row2=sql_fetch_array($result2); $k++) {
+        for($k=1; $row2=sql_pdo_fetch_array($result2); $k++) {
             if($k == 1) {
                 echo '<ul class="ev_prd">'.PHP_EOL;
             }

@@ -51,7 +51,7 @@ if(isset($_FILES['excelfile']['tmp_name']) && $_FILES['excelfile']['tmp_name']) 
         }
 
         // 주문정보
-        $od = sql_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
+        $od = sql_pdo_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
         if (!$od) {
             $fail_count++;
             $fail_od_id[] = $od_id;

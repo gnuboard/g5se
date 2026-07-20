@@ -78,7 +78,7 @@ function order_update_delivery($od_id, $mb_id, $change_status, $delivery)
     $sql = " select * from {$g5['g5_shop_cart_table']} where od_id = '$od_id' ";
     $result = sql_pdo_query($sql);
 
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         // 재고를 사용하지 않았다면
         $stock_use = $row['ct_stock_use'];
@@ -106,7 +106,7 @@ function conv_sms_contents($od_id, $contents)
     {
         $sql = " select od_id, od_name, od_invoice, od_receipt_price, od_delivery_company
                     from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-        $od = sql_fetch($sql);
+        $od = sql_pdo_fetch($sql);
 
         $sms_contents = $contents;
         $sms_contents = str_replace("{이름}", $od['od_name'], $sms_contents);
@@ -197,7 +197,7 @@ function check_order_inicis_tmps(){
 
             $mail_msg = '';
 
-            for($i=0;$row=sql_fetch_array($result);$i++){
+            for($i=0;$row=sql_pdo_fetch_array($result);$i++){
                 
                 $oid = $row['oid'];
                 $p_tid = $row['P_TID'];
@@ -209,12 +209,12 @@ function check_order_inicis_tmps(){
                 sql_pdo_query($sql);
 
                 $sql = " select od_id from {$g5['g5_shop_order_table']} where od_id = '$oid' and od_tno = '$p_tid' ";
-                $tmp = sql_fetch($sql);
+                $tmp = sql_pdo_fetch($sql);
 
                 if( $tmp['od_id'] ) continue;
 
                 $sql = " select pp_id from {$g5['g5_shop_personalpay_table']} where pp_id = '$oid' and pp_tno = '$p_tid' ";
-                $tmp = sql_fetch($sql);
+                $tmp = sql_pdo_fetch($sql);
 
                 if( $tmp['pp_id'] ) continue;
 

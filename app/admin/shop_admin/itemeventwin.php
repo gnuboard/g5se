@@ -8,7 +8,7 @@ auth_check_menu($auth, $sub_menu, 'r');
 auth_check_menu($auth, $sub_menu, "r");
 
 $sql = " select ev_subject from {$g5['g5_shop_event_table']} where ev_id = '$ev_id' ";
-$ev = sql_fetch($sql);
+$ev = sql_pdo_fetch($sql);
 
 $g5['title'] = $ev['ev_subject'].' 이벤트상품';
 include_once(G5_PATH.'/head.sub.php');
@@ -34,7 +34,7 @@ include_once(G5_PATH.'/head.sub.php');
                   where a.ev_id = '$ev_id'
                   order by b.it_id desc ";
         $result = sql_pdo_query($sql);
-        for ($i=0; $row=sql_fetch_array($result); $i++)
+        for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
         {
             $href = shop_item_url($row['it_id']);
         ?>

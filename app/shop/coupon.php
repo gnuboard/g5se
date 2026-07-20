@@ -33,7 +33,7 @@ $result = sql_pdo_query(
 
 // 사용 가능 쿠폰만 미리 모음 (사용된 것 제외)
 $_coupons = [];
-while ($row = sql_fetch_array($result)) {
+while ($row = sql_pdo_fetch_array($result)) {
     if (is_used_coupon($member['mb_id'], $row['cp_id'])) continue;
 
     if ($row['cp_method'] == 1) {

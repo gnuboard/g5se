@@ -35,7 +35,7 @@ if ($stx) {
     }
     $sql_board .= " order by bo_order, gr_id, bo_table ";
     $result = sql_pdo_query($sql_board, $board_params);
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         if ($is_admin != 'super')
         {
@@ -187,7 +187,7 @@ if ($stx) {
         $rows_i        = (int) $rows;
         $result = sql_pdo_query(" select * from {$tmp_write_table} where {$sql_search} order by wr_id desc limit {$from_record_i}, {$rows_i} ",
                                 $search_params);
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
+        for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             // 검색어까지 링크되면 게시판 부하가 일어남
             $list[$idx][$i] = $row;
             $list[$idx][$i]['href'] = get_pretty_url($search_table[$idx], $row['wr_parent']);
@@ -244,7 +244,7 @@ if ($stx) {
 
 $group_select = '<label for="gr_id" class="sound_only">게시판 그룹선택</label><select name="gr_id" id="gr_id" class="select"><option value="">전체 분류';
 $result = sql_pdo_query(" select gr_id, gr_subject from {$g5['group_table']} order by gr_id ");
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     $group_select .= "<option value=\"".$row['gr_id']."\"".get_selected($gr_id, $row['gr_id']).">".$row['gr_subject']."</option>";
 $group_select .= '</select>';
 

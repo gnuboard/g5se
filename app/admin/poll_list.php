@@ -39,7 +39,7 @@ $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search}
             {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -117,9 +117,9 @@ $colspan = 8;
             </thead>
             <tbody>
                 <?php
-                for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                     $sql2 = " select sum(po_cnt1+po_cnt2+po_cnt3+po_cnt4+po_cnt5+po_cnt6+po_cnt7+po_cnt8+po_cnt9) as sum_po_cnt from {$g5['poll_table']} where po_id = '{$row['po_id']}' ";
-                    $row2 = sql_fetch($sql2);
+                    $row2 = sql_pdo_fetch($sql2);
                     $po_etc = ($row['po_etc']) ? "사용" : "미사용";
                     $po_use = ($row['po_use']) ? "사용" : "미사용";
 

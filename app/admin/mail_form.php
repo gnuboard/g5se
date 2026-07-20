@@ -20,7 +20,7 @@ if ($w == 'u') {
     $readonly = ' readonly';
 
     $sql = " select * from {$g5['mail_table']} where ma_id = '{$ma_id}' ";
-    $ma = sql_fetch($sql);
+    $ma = sql_pdo_fetch($sql);
     if (!$ma['ma_id']) {
         alert('등록된 자료가 없습니다.');
     }

@@ -12,7 +12,7 @@ require_once G5_EDITOR_LIB;
 auth_check_menu($auth, $sub_menu, 'w');
 
 $sql = " select count(*) as cnt from {$g5['group_table']} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 if (!$row['cnt']) {
     alert('게시판그룹이 한개 이상 생성되어야 합니다.', G5_ADMIN_URL.'/boardgroup_form');
 }
@@ -56,7 +56,7 @@ if (!array_key_exists('bo_use_sns', $board)) {
     sql_pdo_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_sns` TINYINT NOT NULL DEFAULT '0' AFTER `bo_use_cert` ", false);
 
     $result = sql_pdo_query(" select bo_table from `{$g5['board_table']}` ");
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         sql_pdo_query(
             " ALTER TABLE `{$g5['write_prefix']}{$row['bo_table']}`
                     ADD `wr_facebook_user` VARCHAR(255) NOT NULL DEFAULT '' AFTER `wr_ip`,
@@ -66,7 +66,7 @@ if (!array_key_exists('bo_use_sns', $board)) {
 }
 
 $sql = " SHOW COLUMNS FROM `{$g5['board_table']}` LIKE 'bo_use_cert' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 if (strpos($row['Type'], 'hp-') === false) {
     sql_pdo_query(" ALTER TABLE `{$g5['board_table']}` CHANGE `bo_use_cert` `bo_use_cert` ENUM('','cert','adult','hp-cert','hp-adult') NOT NULL DEFAULT '' ", false);
 }
@@ -75,7 +75,7 @@ if (!array_key_exists('bo_use_list_file', $board)) {
     sql_pdo_query(" ALTER TABLE `{$g5['board_table']}` ADD `bo_use_list_file` TINYINT NOT NULL DEFAULT '0' AFTER `bo_use_list_view` ", false);
 
     $result = sql_pdo_query(" select bo_table from `{$g5['board_table']}` ");
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         sql_pdo_query(
             " ALTER TABLE `{$g5['write_prefix']}{$row['bo_table']}`
                     ADD `wr_file` TINYINT NOT NULL DEFAULT '0' AFTER `wr_datetime` ", false

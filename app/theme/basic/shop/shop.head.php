@@ -2497,7 +2497,7 @@ body > #NAX_BLOCK iframe,
                             order by ca_order, ca_id ",
                         array(':parent_id' => $_parent_id.'%')
                     );
-                    while ($_category_row = sql_fetch_array($_category_result)) {
+                    while ($_category_row = sql_pdo_fetch_array($_category_result)) {
                         $_category_options[] = $_category_row;
                     }
                     if (!$_category_options) continue;

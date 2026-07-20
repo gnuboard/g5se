@@ -31,7 +31,7 @@ if ($is_admin != 'super') {     // 최고관리자가 아니면 체크
     } else {
         $sql = "select b.ca_mb_id from {$g5['g5_shop_item_table']} a , {$g5['g5_shop_category_table']} b where (a.ca_id = b.ca_id) and a.it_id = '$it_id'";
     }
-    $checks = sql_fetch($sql);
+    $checks = sql_pdo_fetch($sql);
 
     if( ! (isset($checks['ca_mb_id']) && $checks['ca_mb_id']) || $checks['ca_mb_id'] !== $member['mb_id'] ){
         alert("해당 분류의 관리회원이 아닙니다.");
@@ -44,7 +44,7 @@ if($w == "u") {
     $sql = " select it_img1, it_img2, it_img3, it_img4, it_img5, it_img6, it_img7, it_img8, it_img9, it_img10
                 from {$g5['g5_shop_item_table']}
                 where it_id = '$it_id' ";
-    $file = sql_fetch($sql);
+    $file = sql_pdo_fetch($sql);
 
     $it_img1    = $file['it_img1'];
     $it_img2    = $file['it_img2'];
@@ -494,7 +494,7 @@ else if ($w == "d")
                   where a.it_id = '$it_id'
                     and a.ca_id = b.ca_id
                     and b.ca_mb_id = '{$member['mb_id']}' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         if (!$row['it_id'])
             alert("\'{$member['mb_id']}\' 님께서 삭제 할 권한이 없는 상품입니다.");
     }

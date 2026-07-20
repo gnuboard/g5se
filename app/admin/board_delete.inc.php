@@ -15,7 +15,7 @@ if (!$tmp_bo_table) {
 }
 
 // 게시판 1개는 삭제 불가 (게시판 복사를 위해서)
-//$row = sql_fetch(" select count(*) as cnt from $g5['board_table'] ");
+//$row = sql_pdo_fetch(" select count(*) as cnt from $g5['board_table'] ");
 //if ($row['cnt'] <= 1) { return; }
 
 // 게시판 설정 삭제

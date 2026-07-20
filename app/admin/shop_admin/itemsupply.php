@@ -46,7 +46,7 @@ if($ps_run) {
     <tbody>
     <?php
     if(isset($it['it_id']) && $it['it_id']) {
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             $spl_id = $row['io_id'];
             $spl_val = explode(chr(30), $spl_id);
             $spl_subject = $spl_val[0];
@@ -108,7 +108,7 @@ if($ps_run) {
                                     where it_id = '{$post_it_id}'
                                       and io_id = '".sql_real_escape_string($spl_id)."'
                                       and io_type = '1' ";
-                        $row = sql_fetch($sql);
+                        $row = sql_pdo_fetch($sql);
 
                         if($row) {
                             $spl_price = (int)$row['io_price'];

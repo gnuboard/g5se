@@ -258,7 +258,7 @@ if ($w == 'c') // 댓글 입력
                         where wr_email not in ( :wr_email, :mb_email, '' )
                         and wr_parent = :wr_parent ",
                 [':wr_email' => $wr['wr_email'], ':mb_email' => $member['mb_email'], ':wr_parent' => $wr_id]);
-            while ($row=sql_fetch_array($result))
+            while ($row=sql_pdo_fetch_array($result))
                 $array_email[] = $row['wr_email'];
         }
 

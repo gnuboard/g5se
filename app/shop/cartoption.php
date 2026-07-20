@@ -78,7 +78,7 @@ if($option_2) {
 	<h3>선택옵션</h3>
     <ul id="sit_opt_added">
         <?php
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             if(!$row['io_id'])
                 $it_stock_qty = get_it_stock_qty($row['it_id']);
             else

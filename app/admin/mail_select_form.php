@@ -23,12 +23,12 @@ if (!$ma['ma_id']) {
 
 // 전체회원수
 $sql = " select COUNT(*) as cnt from {$g5['member_table']} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $tot_cnt = $row['cnt'];
 
 // 탈퇴대기회원수
 $sql = " select COUNT(*) as cnt from {$g5['member_table']} where mb_leave_date <> '' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $finish_cnt = $row['cnt'];
 
 $last_option = explode('||', $ma['ma_last_option']);
@@ -128,7 +128,7 @@ admin_layout_start($g5['title'], 'mail');
                             <?php
                             $sql = " select gr_id, gr_subject from {$g5['group_table']} order by gr_subject ";
                             $result = sql_pdo_query($sql);
-                            for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                            for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                                 echo '<option value="' . $row['gr_id'] . '">' . $row['gr_subject'] . '</option>';
                             }
                             ?>

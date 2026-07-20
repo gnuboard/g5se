@@ -9,7 +9,7 @@ if( !isset($g5['faq_table']) || !isset($g5['faq_master_table']) ){
 // FAQ MASTER
 $faq_master_list = array();
 $result = sql_pdo_query(" select * from {$g5['faq_master_table']} order by fm_order,fm_id ");
-while ($row=sql_fetch_array($result))
+while ($row=sql_pdo_fetch_array($result))
 {
     $key = $row['fm_id'];
     if (!isset($fm_id)) $fm_id = $key;
@@ -84,7 +84,7 @@ if(is_file($skin_file)) {
                   $sql_search
                 order by fa_order , fa_id
                 limit $from_record_i, $page_rows_i ", $search_params);
-    for ($i=0;$row=sql_fetch_array($result);$i++){
+    for ($i=0;$row=sql_pdo_fetch_array($result);$i++){
         $faq_list[] = $row;
         if($stx) {
             $faq_list[$i]['fa_subject'] = search_font($stx, conv_content($faq_list[$i]['fa_subject'], 1));

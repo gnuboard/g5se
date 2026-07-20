@@ -72,7 +72,7 @@ if($po_run) {
     <tbody>
     <?php
     if(isset($it['it_id']) && $it['it_id']) {
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             $opt_id = $row['io_id'];
             $opt_val = explode(chr(30), $opt_id);
             $opt_1 = $opt_val[0];
@@ -148,7 +148,7 @@ if($po_run) {
                                     where it_id = '{$post_it_id}'
                                       and io_id = '$opt_id'
                                       and io_type = '0' ";
-                        $row = sql_fetch($sql);
+                        $row = sql_pdo_fetch($sql);
 
                         if($row) {
                             $opt_price = (int)$row['io_price'];

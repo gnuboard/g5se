@@ -53,7 +53,7 @@ $sql_common = " from {$g5['new_win_table']} ";
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $sql = "select * $sql_common order by nw_id desc ";
@@ -85,7 +85,7 @@ $result = sql_pdo_query($sql);
         </thead>
         <tbody>
             <?php
-            for ($i = 0; $row = sql_fetch_array($result); $i++) {
+            for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                 $bg = 'bg' . ($i % 2);
             ?>
                 <tr class="<?php echo $bg; ?>">

@@ -14,7 +14,7 @@ if (!function_exists("itemdelete")) {
 
         $sql = " select it_explan, it_mobile_explan, it_img1, it_img2, it_img3, it_img4, it_img5, it_img6, it_img7, it_img8, it_img9, it_img10
                     from {$g5['g5_shop_item_table']} where it_id = '$it_id' ";
-        $it = sql_fetch($sql);
+        $it = sql_pdo_fetch($sql);
 
         // 상품 이미지 삭제
         $dir_list = array();

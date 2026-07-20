@@ -51,12 +51,12 @@ $sql_common = "  from {$g5['g5_shop_item_stocksms_table']} ";
 
 // 미전송 건수
 $sql = " select count(*) as cnt " . $sql_common . " where ss_send = '0' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $unsend_count = $row['cnt'];
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -126,11 +126,11 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         // 상품정보
         $sql = " select it_name from {$g5['g5_shop_item_table']} where it_id = '{$row['it_id']}' ";
-        $it = sql_fetch($sql);
+        $it = sql_pdo_fetch($sql);
 
         if($it['it_name'])
             $it_name = get_text($it['it_name']);

@@ -44,7 +44,7 @@ $sql_common .= $sql_search;
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = isset($row['cnt']) ? $row['cnt'] : 0;
 
 $rows = $config['cf_page_rows'];
@@ -88,7 +88,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <?php
     $sql1 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} order by ca_order, ca_id ";
     $result1 = sql_pdo_query($sql1);
-    for ($i=0; $row1=sql_fetch_array($result1); $i++) {
+    for ($i=0; $row1=sql_pdo_fetch_array($result1); $i++) {
         $len = strlen($row1['ca_id']) / 2 - 1;
         $nbsp = "";
         for ($i=0; $i<$len; $i++) $nbsp .= "&nbsp;&nbsp;&nbsp;";
@@ -144,13 +144,13 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $href = shop_item_url($row['it_id']);
 
         // 선택옵션이 있을 경우 주문대기 수량 계산하지 않음
         $sql2 = " select count(*) as cnt from {$g5['g5_shop_item_option_table']} where it_id = '{$row['it_id']}' and io_type = '0' and io_use = '1' ";
-        $row2 = sql_fetch($sql2);
+        $row2 = sql_pdo_fetch($sql2);
         $wait_qty = 0;
 
         if(! (isset($row2['cnt']) && $row2['cnt'])) {
@@ -159,7 +159,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
                        where it_id = '{$row['it_id']}'
                          and ct_stock_use = '0'
                          and ct_status in ('쇼핑', '주문', '입금', '준비') ";
-            $row1 = sql_fetch($sql1);
+            $row1 = sql_pdo_fetch($sql1);
             $wait_qty = $row1['sum_qty'];
         }
 

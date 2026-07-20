@@ -17,7 +17,7 @@ require_once __DIR__.'/admin.lib.php';   // help(), get_member_id_select(), get_
 
 // https://github.com/gnuboard/gnuboard5/issues/296 이슈처리
 $sql = " select * from {$g5['config_table']} limit 1";
-$config = sql_fetch($sql);
+$config = sql_pdo_fetch($sql);
 
 if (!array_key_exists('cf_add_script', $config)) {
     sql_pdo_query(

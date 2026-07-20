@@ -6,7 +6,7 @@ if (get_cookie('ck_visit_ip') != $_SERVER['REMOTE_ADDR'])
 {
     set_cookie('ck_visit_ip', $_SERVER['REMOTE_ADDR'], 86400); // 하루동안 저장
 
-    // $tmp_row = sql_fetch(" select max(vi_id) as max_vi_id from {$g5['visit_table']} ");
+    // $tmp_row = sql_pdo_fetch(" select max(vi_id) as max_vi_id from {$g5['visit_table']} ");
     // $vi_id = $tmp_row['max_vi_id'] + 1;
 
     // $_SERVER 배열변수 값의 변조를 이용한 SQL Injection 공격을 막는 코드입니다. 110810

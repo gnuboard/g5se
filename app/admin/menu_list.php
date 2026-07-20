@@ -81,7 +81,7 @@ admin_layout_start('메뉴 설정', 'menus');
             <?php
             $i = 0;
             $rows_data = [];
-            while ($row = sql_fetch_array($result)) {
+            while ($row = sql_pdo_fetch_array($result)) {
                 $is_sub = strlen($row['me_code']) === 4;
                 $code2  = substr($row['me_code'], 0, 2);
                 $rows_data[] = ['code'=>$code2, 'is_sub'=>$is_sub, 'name'=>$row['me_name'], 'link'=>$row['me_link'], 'target'=>$row['me_target'], 'order'=>(int)$row['me_order'], 'use'=>(int)$row['me_use']];

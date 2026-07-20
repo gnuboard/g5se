@@ -32,7 +32,7 @@ if(! function_exists('column_char')) {
     $last_char = column_char(count($headers) - 1);
     $rows = array();
 
-    for($i=1; $row=sql_fetch_array($result); $i++) {
+    for($i=1; $row=sql_pdo_fetch_array($result); $i++) {
         $rows[] = 
                     array(' '.$row['od_id'], 
                           $row['od_name'], 

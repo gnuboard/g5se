@@ -40,7 +40,7 @@ $sql_common .= $sql_search;
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -101,7 +101,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
           order by bn_order, bn_id desc
           limit $from_record, $rows  ";
     $result = sql_pdo_query($sql);
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         // 테두리 있는지
         $bn_border  = $row['bn_border'];
         // 새창 띄우기인지

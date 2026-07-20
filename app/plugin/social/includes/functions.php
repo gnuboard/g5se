@@ -186,7 +186,7 @@ function social_get_data($by, $provider, $user_profile){
 
         $exists = array();
 
-        while($row=sql_fetch_array($result)){
+        while($row=sql_pdo_fetch_array($result)){
             if($row['mb_nick'] && $row['mb_nick'] == $nick){
                 $exists['mb_nick'] = $nick;
             }
@@ -217,7 +217,7 @@ function social_user_profile_replace( $mb_id, $provider, $profile ){
 
     $result = sql_pdo_query("SELECT mp_no, mb_id from {$g5['social_profile_table']} where provider = :provider and identifier = :identifier ",
                             [':provider' => $provider, ':identifier' => $profile->identifier]);
-    for($i=0;$row=sql_fetch_array($result);$i++){   //혹시 맞지 않는 데이터가 있으면 삭제합니다.
+    for($i=0;$row=sql_pdo_fetch_array($result);$i++){   //혹시 맞지 않는 데이터가 있으면 삭제합니다.
         if( $row['mb_id'] != $mb_id ){
             sql_pdo_query("DELETE FROM {$g5['social_profile_table']} where mp_no = :mp_no",
                           [':mp_no' => (int) $row['mp_no']]);
@@ -875,7 +875,7 @@ function social_login_link_account($mb_id, $is_buffer=false, $is_type=''){
 
     $my_social_accounts = array();
 
-    for($i=0;$row=sql_fetch_array($result);$i++){
+    for($i=0;$row=sql_pdo_fetch_array($result);$i++){
         $my_social_accounts[] = $row;
     }
 

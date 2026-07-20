@@ -45,7 +45,7 @@ save_order_point("완료");
 // 주문서 정보
 //------------------------------------------------------------------------------
 $sql = " select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-$od = sql_fetch($sql);
+$od = sql_pdo_fetch($sql);
 if (! (isset($od['od_id']) && $od['od_id'])) {
     alert("해당 주문번호로 주문서가 존재하지 않습니다.");
 }
@@ -180,7 +180,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
         <tbody>
         <?php
         $chk_cnt = 0;
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             // 상품이미지
             $image = get_it_image($row['it_id'], 50, 50);
 
@@ -199,7 +199,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                         from {$g5['g5_shop_cart_table']}
                         where it_id = '{$row['it_id']}'
                           and od_id = '{$od['od_id']}' ";
-            $sum = sql_fetch($sql);
+            $sum = sql_pdo_fetch($sql);
 
             // 배송비
             switch($row['ct_send_cost'])
@@ -223,7 +223,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                     $ct_send_cost = '무료';
             }
 
-            for($k=0; $opt=sql_fetch_array($res); $k++) {
+            for($k=0; $opt=sql_pdo_fetch_array($res); $k++) {
                 if($opt['io_type'])
                     $opt_price = $opt['io_price'];
                 else
@@ -312,7 +312,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
 <?php } ?>
 <?php if($od['od_pg'] === 'inicis' && !$od['od_test']) {
     $sql = "select P_TID from {$g5['g5_shop_inicis_log_table']} where oid = '$od_id' and P_STATUS = 'cancel' ";
-    $tmp_row = sql_fetch($sql);
+    $tmp_row = sql_pdo_fetch($sql);
     if(isset($tmp_row['P_TID']) && $tmp_row['P_TID']){
 ?>
 <div class="od_test_caution">주의) 이 주문은 결제취소된 내역이 있습니다. 이니시스 관리자 상점에서 반드시 재확인을 해 주세요.</div>

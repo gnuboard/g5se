@@ -43,7 +43,7 @@ $rows_i        = (int) $rows;
 
 $group_select = '<label for="gr_id" class="sound_only">그룹</label><select name="gr_id" id="gr_id"><option value="">전체그룹';
 $result = sql_pdo_query(" select gr_id, gr_subject from {$g5['group_table']} order by gr_id ");
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $group_select .= "<option value=\"".$row['gr_id']."\">".$row['gr_subject'];
 }
 $group_select .= '</select>';
@@ -51,7 +51,7 @@ $group_select .= '</select>';
 $list = array();
 $result = sql_pdo_query(" select a.*, b.bo_subject, b.bo_mobile_subject, c.gr_subject, c.gr_id {$sql_common} {$sql_order} limit {$from_record_i}, {$rows_i} ",
                         $common_params);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $tmp_write_table = $g5['write_prefix'].$row['bo_table'];
 
     if ($row['wr_id'] == $row['wr_parent']) {

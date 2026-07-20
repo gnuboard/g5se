@@ -19,7 +19,7 @@ $result = sql_pdo_query(" select * from {$g5['new_win_table']}
     <h2>팝업레이어 알림</h2>
 
 <?php
-for ($i=0; $nw=sql_fetch_array($result); $i++)
+for ($i=0; $nw=sql_pdo_fetch_array($result); $i++)
 {
     // 이미 체크 되었다면 Continue
     if (isset($_COOKIE["hd_pops_{$nw['nw_id']}"]) && $_COOKIE["hd_pops_{$nw['nw_id']}"])

@@ -44,7 +44,7 @@ foreach($check_keys as $key){
 $od_send_mail = $posts['od_send_mail'];
 
 $sql = " select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-$od  = sql_fetch($sql);
+$od  = sql_pdo_fetch($sql);
 if(! (isset($od['od_id']) && $od['od_id']))
     alert('주문자료가 존재하지 않습니다.');
 
@@ -133,7 +133,7 @@ if($info['od_misu'] == 0 && $od_status == '배송') {
     $sql = " select * from {$g5['g5_shop_cart_table']} where od_id = '$od_id' ";
     $result = sql_pdo_query($sql);
 
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         // 재고를 사용하지 않았다면
         $stock_use = $row['ct_stock_use'];

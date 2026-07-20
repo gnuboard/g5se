@@ -28,7 +28,7 @@ if ($w == "u")
     $readonly = " readonly";
 
     $sql = " select * from {$g5['g5_shop_event_table']} where ev_id = '$ev_id' ";
-    $ev = sql_fetch($sql);
+    $ev = sql_pdo_fetch($sql);
     if (! (isset($ev['ev_id']) && $ev['ev_id']))
         alert("등록된 자료가 없습니다.");
 
@@ -57,7 +57,7 @@ if ($is_admin != 'super')
     $sql .= " where ca_mb_id = '{$member['mb_id']}' ";
 $sql .= " order by ca_order, ca_id ";
 $result = sql_pdo_query($sql);
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     $len = strlen($row['ca_id']) / 2 - 1;
 
@@ -214,7 +214,7 @@ admin_layout_start($g5["title"], "shop");
                 <div id="reg_item_list" class="srel_sel">
                     <?php
                     if( $res_item ) {
-                    for($i=0; $row=sql_fetch_array($res_item); $i++) {
+                    for($i=0; $row=sql_pdo_fetch_array($res_item); $i++) {
                         $it_name = get_it_image($row['it_id'], 50, 50).' '.$row['it_name'];
 
                         if($i==0)

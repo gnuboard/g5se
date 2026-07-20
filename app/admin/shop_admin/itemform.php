@@ -82,7 +82,7 @@ if ($w == "")
     if (!$it['ca_id'])
     {
         $sql = " select ca_id from {$g5['g5_shop_category_table']} order by ca_order, ca_id limit 1 ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         if (! (isset($row['ca_id']) && $row['ca_id']))
             alert("등록된 분류가 없습니다. 우선 분류를 등록하여 주십시오.", './categorylist.php');
         $it['ca_id'] = $row['ca_id'];
@@ -102,7 +102,7 @@ else if ($w == "u")
                   where a.it_id = '$it_id'
                     and a.ca_id = b.ca_id
                     and b.ca_mb_id = '{$member['mb_id']}' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         if (!$row['it_id'])
             alert("\'{$member['mb_id']}\' 님께서 수정 할 권한이 없는 상품입니다.");
     }
@@ -118,7 +118,7 @@ else if ($w == "u")
         $ca_id = $it['ca_id'];
 
     $sql = " select * from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' ";
-    $ca = sql_fetch($sql);
+    $ca = sql_pdo_fetch($sql);
 }
 else
 {
@@ -145,7 +145,7 @@ if ($is_admin != 'super')
     $sql .= " where ca_mb_id = '{$member['mb_id']}' ";
 $sql .= " order by ca_order, ca_id ";
 $result = sql_pdo_query($sql);
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     $len = strlen($row['ca_id']) / 2 - 1;
 
@@ -1379,7 +1379,7 @@ $(function(){
                             $sql .= " where ca_mb_id = '{$member['mb_id']}' ";
                         $sql .= " order by ca_order, ca_id ";
                         $result = sql_pdo_query($sql);
-                        for ($i=0; $row=sql_fetch_array($result); $i++)
+                        for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
                         {
                             $len = strlen($row['ca_id']) / 2 - 1;
 
@@ -1475,7 +1475,7 @@ $(function(){
                           where a.it_id = '$it_id'
                           order by ir_no asc ";
                 $result = sql_pdo_query($sql);
-                for($g=0; $row=sql_fetch_array($result); $g++)
+                for($g=0; $row=sql_pdo_fetch_array($result); $g++)
                 {
                     $it_name = get_it_image($row['it_id'], 50, 50).' '.$row['it_name'];
 
@@ -1517,7 +1517,7 @@ $(function(){
                 <?php
                 $sql = " select ev_id, ev_subject from {$g5['g5_shop_event_table']} order by ev_id desc ";
                 $result = sql_pdo_query($sql);
-                for ($g=0; $row=sql_fetch_array($result); $g++) {
+                for ($g=0; $row=sql_pdo_fetch_array($result); $g++) {
                     if($g == 0)
                         echo '<ul>';
                 ?>
@@ -1592,7 +1592,7 @@ $(function(){
                           where a.it_id = '$it_id'
                           order by b.ev_id desc ";
                 $result = sql_pdo_query($sql);
-                for ($g=0; $row=sql_fetch_array($result); $g++) {
+                for ($g=0; $row=sql_pdo_fetch_array($result); $g++) {
                     $str .= $comma . $row['ev_id'];
                     $comma = ",";
 

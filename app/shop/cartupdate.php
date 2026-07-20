@@ -66,7 +66,7 @@ if($act == "buy")
                                        group by od_id, it_id, it_name, ct_option, io_id, io_type ",
                                    [':od_id' => $tmp_cart_id, ':it_id' => $it_id]);
 
-            for($k=0; $row=sql_fetch_array($result); $k++) {
+            for($k=0; $row=sql_pdo_fetch_array($result); $k++) {
                 $sum = sql_pdo_fetch(" select SUM(ct_qty) as cnt from {$g5['g5_shop_cart_table']}
                                         where od_id <> :od_id
                                           and it_id = :it_id
@@ -215,7 +215,7 @@ else // 장바구니에 담기
         $result = sql_pdo_query(" select * from {$g5['g5_shop_item_option_table']} where it_id = :it_id and io_use = 1 order by io_no asc ",
                                [':it_id' => $it_id]);
         $lst_count = 0;
-        for($k=0; $row=sql_fetch_array($result); $k++) {
+        for($k=0; $row=sql_pdo_fetch_array($result); $k++) {
             $opt_list[$row['io_type']][$row['io_id']]['id'] = $row['io_id'];
             $opt_list[$row['io_type']][$row['io_id']]['use'] = $row['io_use'];
             $opt_list[$row['io_type']][$row['io_id']]['price'] = $row['io_price'];

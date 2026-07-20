@@ -153,7 +153,7 @@ admin_layout_start('게시판 관리', 'bbs_board');
             $select_cls = 'h-9 pl-2.5 pr-8 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm';
             $input_cls  = 'w-full h-9 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-admin-primary-500/30 focus:border-admin-primary-500';
             $num_cls    = 'w-14 h-9 px-2 text-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm';
-            while ($row = sql_fetch_array($result)) {
+            while ($row = sql_pdo_fetch_array($result)) {
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
                     <td class="px-3 py-2 text-center">

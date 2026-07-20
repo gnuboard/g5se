@@ -53,7 +53,7 @@ if ($sst) {
 }
 
 $sql = " select count(*) as cnt {$sql_common} {$sql_search} {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -128,14 +128,14 @@ $colspan = 9;
             </thead>
             <tbody>
                 <?php
-                for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                     // 접근회원수
                     $sql1 = " select count(*) as cnt from {$g5['group_member_table']} where gr_id = '{$row['gr_id']}' ";
-                    $row1 = sql_fetch($sql1);
+                    $row1 = sql_pdo_fetch($sql1);
 
                     // 게시판수
                     $sql2 = " select count(*) as cnt from {$g5['board_table']} where gr_id = '{$row['gr_id']}' ";
-                    $row2 = sql_fetch($sql2);
+                    $row2 = sql_pdo_fetch($sql2);
 
                     $s_upd = '<a href="'.G5_ADMIN_URL.'/boardgroup_form?' . $qstr . '&amp;w=u&amp;gr_id=' . $row['gr_id'] . '" class="btn_03 btn">수정</a>';
 

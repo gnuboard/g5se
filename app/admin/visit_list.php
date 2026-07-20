@@ -31,7 +31,7 @@ if (isset($domain))
 $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -62,7 +62,7 @@ $result = sql_pdo_query($sql);
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $brow = $row['vi_browser'];
         if(!$brow)
             $brow = get_brow($row['vi_agent']);

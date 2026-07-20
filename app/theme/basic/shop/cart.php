@@ -27,7 +27,7 @@ $result = sql_pdo_query(" select a.ct_id, a.it_id, a.it_name, a.ct_price, a.ct_p
                             order by a.ct_id ",
                         [':od_id' => $s_cart_id]);
 
-for ($i = 0; $row = sql_fetch_array($result); $i++) {
+for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
     $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
                                   SUM(ct_point * ct_qty) as point,
                                   SUM(ct_qty) as qty

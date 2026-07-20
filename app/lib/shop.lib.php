@@ -381,13 +381,13 @@ class item_list
 
             if ($this->is_page) {
                 $sql2 = " select count(*) as cnt " . $sql_common . $sql_where;
-                $row2 = sql_fetch($sql2);
+                $row2 = sql_pdo_fetch($sql2);
                 $this->total_count = $row2['cnt'];
             }
         }
 
         if( isset($result) && $result ){
-            while ($row=sql_fetch_array($result)) {
+            while ($row=sql_pdo_fetch_array($result)) {
                 
                 if( isset($row['it_seo_title']) && ! $row['it_seo_title'] ){
                     shop_seo_title_update($row['it_id']);
@@ -1046,7 +1046,7 @@ function get_item_options($it_id, $subject, $is_div='', $is_first_option_title='
         $options = array();
 
         // 옵션항목 배열에 저장
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             $opt_id = explode(chr(30), $row['io_id']);
 
             for($k=0; $k<$subj_count; $k++) {
@@ -1109,7 +1109,7 @@ function get_item_options($it_id, $subject, $is_div='', $is_first_option_title='
 
         $select = '<select id="it_option_1" class="it_option">'.PHP_EOL;
         $select .= '<option value="">선택</option>'.PHP_EOL;
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             if($row['io_price'] >= 0)
                 $price = '&nbsp;&nbsp;+ '.number_format($row['io_price']).'원';
             else
@@ -1157,7 +1157,7 @@ function get_item_supply($it_id, $subject, $is_div='', $is_first_option_title=''
     $options = array();
 
     // 옵션항목 배열에 저장
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $opt_id = explode(chr(30), $row['io_id']);
 
         if($opt_id[0] && !array_key_exists($opt_id[0], $options))
@@ -1228,7 +1228,7 @@ function print_item_options($it_id, $cart_id)
                            [':it_id' => $it_id, ':cart_id' => $cart_id]);
 
     $str = '';
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if($i == 0)
             $str .= '<ul>'.PHP_EOL;
         $price_plus = '';
@@ -1531,7 +1531,7 @@ function relation_item($it_id, $width, $height, $rows=3)
                                 where a.it_id = :it_id order by ir_no asc limit 0, ".(int)$rows,
                            [':it_id' => $it_id]);
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if($i == 0) {
             $str .= '<span class="sound_only">관련 상품 시작</span>';
             $str .= '<ul class="sct_rel_ul">';
@@ -1587,7 +1587,7 @@ function item_icon($it)
                         OR
                         ( cp_method = '1' and ( cp_target IN ( '{$it['ca_id']}', '{$it['ca_id2']}', '{$it['ca_id3']}' ) ) )
                       ) ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if($row['cnt'])
         $icon .= '<span class="shop_icon shop_icon_coupon">쿠폰</span>';
 
@@ -1778,7 +1778,7 @@ function get_order_info($od_id)
                 from {$g5['g5_shop_cart_table']}
                 where od_id = '$od_id'
                   and ct_status IN ( '취소', '반품', '품절' ) ";
-    $sum = sql_fetch($sql);
+    $sum = sql_pdo_fetch($sql);
     $cancel_price = $sum['price'];
 
     // 미수금액
@@ -1822,7 +1822,7 @@ function get_item_point($it, $io_id='', $trunc=10)
                           and io_id = '$io_id'
                           and io_type = '0'
                           and io_use = '1' ";
-            $opt = sql_fetch($sql);
+            $opt = sql_pdo_fetch($sql);
 
             if($opt['io_id'])
                 $it_price += $opt['io_price'];
@@ -1855,7 +1855,7 @@ function get_sendcost($cart_id, $selected=1)
                   and ct_select = '$selected' ";
 
     $result = sql_pdo_query($sql);
-    for($i=0; $sc=sql_fetch_array($result); $i++) {
+    for($i=0; $sc=sql_pdo_fetch_array($result); $i++) {
         // 합계
         $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
                         SUM(ct_qty) as qty
@@ -1864,7 +1864,7 @@ function get_sendcost($cart_id, $selected=1)
                       and od_id = '$cart_id'
                       and ct_status IN ( '쇼핑', '주문', '입금', '준비', '배송', '완료' )
                       and ct_select = '$selected'";
-        $sum = sql_fetch($sql);
+        $sum = sql_pdo_fetch($sql);
 
         $send_cost = get_item_sendcost($sc['it_id'], $sum['price'], $sum['qty'], $cart_id);
 
@@ -1908,7 +1908,7 @@ function get_item_sendcost($it_id, $price, $qty, $cart_id)
                   and od_id = '$cart_id'
                 order by ct_id
                 limit 1 ";
-    $ct = sql_fetch($sql);
+    $ct = sql_pdo_fetch($sql);
     if(!$ct['it_id'])
         return 0;
 
@@ -1945,7 +1945,7 @@ function get_item_sendcost2($it_id, $price, $qty)
     $sql = " select it_id, it_sc_type, it_sc_method, it_sc_price, it_sc_minimum, it_sc_qty
                 from {$g5['g5_shop_item_table']}
                 where it_id = '$it_id' ";
-    $it = sql_fetch($sql);
+    $it = sql_pdo_fetch($sql);
     if(!$it['it_id'])
         return 0;
 
@@ -2051,7 +2051,7 @@ function is_soldout($it_id, $is_cache=false)
                       and io_use = '1' ";
         $result = sql_pdo_query($sql);
 
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             // 옵션 재고수량
             $stock_qty = get_option_stock_qty($it_id, $row['io_id'], $row['io_type']);
 
@@ -2093,7 +2093,7 @@ function check_itemuse_write($it_id, $mb_id, $close=true)
                     where it_id = '$it_id'
                       and mb_id = '$mb_id'
                       and ct_status = '완료' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
 
         if($row['cnt'] == 0)
         {
@@ -2225,7 +2225,7 @@ function get_delivery_inquiry($company, $invoice, $class='')
 function update_use_cnt($it_id)
 {
     global $g5;
-    $row = sql_fetch(" select count(*) as cnt from {$g5['g5_shop_item_use_table']} where it_id = '{$it_id}' and is_confirm = 1 ");
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_item_use_table']} where it_id = '{$it_id}' and is_confirm = 1 ");
     return sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_use_cnt = '{$row['cnt']}' where it_id = '{$it_id}' ");
 }
 
@@ -2303,7 +2303,7 @@ function get_boxcart_datas($is_cache=false)
     $sql  = " select * from {$g5['g5_shop_cart_table']} ";
     $sql .= " where od_id = '".$cart_id."' group by it_id ";
     $result = sql_pdo_query($sql);
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $key = $row['it_id'];
         $cache[$key] = $row;
@@ -2341,7 +2341,7 @@ function get_wishlist_datas($mb_id, $is_cache=false)
     $sql  = " select a.it_id, b.it_name from {$g5['g5_shop_wish_table']} a, {$g5['g5_shop_item_table']} b ";
     $sql .= " where a.mb_id = '".$mb_id."' and a.it_id  = b.it_id order by a.wi_id desc ";
     $result = sql_pdo_query($sql);
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $key = $row['it_id'];
         $cache[$mb_id][$key] = $row;
@@ -2406,9 +2406,9 @@ function get_shop_order_data($od_id, $type='item')
     $od_id = preg_replace('/[^0-9a-z_-]/i', '', clean_xss_tags($od_id));
 
     if( $type == 'personal' ){
-        $row = sql_fetch("select * from {$g5['g5_shop_personalpay_table']} where pp_id = $od_id ", false);
+        $row = sql_pdo_fetch("select * from {$g5['g5_shop_personalpay_table']} where pp_id = $od_id ", false);
     } else {
-        $row = sql_fetch("select * from {$g5['g5_shop_order_table']} where od_id = $od_id ", false);
+        $row = sql_pdo_fetch("select * from {$g5['g5_shop_order_table']} where od_id = $od_id ", false);
     }
 
     return $row;
@@ -2478,7 +2478,7 @@ function save_order_point($ct_status="완료")
     $result = sql_pdo_query(" select * from {$g5['g5_shop_cart_table']}
                                where ct_status = :status and ct_point_use = '0' and ct_time <= :before ",
                            [':status' => $ct_status, ':before' => $beforedays]);
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         // 회원 ID 를 얻는다.
         $od_row = sql_pdo_fetch(" select od_id, mb_id from {$g5['g5_shop_order_table']} where od_id = :od_id ",
                                 [':od_id' => $row['od_id']]);
@@ -2629,7 +2629,7 @@ function before_check_cart_price($s_cart_id, $is_ct_select_condition=false, $is_
                            [':s_cart_id' => $s_cart_id]);
     $check_need_update = false;
     
-    for ($i=0; $row=sql_fetch_array($result); $i++){
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++){
         if( ! $row['it_id'] ) continue;
 
         $it_id = $row['it_id'];
@@ -2802,7 +2802,7 @@ function add_order_post_log($msg='', $code='error'){
 
     if ( $code === 'error' ) {
         $result = sql_pdo_query("describe `{$g5['g5_shop_post_log_table']}`");
-        while ($row = sql_fetch_array($result)){
+        while ($row = sql_pdo_fetch_array($result)){
             if( $row['Field'] === 'ol_msg' && $row['Type'] === 'varchar(255)' ){
                 sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` MODIFY ol_msg TEXT NOT NULL;", false);
                 sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` DROP PRIMARY KEY;", false);

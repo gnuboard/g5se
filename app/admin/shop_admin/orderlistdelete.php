@@ -29,7 +29,7 @@ for ($i=0; $i<$count_post_chk; $i++)
     $k     = isset($_POST['chk'][$i]) ? $_POST['chk'][$i] : 0;
     $od_id = isset($_POST['od_id'][$k]) ? safe_replace_regex($_POST['od_id'][$k], 'od_id') : '';
 
-    $od = sql_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
+    $od = sql_pdo_fetch(" select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
     if (!$od) continue;
 
     // 주문상태가 주문이 아니면 건너뜀

@@ -54,7 +54,7 @@ function g54_user_memo_insert($kind, $unkind, $page=1){
         $result = sql_pdo_query(" select * from {$g5['memo_table']} where me_send_mb_id = :mb_id and me_type = 'recv' ",
                                 [':mb_id' => $member['mb_id']]);
 
-        while ($row = sql_fetch_array($result))
+        while ($row = sql_pdo_fetch_array($result))
         {
             sql_pdo_query(" insert into {$g5['memo_table']} (
                                 me_recv_mb_id, me_send_mb_id, me_send_datetime, me_read_datetime,

@@ -57,7 +57,7 @@ $result = sql_pdo_query(" select wr_id, wr_subject, wr_content, wr_name, wr_date
             where wr_is_comment = 0
             and wr_option not like '%secret%'
             order by wr_num, wr_reply limit 0, {$lines_i} ");
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $file = '';
 
     if (strpos($row['wr_option'], 'html') !== false)

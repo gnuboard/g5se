@@ -36,7 +36,7 @@ function get_order_status_sum($status)
                     sum(od_cart_price + od_send_cost + od_send_cost2 - od_cancel_price) as price
                 from {$g5['g5_shop_order_table']}
                 where od_status = '$status' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
 
     $info = array();
     $info['count'] = (int)$row['cnt'];
@@ -55,7 +55,7 @@ function get_order_date_sum($date)
                     sum(od_cancel_price) as cancelprice
                 from {$g5['g5_shop_order_table']}
                 where SUBSTRING(od_time, 1, 10) = '$date' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
 
     $info = array();
     $info['order'] = (int)$row['orderprice'];
@@ -80,7 +80,7 @@ function get_order_settle_sum($date)
                     from {$g5['g5_shop_order_table']}
                     where SUBSTRING(od_time, 1, 10) = '$date'
                       and od_settle_case = '$val' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
 
         $info[$val]['price'] = (int)$row['price'];
         $info[$val]['count'] = (int)$row['cnt'];
@@ -92,7 +92,7 @@ function get_order_settle_sum($date)
                 from {$g5['g5_shop_order_table']}
                 where SUBSTRING(od_time, 1, 10) = '$date'
                   and od_receipt_point > 0 ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     $info['포인트']['price'] = (int)$row['price'];
     $info['포인트']['count'] = (int)$row['cnt'];
 
@@ -102,7 +102,7 @@ function get_order_settle_sum($date)
                 from {$g5['g5_shop_order_table']}
                 where SUBSTRING(od_time, 1, 10) = '$date'
                   and ( od_cart_coupon > 0 or od_coupon > 0 or od_send_coupon > 0 ) ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     $info['쿠폰']['price'] = (int)$row['price'];
     $info['쿠폰']['count'] = (int)$row['cnt'];
 
@@ -278,7 +278,7 @@ function get_max_value($arr)
                         where it_use = '1'
                           and it_option_subject = ''
                           and it_stock_qty <= it_noti_qty ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch($sql);
             $item_noti = (int)$row['cnt'];
 
             // 재고부족 옵션
@@ -287,7 +287,7 @@ function get_max_value($arr)
                         from {$g5['g5_shop_item_option_table']}
                         where io_use = '1'
                           and io_stock_qty <= io_noti_qty ";
-            $row = sql_fetch($sql);
+            $row = sql_pdo_fetch($sql);
             $option_noti = (int)$row['cnt'];
 
             // SMS 정보
@@ -395,10 +395,10 @@ function get_max_value($arr)
                           order by qa_num
                           limit $max_limit ";
                 $result = sql_pdo_query($sql);
-                for ($i=0; $row=sql_fetch_array($result); $i++)
+                for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
                 {
                     $sql1 = " select * from {$g5['member_table']} where mb_id = '{$row['mb_id']}' ";
-                    $row1 = sql_fetch($sql1);
+                    $row1 = sql_pdo_fetch($sql1);
 
                     $name = get_sideview($row['mb_id'], get_text($row['qa_name']), $row1['mb_email'], $row1['mb_homepage']);
                 ?>
@@ -433,10 +433,10 @@ function get_max_value($arr)
                           order by iq_id desc
                           limit $max_limit ";
                 $result = sql_pdo_query($sql);
-                for ($i=0; $row=sql_fetch_array($result); $i++)
+                for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
                 {
                     $sql1 = " select * from {$g5['member_table']} where mb_id = '{$row['mb_id']}' ";
-                    $row1 = sql_fetch($sql1);
+                    $row1 = sql_pdo_fetch($sql1);
 
                     $name = get_sideview($row['mb_id'], get_text($row['iq_name']), $row1['mb_email'], $row1['mb_homepage']);
                 ?>
@@ -470,10 +470,10 @@ function get_max_value($arr)
                       order by is_id desc
                       limit $max_limit ";
             $result = sql_pdo_query($sql);
-            for ($i=0; $row=sql_fetch_array($result); $i++)
+            for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
             {
                 $sql1 = " select * from {$g5['member_table']} where mb_id = '{$row['mb_id']}' ";
-                $row1 = sql_fetch($sql1);
+                $row1 = sql_pdo_fetch($sql1);
 
                 $name = get_sideview($row['mb_id'], get_text($row['is_name']), $row1['mb_email'], $row1['mb_homepage']);
             ?>

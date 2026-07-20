@@ -23,7 +23,7 @@ $items = [];
 switch ($type) {
     case 'group':
         $r = sql_pdo_query(" select gr_id as id, gr_subject as subject from {$g5['group_table']} order by gr_order, gr_id ");
-        while ($row = sql_fetch_array($r)) {
+        while ($row = sql_pdo_fetch_array($r)) {
             $items[] = [
                 'subject' => preg_replace('/[\'\"]/', '', $row['subject']),
                 'link'    => G5_BBS_URL.'/group.php?gr_id='.$row['id'],
@@ -32,7 +32,7 @@ switch ($type) {
         break;
     case 'board':
         $r = sql_pdo_query(" select bo_table as id, bo_subject as subject, gr_id from {$g5['board_table']} order by bo_order, bo_table ");
-        while ($row = sql_fetch_array($r)) {
+        while ($row = sql_pdo_fetch_array($r)) {
             $g = get_call_func_cache('get_group', [$row['gr_id']]);
             $items[] = [
                 'subject' => preg_replace('/[\'\"]/', '', $row['subject']),
@@ -44,7 +44,7 @@ switch ($type) {
     case 'content':
         if (isset($g5['content_table']) && sql_pdo_query(" describe {$g5['content_table']} ", [], false)) {
             $r = sql_pdo_query(" select co_id as id, co_subject as subject from {$g5['content_table']} order by co_id ");
-            while ($row = sql_fetch_array($r)) {
+            while ($row = sql_pdo_fetch_array($r)) {
                 $items[] = [
                     'subject' => preg_replace('/[\'\"]/', '', $row['subject']),
                     'link'    => get_pretty_url(G5_CONTENT_DIR, $row['id']),

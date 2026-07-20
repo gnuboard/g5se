@@ -31,7 +31,7 @@ if($cart_stock_limit > 0) {
                   and ct_status = '쇼핑'
                   and ct_select = '1'
                   and UNIX_TIMESTAMP(ct_select_time) > '$stocktime' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
 
     if(!$row['cnt'])
         die("주문 요청 때까지 ".$cart_stock_limit."시간 이상 경과되어 주문 상품이 초기화 됐습니다.\n\n 장바구니에서 주문하실 상품을 다시 확인해 주십시오.");
@@ -49,12 +49,12 @@ $sql = " select *, sum(ct_qty) as sum_ct_qty
               and ct_status = '쇼핑' GROUP BY od_id, it_id, it_name, ct_option, io_id, io_type ";
 $result = sql_pdo_query($sql);
 
-for($i=0; $row=sql_fetch_array($result); $i++) {
+for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $ct_qty = $row['sum_ct_qty'];
 
     // 해당 상품이 품절 또는 판매중지 상태인지 체크합니다.
     $sql = " select it_soldout, it_use, ca_id, ca_id2, ca_id3 from {$g5['g5_shop_item_table']} where it_id = '".$row['it_id']."' ";
-    $item = sql_fetch($sql);
+    $item = sql_pdo_fetch($sql);
     
     $category_str = '';
 
@@ -63,7 +63,7 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
         $sql = " select ca_use from {$g5['g5_shop_category_table']} where (ca_id = '".$item['ca_id']."' or ca_id = '".$item['ca_id2']."' or ca_id = '".$item['ca_id3']."') ";
         $result2 = sql_pdo_query($sql);
 
-        while($ca=sql_fetch_array($result2)){
+        while($ca=sql_pdo_fetch_array($result2)){
             if ( ! $ca['ca_use']) {
                 $item['it_use'] = false;
                 $category_str = '분류에서 ';

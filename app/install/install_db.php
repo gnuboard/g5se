@@ -101,7 +101,7 @@ if (!$select_db) {
 $mysql_set_mode = 'false';
 sql_set_charset(G5_DB_CHARSET, $dblink);
 $result = sql_pdo_query(" SELECT @@sql_mode as mode ", [], true, $dblink);
-$row = sql_fetch_array($result);
+$row = sql_pdo_fetch_array($result);
 if($row['mode']) {
     sql_pdo_query("SET SESSION sql_mode = ''", [], true, $dblink);
     $mysql_set_mode = 'true';

@@ -26,7 +26,7 @@ $sql = " select count(*) as cnt
             where it_id = '$it_id'
               and ss_hp = '$ss_hp'
               and ss_send = '0' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 if($row['cnt'])
     alert_close('해당 상품에 대하여 이전에 알림 요청을 등록한 내역이 있습니다.');

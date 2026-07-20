@@ -8,7 +8,7 @@ add_javascript('<script src="'.G5_JS_URL.'/jquery.bxslider.js"></script>', 10);
 
 <!-- 관련상품 10 시작 { -->
 <?php
-for ($i=1; $row=sql_fetch_array($result); $i++) {
+for ($i=1; $row=sql_pdo_fetch_array($result); $i++) {
 
 	$item_link_href = shop_item_url($row['it_id']);
     if ($this->list_mod >= 2) { // 1줄 이미지 : 2개 이상

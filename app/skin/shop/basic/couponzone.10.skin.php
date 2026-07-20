@@ -16,7 +16,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
     $coupon = '';
     $coupon_info_class = '';
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if(!$row['cz_file'])
             continue;
 
@@ -35,7 +35,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
                 break;
             case '1':
                 $sql3 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$row['cp_target']}' ";
-                $row3 = sql_fetch($sql3);
+                $row3 = sql_pdo_fetch($sql3);
                 $cp_target = '카테고리할인';
                 $cp_link = '<a href="'.shop_category_url($row3['ca_id']).'" target="_blank">'.get_text($row3['ca_name']).'</a>';
                 $coupon_info_class = 'cp_1';
@@ -108,7 +108,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
     $coupon = '';
     $coupon_info_class = '';
 
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if(!$row['cz_file'])
             continue;
 
@@ -127,7 +127,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
                 break;
             case '1':
                 $sql3 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$row['cp_target']}' ";
-                $row3 = sql_fetch($sql3);
+                $row3 = sql_pdo_fetch($sql3);
                 $cp_link = '<a href="'.shop_category_url($row3['ca_id']).'" target="_blank">'.get_text($row3['ca_name']).'</a>';
                 $cp_target = '카테고리할인';
                 $coupon_info_class = 'cp_1';

@@ -52,7 +52,7 @@ $result = sql_pdo_query($sql, $params);
 
 $list = array();
 
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     $list[$i] = $row;
 }

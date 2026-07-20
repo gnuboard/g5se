@@ -406,7 +406,7 @@ function get_file($bo_table, $wr_id)
     $result = sql_pdo_query(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id order by bf_no ",
                             [':bo_table' => $bo_table, ':wr_id' => $wr_id]);
     $nonce = download_file_nonce_key($bo_table, $wr_id);
-    while ($row = sql_fetch_array($result))
+    while ($row = sql_pdo_fetch_array($result))
     {
         $no = (int) $row['bf_no'];
         $bf_content = $row['bf_content'] ? html_purifier($row['bf_content']) : '';
@@ -1128,7 +1128,7 @@ function get_group_select($name, $selected='', $event='')
 
     $result = sql_pdo_query($sql, $params);
     $str = "<select id=\"$name\" name=\"$name\" $event>\n";
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         if ($i == 0) $str .= "<option value=\"\">선택</option>";
         $str .= option_selected($row['gr_id'], $selected, $row['gr_subject']);
     }
@@ -1958,6 +1958,8 @@ function sql_data_seek($result, $offset=0)
 // PDO 기반 query — 결과는 PDOStatement (또는 실패 시 false).
 // raw SQL 만 받음 (시그니처 보존). 변수 바인딩이 필요한 신규 코드는
 // sql_pdo_query() / sql_pdo_fetch() 사용 (lib/sql_pdo.lib.php).
+// Legacy API disabled. The nested declaration is intentionally never executed.
+if (false) {
 function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 {
     global $g5, $g5_debug;
@@ -2063,37 +2065,13 @@ function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 
     return $result;
 }
-
-
-// 쿼리를 실행한 후 결과값에서 한행을 얻는다.
-//   sql_fetch("... where id = ?", [$id])  ← prepared 모드 (sql_query 와 동일한 분기)
-function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
-{
-    global $g5;
-
-    if(!$link)
-        $link = $g5['connect_db'];
-
-    $result = sql_pdo_query($sql, [], $error, $link);
-    $row = sql_fetch_array($result);
-    return $row;
 }
 
 
-// 결과값에서 한행 연관배열(이름으로)로 얻는다.
-function sql_fetch_array($result)
-{
-    if (!$result) return array();
-    if ($result instanceof PDOStatement) {
-        try {
-            $row = @$result->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            $row = null;
-        }
-        return $row !== false ? $row : null;
-    }
-    return null;
-}
+// Legacy DB fetch API disabled. Use sql_pdo_fetch() and
+// sql_pdo_fetch_array() from lib/sql_pdo.lib.php.
+// function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null) {}
+// function sql_fetch_array($result) {}
 
 
 // $result에 대한 메모리(memory)에 있는 내용을 모두 제거한다.
@@ -2182,7 +2160,7 @@ function get_table_define($table, $crlf="\n")
 
     // SHOW FIELDS — 테이블명은 호출자 책임 (DDL placeholder 미지원)
     $result = sql_pdo_query('SHOW FIELDS FROM ' . $table);
-    while ($row = sql_fetch_array($result))
+    while ($row = sql_pdo_fetch_array($result))
     {
         $schema_create .= '    ' . $row['Field'] . ' ' . $row['Type'];
         if (isset($row['Default']) && $row['Default'] != '')
@@ -2205,7 +2183,7 @@ function get_table_define($table, $crlf="\n")
 
     // SHOW KEYS — 테이블명은 호출자 책임
     $result = sql_pdo_query('SHOW KEYS FROM ' . $table);
-    while ($row = sql_fetch_array($result))
+    while ($row = sql_pdo_fetch_array($result))
     {
         $kname    = $row['Key_name'];
         $comment  = (isset($row['Comment'])) ? $row['Comment'] : '';

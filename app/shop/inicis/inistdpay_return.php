@@ -21,7 +21,7 @@ if( !$orderNumber ){
 }
 
 $sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$orderNumber' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 if( empty($row) ){
     alert("임시 주문정보가 저장되지 않았습니다.");

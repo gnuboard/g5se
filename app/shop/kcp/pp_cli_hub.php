@@ -7,7 +7,7 @@ if($tx == 'personalpay')
 else
     $sql = " select count(*) as cnt from {$g5['g5_shop_order_table']} where od_id = '{$_POST['ordr_idxx']}' and od_cash = 1 ";
 
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 if ($row['cnt']) {
     alert('이미 등록된 현금영수증 입니다.');
 }

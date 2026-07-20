@@ -33,7 +33,7 @@ $sql = " select SUBSTRING(vs_date,1,4) as vs_year, SUM(vs_count) as cnt
             group by vs_year
             order by vs_year desc ";
 $result = sql_pdo_query($sql);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $arr[$row['vs_year']] = $row['cnt'];
 
     if ($row['cnt'] > $max) $max = $row['cnt'];

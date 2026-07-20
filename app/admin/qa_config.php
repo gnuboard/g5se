@@ -102,7 +102,7 @@ if (!sql_pdo_query(" DESCRIBE `{$g5['qa_config_table']}` ", false)) {
 }
 
 $sql = " SHOW COLUMNS FROM `{$g5['qa_content_table']}` LIKE 'qa_content' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 if (strpos($row['Type'], 'text') === false) {
     sql_pdo_query(" ALTER TABLE `{$g5['qa_content_table']}` CHANGE `qa_content` `qa_content` text NOT NULL ", true);
 }

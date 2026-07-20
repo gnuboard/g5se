@@ -56,7 +56,7 @@ include_once(G5_PATH.'/head.sub.php');
                         order by bo_order, bo_table limit 6";
                 $rs = sql_pdo_query($sql);
                 $_widgets = [];
-                while ($row = sql_fetch_array($rs)) {
+                while ($row = sql_pdo_fetch_array($rs)) {
                     // bo_skin 에 'gallery' 또는 'pic' 들어가면 갤러리형, 그 외는 게시판형
                     $bo_skin = strtolower($row['bo_skin'] ?? '');
                     $is_gallery = (strpos($bo_skin, 'gallery') !== false || strpos($bo_skin, 'pic') !== false);

@@ -12,7 +12,7 @@ if (empty($orderId) || empty($paymentKey)) {
 }
 
 $sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$orderId' limit 1 ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 $data = isset($row['dt_data']) ? unserialize(base64_decode($row['dt_data'])) : array();
 

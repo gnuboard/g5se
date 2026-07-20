@@ -27,7 +27,7 @@ for ($depth = 1; $depth <= 5; $depth++) {
     $sql .= " order by ca_order, ca_id ";
 
     $result = sql_pdo_query($sql, $params);
-    while ($row = sql_fetch_array($result)) {
+    while ($row = sql_pdo_fetch_array($result)) {
         $row['url'] = shop_category_url($row['ca_id']);
         $navi_datas[$depth - 1][] = $row;
     }

@@ -100,7 +100,7 @@ if(is_file($skin_file)) {
     $list = array();
     $num = $total_count - ($page - 1) * $page_rows;
     $subject_len = $qaconfig['qa_subject_len'];
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $list[$i] = $row;
 
         $list[$i]['category'] = get_text($row['qa_category']);

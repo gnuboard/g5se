@@ -12,7 +12,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
     <?php
     $hsql = " select bo_table, bo_subject from {$g5['board_table']} order by gr_id, bo_table ";
     $hresult = sql_pdo_query($hsql);
-    for ($i=0; $row=sql_fetch_array($hresult); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($hresult); $i++)
     {
         echo '<li><i class="fa fa-angle-right" aria-hidden="true"></i> <a href="'.get_pretty_url($row['bo_table']).'">'.$row['bo_subject'].'</a></li>'.PHP_EOL;
     }

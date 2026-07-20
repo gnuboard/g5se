@@ -465,7 +465,7 @@ add_javascript(G5_POSTCODE_JS, 0);    //다음 주소 js
                     <td colspan="3">
                         <?php
                         $cnt = 0;
-                        while ($row = sql_fetch_array($mb_cert_history)) {
+                        while ($row = sql_pdo_fetch_array($mb_cert_history)) {
                             $cnt++;
                             $cert_type = '';
                             switch ($row['ch_type']) {

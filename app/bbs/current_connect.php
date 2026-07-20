@@ -11,7 +11,7 @@ $result = sql_pdo_query(" select a.mb_id, b.mb_nick, b.mb_name, b.mb_email, b.mb
             where a.mb_id <> :admin_id
             order by a.lo_datetime desc ",
             [':admin_id' => $config['cf_admin']]);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $row['lo_url'] = get_text($row['lo_url']);
     $list[$i] = $row;
 

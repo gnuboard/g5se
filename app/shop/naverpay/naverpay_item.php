@@ -45,15 +45,15 @@ foreach($itemIds as $it_id) {
     $option      = get_naverpay_item_option($it_id, $it['it_option_subject']);
 
     if($it['ca_id']) {
-        $cat = sql_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id']}' ");
+        $cat = sql_pdo_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id']}' ");
         $ca_name = $cat['ca_name'];
     }
     if($it['ca_id2']) {
-        $cat = sql_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id2']}' ");
+        $cat = sql_pdo_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id2']}' ");
         $ca_name2 = $cat['ca_name'];
     }
     if($it['ca_id3']) {
-        $cat = sql_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id3']}' ");
+        $cat = sql_pdo_fetch(" select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$it['ca_id3']}' ");
         $ca_name3 = $cat['ca_name'];
     }
 ?>

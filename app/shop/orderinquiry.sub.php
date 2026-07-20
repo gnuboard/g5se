@@ -38,7 +38,7 @@ if(defined('G5_THEME_SHOP_PATH')) {
               order by od_id desc
               $limit ";
     $result = sql_pdo_query($sql);
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $uid = function_exists('get_shop_uid') ? get_shop_uid('order', $row['od_id'], $row['od_time'], $row['od_ip']) : md5($row['od_id'].$row['od_time'].$row['od_ip']);
 

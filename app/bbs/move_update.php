@@ -26,7 +26,7 @@ $wr_id_list = isset($_POST['wr_id_list']) ? preg_replace('/[^0-9\,]/', '', $_POS
 
 // $wr_id_list 는 preg_replace 로 숫자/콤마만 남겨 안전 — IN 절 식별자 영역이라 보간 유지
 $result = sql_pdo_query(" select distinct wr_num from $write_table where wr_id in ({$wr_id_list}) order by wr_id ");
-while ($row = sql_fetch_array($result))
+while ($row = sql_pdo_fetch_array($result))
 {
     $save[$cnt]['wr_contents'] = array();
 
@@ -69,7 +69,7 @@ while ($row = sql_fetch_array($result))
 
         $result2 = sql_pdo_query(" select * from $write_table where wr_num = :wr_num order by wr_parent, wr_is_comment, wr_comment desc, wr_id ",
                                  [':wr_num' => $wr_num]);
-        while ($row2 = sql_fetch_array($result2))
+        while ($row2 = sql_pdo_fetch_array($result2))
         {
             $save[$cnt]['wr_contents'][] = $row2['wr_content'];
 
@@ -160,7 +160,7 @@ while ($row = sql_fetch_array($result))
 
                 $result3 = sql_pdo_query(" select * from {$g5['board_file_table']} where bo_table = :bo_table and wr_id = :wr_id order by bf_no ",
                                          [':bo_table' => $bo_table, ':wr_id' => $row2['wr_id']]);
-                for ($k=0; $row3 = sql_fetch_array($result3); $k++)
+                for ($k=0; $row3 = sql_pdo_fetch_array($result3); $k++)
                 {
                     $copy_file_name = '';
                     

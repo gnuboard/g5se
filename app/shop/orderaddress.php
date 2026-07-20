@@ -203,7 +203,7 @@ if(defined('G5_THEME_PATH') && is_file(G5_THEME_PATH.'/modern/_head.inc.php')) {
         <div class="adr-list">
             <?php
             $sep = chr(30);
-            for($i=0; $row=sql_fetch_array($result); $i++) {
+            for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
                 $addr = $row['ad_name'].$sep.$row['ad_tel'].$sep.$row['ad_hp'].$sep.$row['ad_zip1'].$sep.$row['ad_zip2'].$sep.$row['ad_addr1'].$sep.$row['ad_addr2'].$sep.$row['ad_addr3'].$sep.$row['ad_jibeon'].$sep.$row['ad_subject'];
                 $addr = get_text($addr);
                 $is_default = !empty($row['ad_default']);

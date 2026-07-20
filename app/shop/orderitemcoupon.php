@@ -20,7 +20,7 @@ $sql = " select SUM( IF(io_type = '1', io_price * ct_qty, (ct_price + io_price) 
             from {$g5['g5_shop_cart_table']}
             where od_id = '$cart_id'
               and it_id = '$it_id' ";
-$ct = sql_fetch($sql);
+$ct = sql_pdo_fetch($sql);
 $item_price = $ct['sum_price'];
 
 // 쿠폰정보
@@ -57,7 +57,7 @@ $count = sql_num_rows($result);
 	        </thead>
 	        <tbody>
 	        <?php
-	        for($i=0; $row=sql_fetch_array($result); $i++) {
+	        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
 	            // 사용한 쿠폰인지 체크
 	            if(is_used_coupon($member['mb_id'], $row['cp_id']))
 	                continue;

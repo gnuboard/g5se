@@ -25,12 +25,12 @@ $new_it_id = isset($_REQUEST['new_it_id']) ? preg_replace("/[^A-Za-z0-9\-_]/", "
 
 if( ! $new_it_id ) alert('상품코드를 입력해 주세요.');
 
-$row = sql_fetch(" select count(*) as cnt from {$g5['g5_shop_item_table']} where it_id = '$new_it_id' ");
+$row = sql_pdo_fetch(" select count(*) as cnt from {$g5['g5_shop_item_table']} where it_id = '$new_it_id' ");
 if (isset($row['cnt']) && $row['cnt'])
     alert('이미 존재하는 상품코드 입니다.');
 
 $sql = " select * from {$g5['g5_shop_item_table']} where it_id = '$it_id' limit 1 ";
-$cp = sql_fetch($sql);
+$cp = sql_pdo_fetch($sql);
 
 // 상품테이블의 필드가 추가되어도 수정하지 않도록 필드명을 추출하여 insert 퀴리를 생성한다. (상품코드만 새로운것으로 대체)
 $sql_common = "";

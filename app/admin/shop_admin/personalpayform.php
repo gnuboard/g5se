@@ -19,7 +19,7 @@ if ($w == 'u') {
     $html_title = '개인결제 수정';
 
     $sql = " select * from {$g5['g5_shop_personalpay_table']} where pp_id = '$pp_id' ";
-    $pp = sql_fetch($sql);
+    $pp = sql_pdo_fetch($sql);
     if (!$pp['pp_id']) alert('등록된 자료가 없습니다.');
 }
 else
@@ -36,7 +36,7 @@ if($popup == 'yes') { // 팝업창일 때
     $sql = " select od_id, od_name, od_misu
                 from {$g5['g5_shop_order_table']}
                 where od_id = '$od_id' ";
-    $od = sql_fetch($sql);
+    $od = sql_pdo_fetch($sql);
 
     if(!$od['od_id'])
         alert_close('주문정보가 존재하지 않습니다.');
@@ -191,7 +191,7 @@ if(!sql_pdo_query(" select pp_cash from {$g5['g5_shop_personalpay_table']} limit
             // 주문내역이 있으면 현금영수증 발급하지 않음
             if($pp['od_id']) {
                 $sql = " select count(od_id) as cnt from {$g5['g5_shop_order_table']} where od_id = '{$pp['od_id']}' ";
-                $row = sql_fetch($sql);
+                $row = sql_pdo_fetch($sql);
 
                 if($row['cnt'] > 0)
                     $is_cash_receipt = false;

@@ -53,7 +53,7 @@ $where_params[':mb_level_to']   = $mb_level_to;
 if ($gr_id) {
     $stmt2 = sql_pdo_query(" select mb_id from {$g5['group_member_table']} where gr_id = :gr_id order by mb_id ", [':gr_id' => $gr_id]);
     $group_placeholders = [];
-    while ($row2 = sql_fetch_array($stmt2)) {
+    while ($row2 = sql_pdo_fetch_array($stmt2)) {
         $key = ':gm_'.count($group_placeholders);
         $group_placeholders[] = $key;
         $where_params[$key] = $row2['mb_id'];
@@ -120,7 +120,7 @@ admin_layout_start($g5['title'], 'mail');
                 $i = 0;
                 $ma_list = "";
                 $cr = "";
-                while ($row = sql_fetch_array($result)) {
+                while ($row = sql_pdo_fetch_array($result)) {
                     $i++;
                     $ma_list .= $cr . $row['mb_email'] . "||" . $row['mb_id'] . "||" . get_text($row['mb_name']) . "||" . $row['mb_nick'] . "||" . $row['mb_datetime'];
                     $cr = "\n";

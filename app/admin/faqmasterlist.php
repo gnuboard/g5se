@@ -90,7 +90,7 @@ admin_layout_start('FAQ 관리', 'scf_faq');
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             <?php
             $i = 0;
-            while ($row = sql_fetch_array($result)):
+            while ($row = sql_pdo_fetch_array($result)):
                 $cnt = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['faq_table']} where fm_id = :fm_id ", [':fm_id' => (int)$row['fm_id']])['cnt'];
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">

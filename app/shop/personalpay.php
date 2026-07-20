@@ -26,7 +26,7 @@ include_once('./_head.php');
         $items = $list_mod * $list_row;
 
         $sql = "select COUNT(*) as cnt $sql_common ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         $total_count = $row['cnt'];
 
         // 전체 페이지 계산

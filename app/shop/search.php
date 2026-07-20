@@ -121,7 +121,7 @@ $from_record = ($page - 1) * $items;
 
 // 검색된 내용이 몇행인지를 얻는다
 $sql = " select COUNT(*) as cnt $sql_common $sql_where ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 $total_page  = ceil($total_count / $items); // 전체 페이지 계산
 
@@ -130,7 +130,7 @@ $result = sql_pdo_query($sql);
 
 $categorys = array();
 // 검색된 분류를 배열에 저장
-while($row = sql_fetch_array($result)){
+while($row = sql_pdo_fetch_array($result)){
     $categorys[] = $row;
 }
 

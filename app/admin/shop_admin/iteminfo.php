@@ -14,7 +14,7 @@ if(isset($it['it_id']) && $it['it_id']) {
     
     if ( $it_id ){
         $sql = " select it_id, it_info_gubun, it_info_value from {$g5['g5_shop_item_table']} where it_id = '$it_id' ";
-        if( $items = sql_fetch($sql) ) {
+        if( $items = sql_pdo_fetch($sql) ) {
             $it = $items;
         }
     }

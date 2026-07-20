@@ -15,7 +15,7 @@ $sql = " select *
            left join {$g5['member_table']} b on (a.mb_id = b.mb_id)
            left join {$g5['g5_shop_item_table']} c on (a.it_id = c.it_id)
           where is_id = '$is_id' ";
-$is = sql_fetch($sql);
+$is = sql_pdo_fetch($sql);
 
 if (!$is['is_id'])
     alert('등록된 자료가 없습니다.');

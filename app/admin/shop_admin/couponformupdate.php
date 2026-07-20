@@ -68,12 +68,12 @@ if($_POST['cp_type'] && ($_POST['cp_price'] < 1 || $_POST['cp_price'] > 99))
 
 if($_POST['cp_method'] == 0) {
     $sql = " select count(*) as cnt from {$g5['g5_shop_item_table']} where it_id = '$cp_target' and it_nocoupon = '0' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if(!$row['cnt'])
         alert('입력하신 상품코드는 존재하지 않는 코드이거나 쿠폰적용안함으로 설정된 상품입니다.');
 } else if($_POST['cp_method'] == 1) {
     $sql = " select count(*) as cnt from {$g5['g5_shop_category_table']} where ca_id = '$cp_target' and ca_nocoupon = '0' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if(!$row['cnt'])
         alert('입력하신 분류코드는 존재하지 않는 분류코드이거나 쿠폰적용안함으로 설정된 분류입니다.');
 }
@@ -83,7 +83,7 @@ if($w == '') {
         $mb_id = '전체회원';
     } else {
         $sql = " select mb_id from {$g5['member_table']} where mb_id = '{$_POST['mb_id']}' and mb_leave_date = '' and mb_intercept_date = '' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         if(!$row['mb_id'])
             alert('입력하신 회원아이디는 존재하지 않거나 탈퇴 또는 차단된 회원아이디입니다.');
 
@@ -95,7 +95,7 @@ if($w == '') {
         $cp_id = get_coupon_id();
 
         $sql3 = " select count(*) as cnt from {$g5['g5_shop_coupon_table']} where cp_id = '$cp_id' ";
-        $row3 = sql_fetch($sql3);
+        $row3 = sql_pdo_fetch($sql3);
 
         if(!$row3['cnt'])
             break;
@@ -116,7 +116,7 @@ if($w == '') {
     sql_pdo_query($sql);
 } else if($w == 'u') {
     $sql = " select * from {$g5['g5_shop_coupon_table']} where cp_id = '$cp_id' ";
-    $cp = sql_fetch($sql);
+    $cp = sql_pdo_fetch($sql);
 
     if(!$cp['cp_id'])
         alert('쿠폰정보가 존재하지 않습니다.', './couponlist.php');
@@ -164,7 +164,7 @@ if ($w == '' && (isset($_POST['cp_sms_send']) || isset($_POST['cp_email_send']))
 
     $result = sql_pdo_query($sql);
 
-    for($i=0; $row = sql_fetch_array($result); $i++) {
+    for($i=0; $row = sql_pdo_fetch_array($result); $i++) {
         $arr_send_list[] = $row;
     }
 

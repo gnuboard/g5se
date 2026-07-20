@@ -52,7 +52,7 @@ $sql_common = " from {$g5['content_table']} ";
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -86,7 +86,7 @@ $result = sql_pdo_query($sql);
             </tr>
         </thead>
         <tbody>
-            <?php for ($i = 0; $row = sql_fetch_array($result); $i++) {
+            <?php for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                 $bg = 'bg' . ($i % 2);
             ?>
                 <tr class="<?php echo $bg; ?>">

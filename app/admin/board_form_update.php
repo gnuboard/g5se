@@ -345,10 +345,10 @@ if ($w == '') {
     sql_pdo_query($sql, false);
 } elseif ($w == 'u') {
     // 게시판의 글/코멘트 수 — 테이블명에 변수가 들어가므로 (placeholder 불가) bo_table 검증된 영숫자만 보간
-    $row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 0 ");
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 0 ");
     $bo_count_write = $row['cnt'];
 
-    $row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 1 ");
+    $row = sql_pdo_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 1 ");
     $bo_count_comment = $row['cnt'];
 
     // 글수 조정
@@ -359,7 +359,7 @@ if ($w == '') {
     if (isset($_POST['proc_count'])) {
         $sql = " select a.wr_id, (count(b.wr_parent) - 1) as cnt from {$g5['write_prefix']}{$bo_table} a, {$g5['write_prefix']}{$bo_table} b where a.wr_id=b.wr_parent and a.wr_is_comment=0 group by a.wr_id ";
         $result = sql_pdo_query($sql);
-        while ($row = sql_fetch_array($result)) {
+        while ($row = sql_pdo_fetch_array($result)) {
             sql_pdo_query(" update {$g5['write_prefix']}{$bo_table} set wr_comment = :cnt where wr_id = :wr_id ",
                           [':cnt' => $row['cnt'], ':wr_id' => $row['wr_id']]);
         }

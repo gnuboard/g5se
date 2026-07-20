@@ -21,7 +21,7 @@ if ($member['mb_level'] >= $board['bo_comment_level'])
 // 코멘트 출력
 $result = sql_pdo_query(" select * from $write_table where wr_parent = :wr_parent and wr_is_comment = 1 order by wr_comment, wr_comment_reply ",
                         [':wr_parent' => $wr_id]);
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     $list[$i] = $row;
 

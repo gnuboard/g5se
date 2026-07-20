@@ -54,7 +54,7 @@ $result = sql_pdo_query(" select a.*, b.mb_id, b.mb_nick, b.mb_email, b.mb_homep
             where a.me_{$kind}_mb_id = :mb_id and a.me_type = :kind
             order by a.me_id desc limit $from_record_i, $page_rows_i ",
             [':mb_id' => $member['mb_id'], ':kind' => $kind]);
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     $list[$i] = $row;
 

@@ -25,7 +25,7 @@ if($mb_name){
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common . $sql_where;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -64,7 +64,7 @@ $qstr1 = 'mb_name='.urlencode($mb_name);
         </thead>
         <tbody>
         <?php
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         ?>
         <tr>
             <td class="td_mbname"><?php echo get_text($row['mb_name']); ?></td>

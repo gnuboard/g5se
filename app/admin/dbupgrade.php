@@ -90,11 +90,11 @@ if( isset($g5['social_profile_table']) && !sql_pdo_query(" DESC {$g5['social_pro
 $sql = " select bo_table from {$g5['board_table']} ";
 $result = sql_pdo_query($sql);
 
-while ($row = sql_fetch_array($result)) {
+while ($row = sql_pdo_fetch_array($result)) {
     $write_table = $g5['write_prefix'] . $row['bo_table']; // 게시판 테이블 전체이름
 
     $sql = " SHOW COLUMNS FROM {$write_table} LIKE 'wr_seo_title' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     
     if( !$row ){
         sql_pdo_query("ALTER TABLE `{$write_table}`
@@ -108,7 +108,7 @@ while ($row = sql_fetch_array($result)) {
 
 // 내용 관리 짧은 주소
 $sql = " SHOW COLUMNS FROM `{$g5['content_table']}` LIKE 'co_seo_title' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 if( !$row ){
     sql_pdo_query("ALTER TABLE `{$g5['content_table']}`
@@ -122,7 +122,7 @@ if( !$row ){
 $sql = "select * from {$g5['content_table']} limit 100 ";
 $result = sql_pdo_query($sql);
 
-while ($row = sql_fetch_array($result)) {
+while ($row = sql_pdo_fetch_array($result)) {
 
     if( ! $row['co_seo_title']){
         
@@ -138,7 +138,7 @@ while ($row = sql_fetch_array($result)) {
 
 // 메모 테이블
 $sql = " SHOW COLUMNS FROM `{$g5['memo_table']}` LIKE 'me_send_id' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 if( !$row ){
     sql_pdo_query("ALTER TABLE `{$g5['memo_table']}`
@@ -178,7 +178,7 @@ if (!isset($config['cf_bbs_rewrite'])) {
 // 파일테이블에 추가 칼럼
 
 $sql = " SHOW COLUMNS FROM `{$g5['board_file_table']}` LIKE 'bf_fileurl' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 if( !$row ) {
     sql_pdo_query(" ALTER TABLE `{$g5['board_file_table']}` 
@@ -208,7 +208,7 @@ if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
     }
 
     $result = sql_pdo_query("describe `{$g5['g5_shop_post_log_table']}`");
-    while ($row = sql_fetch_array($result)){
+    while ($row = sql_pdo_fetch_array($result)){
         if( isset($row['Field']) && $row['Field'] === 'ol_msg' && $row['Type'] === 'varchar(255)' ){
             sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` MODIFY ol_msg TEXT NOT NULL;", false);
             sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` DROP PRIMARY KEY;", false);
@@ -229,7 +229,7 @@ if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
 
 // auth.au_menu 컬럼 크기 조정
 $sql = " SHOW COLUMNS FROM `{$g5['auth_table']}` LIKE 'au_menu' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 if (
     stripos($row['Type'], 'varchar') !== false
     && (int) preg_replace('/[^0-9]/', '', $row['Type']) < 50
@@ -240,7 +240,7 @@ if (
 }
 
 // qa config 테이블 auto id key 추가
-$row = sql_fetch("select * from `{$g5['qa_config_table']}` limit 1");
+$row = sql_pdo_fetch("select * from `{$g5['qa_config_table']}` limit 1");
 if (!array_key_exists('qa_id', $row)) {
     sql_pdo_query(" ALTER TABLE `{$g5['qa_config_table']}` ADD COLUMN `qa_id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
                 ADD PRIMARY KEY (`qa_id`); ", true);
@@ -258,7 +258,7 @@ if (!isset($config['cf_id'])) {
 }
 
 // login 테이블 auto id key 추가
-$row = sql_fetch("select * from `{$g5['login_table']}` limit 1");
+$row = sql_pdo_fetch("select * from `{$g5['login_table']}` limit 1");
 if (!array_key_exists('lo_id', $row)) {
     sql_pdo_query(" ALTER TABLE `{$g5['login_table']}`
                     ADD COLUMN `lo_id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
@@ -271,7 +271,7 @@ if (!array_key_exists('lo_id', $row)) {
 
 // visit 테이블 auto id key 로 변경
 $result = sql_pdo_query("describe `{$g5['visit_table']}`");
-while ($row = sql_fetch_array($result)){
+while ($row = sql_pdo_fetch_array($result)){
     if (isset($row['Field']) && $row['Field'] === 'vi_id' && (isset($row['Default']) && $row['Default'] == 0)){
         sql_pdo_query("ALTER TABLE `{$g5['visit_table']}`
                     CHANGE COLUMN `vi_id` `vi_id` INT(11) NOT NULL AUTO_INCREMENT;
@@ -341,7 +341,7 @@ if (defined('G5_USE_SHOP') && G5_USE_SHOP) {
 
         $dup_result = sql_pdo_query($dup_sql, false);
         if ($dup_result && sql_num_rows($dup_result)) {
-            while ($dup_row = sql_fetch_array($dup_result)) {
+            while ($dup_row = sql_pdo_fetch_array($dup_result)) {
                 
                 echo $dup_row['cp_id']." 의 동일 쿠폰이 중복 사용된 데이터가 있으므로 인덱스 생성이 불가합니다. <br>";
                 

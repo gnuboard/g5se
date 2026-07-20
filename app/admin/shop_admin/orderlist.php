@@ -127,7 +127,7 @@ if ($sort2 == "") $sort2 = "desc";
 $sql_common = " from {$g5['g5_shop_order_table']} $sql_search ";
 
 $sql = " select count(od_id) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -309,7 +309,7 @@ if( function_exists('pg_setting_check') ){
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         // 결제 수단
         $s_receipt_way = $s_br = "";
@@ -333,7 +333,7 @@ if( function_exists('pg_setting_check') ){
         if ($row['mb_id'])
         {
             $sql2 = " select count(*) as cnt from {$g5['g5_shop_order_table']} where mb_id = '{$row['mb_id']}' ";
-            $row2 = sql_fetch($sql2);
+            $row2 = sql_pdo_fetch($sql2);
             $od_cnt = $row2['cnt'];
         }
 

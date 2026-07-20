@@ -46,7 +46,7 @@ if ($w == "")
 
     $sql = " select MAX(SUBSTRING(ca_id,$len2,2)) as max_subid from {$g5['g5_shop_category_table']}
               where SUBSTRING(ca_id,1,$len) = '$ca_id' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
 
     $subid = base_convert((string)$row['max_subid'], 36, 10);
     $subid += 36;
@@ -65,7 +65,7 @@ if ($w == "")
     if ($ca_id) // 2단계이상 분류
     {
         $sql = " select * from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' ";
-        $ca = sql_fetch($sql);
+        $ca = sql_pdo_fetch($sql);
         $html_title = $ca['ca_name'] . " 하위분류추가";
         $ca['ca_name'] = "";
     }
@@ -85,7 +85,7 @@ if ($w == "")
 else if ($w == "u")
 {
     $sql = " select * from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' ";
-    $ca = sql_fetch($sql);
+    $ca = sql_pdo_fetch($sql);
     if (! (isset($ca['ca_id']) && $ca['ca_id']))
         alert("자료가 없습니다.");
 

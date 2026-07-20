@@ -102,7 +102,7 @@ if($is_upload_file) {
 
         // it_id 중복체크
         $sql2 = " select count(*) as cnt from {$g5['g5_shop_item_table']} where it_id = '$it_id' ";
-        $row2 = sql_fetch($sql2);
+        $row2 = sql_pdo_fetch($sql2);
         if(isset($row2['cnt']) && $row2['cnt']) {
             $fail_it_id[] = $it_id;
             $dup_it_id[] = $it_id;
@@ -113,7 +113,7 @@ if($is_upload_file) {
 
         // 기본분류체크
         $sql2 = " select count(*) as cnt from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' ";
-        $row2 = sql_fetch($sql2);
+        $row2 = sql_pdo_fetch($sql2);
         if(! (isset($row2['cnt']) && $row2['cnt'])) {
             $fail_it_id[] = $it_id;
             $fail_count++;

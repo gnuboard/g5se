@@ -17,7 +17,7 @@ $res = sql_pdo_query($sql, [
     ':end_date' => G5_TIME_YMD,
 ]);
 
-for($k=0; $cp=sql_fetch_array($res); $k++) {
+for($k=0; $cp=sql_pdo_fetch_array($res); $k++) {
     if(!is_used_coupon($member['mb_id'], $cp['cp_id']))
         $cp_count++;
 }

@@ -26,7 +26,7 @@ $rows_i        = (int) $rows;
 $result = sql_pdo_query(" select * {$sql_common} {$sql_order} limit {$from_record_i}, {$rows_i} ",
                         $common_params);
 
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $list[] = $row;
 }
 

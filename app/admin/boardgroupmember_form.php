@@ -76,7 +76,7 @@ admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
             <input type="hidden" name="token" value="<?php echo $_admin_token ?>">
             <select name="gr_id" required class="h-10 pl-3 pr-8 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm flex-1 min-w-64">
                 <option value="">접근가능 그룹을 선택하세요</option>
-                <?php while ($row = sql_fetch_array($add_result)): ?>
+                <?php while ($row = sql_pdo_fetch_array($add_result)): ?>
                     <option value="<?php echo $h($row['gr_id']) ?>"><?php echo $h($row['gr_subject']) ?> <span class="font-mono">(<?php echo $h($row['gr_id']) ?>)</span></option>
                 <?php endwhile; ?>
             </select>
@@ -103,7 +103,7 @@ admin_layout_start($mb['mb_id'].' 의 접근가능 그룹', 'groups');
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             <?php
             $i = 0;
-            while ($row = sql_fetch_array($result)):
+            while ($row = sql_pdo_fetch_array($result)):
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
                     <td class="px-3 py-2 text-center"><input type="checkbox" name="chk[]" value="<?php echo (int)$row['gm_id'] ?>" class="rounded border-slate-300"></td>

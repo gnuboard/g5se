@@ -12,7 +12,7 @@ $bn_slide_btn = '';
 $bn_sl = ' class="bn_sl"';
 $main_banners = array();
 
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     $main_banners[] = $row;
 

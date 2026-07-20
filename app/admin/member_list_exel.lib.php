@@ -131,7 +131,7 @@ function member_export_get_total_count($params)
         throw new Exception("데이터 조회에 실패하였습니다. 다시 시도해주세요.");
     }
     
-    $row = sql_fetch_array($result);
+    $row = sql_pdo_fetch_array($result);
     return (int)$row['cnt'];
 }
 

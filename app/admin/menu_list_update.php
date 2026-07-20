@@ -44,7 +44,7 @@ for ($i = 0; $i < $count; $i++) {
         $sql = " select MAX(SUBSTRING(me_code,3,2)) as max_me_code
                     from {$g5['menu_table']}
                     where SUBSTRING(me_code,1,2) = '$primary_code' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
 
         $sub_code = (int)base_convert($row['max_me_code'], 36, 10);
         $sub_code += 36;
@@ -55,7 +55,7 @@ for ($i = 0; $i < $count; $i++) {
         $sql = " select MAX(SUBSTRING(me_code,1,2)) as max_me_code
                     from {$g5['menu_table']}
                     where LENGTH(me_code) = '2' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
 
         $me_code = (int)base_convert($row['max_me_code'], 36, 10);
         $me_code += 36;

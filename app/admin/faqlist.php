@@ -67,7 +67,7 @@ admin_layout_start('FAQ 상세 — '.$fm['fm_subject'], 'scf_faq');
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             <?php
             $i = 0;
-            while ($row = sql_fetch_array($result)):
+            while ($row = sql_pdo_fetch_array($result)):
                 $subj = strip_tags(conv_content($row['fa_subject'], 1));
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">

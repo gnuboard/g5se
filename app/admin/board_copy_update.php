@@ -148,7 +148,7 @@ if ($copy_case == 'schema_data_both') {
 
     // 4.00.01
     $stmt = sql_pdo_query(" select * from {$g5['board_file_table']} where bo_table = :bo_table ", [':bo_table' => $bo_table], false);
-    for ($i = 0; $stmt && ($row = sql_fetch_array($stmt)); $i++) {
+    for ($i = 0; $stmt && ($row = sql_pdo_fetch_array($stmt)); $i++) {
         $file_copy[$i] = $row;
     }
 }

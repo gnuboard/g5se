@@ -8,7 +8,7 @@
  *
  * 사용 예:
  *   $stmt = sql_pdo_query("select * from {$g5['member_table']} where mb_id = ?", [$mb_id]);
- *   while ($row = sql_fetch_array($stmt)) { ... }
+ *   while ($row = sql_pdo_fetch_array($stmt)) { ... }
  *
  *   $row = sql_pdo_fetch("select * from {$g5['faq_table']} where fa_id = ?", [$fa_id]);
  *
@@ -119,10 +119,30 @@ function sql_pdo_query($sql, $params = [], $error = G5_DISPLAY_SQL_ERROR, $link 
  * @param PDO|null   $link    DB 핸들
  * @return array              연관배열 (행 없으면 빈 배열)
  */
-function sql_pdo_fetch($sql, array $params = [], $error = G5_DISPLAY_SQL_ERROR, $link = null)
+function sql_pdo_fetch($sql, $params = [], $error = G5_DISPLAY_SQL_ERROR, $link = null)
 {
     $stmt = sql_pdo_query($sql, $params, $error, $link);
     if (!$stmt) return array();
-    $row = sql_fetch_array($stmt);
+    $row = sql_pdo_fetch_array($stmt);
     return is_array($row) ? $row : array();
+}
+
+
+/**
+ * PDOStatement 결과에서 연관배열 한 행을 가져온다.
+ *
+ * @param PDOStatement|false $stmt
+ * @return array|null
+ */
+function sql_pdo_fetch_array($stmt)
+{
+    if (!$stmt instanceof PDOStatement) return null;
+
+    try {
+        $row = @$stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        return null;
+    }
+
+    return $row !== false ? $row : null;
 }

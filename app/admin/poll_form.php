@@ -23,7 +23,7 @@ if ($w == '') {
 } elseif ($w == 'u') {
     $html_title .= ' 수정';
     $sql = " select * from {$g5['poll_table']} where po_id = '{$po_id}' ";
-    $po = sql_fetch($sql);
+    $po = sql_pdo_fetch($sql);
 } else {
     alert('w 값이 제대로 넘어오지 않았습니다.');
 }

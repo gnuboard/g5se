@@ -35,7 +35,7 @@ $itemuselist_url = G5_SHOP_URL.'/itemuselist';
     <?php
     $thumbnail_width = 500;
 
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $num = $total_count - ($page - 1) * $rows - $i;
         $star = get_star($row['is_score']);

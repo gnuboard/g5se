@@ -10,7 +10,7 @@ if (preg_match("/[^0-9a-z]/i", $ca_id)) {
 }
 
 $sql = " select ca_name from {$g5['g5_shop_category_table']} where ca_id = '{$ca_id}' ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 if (isset($row['ca_name']) && $row['ca_name']) {
     $ca_name = addslashes($row['ca_name']);
     die("{\"error\":\"이미 등록된 분류코드 입니다.\\n\\n분류명 : {$ca_name}\"}");

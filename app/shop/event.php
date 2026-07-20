@@ -13,7 +13,7 @@ if( isset($sort) && ! in_array($sort, array('it_name', 'it_sum_qty', 'it_price',
 $sql = " select * from {$g5['g5_shop_event_table']}
           where ev_id = '$ev_id'
             and ev_use = 1 ";
-$ev = sql_fetch($sql);
+$ev = sql_pdo_fetch($sql);
 if (! (isset($ev['ev_id']) && $ev['ev_id']))
     alert('등록된 이벤트가 없습니다.');
 

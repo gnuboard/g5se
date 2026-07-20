@@ -55,7 +55,7 @@ function get_board_names(){
     if( ! $boards ){
         $result = sql_pdo_query(" select bo_table from {$g5['board_table']} ");
 
-        while ($row = sql_fetch_array($result)) {
+        while ($row = sql_pdo_fetch_array($result)) {
             $boards[] = $row['bo_table'];
         }
     }
@@ -112,7 +112,7 @@ function get_menu_db($use_mobile=0, $is_cache=false){
                 and length(me_code) = '2'
                 order by me_order, me_id ", [], false);
 
-        for ($i=0; $row=sql_fetch_array($result); $i++) {
+        for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
 
             $row['ori_me_link'] = $row['me_link'];
             $row['me_link'] = short_url_clean($row['me_link']);
@@ -126,7 +126,7 @@ function get_menu_db($use_mobile=0, $is_cache=false){
                     and substring(me_code, 1, 2) = :me_code
                     order by me_order, me_id ",
                     [':me_code' => $row['me_code']]);
-            for ($k=0; $row2=sql_fetch_array($result2); $k++) {
+            for ($k=0; $row2=sql_pdo_fetch_array($result2); $k++) {
                 $row2['ori_me_link'] = $row2['me_link'];
                 $row2['me_link'] = short_url_clean($row2['me_link']);
                 $cache[$key][$i]['sub'][$k] = $row2;

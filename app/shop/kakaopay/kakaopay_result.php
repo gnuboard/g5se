@@ -4,7 +4,7 @@ if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 if( isset($_POST['P_NOTI']) ){
 
     $sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '".preg_replace("/\s+/", "", $_POST['P_NOTI'])."' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
 
     if (isset($row['dt_data']) && (base64_encode(base64_decode($row['dt_data'], true)) === $row['dt_data'])){
         $data = unserialize(base64_decode($row['dt_data']));

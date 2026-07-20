@@ -93,7 +93,7 @@ if (!$is_search_bbs) {
     $notice_rows_by_id = array();
     if (!empty($notice_ids_int)) {
         $result = sql_pdo_query(" select * from {$write_table} where wr_id in (" . implode(',', $notice_ids_int) . ") ");
-        while ($nrow = sql_fetch_array($result)) {
+        while ($nrow = sql_pdo_fetch_array($result)) {
             $notice_rows_by_id[$nrow['wr_id']] = $nrow;
         }
     }
@@ -202,7 +202,7 @@ if ($page_rows > 0) {
         $result = sql_pdo_query(" select distinct wr_parent from {$write_table} where {$sql_search} {$sql_order} limit {$from_record_i}, {$page_rows_i} ");
 
         $parent_ids_in_order = array();
-        while ($id_row = sql_fetch_array($result)) {
+        while ($id_row = sql_pdo_fetch_array($result)) {
             $pid = (int) $id_row['wr_parent'];
             if ($pid > 0) {
                 $parent_ids_in_order[] = $pid;
@@ -214,7 +214,7 @@ if ($page_rows > 0) {
             $batch_result = sql_pdo_query(" select * from {$write_table} where wr_id in (" . implode(',', $parent_ids_in_order) . ") ");
 
             $rows_by_id = array();
-            while ($br = sql_fetch_array($batch_result)) {
+            while ($br = sql_pdo_fetch_array($batch_result)) {
                 $rows_by_id[$br['wr_id']] = $br;
             }
 
@@ -233,7 +233,7 @@ if ($page_rows > 0) {
         $sql .= " {$sql_order} limit {$from_record_i}, {$page_rows_i} ";
 
         $result = sql_pdo_query($sql);
-        while ($row = sql_fetch_array($result)) {
+        while ($row = sql_pdo_fetch_array($result)) {
             $rows_to_process[] = $row;
         }
     }

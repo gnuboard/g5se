@@ -23,7 +23,7 @@ admin_layout_start($g5["title"], "shop");
 // 주문서 정보
 //------------------------------------------------------------------------------
 $sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$od_id' ";
-$od = sql_fetch($sql);
+$od = sql_pdo_fetch($sql);
 if (!$od['od_id']) {
     alert("해당 주문번호로 미완료 주문서가 존재하지 않습니다.");
 }
@@ -35,7 +35,7 @@ $sql_common = " from {$g5['g5_shop_cart_table']} where od_id = '{$od['cart_id']}
 
 // 주문금액
 $sql = " select SUM(IF(io_type = 1, io_price, (ct_price + io_price)) * ct_qty) as od_price, COUNT(distinct it_id) as cart_count $sql_common ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $tot_ct_price = $row['od_price'];
 $cart_count   = $row['cart_count'];
 $tot_od_price = $tot_ct_price;
@@ -55,7 +55,7 @@ if($od['mb_id']) {
                     where cp_id = '$cid'
                       and mb_id IN ( '{$od['mb_id']}', '전체회원' )
                       and cp_method IN ( 0, 1 ) ";
-        $cp = sql_fetch($sql);
+        $cp = sql_pdo_fetch($sql);
         if(! (isset($cp['cp_id']) && $cp['cp_id']))
             continue;
 
@@ -68,7 +68,7 @@ if($od['mb_id']) {
             $sql2 = " select it_id, ca_id, ca_id2, ca_id3
                         from {$g5['g5_shop_item_table']}
                         where it_id = '$it_id' ";
-            $row2 = sql_fetch($sql2);
+            $row2 = sql_pdo_fetch($sql2);
 
             if(!$row2['it_id'])
                 continue;
@@ -82,7 +82,7 @@ if($od['mb_id']) {
 
         // 상품금액
         $sql = " select SUM( IF(io_type = '1', io_price * ct_qty, (ct_price + io_price) * ct_qty)) as sum_price $sql_common and it_id = '$it_id' ";
-        $ct = sql_fetch($sql);
+        $ct = sql_pdo_fetch($sql);
         $item_price = $ct['sum_price'];
 
         if($cp['cp_minimum'] > $item_price)
@@ -114,7 +114,7 @@ if($od['mb_id']) {
                     where cp_id = '{$data['od_cp_id']}'
                       and mb_id IN ( '{$od['mb_id']}', '전체회원' )
                       and cp_method = '2' ";
-        $cp = sql_fetch($sql);
+        $cp = sql_pdo_fetch($sql);
 
         // 사용한 쿠폰인지
         $cp_used = is_used_coupon($od['mb_id'], $cp['cp_id']);
@@ -150,7 +150,7 @@ if($od['mb_id'] && $od_send_cost > 0) {
                     where cp_id = '{$data['sc_cp_id']}'
                       and mb_id IN ( '{$od['mb_id']}', '전체회원' )
                       and cp_method = '3' ";
-        $cp = sql_fetch($sql);
+        $cp = sql_pdo_fetch($sql);
 
         // 사용한 쿠폰인지
         $cp_used = is_used_coupon($od['mb_id'], $cp['cp_id']);
@@ -224,7 +224,7 @@ $pg_anchor = '<ul class="anchor">
         </thead>
         <tbody>
         <?php
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             // 상품이미지
             $image = get_it_image($row['it_id'], 50, 50);
 
@@ -235,7 +235,7 @@ $pg_anchor = '<ul class="anchor">
 
             // 합계금액 계산
             $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price, SUM(ct_qty) as qty $sql_common and it_id = '{$row['it_id']}' ";
-            $sum = sql_fetch($sql);
+            $sum = sql_pdo_fetch($sql);
 
             // 배송비
             switch($row['ct_send_cost'])
@@ -259,7 +259,7 @@ $pg_anchor = '<ul class="anchor">
                     $ct_send_cost = '무료';
             }
 
-            for($k=0; $opt=sql_fetch_array($res); $k++) {
+            for($k=0; $opt=sql_pdo_fetch_array($res); $k++) {
                 if($opt['io_type'])
                     $opt_price = $opt['io_price'];
                 else
@@ -403,15 +403,15 @@ $pg_anchor = '<ul class="anchor">
 
         $tmps = array();
 
-        while( $tmp=sql_fetch_array($results) ){
+        while( $tmp=sql_pdo_fetch_array($results) ){
 
             $sql = " select od_id from {$g5['g5_shop_order_table']} where od_id = '".$tmp['oid']."' and od_tno = '".$tmp['P_TID']."' ";
-            $exist_od = sql_fetch($sql);
+            $exist_od = sql_pdo_fetch($sql);
 
             if( $exist_od['od_id'] ) continue;
 
             $sql = " select pp_id from {$g5['g5_shop_personalpay_table']} where pp_id = '".$tmp['oid']."' and pp_tno = '".$tmp['P_TID']."' ";
-            $exist_od = sql_fetch($sql);
+            $exist_od = sql_pdo_fetch($sql);
 
             if( $exist_od['od_id'] ) continue;
 

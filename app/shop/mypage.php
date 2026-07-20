@@ -29,7 +29,7 @@ $sql = " select cp_id
               and cp_end >= '".G5_TIME_YMD."' ";
 $res = sql_pdo_query($sql);
 
-for($k=0; $cp=sql_fetch_array($res); $k++) {
+for($k=0; $cp=sql_pdo_fetch_array($res); $k++) {
     if(!is_used_coupon($member['mb_id'], $cp['cp_id']))
         $cp_count++;
 }
@@ -115,7 +115,7 @@ for($k=0; $cp=sql_fetch_array($res); $k++) {
                       order by a.wi_id desc
                       limit 0, 8 ";
             $result = sql_pdo_query($sql);
-            for ($i=0; $row = sql_fetch_array($result); $i++)
+            for ($i=0; $row = sql_pdo_fetch_array($result); $i++)
             {
                 $image = get_it_image($row['it_id'], 230, 230, true);
             ?>

@@ -31,7 +31,7 @@ if ($file = $ca_include_tail) {
 
 if( $ca_id ){
     $sql = " select * from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' ";
-    $ca = sql_fetch($sql);
+    $ca = sql_pdo_fetch($sql);
 
     if ($ca && ($ca['ca_include_head'] !== $ca_include_head || $ca['ca_include_tail'] !== $ca_include_tail) && function_exists('get_admin_captcha_by') && get_admin_captcha_by()){
         include_once(G5_CAPTCHA_PATH.'/captcha.lib.php');
@@ -114,7 +114,7 @@ if ($w == "" || $w == "u")
     if ($ca_mb_id)
     {
         $sql = " select mb_id from {$g5['member_table']} where mb_id = '$ca_mb_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         if (!$row['mb_id'])
             alert("\'$ca_mb_id\' 은(는) 존재하는 회원아이디가 아닙니다.");
     }
@@ -208,7 +208,7 @@ else if ($w == "d")
     $sql = " select COUNT(*) as cnt from {$g5['g5_shop_category_table']}
               where SUBSTRING(ca_id,1,$len) = '$ca_id'
                 and ca_id <> '$ca_id' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if ($row['cnt'] > 0)
         alert("이 분류에 속한 하위 분류가 있으므로 삭제 할 수 없습니다.\\n\\n하위분류를 우선 삭제하여 주십시오.");
 
@@ -216,7 +216,7 @@ else if ($w == "d")
     $sql = " select it_id from {$g5['g5_shop_item_table']} where ca_id = '$ca_id' ";
     $result = sql_pdo_query($sql);
     $i=0;
-    while ($row = sql_fetch_array($result))
+    while ($row = sql_pdo_fetch_array($result))
     {
         $i++;
         if ($i % 10 == 0) $str .= "\\n";

@@ -34,7 +34,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
     <?php
     $thumbnail_width = 500;
 
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $num = $total_count - ($page - 1) * $rows - $i;
         $star = get_star($row['is_score']);

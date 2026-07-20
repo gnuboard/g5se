@@ -21,7 +21,7 @@ $sql_common = " from {$g5['g5_shop_event_table']} ";
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $sql = "select * $sql_common order by ev_id desc ";
@@ -51,12 +51,12 @@ $result = sql_pdo_query($sql);
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
 
         $href = '';
         $href_close = '';
         $sql = " select count(ev_id) as cnt from {$g5['g5_shop_event_item_table']} where ev_id = '{$row['ev_id']}' ";
-        $ev = sql_fetch($sql);
+        $ev = sql_pdo_fetch($sql);
         if ($ev['cnt']) {
             $href = '<a href="javascript:;" onclick="itemeventwin('.$row['ev_id'].');">';
             $href_close = '</a>';

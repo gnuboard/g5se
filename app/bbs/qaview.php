@@ -88,7 +88,7 @@ if(is_file($skin_file)) {
 
     $rel_list = array();
     $rel_count = 0;
-    for($i=0; $row=sql_fetch_array($result); $i++) {
+    for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $rel_list[$i] = $row;
         $rel_list[$i]['category'] = get_text($row['qa_category']);
         $rel_list[$i]['subject'] = conv_subject($row['qa_subject'], $subject_len, '…');

@@ -9,7 +9,7 @@ $len4 = $ca_id_len + 4;
 
 $sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']} where ca_id like :ca_pattern and length(ca_id) = :ca_length and ca_use = '1' order by ca_order, ca_id ";
 $result = sql_pdo_query($sql, [':ca_pattern' => $ca_id.'%', ':ca_length' => $len2]);
-while ($row=sql_fetch_array($result)) {
+while ($row=sql_pdo_fetch_array($result)) {
 
     $category_pattern = $row['ca_id'].'%';
     $row2 = sql_pdo_fetch(

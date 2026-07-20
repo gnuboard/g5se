@@ -42,7 +42,7 @@ if (get_cart_count($tmp_cart_id) == 0) {    // 장바구니에 담기
 }
 
 $sql = "select * from {$g5['g5_shop_order_table']} limit 1";
-$check_tmp = sql_fetch($sql);
+$check_tmp = sql_pdo_fetch($sql);
 
 if(!isset($check_tmp['od_other_pay_type'])){
     $sql = "ALTER TABLE `{$g5['g5_shop_order_table']}`
@@ -63,7 +63,7 @@ $result = sql_pdo_query(" select it_id, ct_qty, it_name, io_id, io_type, ct_opti
                             from {$g5['g5_shop_cart_table']}
                            where od_id = :od_id and ct_select = '1' ",
                        [':od_id' => $tmp_cart_id]);
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     // 상품에 대한 현재고수량
     if($row['io_id']) {

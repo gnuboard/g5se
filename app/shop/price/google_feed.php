@@ -11,7 +11,7 @@ $sql = "SELECT a.ca_id,
 $result = sql_pdo_query($sql);
 
 $category_adult_array = array();
-for ($i = 0; $row = sql_fetch_array($result); $i++ ) {
+for ($i = 0; $row = sql_pdo_fetch_array($result); $i++ ) {
     $category_adult_array[$row['ca_id']] = array( $row['ca_adult'],               // 자기자신 성인인증판단
                                             $row['ca_adult_parent1'],       // 1depth 성인인증
                                             $row['ca_adult_parent2'],       // 2depth 성인인증 
@@ -32,7 +32,7 @@ $title = $channel->addChild("title", "쇼핑몰피드");
 $link = $channel->addChild("link", G5_URL);
 $description = $channel->addChild("description", "");
 
-for ($i = 0; $row = sql_fetch_array($result); $i++) {
+for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
     $it_id = $row['it_id'];
     $it_title = $row['it_name'];
     $it_link = shop_item_url($row['it_id']);

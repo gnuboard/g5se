@@ -43,7 +43,7 @@ for ($i=0; $i<$cnt; $i++)
         continue;
 
     $sql = " select * from {$g5['g5_shop_cart_table']} where od_id = '$od_id' and ct_id  = '$ct_id' ";
-    $ct = sql_fetch($sql);
+    $ct = sql_pdo_fetch($sql);
     if(! (isset($ct['ct_id']) && $ct['ct_id']))
         continue;
 
@@ -166,7 +166,7 @@ if(is_array($arr_it_id) && !empty($arr_it_id)) {
 
     foreach($unq_it_id as $it_id) {
         $sql2 = " select sum(ct_qty) as sum_qty from {$g5['g5_shop_cart_table']} where it_id = '$it_id' and ct_status = '완료' ";
-        $row2 = sql_fetch($sql2);
+        $row2 = sql_pdo_fetch($sql2);
 
         $sql3 = " update {$g5['g5_shop_item_table']} set it_sum_qty = '{$row2['sum_qty']}' where it_id = '$it_id' ";
         sql_pdo_query($sql3);
@@ -180,7 +180,7 @@ if (in_array($_POST['ct_status'], $status_cancel)) {
                     SUM(IF(ct_status = '취소' OR ct_status = '반품' OR ct_status = '품절', 1, 0)) as od_count2
                 from {$g5['g5_shop_cart_table']}
                 where od_id = '$od_id' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
 
     if($row['od_count1'] == $row['od_count2']) {
         $cancel_change = true;
@@ -192,7 +192,7 @@ if (in_array($_POST['ct_status'], $status_cancel)) {
         // PG 신용카드 결제 취소일 때
         if($pg_cancel == 1) {
             $sql = " select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-            $od = sql_fetch($sql);
+            $od = sql_pdo_fetch($sql);
 
             if ($od['od_tno'] && is_cancel_shop_pg_order($od)) {
                 switch($od['od_pg']) {
@@ -384,7 +384,7 @@ if($pg_cancel == 1 && $pg_res_cd && $pg_res_msg) {
     alert('오류코드 : '.$pg_res_cd.' 오류내용 : '.$pg_res_msg, $url);
 } else {
     // 1.06.06
-    $od = sql_fetch(" select od_receipt_point from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
+    $od = sql_pdo_fetch(" select od_receipt_point from {$g5['g5_shop_order_table']} where od_id = '$od_id' ");
     if ($od['od_receipt_point'])
         alert("포인트로 결제한 주문은,\\n\\n주문상태 변경으로 인해 포인트의 가감이 발생하는 경우\\n\\n회원관리 > 포인트관리에서 수작업으로 포인트를 맞추어 주셔야 합니다.", $url);
     else

@@ -72,7 +72,7 @@ $result = sql_pdo_query($sql);
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         if ($row['mb_id'] == '') { // 비회원일 경우는 주문자로 링크
             $href = '<a href="./orderlist.php?sel_field=od_name&amp;search='.$row['od_name'].'">';

@@ -22,7 +22,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_SKIN_URL.'/style.css">', 
     $thumbnail_width = 500;
     $iq_num     = $total_count - ($page - 1) * $rows;
 
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $iq_name    = get_text($row['iq_name']);
         $iq_subject = conv_subject($row['iq_subject'],50,"…");

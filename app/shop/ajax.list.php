@@ -11,7 +11,7 @@ $sql = " select *
            from {$g5['g5_shop_category_table']}
           where ca_id = '$ca_id'
             and ca_use = '1'  ";
-$ca = sql_fetch($sql);
+$ca = sql_pdo_fetch($sql);
 if (!$ca['ca_id'])
     die(json_encode($data['error'] = '등록된 분류가 없습니다.'));
 

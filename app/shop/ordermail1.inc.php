@@ -16,7 +16,7 @@ $result = sql_pdo_query(" select a.it_id, a.it_name, a.ct_qty, a.ct_price, a.ct_
                            where a.od_id = :od_id and a.ct_select = '1'
                            group by a.it_id order by a.ct_id asc ",
                        [':od_id' => $od_id]);
-for ($i=0; $row=sql_fetch_array($result); $i++)
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
 {
     // 합계금액 계산
     $sum = sql_pdo_fetch(" select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
@@ -35,7 +35,7 @@ for ($i=0; $row=sql_fetch_array($result); $i++)
     $options = '';
     $options_ul = ' style="margin:0;padding:0"'; // ul style
     $options_li = ' style="padding:5px 0;list-style:none"'; // li style
-    for($k=0; $row2=sql_fetch_array($result2); $k++) {
+    for($k=0; $row2=sql_pdo_fetch_array($result2); $k++) {
         if($k == 0)
             $options .= '<ul'.$options_ul.'>'.PHP_EOL;
         $price_plus = '';

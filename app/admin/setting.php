@@ -184,7 +184,7 @@ if ($_edit_key !== '') {
     $_table_missing = false;
     try {
         $_rs = sql_pdo_query("SELECT s_key FROM `".G5_TABLE_PREFIX."setting`");
-        while ($_r = sql_fetch_array($_rs)) {
+        while ($_r = sql_pdo_fetch_array($_rs)) {
             $_saved_keys[$_r['s_key']] = true;
         }
     } catch (\Throwable) {

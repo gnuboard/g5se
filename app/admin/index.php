@@ -30,12 +30,12 @@ foreach ($days as $d) {
 // 최근 가입 회원 5명
 $recent_members = [];
 $res = sql_pdo_query("SELECT mb_id, mb_nick, mb_datetime FROM {$g5['member_table']} WHERE mb_leave_date = '' ORDER BY mb_datetime DESC LIMIT 5");
-while ($row = sql_fetch_array($res)) $recent_members[] = $row;
+while ($row = sql_pdo_fetch_array($res)) $recent_members[] = $row;
 
 // 최근 게시물 5개
 $recent_posts = [];
 $res = sql_pdo_query("SELECT bo_table, wr_id, wr_parent, bn_datetime, mb_id FROM {$g5['board_new_table']} ORDER BY bn_datetime DESC LIMIT 5");
-while ($row = sql_fetch_array($res)) {
+while ($row = sql_pdo_fetch_array($res)) {
     $w = sql_pdo_fetch("SELECT wr_subject, wr_name FROM {$g5['write_prefix']}{$row['bo_table']} WHERE wr_id = :wr_id", [':wr_id' => (int)$row['wr_id']]);
     if ($w) {
         $row['wr_subject'] = $w['wr_subject'];

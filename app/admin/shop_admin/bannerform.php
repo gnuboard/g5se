@@ -24,7 +24,7 @@ if ($w=="u")
 {
     $html_title .= ' 수정';
     $sql = " select * from {$g5['g5_shop_banner_table']} where bn_id = '$bn_id' ";
-    $bn = sql_fetch($sql);
+    $bn = sql_pdo_fetch($sql);
 }
 else
 {

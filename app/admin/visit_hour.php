@@ -33,7 +33,7 @@ $sql = " select SUBSTRING(vi_time,1,2) as vi_hour, count(vi_id) as cnt
             group by vi_hour
             order by vi_hour ";
 $result = sql_pdo_query($sql);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $arr[$row['vi_hour']] = $row['cnt'];
 
     if ($row['cnt'] > $max) $max = $row['cnt'];

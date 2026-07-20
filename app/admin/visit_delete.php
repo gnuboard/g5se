@@ -19,7 +19,7 @@ admin_layout_start($g5['title'], 'visit_delete');
 
 // 최소년도 구함
 $sql = " select min(vi_date) as min_date from {$g5['visit_table']} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 
 $min_year = (int)substr($row['min_date'], 0, 4);
 $now_year = (int)substr(G5_TIME_YMD, 0, 4);

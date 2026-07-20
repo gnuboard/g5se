@@ -85,12 +85,12 @@ if($_POST['cp_type'] && ($_POST['cp_price'] < 1 || $_POST['cp_price'] > 99))
 
 if($_POST['cp_method'] == 0) {
     $sql = " select count(*) as cnt from {$g5['g5_shop_item_table']} where it_id = '$cp_target' and it_nocoupon = '0' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if(!$row['cnt'])
         alert('입력하신 상품코드는 존재하지 않는 코드이거나 쿠폰적용안함으로 설정된 상품입니다.');
 } else if($_POST['cp_method'] == 1) {
     $sql = " select count(*) as cnt from {$g5['g5_shop_category_table']} where ca_id = '$cp_target' and ca_nocoupon = '0' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if(!$row['cnt'])
         alert('입력하신 분류코드는 존재하지 않는 분류코드이거나 쿠폰적용안함으로 설정된 분류입니다.');
 }
@@ -121,7 +121,7 @@ if($w == '') {
     $cz_id = sql_insert_id();
 } else if($w == 'u') {
     $sql = " select * from {$g5['g5_shop_coupon_zone_table']} where cz_id = '$cz_id' ";
-    $cp = sql_fetch($sql);
+    $cp = sql_pdo_fetch($sql);
 
     if(! (isset($cp['cz_id']) && $cp['cz_id']))
         alert('쿠폰정보가 존재하지 않습니다.', './couponzonelist.php');

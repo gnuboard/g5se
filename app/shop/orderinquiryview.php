@@ -102,7 +102,7 @@ if($od['od_pg'] == 'lg') {
             </thead>
             <tbody>
             <?php
-            for($i=0; $row=sql_fetch_array($result); $i++) {
+            for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
                 $image = get_it_image($row['it_id'], 70, 70);
 
                 $res = sql_pdo_query(" select ct_id, it_name, ct_option, ct_qty, ct_price, ct_point, ct_status, io_type, io_price
@@ -141,7 +141,7 @@ if($od['od_pg'] == 'lg') {
                         $ct_send_cost = '무료';
                 }
 
-                for($k=0; $opt=sql_fetch_array($res); $k++) {
+                for($k=0; $opt=sql_pdo_fetch_array($res); $k++) {
                     if($opt['io_type'])
                         $opt_price = $opt['io_price'];
                     else

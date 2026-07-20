@@ -21,7 +21,7 @@ set_session('ss_order_id', $pp_id);
 // 개인결제 정보
 $pp_check = false;
 $sql = " select * from {$g5['g5_shop_personalpay_table']} where pp_id = '{$pp_id}' and pp_use = '1' ";
-$pp = sql_fetch($sql);
+$pp = sql_pdo_fetch($sql);
 if(! (isset($pp['pp_id']) && $pp['pp_id']))
     alert('개인결제 정보가 존재하지 않습니다.', $page_return_url);
 

@@ -270,7 +270,7 @@ function get_naverpay_item_option($it_id, $subject)
         $options = array();
 
         // 옵션항목 배열에 저장
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             $osl_id = explode(chr(30), $row['io_id']);
 
             for($k=0; $k<$subj_count; $k++) {
@@ -299,7 +299,7 @@ function get_naverpay_item_option($it_id, $subject)
         }
     } else {
         $option .= '<option name="'.get_text($subj[0]).'">'.PHP_EOL;
-        for($i=0; $row=sql_fetch_array($result); $i++) {
+        for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
             $option .= '<select><![CDATA['.$row['io_id'].']]></select>'.PHP_EOL;
         }
         $option .= '</option>'.PHP_EOL;

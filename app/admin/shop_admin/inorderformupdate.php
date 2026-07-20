@@ -20,7 +20,7 @@ $od_id = isset($_REQUEST['od_id']) ? safe_replace_regex($_REQUEST['od_id'], 'od_
 // 주문서 정보
 //------------------------------------------------------------------------------
 $sql = " select * from {$g5['g5_shop_order_data_table']} where od_id = '$od_id' ";
-$od = sql_fetch($sql);
+$od = sql_pdo_fetch($sql);
 if (! (isset($od['od_id']) && $od['od_id'])) {
     alert("해당 주문번호로 미완료 주문서가 존재하지 않습니다.");
 }
@@ -38,7 +38,7 @@ $sql_common = " from {$g5['g5_shop_cart_table']} where od_id = '{$od['cart_id']}
 
 // 주문금액
 $sql = " select SUM(IF(io_type = 1, io_price, (ct_price + io_price)) * ct_qty) as od_price, COUNT(distinct it_id) as cart_count $sql_common ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $tot_ct_price  = $row['od_price'];
 $cart_count    = $row['cart_count'];
 $tot_od_price  = $tot_ct_price;
@@ -63,7 +63,7 @@ if($od['mb_id']) {
                     where cp_id = '$cid'
                       and mb_id IN ( '{$od['mb_id']}', '전체회원' )
                       and cp_method IN ( 0, 1 ) ";
-        $cp = sql_fetch($sql);
+        $cp = sql_pdo_fetch($sql);
         if(! (isset($cp['cp_id']) && $cp['cp_id']))
             continue;
 
@@ -76,7 +76,7 @@ if($od['mb_id']) {
             $sql2 = " select it_id, ca_id, ca_id2, ca_id3
                         from {$g5['g5_shop_item_table']}
                         where it_id = '$it_id' ";
-            $row2 = sql_fetch($sql2);
+            $row2 = sql_pdo_fetch($sql2);
 
             if(!$row2['it_id'])
                 continue;
@@ -90,7 +90,7 @@ if($od['mb_id']) {
 
         // 상품금액
         $sql = " select SUM( IF(io_type = '1', io_price * ct_qty, (ct_price + io_price) * ct_qty)) as sum_price $sql_common and it_id = '$it_id' ";
-        $ct = sql_fetch($sql);
+        $ct = sql_pdo_fetch($sql);
         $item_price = $ct['sum_price'];
 
         if($cp['cp_minimum'] > $item_price)
@@ -122,7 +122,7 @@ if($od['mb_id']) {
                     where cp_id = '{$data['od_cp_id']}'
                       and mb_id IN ( '{$od['mb_id']}', '전체회원' )
                       and cp_method = '2' ";
-        $cp = sql_fetch($sql);
+        $cp = sql_pdo_fetch($sql);
 
         // 사용한 쿠폰인지
         $cp_used = is_used_coupon($od['mb_id'], $cp['cp_id']);
@@ -158,7 +158,7 @@ if($od['mb_id'] && $od_send_cost > 0) {
                     where cp_id = '{$data['sc_cp_id']}'
                       and mb_id IN ( '{$od['mb_id']}', '전체회원' )
                       and cp_method = '3' ";
-        $cp = sql_fetch($sql);
+        $cp = sql_pdo_fetch($sql);
 
         // 사용한 쿠폰인지
         $cp_used = is_used_coupon($od['mb_id'], $cp['cp_id']);

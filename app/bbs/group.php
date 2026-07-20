@@ -33,7 +33,7 @@ if(!$is_admin)
     $sql .= " and bo_use_cert = '' ";
 $sql .= " order by bo_order ";
 $result = sql_pdo_query($sql, $params);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $lt_style = "";
     if ($i%3 !== 0) $lt_style = "margin-left:2%";
     else $lt_style = "";

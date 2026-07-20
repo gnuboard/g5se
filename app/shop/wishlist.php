@@ -32,11 +32,11 @@ include_once('./_head.php');
         $sql  = " select a.wi_id, a.wi_time, b.* from {$g5['g5_shop_wish_table']} a left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id ) ";
         $sql .= " where a.mb_id = '{$member['mb_id']}' order by a.wi_id desc ";
         $result = sql_pdo_query($sql);
-        for ($i=0; $row = sql_fetch_array($result); $i++) {
+        for ($i=0; $row = sql_pdo_fetch_array($result); $i++) {
 
             $out_cd = '';
             $sql = " select count(*) as cnt from {$g5['g5_shop_item_option_table']} where it_id = '{$row['it_id']}' and io_type = '0' ";
-            $tmp = sql_fetch($sql);
+            $tmp = sql_pdo_fetch($sql);
             if(isset($tmp['cnt']) && $tmp['cnt'])
                 $out_cd = 'no';
 

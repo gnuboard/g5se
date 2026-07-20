@@ -55,7 +55,7 @@ if ($sod && !in_array(strtolower($sod), array('asc', 'desc'))) $sod = '';
 $sql_order = " order by {$sst} {$sod} ";
 
 $sql = " select count(*) as cnt {$sql_common} {$sql_search} {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -67,12 +67,12 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 // 탈퇴회원수
 $sql = " select count(*) as cnt {$sql_common} {$sql_search} and mb_leave_date <> '' {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $leave_count = $row['cnt'];
 
 // 차단회원수
 $sql = " select count(*) as cnt {$sql_common} {$sql_search} and mb_intercept_date <> '' {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $intercept_count = $row['cnt'];
 
 $listall = '<a href="'.G5_ADMIN_URL.'/member_list" class="ov_listall">전체목록</a>';
@@ -171,10 +171,10 @@ $colspan = 16;
             </thead>
             <tbody>
                 <?php
-                for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                     // 접근가능한 그룹수
                     $sql2 = " select count(*) as cnt from {$g5['group_member_table']} where mb_id = '{$row['mb_id']}' ";
-                    $row2 = sql_fetch($sql2);
+                    $row2 = sql_pdo_fetch($sql2);
                     $group = '';
                     if ($row2['cnt']) {
                         $group = '<a href="'.G5_ADMIN_URL.'/boardgroupmember_form?mb_id=' . $row['mb_id'] . '">' . $row2['cnt'] . '</a>';

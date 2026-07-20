@@ -10,7 +10,7 @@ auth_check_menu($auth, $sub_menu, "w");
 $od_id = isset($_REQUEST['od_id']) ? safe_replace_regex($_REQUEST['od_id'], 'od_id') : '';
 
 $sql = " select * from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-$od = sql_fetch($sql);
+$od = sql_pdo_fetch($sql);
 
 if(! (isset($od['od_id']) && $od['od_id']))
     alert_close('주문정보가 존재하지 않습니다.');

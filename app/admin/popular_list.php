@@ -126,7 +126,7 @@ $colspan = 4;
             </thead>
             <tbody>
                 <?php
-                for ($i = 0; $row = sql_fetch_array($result); $i++) {
+                for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
                     $word = get_text($row['pp_word']);
                     $bg = 'bg' . ($i % 2);
                 ?>

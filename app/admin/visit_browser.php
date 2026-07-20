@@ -30,7 +30,7 @@ $arr = array();
 $sql = " select * from {$g5['visit_table']}
             where vi_date between '{$fr_date}' and '{$to_date}' ";
 $result = sql_pdo_query($sql);
-while ($row=sql_fetch_array($result)) {
+while ($row=sql_pdo_fetch_array($result)) {
     $s = $row['vi_browser'];
     if(!$s)
         $s = get_brow($row['vi_agent']);

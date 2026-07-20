@@ -25,7 +25,7 @@ $boards_result = sql_pdo_query($sql_boards, [
     ':mb_level' => $member['mb_level'],
 ]);
 $boards = [];
-while ($row = sql_fetch_array($boards_result)) $boards[] = $row;
+while ($row = sql_pdo_fetch_array($boards_result)) $boards[] = $row;
 $board_count = count($boards);
 ?>
 

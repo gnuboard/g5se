@@ -41,7 +41,7 @@ $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search}
             {$sql_order} ";
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -112,7 +112,7 @@ $colspan = 10;
     </thead>
     <tbody>
     <?php
-    for ($i=0; $row=sql_fetch_array($result); $i++) {
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $data = unserialize(base64_decode($row['dt_data']));
 
         switch($row['dt_pg']) {
@@ -129,7 +129,7 @@ $colspan = 10;
 
         // 주문금액
         $sql = " select sum(if(io_type = '1', io_price, (ct_price + io_price)) * ct_qty) as price from {$g5['g5_shop_cart_table']} where od_id = '{$row['cart_id']}' and ct_status = '쇼핑' ";
-        $ct = sql_fetch($sql);
+        $ct = sql_pdo_fetch($sql);
 
         $bg = 'bg'.($i%2);
     ?>

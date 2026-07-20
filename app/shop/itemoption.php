@@ -39,7 +39,7 @@ if( $op_title && ($op_title !== $option_title) && $it['it_option_subject'] ){
 $str = '<option value="">'.$option_title.'</option>';
 $opt = array();
 
-for($i=0; $row=sql_fetch_array($result); $i++) {
+for($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $val = explode(chr(30), $row['io_id']);
     $key = $idx + 1;
 

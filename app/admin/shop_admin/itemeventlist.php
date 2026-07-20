@@ -44,7 +44,7 @@ $sql_common .= $sql_search;
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -74,7 +74,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
 
 // 이벤트제목
 if($ev_id) {
-    $tmp = sql_fetch(" select ev_subject from {$g5['g5_shop_event_table']} where ev_id = '$ev_id' ");
+    $tmp = sql_pdo_fetch(" select ev_subject from {$g5['g5_shop_event_table']} where ev_id = '$ev_id' ");
     $ev_title = $tmp['ev_subject'];
 }
 ?>
@@ -93,7 +93,7 @@ if($ev_id) {
     $event_option = "<option value=''>이벤트를 선택하세요</option>";
     $sql1 = " select ev_id, ev_subject from {$g5['g5_shop_event_table']} order by ev_id desc ";
     $result1 = sql_pdo_query($sql1);
-    while ($row1=sql_fetch_array($result1))
+    while ($row1=sql_pdo_fetch_array($result1))
         $event_option .= '<option value="'.$row1['ev_id'].'" '.get_selected($ev_id, $row1['ev_id']).' >'.conv_subject($row1['ev_subject'], 20,"…").'</option>';
     echo $event_option;
     ?>
@@ -112,7 +112,7 @@ if($ev_id) {
     <?php
     $sql1 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} order by ca_order, ca_id ";
     $result1 = sql_pdo_query($sql1);
-    for ($i=0; $row1=sql_fetch_array($result1); $i++)
+    for ($i=0; $row1=sql_pdo_fetch_array($result1); $i++)
     {
         $len = strlen($row1['ca_id']) / 2 - 1;
         $nbsp = "";
@@ -160,13 +160,13 @@ if($ev_id) {
     </tr>
     </thead>
     <tbody>
-    <?php for ($i=0; $row=sql_fetch_array($result); $i++) {
+    <?php for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
         $href = shop_item_url($row['it_id']);
 
         $sql = " select ev_id from {$g5['g5_shop_event_item_table']}
                   where it_id = '{$row['it_id']}'
                     and ev_id = '$ev_id' ";
-        $ev = sql_fetch($sql);
+        $ev = sql_pdo_fetch($sql);
 
         $bg = 'bg'.($i%2);
     ?>

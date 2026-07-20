@@ -59,7 +59,7 @@ $sql_common = " from `{$g5['g5_shop_item_qa_table']}` where it_id = '{$it_id}' "
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select COUNT(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = 5;

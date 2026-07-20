@@ -37,7 +37,7 @@ $sql_common .= $sql_search;
 
 // 테이블의 전체 레코드수만 얻음
 $sql = " select count(*) as cnt " . $sql_common;
-$row = sql_fetch($sql);
+$row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -119,7 +119,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <tbody>
     <?php
     $s_add = $s_vie = $s_upd = $s_del = '';
-    for ($i=0; $row=sql_fetch_array($result); $i++)
+    for ($i=0; $row=sql_pdo_fetch_array($result); $i++)
     {
         $level = strlen($row['ca_id']) / 2 - 1;
         $p_ca_name = '';
@@ -129,7 +129,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
             // 상위단계의 분류명
             $p_ca_id = substr($row['ca_id'], 0, $level*2);
             $sql = " select ca_name from {$g5['g5_shop_category_table']} where ca_id = '$p_ca_id' ";
-            $temp = sql_fetch($sql);
+            $temp = sql_pdo_fetch($sql);
             $p_ca_name = $temp['ca_name'].'의하위';
         } else {
             $class = '';
@@ -150,7 +150,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
                       where ca_id = '{$row['ca_id']}'
                       or ca_id2 = '{$row['ca_id']}'
                       or ca_id3 = '{$row['ca_id']}' ";
-        $row1 = sql_fetch($sql1);
+        $row1 = sql_pdo_fetch($sql1);
 
         // 스킨 Path
         if(!$row['ca_skin_dir'])

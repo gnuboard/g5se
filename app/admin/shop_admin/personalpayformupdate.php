@@ -15,7 +15,7 @@ if($w == 'd') {
     auth_check_menu($auth, $sub_menu, 'd');
 
     $sql = " select pp_id from {$g5['g5_shop_personalpay_table']} where pp_id = '{$pp_id}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if(!$row['pp_id'])
         alert('삭제하시려는 자료가 존재하지 않습니다.');
 
@@ -36,7 +36,7 @@ if($w == 'd') {
 
     if($od_id) {
         $sql = " select od_id from {$g5['g5_shop_order_table']} where od_id = '$od_id' ";
-        $row = sql_fetch($sql);
+        $row = sql_pdo_fetch($sql);
         if(! (isset($row['od_id']) && $row['od_id']))
             alert('입력하신 주문번호는 존재하지 않는 주문 자료입니다.');
     }
@@ -69,7 +69,7 @@ if($w == '') {
     sql_pdo_query($sql);
 } else if($w == 'u') {
     $sql = " select pp_id from {$g5['g5_shop_personalpay_table']} where pp_id = '{$pp_id}' ";
-    $row = sql_fetch($sql);
+    $row = sql_pdo_fetch($sql);
     if(!$row['pp_id'])
         alert('수정하시려는 자료가 존재하지 않습니다.');
 

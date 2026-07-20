@@ -33,7 +33,7 @@ $sql = " select WEEKDAY(vs_date) as weekday_date, SUM(vs_count) as cnt
             group by weekday_date
             order by weekday_date ";
 $result = sql_pdo_query($sql);
-for ($i=0; $row=sql_fetch_array($result); $i++) {
+for ($i=0; $row=sql_pdo_fetch_array($result); $i++) {
     $arr[$row['weekday_date']] = $row['cnt'];
 
     $sum_count += $row['cnt'];
