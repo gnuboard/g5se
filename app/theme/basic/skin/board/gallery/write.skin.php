@@ -8,7 +8,7 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
 <div class="m-shell">
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
-    <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
+    <main class="m-container<?php echo empty($g5['m_board_bare_side']) ? ' m-with-sidebar' : ''; ?>" style="padding: 32px 20px 64px;<?php echo $g5["m_board_width_style"] ?? ""; ?>">
         <div class="m-main-col">
 
             <header class="m-write-head">
@@ -207,9 +207,11 @@ require_once(G5_THEME_PATH.'/modern/_head.inc.php');
             </form>
         </div>
 
+        <?php if (empty($g5['m_board_bare_side'])) { ?>
         <aside class="m-side-col">
             <?php require G5_THEME_PATH.'/modern/_outlogin.inc.php'; ?>
         </aside>
+        <?php } ?>
     </main>
     <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>

@@ -5,6 +5,28 @@
 // (m-shell 이 아닌 body 직속 형제는 모두 시각적으로 숨겨져 gnuboard chrome 이 가려짐)
 
 if (!defined('_GNUBOARD_')) exit;
+
+// 게시판 하단 파일 경로(bo_include_tail)가 비어 있으면 우측 사이드바(아웃로그인)도 생략하고
+// 본문을 전체폭으로 만든다. _nav/_tail 이 모던 크롬을 생략하는 조건과 동일 — bare 게시판 계승.
+// (board 스킨이 최상단에서 이 파일을 require_once 하므로 이 시점에 $board 가 스코프에 있다.)
+global $board, $g5;
+$g5['m_board_bare_side'] = (isset($board['bo_include_tail']) && trim($board['bo_include_tail']) === '');
+
+// 레거시 게시판 폭(bo_table_width) 계승: 게시판 전체 블록(.m-container)의 폭을 지정한다.
+// 레거시 board.php 는 100 이하면 '%', 초과면 'px' 로 계산했다. 여기서 한 번만 계산해
+// 스킨(list/view/write)의 <main> 인라인 style 에 덧붙일 조각 문자열로 $g5 에 담는다.
+//  - N<=0/미설정: 강제 안 함(=.m-container 기본 max-width 7xl 캡 + 가운데 정렬 유지)
+//  - N>100(px): 고정 px — 헤더 유무와 무관하게 항상 적용(작은 화면 대비 max-width:100%).
+//  - N<=100(%)+헤더 있음: width:N% 만 — 기본 max-width 캡 유지 → 100% 도 메인과 동일하게 캡.
+//  - N<=100(%)+맨몸(헤더 없음): 캡 제거 → 화면 전체 기준 %(100 이 진짜 전체폭).
+$_bw = isset($board['bo_table_width']) ? (int)$board['bo_table_width'] : 0;
+$_has_head = isset($board['bo_include_head']) && trim($board['bo_include_head']) !== '';
+if ($_bw <= 0)        $g5['m_board_width_style'] = '';
+elseif ($_bw > 100)   $g5['m_board_width_style'] = 'width:'.$_bw.'px;max-width:100%;';
+elseif ($_has_head)   $g5['m_board_width_style'] = 'width:'.$_bw.'%;';
+else                  $g5['m_board_width_style'] = 'width:'.$_bw.'%;max-width:none;';
+unset($_bw, $_has_head);
+
 if (defined('_MODERN_HEAD_LOADED_')) return;
 define('_MODERN_HEAD_LOADED_', true);
 

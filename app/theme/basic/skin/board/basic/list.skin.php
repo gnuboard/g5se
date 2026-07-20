@@ -16,7 +16,7 @@ if (empty($g5['m_board_chrome_open'])) { ?>
 
     <?php require G5_THEME_PATH.'/modern/_nav.inc.php'; ?>
 
-    <main class="m-container m-with-sidebar" style="padding: 32px 20px 64px;">
+    <main class="m-container<?php echo empty($g5['m_board_bare_side']) ? ' m-with-sidebar' : ''; ?>" style="padding: 32px 20px 64px;<?php echo $g5["m_board_width_style"] ?? ""; ?>">
         <div class="m-main-col">
 <?php } ?>
         <?php if (!empty($g5['board_content_head_html']) && empty($g5['board_content_head_rendered'])) {
@@ -186,9 +186,11 @@ if (empty($g5['m_board_chrome_open'])) { ?>
         } ?>
         </div><!-- /m-main-col -->
 
+        <?php if (empty($g5['m_board_bare_side'])) { ?>
         <aside class="m-side-col">
             <?php require G5_THEME_PATH.'/modern/_outlogin.inc.php'; ?>
         </aside>
+        <?php } ?>
     </main>
     <?php require G5_THEME_PATH.'/modern/_tail.inc.php'; ?>
 </div>

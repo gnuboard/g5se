@@ -13,6 +13,9 @@
 
 if (!defined('_GNUBOARD_')) return;
 
+// 레거시 bo_include_tail 계승: 게시판에서 하단 파일 경로를 비우면 모던 하단 크롬(푸터) 생략.
+if (isset($board['bo_include_tail']) && trim($board['bo_include_tail']) === '') return;
+
 global $config, $g5, $default;
 
 // 공지사항 최근 5건 (notice 게시판이 있으면)

@@ -11,6 +11,9 @@
 
 if (!defined('_GNUBOARD_')) return;
 
+// 레거시 bo_include_head 계승: 게시판에서 상단 파일 경로를 비우면 모던 상단 크롬(네비) 생략.
+if (isset($board['bo_include_head']) && trim($board['bo_include_head']) === '') return;
+
 global $is_member, $is_admin, $member, $config;
 
 // gnuboard 의 g5_menu (관리자 → 환경설정 → 메뉴설정) 에서 등록된 메뉴를 동적으로 출력.
