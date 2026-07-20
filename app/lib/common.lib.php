@@ -2068,10 +2068,22 @@ function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
 }
 
 
-// Legacy DB fetch API disabled. Use sql_pdo_fetch() and
-// sql_pdo_fetch_array() from lib/sql_pdo.lib.php.
-// function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null) {}
-// function sql_fetch_array($result) {}
+// Legacy API compatibility wrappers. All execution and fetching is delegated
+// to the prepared-statement helpers in lib/sql_pdo.lib.php.
+function sql_query($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
+{
+    return sql_pdo_query($sql, [], $error, $link);
+}
+
+function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
+{
+    return sql_pdo_fetch($sql, [], $error, $link);
+}
+
+function sql_fetch_array($result)
+{
+    return sql_pdo_fetch_array($result);
+}
 
 
 // $result에 대한 메모리(memory)에 있는 내용을 모두 제거한다.
