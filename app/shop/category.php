@@ -7,7 +7,7 @@ function get_mshop_category($ca_id, $len)
 
     $sql = " select ca_id, ca_name from {$g5['g5_shop_category_table']}
                 where ca_use = '1' ";
-    // g5se: get_mshop_category() 가 SQL 문자열을 반환해 외부 sql_query() 로 실행하므로
+    // g5se: get_mshop_category() 가 SQL 문자열을 반환해 외부 sql_pdo_query() 로 실행하므로
     //   placeholder 적용 어려움. 값을 escape 처리해 안전화.
     if($ca_id)
         $sql .= " and ca_id like '".sql_real_escape_string($ca_id)."%' ";
@@ -21,7 +21,7 @@ function get_mshop_category($ca_id, $len)
 
     <div class="ct_wr">
         <?php
-        $mshop_ca_res1 = sql_query(get_mshop_category('', 2));
+        $mshop_ca_res1 = sql_pdo_query(get_mshop_category('', 2));
         for($i=0; $mshop_ca_row1=sql_fetch_array($mshop_ca_res1); $i++) {
             if($i == 0)
                 echo '<ul class="cate">'.PHP_EOL;
@@ -29,7 +29,7 @@ function get_mshop_category($ca_id, $len)
             <li class="cate_li_1">
                 <a href="<?php echo shop_category_url($mshop_ca_row1['ca_id']); ?>" class="cate_li_1_a"><?php echo get_text($mshop_ca_row1['ca_name']); ?></a>
                 <?php
-                $mshop_ca_res2 = sql_query(get_mshop_category($mshop_ca_row1['ca_id'], 4));
+                $mshop_ca_res2 = sql_pdo_query(get_mshop_category($mshop_ca_row1['ca_id'], 4));
 
                 for($j=0; $mshop_ca_row2=sql_fetch_array($mshop_ca_res2); $j++) {
                     if($j == 0)

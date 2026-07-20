@@ -63,7 +63,7 @@ $sql  = " select it_id,
            $sql_common
           order by $sort1 $sort2
           limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $qstr1 = 'sel_ca_id='.$sel_ca_id.'&amp;sel_field='.$sel_field.'&amp;search='.$search;
 $qstr = $qstr1.'&amp;sort1='.$sort1.'&amp;sort2='.$sort2.'&amp;page='.$page;
@@ -87,7 +87,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <option value=''>전체분류</option>
     <?php
     $sql1 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} order by ca_order, ca_id ";
-    $result1 = sql_query($sql1);
+    $result1 = sql_pdo_query($sql1);
     for ($i=0; $row1=sql_fetch_array($result1); $i++) {
         $len = strlen($row1['ca_id']) / 2 - 1;
         $nbsp = "";

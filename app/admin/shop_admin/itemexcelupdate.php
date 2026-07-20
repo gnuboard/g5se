@@ -164,7 +164,7 @@ if($is_upload_file) {
                          it_img9 = '$it_img9',
                          it_img10 = '$it_img10' ";
 
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         $succ_count++;
     }

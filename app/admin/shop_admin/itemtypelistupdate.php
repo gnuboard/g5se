@@ -30,7 +30,7 @@ for ($i=0; $i<$count_post_it_id; $i++)
                    it_type4 = '".$it_type4."',
                    it_type5 = '".$it_type5."'
              where it_id = '".$it_id."' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 goto_url("itemtypelist.php?sca=$sca&amp;sst=$sst&amp;sod=$sod&amp;sfl=$sfl&amp;stx=$stx&amp;page=$page");

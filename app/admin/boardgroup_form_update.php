@@ -85,12 +85,12 @@ if ($w == '') {
     $sql = " insert into {$g5['group_table']}
                 set gr_id = '{$gr_id}',
                      {$sql_common} ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 } elseif ($w == "u") {
     $sql = " update {$g5['group_table']}
                 set {$sql_common}
                 where gr_id = '{$gr_id}' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 } else {
     alert('제대로 된 값이 넘어오지 않았습니다.');
 }

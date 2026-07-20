@@ -44,7 +44,7 @@ if ($sel_ca_id)
 }
 $sql .= " group by a.it_id, b.it_name
           order by $sort1 $sort2 ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 $total_count = sql_num_rows($result);
 
 $rows = $config['cf_page_rows'];
@@ -55,7 +55,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 $rank = ($page - 1) * $rows;
 
 $sql = $sql . " limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $qstr1 = $qstr.'&amp;fr_date='.$fr_date.'&amp;to_date='.$to_date.'&amp;sel_ca_id='.$sel_ca_id;
 
@@ -76,7 +76,7 @@ $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목�
     <option value=''>전체분류</option>
     <?php
     $sql1 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} order by ca_order, ca_id ";
-    $result1 = sql_query($sql1);
+    $result1 = sql_pdo_query($sql1);
     for ($i=0; $row1=sql_fetch_array($result1); $i++) {
         $len = strlen($row1['ca_id']) / 2 - 1;
         $nbsp = "";

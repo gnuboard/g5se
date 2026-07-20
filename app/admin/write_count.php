@@ -137,7 +137,7 @@ switch ($day) {
             <option value="">전체게시판</option>
             <?php
             $sql = " select bo_table, bo_subject from {$g5['board_table']} order by bo_count_write desc ";
-            $result = sql_query($sql);
+            $result = sql_pdo_query($sql);
             while ($row = sql_fetch_array($result)) {
                 $sel = ($bo_table == $row['bo_table']) ? ' selected' : '';
                 echo '<option value="'.htmlspecialchars($row['bo_table']).'"'.$sel.'>'.htmlspecialchars($row['bo_subject']).'</option>'."\n";

@@ -36,7 +36,7 @@ if ($w == "u")
     $sql = " select b.it_id, b.it_name
                 from {$g5['g5_shop_event_item_table']} a left join {$g5['g5_shop_item_table']} b on ( a.it_id = b.it_id )
                 where a.ev_id = '$ev_id' ";
-    $res_item = sql_query($sql);
+    $res_item = sql_pdo_query($sql);
 }
 else
 {
@@ -56,7 +56,7 @@ $sql = " select * from {$g5['g5_shop_category_table']} ";
 if ($is_admin != 'super')
     $sql .= " where ca_mb_id = '{$member['mb_id']}' ";
 $sql .= " order by ca_order, ca_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 for ($i=0; $row=sql_fetch_array($result); $i++)
 {
     $len = strlen($row['ca_id']) / 2 - 1;
@@ -71,8 +71,8 @@ for ($i=0; $row=sql_fetch_array($result); $i++)
 }
 
 // 모바일 1줄당 이미지수 필드 추가
-if(!sql_query(" select ev_mobile_list_row from {$g5['g5_shop_event_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_event_table']}`
+if(!sql_pdo_query(" select ev_mobile_list_row from {$g5['g5_shop_event_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_event_table']}`
                     ADD `ev_mobile_list_row` int(11) NOT NULL DEFAULT '0' AFTER `ev_mobile_list_mod` ", true);
 }
 

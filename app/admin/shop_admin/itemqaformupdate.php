@@ -21,7 +21,7 @@ if ($w == "u")
                    iq_question = '$iq_question',
                    iq_answer = '$iq_answer'
              where iq_id = '$iq_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_item_qa_updated', $iq_id);
 
     if(trim($iq_answer)) {

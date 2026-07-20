@@ -88,7 +88,7 @@ admin_layout_start($g5['title'], 'member');
 <?php
 
 $sql = " select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $colspan = 16;
 ?>

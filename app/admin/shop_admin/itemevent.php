@@ -25,7 +25,7 @@ $row = sql_fetch($sql);
 $total_count = $row['cnt'];
 
 $sql = "select * $sql_common order by ev_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 ?>
 
 <div class="local_ov01 local_ov">

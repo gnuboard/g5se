@@ -127,7 +127,7 @@ admin_layout_start($g5['title'], 'mail');
                             <option value=''>전체</option>
                             <?php
                             $sql = " select gr_id, gr_subject from {$g5['group_table']} order by gr_subject ";
-                            $result = sql_query($sql);
+                            $result = sql_pdo_query($sql);
                             for ($i = 0; $row = sql_fetch_array($result); $i++) {
                                 echo '<option value="' . $row['gr_id'] . '">' . $row['gr_subject'] . '</option>';
                             }

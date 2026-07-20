@@ -126,7 +126,7 @@ function member_export_get_total_count($params)
     $where = member_export_build_where($params);
     $sql = "SELECT COUNT(*) as cnt FROM {$g5['member_table']} {$where}";
     
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     if (!$result) {
         throw new Exception("데이터 조회에 실패하였습니다. 다시 시도해주세요.");
     }

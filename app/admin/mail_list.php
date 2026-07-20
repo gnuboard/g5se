@@ -19,7 +19,7 @@ $total_count = $row['cnt'];
 $page = 1;
 
 $sql = " select * {$sql_common} order by ma_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $g5['title'] = '회원메일발송';
 admin_layout_start($g5['title'], 'mail');

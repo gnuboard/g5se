@@ -35,7 +35,7 @@ $sql = " select *
                     OR
                     ( cp_method = '1' and ( cp_target IN ( '{$it['ca_id']}', '{$it['ca_id2']}', '{$it['ca_id3']}' ) ) )
                   ) ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 $count = sql_num_rows($result);
 ?>
 

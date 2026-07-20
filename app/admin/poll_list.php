@@ -54,7 +54,7 @@ $sql = " select *
             {$sql_search}
             {$sql_order}
             limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/poll_list" class="ov_listall">전체목록</a>';
 

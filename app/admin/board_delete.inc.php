@@ -19,22 +19,22 @@ if (!$tmp_bo_table) {
 //if ($row['cnt'] <= 1) { return; }
 
 // 게시판 설정 삭제
-sql_query(" delete from {$g5['board_table']} where bo_table = '{$tmp_bo_table}' ");
+sql_pdo_query(" delete from {$g5['board_table']} where bo_table = '{$tmp_bo_table}' ");
 
 // 최신글 삭제
-sql_query(" delete from {$g5['board_new_table']} where bo_table = '{$tmp_bo_table}' ");
+sql_pdo_query(" delete from {$g5['board_new_table']} where bo_table = '{$tmp_bo_table}' ");
 
 // 스크랩 삭제
-sql_query(" delete from {$g5['scrap_table']} where bo_table = '{$tmp_bo_table}' ");
+sql_pdo_query(" delete from {$g5['scrap_table']} where bo_table = '{$tmp_bo_table}' ");
 
 // 파일 삭제
-sql_query(" delete from {$g5['board_file_table']} where bo_table = '{$tmp_bo_table}' ");
+sql_pdo_query(" delete from {$g5['board_file_table']} where bo_table = '{$tmp_bo_table}' ");
 
 // 게시판 테이블 DROP
-sql_query(" drop table {$g5['write_prefix']}{$tmp_bo_table} ", false);
+sql_pdo_query(" drop table {$g5['write_prefix']}{$tmp_bo_table} ", false);
 
 // 좋아요 테이블에서 기록 삭제
-sql_query(" delete from {$g5['board_good_table']} where bo_table = '{$tmp_bo_table}' ");
+sql_pdo_query(" delete from {$g5['board_good_table']} where bo_table = '{$tmp_bo_table}' ");
 
 delete_cache_latest($tmp_bo_table);
 

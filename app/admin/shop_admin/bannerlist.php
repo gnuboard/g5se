@@ -100,7 +100,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
     $sql = " select * from {$g5['g5_shop_banner_table']} $sql_search
           order by bn_order, bn_id desc
           limit $from_record, $rows  ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         // 테두리 있는지
         $bn_border  = $row['bn_border'];

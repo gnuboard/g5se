@@ -65,7 +65,7 @@ if(isset($_POST['mod_type']) && $_POST['mod_type'] === 'info') {
                 set od_shop_memo = '$od_shop_memo' ";
 }
 $sql .= " where od_id = '$od_id' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 $qstr = "sort1=$sort1&amp;sort2=$sort2&amp;sel_field=$sel_field&amp;search=$search&amp;page=$page";
 

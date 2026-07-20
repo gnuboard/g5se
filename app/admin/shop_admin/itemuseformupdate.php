@@ -36,7 +36,7 @@ if ($w == "u")
                    is_reply_content = '".$posts['is_reply_content']."',
                    is_reply_name = '".$member['mb_nick']."'
              where is_id = '".$posts['is_id']."'";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_item_use_updated', $posts['is_id']);
 
     if( isset($_POST['it_id']) ) {

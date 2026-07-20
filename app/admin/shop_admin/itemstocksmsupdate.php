@@ -50,7 +50,7 @@ if ($_POST['act_button'] == "선택SMS전송") {
                     set ss_send = '1',
                         ss_send_time = '".G5_TIME_YMDHIS."'
                     where ss_id = '{$ss_id}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 
     // SMS
@@ -114,7 +114,7 @@ if ($_POST['act_button'] == "선택SMS전송") {
         $ss_id = isset($_POST['ss_id'][$k]) ? (int) $_POST['ss_id'][$k] : 0;
 
         $sql = " delete from {$g5['g5_shop_item_stocksms_table']} where ss_id = '{$ss_id}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 }
 

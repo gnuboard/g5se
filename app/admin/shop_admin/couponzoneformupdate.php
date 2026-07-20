@@ -116,7 +116,7 @@ if($w == '') {
     $sql = " INSERT INTO {$g5['g5_shop_coupon_zone_table']}
                 set $sql_common,
                     cz_datetime = '".G5_TIME_YMDHIS."' ";
-    sql_query($sql, true);
+    sql_pdo_query($sql, true);
 
     $cz_id = sql_insert_id();
 } else if($w == 'u') {
@@ -137,7 +137,7 @@ if($w == '') {
     $sql = " update {$g5['g5_shop_coupon_zone_table']}
                 set $sql_common
                 where cz_id = '$cz_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 // 이미지업로드
@@ -150,7 +150,7 @@ if($_FILES['cp_img']['tmp_name']) {
     $sql = " update {$g5['g5_shop_coupon_zone_table']}
                 set cz_file = '$filename'
                 where cz_id = '$cz_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 goto_url('./couponzonelist.php?'.$qstr);

@@ -31,16 +31,16 @@ $sql = " insert into {$g5['auth_table']}
             set mb_id   = '$mb_id',
                 au_menu = '$au_menu',
                 au_auth = '{$post_r},{$post_w},{$post_d}' ";
-$result = sql_query($sql, false);
+$result = sql_pdo_query($sql, false);
 if (!$result) {
     $sql = " update {$g5['auth_table']}
                 set au_auth = '{$post_r},{$post_w},{$post_d}'
               where mb_id   = '$mb_id'
                 and au_menu = '$au_menu' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
-//sql_query(" OPTIMIZE TABLE `$g5['auth_table']` ");
+//sql_pdo_query(" OPTIMIZE TABLE `$g5['auth_table']` ");
 
 // 세션을 체크하여 하루에 한번만 메일알림이 가게 합니다.
 if (str_replace('-', '', G5_TIME_YMD) !== get_session('adm_auth_update')) {

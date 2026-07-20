@@ -104,7 +104,7 @@ $sql = " update {$g5['qa_config_table']}
                 qa_3                    = '{$_POST['qa_3']}',
                 qa_4                    = '{$_POST['qa_4']}',
                 qa_5                    = '{$_POST['qa_5']}' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 run_event('admin_qa_config_updated');
 

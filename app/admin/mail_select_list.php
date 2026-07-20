@@ -116,7 +116,7 @@ admin_layout_start($g5['title'], 'mail');
             <tbody>
                 <?php
                 $sql = " select mb_id, mb_name, mb_nick, mb_email, mb_datetime $sql_common $sql_where order by mb_id ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql);
                 $i = 0;
                 $ma_list = "";
                 $cr = "";

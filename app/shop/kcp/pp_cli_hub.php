@@ -254,7 +254,7 @@ setlocale(LC_CTYPE, 'ko_KR.euc-kr');
                               where od_id = '$ordr_idxx' ";
                 }
 
-                $result = sql_query($sql, false);
+                $result = sql_pdo_query($sql, false);
                 if (!$result) $bSucc = "false";
 
     /* = -------------------------------------------------------------------------- = */

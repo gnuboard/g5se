@@ -23,7 +23,7 @@ if($it_name)
     $sql .= " and it_name like '%$it_name%' ";
 
 $sql .= " order by ca_id, it_name ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $list = '';
 

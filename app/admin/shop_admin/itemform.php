@@ -144,7 +144,7 @@ $sql = " select * from {$g5['g5_shop_category_table']} ";
 if ($is_admin != 'super')
     $sql .= " where ca_mb_id = '{$member['mb_id']}' ";
 $sql .= " order by ca_order, ca_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 for ($i=0; $row=sql_fetch_array($result); $i++)
 {
     $len = strlen($row['ca_id']) / 2 - 1;
@@ -164,27 +164,27 @@ for ($i=0; $row=sql_fetch_array($result); $i++)
 }
 
 // 재입고알림 설정 필드 추가
-if(!sql_query(" select it_stock_sms from {$g5['g5_shop_item_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
+if(!sql_pdo_query(" select it_stock_sms from {$g5['g5_shop_item_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `it_stock_sms` tinyint(4) NOT NULL DEFAULT '0' AFTER `it_stock_qty` ", true);
 }
 
 // 추가옵션 포인트 설정 필드 추가
-if(!sql_query(" select it_supply_point from {$g5['g5_shop_item_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
+if(!sql_pdo_query(" select it_supply_point from {$g5['g5_shop_item_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `it_supply_point` int(11) NOT NULL DEFAULT '0' AFTER `it_point_type` ", true);
 }
 
 // 상품메모 필드 추가
-if(!sql_query(" select it_shop_memo from {$g5['g5_shop_item_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
+if(!sql_pdo_query(" select it_shop_memo from {$g5['g5_shop_item_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `it_shop_memo` text NOT NULL AFTER `it_use_avg` ", true);
 }
 
 // 지식쇼핑 PID 필드추가
 // 상품메모 필드 추가
-if(!sql_query(" select ec_mall_pid from {$g5['g5_shop_item_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
+if(!sql_pdo_query(" select ec_mall_pid from {$g5['g5_shop_item_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `ec_mall_pid` varchar(255) NOT NULL AFTER `it_shop_memo` ", true);
 }
 
@@ -205,14 +205,14 @@ $pg_anchor ='<ul class="anchor">
 
 
 // 쿠폰적용안함 설정 필드 추가
-if(!sql_query(" select it_nocoupon from {$g5['g5_shop_item_table']} limit 1", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
+if(!sql_pdo_query(" select it_nocoupon from {$g5['g5_shop_item_table']} limit 1", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `it_nocoupon` tinyint(4) NOT NULL DEFAULT '0' AFTER `it_use` ", true);
 }
 
 // 스킨필드 추가
-if(!sql_query(" select it_skin from {$g5['g5_shop_item_table']} limit 1", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
+if(!sql_pdo_query(" select it_skin from {$g5['g5_shop_item_table']} limit 1", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_item_table']}`
                     ADD `it_skin` varchar(255) NOT NULL DEFAULT '' AFTER `ca_id3`,
                     ADD `it_mobile_skin` varchar(255) NOT NULL DEFAULT '' AFTER `it_skin` ", true);
 }
@@ -1378,7 +1378,7 @@ $(function(){
                         if ($is_admin != 'super')
                             $sql .= " where ca_mb_id = '{$member['mb_id']}' ";
                         $sql .= " order by ca_order, ca_id ";
-                        $result = sql_query($sql);
+                        $result = sql_pdo_query($sql);
                         for ($i=0; $row=sql_fetch_array($result); $i++)
                         {
                             $len = strlen($row['ca_id']) / 2 - 1;
@@ -1474,7 +1474,7 @@ $(function(){
                            left join {$g5['g5_shop_item_table']} b on (a.it_id2=b.it_id)
                           where a.it_id = '$it_id'
                           order by ir_no asc ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql);
                 for($g=0; $row=sql_fetch_array($result); $g++)
                 {
                     $it_name = get_it_image($row['it_id'], 50, 50).' '.$row['it_name'];
@@ -1516,7 +1516,7 @@ $(function(){
             <div id="event_list" class="srel_list srel_noneimg">
                 <?php
                 $sql = " select ev_id, ev_subject from {$g5['g5_shop_event_table']} order by ev_id desc ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql);
                 for ($g=0; $row=sql_fetch_array($result); $g++) {
                     if($g == 0)
                         echo '<ul>';
@@ -1591,7 +1591,7 @@ $(function(){
                            left join {$g5['g5_shop_event_table']} b on (a.ev_id=b.ev_id)
                           where a.it_id = '$it_id'
                           order by b.ev_id desc ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql);
                 for ($g=0; $row=sql_fetch_array($result); $g++) {
                     $str .= $comma . $row['ev_id'];
                     $comma = ",";

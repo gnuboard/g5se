@@ -17,7 +17,7 @@ $sql = " select *
               and cp_start <= '".G5_TIME_YMD."'
               and cp_end >= '".G5_TIME_YMD."'
               and cp_minimum <= '$price' ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 $count = sql_num_rows($result);
 ?>
 

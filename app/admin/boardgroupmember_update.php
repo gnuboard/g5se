@@ -5,7 +5,7 @@ require_once __DIR__.'/_layout.php';
 admin_require_login();
 require_once __DIR__.'/admin.lib.php';
 
-sql_query(" ALTER TABLE {$g5['group_member_table']} CHANGE `gm_id` `gm_id` INT( 11 ) DEFAULT '0' NOT NULL AUTO_INCREMENT ", false);
+sql_pdo_query(" ALTER TABLE {$g5['group_member_table']} CHANGE `gm_id` `gm_id` INT( 11 ) DEFAULT '0' NOT NULL AUTO_INCREMENT ", false);
 
 if ($w == '') {
     auth_check_menu($auth, $sub_menu, 'w');

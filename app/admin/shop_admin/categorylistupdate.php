@@ -79,7 +79,7 @@ for ($i=0; $i<$post_ca_id_count; $i++)
                     ca_list_row         = '".sql_real_escape_string(strip_tags($posts['ca_list_row']))."'
               where ca_id = '".sql_real_escape_string($posts['ca_id'])."' ";
 
-    sql_query($sql);
+    sql_pdo_query($sql);
 
 }
 

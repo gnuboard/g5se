@@ -15,7 +15,7 @@ check_admin_token();
 
 // 이전 메뉴정보 삭제
 $sql = " delete from {$g5['menu_table']} ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 $group_code = null;
 $primary_code = null;
@@ -73,7 +73,7 @@ for ($i = 0; $i < $count; $i++) {
                     me_target       = '" . sql_real_escape_string(strip_tags($_POST['me_target'][$i])) . "',
                     me_order        = '" . sql_real_escape_string(strip_tags($_POST['me_order'][$i])) . "',
                     me_use          = '" . sql_real_escape_string(strip_tags($_POST['me_use'][$i])) . "' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 run_event('admin_menu_list_update');

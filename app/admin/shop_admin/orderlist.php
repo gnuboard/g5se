@@ -140,7 +140,7 @@ $sql  = " select *,
            $sql_common
            order by $sort1 $sort2
            limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $qstr1 = "od_status=".urlencode($od_status)."&amp;od_settle_case=".urlencode($od_settle_case)."&amp;od_misu=$od_misu&amp;od_cancel_price=$od_cancel_price&amp;od_refund_price=$od_refund_price&amp;od_receipt_point=$od_receipt_point&amp;od_coupon=$od_coupon&amp;fr_date=$fr_date&amp;to_date=$to_date&amp;sel_field=$sel_field&amp;search=$search&amp;save_search=$search";
 if($default['de_escrow_use'])
@@ -150,8 +150,8 @@ $qstr = "$qstr1&amp;sort1=$sort1&amp;sort2=$sort2&amp;page=$page";
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 
 // 주문삭제 히스토리 테이블 필드 추가
-if(!sql_query(" select mb_id from {$g5['g5_shop_order_delete_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_order_delete_table']}`
+if(!sql_pdo_query(" select mb_id from {$g5['g5_shop_order_delete_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_order_delete_table']}`
                     ADD `mb_id` varchar(20) NOT NULL DEFAULT '' AFTER `de_data`,
                     ADD `de_ip` varchar(255) NOT NULL DEFAULT '' AFTER `mb_id`,
                     ADD `de_datetime` datetime NULL DEFAULT NULL AFTER `de_ip` ", true);

@@ -53,7 +53,7 @@ $common_params = [
 ];
 
 if ($w == "") {
-    sql_query(" alter table {$g5['faq_master_table']} auto_increment=1 ");
+    sql_pdo_query(" alter table {$g5['faq_master_table']} auto_increment=1 ");
     sql_pdo_query(" insert {$g5['faq_master_table']} $sql_common ", $common_params);
     $fm_id = sql_insert_id();
     run_event('admin_faq_master_created', $fm_id);

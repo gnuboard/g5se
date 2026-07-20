@@ -22,8 +22,8 @@ admin_layout_start($g5['title'], 'qa_config');
 <?php
 
 // DB 테이블 생성
-if (!sql_query(" DESCRIBE `{$g5['qa_config_table']}` ", false)) {
-    sql_query(
+if (!sql_pdo_query(" DESCRIBE `{$g5['qa_config_table']}` ", false)) {
+    sql_pdo_query(
         " CREATE TABLE IF NOT EXISTS `{$g5['qa_config_table']}` (
                   `qa_id` int(11) NOT NULL auto_increment,
                   `qa_title` varchar(255) NOT NULL DEFAULT'',
@@ -65,7 +65,7 @@ if (!sql_query(" DESCRIBE `{$g5['qa_config_table']}` ", false)) {
                 )",
         true
     );
-    sql_query(
+    sql_pdo_query(
         " CREATE TABLE IF NOT EXISTS `{$g5['qa_content_table']}` (
                   `qa_id` int(11) NOT NULL AUTO_INCREMENT,
                   `qa_num` int(11) NOT NULL DEFAULT '0',
@@ -104,7 +104,7 @@ if (!sql_query(" DESCRIBE `{$g5['qa_config_table']}` ", false)) {
 $sql = " SHOW COLUMNS FROM `{$g5['qa_content_table']}` LIKE 'qa_content' ";
 $row = sql_fetch($sql);
 if (strpos($row['Type'], 'text') === false) {
-    sql_query(" ALTER TABLE `{$g5['qa_content_table']}` CHANGE `qa_content` `qa_content` text NOT NULL ", true);
+    sql_pdo_query(" ALTER TABLE `{$g5['qa_content_table']}` CHANGE `qa_content` `qa_content` text NOT NULL ", true);
 }
 
 $qaconfig = get_qa_config();
@@ -114,14 +114,14 @@ if (empty($qaconfig)) {
                 ( qa_title, qa_category, qa_skin, qa_mobile_skin, qa_use_email, qa_req_email, qa_use_hp, qa_req_hp, qa_use_editor, qa_subject_len, qa_mobile_subject_len, qa_page_rows, qa_mobile_page_rows, qa_image_width, qa_upload_size, qa_insert_content )
               values
                 ( '1:1문의', '회원|포인트', 'basic', 'basic', '1', '0', '1', '0', '1', '60', '30', '15', '15', '600', '1048576', '' ) ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     $qaconfig = get_qa_config();
 }
 
 // 관리자 이메일필드 추가
 if (!isset($qaconfig['qa_admin_email'])) {
-    sql_query(
+    sql_pdo_query(
         " ALTER TABLE `{$g5['qa_config_table']}`
                     ADD `qa_admin_email` varchar(255) NOT NULL DEFAULT '' AFTER `qa_admin_hp` ",
         true
@@ -130,7 +130,7 @@ if (!isset($qaconfig['qa_admin_email'])) {
 
 // 상단 하단 설정 필드 추가
 if (!isset($qaconfig['qa_include_head'])) {
-    sql_query(
+    sql_pdo_query(
         " ALTER TABLE `{$g5['qa_config_table']}`
                     ADD `qa_include_head` varchar(255) NOT NULL DEFAULT '' AFTER `qa_insert_content`,
                     ADD `qa_include_tail` varchar(255) NOT NULL DEFAULT '' AFTER `qa_include_head`,

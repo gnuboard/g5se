@@ -34,7 +34,7 @@ if (isset($result['ResultCode'])) {
                         $add_memo_sql
                     where od_id = '{$od['od_id']}'
                       and od_tno = '$tno' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         // 미수금 등의 정보 업데이트
         $info = get_order_info($od_id);
@@ -45,7 +45,7 @@ if (isset($result['ResultCode'])) {
                         od_vat_mny  = '{$info['od_vat_mny']}',
                         od_free_mny = '{$info['od_free_mny']}'
                     where od_id = '$od_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
     } else {
         $pg_res_cd = $result['ResultCode'];

@@ -177,7 +177,7 @@ if ($w == "")
                 set ca_id   = '$ca_id',
                     ca_name = '$ca_name',
                     $sql_common ";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_category_created', $ca_id);
 }
 else if ($w == "u")
@@ -186,7 +186,7 @@ else if ($w == "u")
                 set ca_name = '$ca_name',
                     $sql_common
               where ca_id = '$ca_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     // 하위분류를 똑같은 설정으로 반영
     if (isset($_POST['sub_category']) && $_POST['sub_category']) {
@@ -196,7 +196,7 @@ else if ($w == "u")
                   where SUBSTRING(ca_id,1,$len) = '$ca_id' ";
         if ($is_admin != 'super')
             $sql .= " and ca_mb_id = '{$member['mb_id']}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
     run_event('shop_admin_category_updated', $ca_id);
 }
@@ -214,7 +214,7 @@ else if ($w == "d")
 
     $str = $comma = "";
     $sql = " select it_id from {$g5['g5_shop_item_table']} where ca_id = '$ca_id' ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     $i=0;
     while ($row = sql_fetch_array($result))
     {
@@ -229,7 +229,7 @@ else if ($w == "d")
 
     // 분류 삭제
     $sql = " delete from {$g5['g5_shop_category_table']} where ca_id = '$ca_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_category_deleted', $ca_id);
 }
 

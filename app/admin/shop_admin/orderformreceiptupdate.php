@@ -67,7 +67,7 @@ $sql = " update {$g5['g5_shop_order_table']}
                 od_send_cost       = '{$posts['od_send_cost']}',
                 od_send_cost2      = '{$posts['od_send_cost2']}'
             where od_id = '$od_id' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 // 주문정보
 $info = get_order_info($od_id);
@@ -105,7 +105,7 @@ $sql = " update {$g5['g5_shop_order_table']}
                 od_free_mny     = '{$info['od_free_mny']}',
                 od_status       = '$od_status'
             where od_id = '$od_id' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 // 장바구니 상태 변경
 if($cart_status) {
@@ -124,14 +124,14 @@ if($cart_status) {
             ;
     }
 
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 
 // 배송때 재고반영
 if($info['od_misu'] == 0 && $od_status == '배송') {
     $sql = " select * from {$g5['g5_shop_cart_table']} where od_id = '$od_id' ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
@@ -145,7 +145,7 @@ if($info['od_misu'] == 0 && $od_status == '배송') {
             $stock_use = 1;
 
             $sql = " update {$g5['g5_shop_cart_table']} set ct_stock_use  = '$stock_use' where ct_id = '{$row['ct_id']}' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
     }
 

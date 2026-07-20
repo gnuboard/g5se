@@ -158,36 +158,36 @@ $mb_thirdparty_agree_no     = !$mb['mb_thirdparty_agree'] ? 'checked="checked"' 
 if (isset($mb['mb_certify'])) {
     // 날짜시간형이라면 drop 시킴
     if (preg_match("/-/", $mb['mb_certify'])) {
-        sql_query(" ALTER TABLE `{$g5['member_table']}` DROP `mb_certify` ", false);
+        sql_pdo_query(" ALTER TABLE `{$g5['member_table']}` DROP `mb_certify` ", false);
     }
 } else {
-    sql_query(" ALTER TABLE `{$g5['member_table']}` ADD `mb_certify` TINYINT(4) NOT NULL DEFAULT '0' AFTER `mb_hp` ", false);
+    sql_pdo_query(" ALTER TABLE `{$g5['member_table']}` ADD `mb_certify` TINYINT(4) NOT NULL DEFAULT '0' AFTER `mb_hp` ", false);
 }
 
 if (isset($mb['mb_adult'])) {
-    sql_query(" ALTER TABLE `{$g5['member_table']}` CHANGE `mb_adult` `mb_adult` TINYINT(4) NOT NULL DEFAULT '0' ", false);
+    sql_pdo_query(" ALTER TABLE `{$g5['member_table']}` CHANGE `mb_adult` `mb_adult` TINYINT(4) NOT NULL DEFAULT '0' ", false);
 } else {
-    sql_query(" ALTER TABLE `{$g5['member_table']}` ADD `mb_adult` TINYINT NOT NULL DEFAULT '0' AFTER `mb_certify` ", false);
+    sql_pdo_query(" ALTER TABLE `{$g5['member_table']}` ADD `mb_adult` TINYINT NOT NULL DEFAULT '0' AFTER `mb_certify` ", false);
 }
 
 // 지번주소 필드추가
 if (!array_key_exists('mb_addr_jibeon', $mb)) {
-    sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_addr_jibeon` varchar(255) NOT NULL DEFAULT '' AFTER `mb_addr2` ", false);
+    sql_pdo_query(" ALTER TABLE {$g5['member_table']} ADD `mb_addr_jibeon` varchar(255) NOT NULL DEFAULT '' AFTER `mb_addr2` ", false);
 }
 
 // 건물명필드추가
 if (!array_key_exists('mb_addr3', $mb)) {
-    sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_addr3` varchar(255) NOT NULL DEFAULT '' AFTER `mb_addr2` ", false);
+    sql_pdo_query(" ALTER TABLE {$g5['member_table']} ADD `mb_addr3` varchar(255) NOT NULL DEFAULT '' AFTER `mb_addr2` ", false);
 }
 
 // 중복가입 확인필드 추가
 if (!array_key_exists('mb_dupinfo', $mb)) {
-    sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_dupinfo` varchar(255) NOT NULL DEFAULT '' AFTER `mb_adult` ", false);
+    sql_pdo_query(" ALTER TABLE {$g5['member_table']} ADD `mb_dupinfo` varchar(255) NOT NULL DEFAULT '' AFTER `mb_adult` ", false);
 }
 
 // 이메일인증 체크 필드추가
 if (!array_key_exists('mb_email_certify2', $mb)) {
-    sql_query(" ALTER TABLE {$g5['member_table']} ADD `mb_email_certify2` varchar(255) NOT NULL DEFAULT '' AFTER `mb_email_certify` ", false);
+    sql_pdo_query(" ALTER TABLE {$g5['member_table']} ADD `mb_email_certify2` varchar(255) NOT NULL DEFAULT '' AFTER `mb_email_certify` ", false);
 }
 
 // 본인인증 내역 테이블 정보가 dbconfig에 없으면 소셜 테이블 정의
@@ -195,8 +195,8 @@ if (!isset($g5['member_cert_history'])) {
     $g5['member_cert_history_table'] = G5_TABLE_PREFIX . 'member_cert_history';
 }
 // 멤버 본인인증 정보 변경 내역 테이블 없을 경우 생성
-if (isset($g5['member_cert_history_table']) && !sql_query(" DESC {$g5['member_cert_history_table']} ", false)) {
-    sql_query(
+if (isset($g5['member_cert_history_table']) && !sql_pdo_query(" DESC {$g5['member_cert_history_table']} ", false)) {
+    sql_pdo_query(
         " CREATE TABLE IF NOT EXISTS `{$g5['member_cert_history_table']}` (
                     `ch_id` int(11) NOT NULL auto_increment,
                     `mb_id` varchar(20) NOT NULL DEFAULT '',
@@ -215,7 +215,7 @@ if (isset($g5['member_cert_history_table']) && !sql_query(" DESC {$g5['member_ce
 $mb_cert_history = '';
 if (isset($mb_id) && $mb_id) {
     $sql = "select * from {$g5['member_cert_history_table']} where mb_id = '{$mb_id}' order by ch_id asc";
-    $mb_cert_history = sql_query($sql);
+    $mb_cert_history = sql_pdo_query($sql);
 }
 
 if ($mb['mb_intercept_date']) {

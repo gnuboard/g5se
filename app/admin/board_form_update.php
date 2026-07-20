@@ -342,7 +342,7 @@ if ($w == '') {
     $source = array('/__TABLE_NAME__/', '/;/');
     $target = array($create_table, '');
     $sql = preg_replace($source, $target, $sql);
-    sql_query($sql, false);
+    sql_pdo_query($sql, false);
 } elseif ($w == 'u') {
     // 게시판의 글/코멘트 수 — 테이블명에 변수가 들어가므로 (placeholder 불가) bo_table 검증된 영숫자만 보간
     $row = sql_fetch(" select count(*) as cnt from {$g5['write_prefix']}{$bo_table} where wr_is_comment = 0 ");
@@ -358,7 +358,7 @@ if ($w == '') {
     */
     if (isset($_POST['proc_count'])) {
         $sql = " select a.wr_id, (count(b.wr_parent) - 1) as cnt from {$g5['write_prefix']}{$bo_table} a, {$g5['write_prefix']}{$bo_table} b where a.wr_id=b.wr_parent and a.wr_is_comment=0 group by a.wr_id ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql);
         while ($row = sql_fetch_array($result)) {
             sql_pdo_query(" update {$g5['write_prefix']}{$bo_table} set wr_comment = :cnt where wr_id = :wr_id ",
                           [':cnt' => $row['cnt'], ':wr_id' => $row['wr_id']]);

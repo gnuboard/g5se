@@ -36,7 +36,7 @@ for ($i=0; $i<$count_post_it_id; $i++)
              where it_id = '".$it_id."'
                and io_id = '".sql_real_escape_string($io_id)."'
                and io_type = '".$io_type."' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 goto_url("./optionstocklist.php?sort1=$sort1&amp;sort2=$sort2&amp;sel_ca_id=$sel_ca_id&amp;sel_field=$sel_field&amp;search=$search&amp;page=$page");

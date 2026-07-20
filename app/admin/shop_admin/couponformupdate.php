@@ -113,7 +113,7 @@ if($w == '') {
             VALUES
                 ( '$cp_id', '$cp_subject', '$cp_method', '$cp_target', '$mb_id', '$cp_start', '$cp_end', '$cp_type', '$cp_price', '$cp_trunc', '$cp_minimum', '$cp_maximum', '".G5_TIME_YMDHIS."' ) ";
 
-    sql_query($sql);
+    sql_pdo_query($sql);
 } else if($w == 'u') {
     $sql = " select * from {$g5['g5_shop_coupon_table']} where cp_id = '$cp_id' ";
     $cp = sql_fetch($sql);
@@ -138,7 +138,7 @@ if($w == '') {
                     cp_maximum  = '$cp_maximum',
                     cp_minimum  = '$cp_minimum'
                 where cp_id = '$cp_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 // 쿠폰생성알림 발송
@@ -162,7 +162,7 @@ if ($w == '' && (isset($_POST['cp_sms_send']) || isset($_POST['cp_email_send']))
                     where mb_id = '$mb_id' ";
     }
 
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 
     for($i=0; $row = sql_fetch_array($result); $i++) {
         $arr_send_list[] = $row;

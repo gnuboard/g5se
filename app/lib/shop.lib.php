@@ -333,7 +333,7 @@ class item_list
         if ($this->query) {
 
             $sql = $this->query;
-            $result = sql_query($sql);
+            $result = sql_pdo_query($sql);
             $this->total_count = @sql_num_rows($result);
 
         } else {
@@ -377,7 +377,7 @@ class item_list
             $sql_limit = " limit " . $this->from_record . " , " . ($this->list_mod * $this->list_row);
 
             $sql = $sql_select . $sql_common . $sql_where . $sql_order . $sql_limit;
-            $result = sql_query($sql);
+            $result = sql_pdo_query($sql);
 
             if ($this->is_page) {
                 $sql2 = " select count(*) as cnt " . $sql_common . $sql_where;
@@ -843,7 +843,7 @@ function display_type($type, $list_skin='', $list_mod='', $list_row='', $img_wid
     $sql = " select * from {$g5['g5_shop_item_table']} where it_use = '1' and it_type{$type} = '1' ";
     if ($ca_id) $sql .= " and ca_id like '$ca_id%' ";
     $sql .= " order by it_order, it_id desc limit $items ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     /*
     if (!sql_num_rows($result)) {
         return false;
@@ -878,7 +878,7 @@ function mobile_display_type($type, $skin_file, $list_row, $img_width, $img_heig
     $sql = " select * from {$g5['g5_shop_item_table']} where it_use = '1' and it_type{$type} = '1' ";
     if ($ca_id) $sql .= " and ca_id like '$ca_id%' ";
     $sql .= " order by it_order, it_id desc limit $items ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     /*
     if (!sql_num_rows($result)) {
         return false;
@@ -908,7 +908,7 @@ function display_category($no, $list_mod, $list_row, $img_width, $img_height, $c
     if ($ca_id)
         $sql .= " and ca_id LIKE '{$ca_id}%' ";
     $sql .= " order by it_order, it_id desc limit $items ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     if (!sql_num_rows($result)) {
         return false;
     }
@@ -1451,7 +1451,7 @@ function get_new_od_id()
     global $g5;
 
     // 주문서 테이블 Lock 걸고
-    sql_query(" LOCK TABLES {$g5['g5_shop_order_table']} READ, {$g5['g5_shop_order_table']} WRITE ", FALSE);
+    sql_pdo_query(" LOCK TABLES {$g5['g5_shop_order_table']} READ, {$g5['g5_shop_order_table']} WRITE ", FALSE);
     // 주문서 번호를 만든다.
     $date = date("ymd", time());    // 2002년 3월 7일 일경우 020307
     $row = sql_pdo_fetch(" select max(od_id) as max_od_id from {$g5['g5_shop_order_table']} where SUBSTRING(od_id, 1, 6) = :date ",
@@ -1466,7 +1466,7 @@ function get_new_od_id()
     }
     $od_id = $date . substr("0000" . $od_id, -4);
     // 주문서 테이블 Lock 풀고
-    sql_query(" UNLOCK TABLES ", FALSE);
+    sql_pdo_query(" UNLOCK TABLES ", FALSE);
 
     return $od_id;
 }
@@ -1510,7 +1510,7 @@ function set_cart_id($direct)
                         where mb_id = '{$member['mb_id']}'
                           and ct_direct = '0'
                           and ct_status = '쇼핑' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
     }
 }
@@ -1854,7 +1854,7 @@ function get_sendcost($cart_id, $selected=1)
                   and ct_status IN ( '쇼핑', '주문', '입금', '준비', '배송', '완료' )
                   and ct_select = '$selected' ";
 
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     for($i=0; $sc=sql_fetch_array($result); $i++) {
         // 합계
         $sql = " select SUM(IF(io_type = 1, (io_price * ct_qty), ((ct_price + io_price) * ct_qty))) as price,
@@ -2049,7 +2049,7 @@ function is_soldout($it_id, $is_cache=false)
                     where it_id = '$it_id'
                       and io_type = '0'
                       and io_use = '1' ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql);
 
         for($i=0; $row=sql_fetch_array($result); $i++) {
             // 옵션 재고수량
@@ -2226,7 +2226,7 @@ function update_use_cnt($it_id)
 {
     global $g5;
     $row = sql_fetch(" select count(*) as cnt from {$g5['g5_shop_item_use_table']} where it_id = '{$it_id}' and is_confirm = 1 ");
-    return sql_query(" update {$g5['g5_shop_item_table']} set it_use_cnt = '{$row['cnt']}' where it_id = '{$it_id}' ");
+    return sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_use_cnt = '{$row['cnt']}' where it_id = '{$it_id}' ");
 }
 
 
@@ -2302,7 +2302,7 @@ function get_boxcart_datas($is_cache=false)
 
     $sql  = " select * from {$g5['g5_shop_cart_table']} ";
     $sql .= " where od_id = '".$cart_id."' group by it_id ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
         $key = $row['it_id'];
@@ -2340,7 +2340,7 @@ function get_wishlist_datas($mb_id, $is_cache=false)
     $cache[$mb_id] = array();
     $sql  = " select a.it_id, b.it_name from {$g5['g5_shop_wish_table']} a, {$g5['g5_shop_item_table']} b ";
     $sql .= " where a.mb_id = '".$mb_id."' and a.it_id  = b.it_id order by a.wi_id desc ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
         $key = $row['it_id'];
@@ -2737,7 +2737,7 @@ function cart_item_clean()
                     where ct_select = '1'
                       and ct_status = '쇼핑'
                       and UNIX_TIMESTAMP(ct_select_time) < '$stocktime' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 
     // 설정 시간이상 경과된 상품 삭제
@@ -2746,7 +2746,7 @@ function cart_item_clean()
     $sql = " delete from {$g5['g5_shop_cart_table']}
                 where ct_status = '쇼핑'
                   and UNIX_TIMESTAMP(ct_time) < '$statustime' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 // 임시주문 데이터로 주문 필드 생성
@@ -2801,12 +2801,12 @@ function add_order_post_log($msg='', $code='error'){
     }
 
     if ( $code === 'error' ) {
-        $result = sql_query("describe `{$g5['g5_shop_post_log_table']}`");
+        $result = sql_pdo_query("describe `{$g5['g5_shop_post_log_table']}`");
         while ($row = sql_fetch_array($result)){
             if( $row['Field'] === 'ol_msg' && $row['Type'] === 'varchar(255)' ){
-                sql_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` MODIFY ol_msg TEXT NOT NULL;", false);
-                sql_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` DROP PRIMARY KEY;", false);
-                sql_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` ADD `log_id` int(11) NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`log_id`);", false);
+                sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` MODIFY ol_msg TEXT NOT NULL;", false);
+                sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` DROP PRIMARY KEY;", false);
+                sql_pdo_query("ALTER TABLE `{$g5['g5_shop_post_log_table']}` ADD `log_id` int(11) NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`log_id`);", false);
                 break;
             }
         }
@@ -2830,8 +2830,8 @@ function add_order_post_log($msg='', $code='error'){
         sql_pdo_query(" delete from {$g5['g5_shop_post_log_table']} where ol_datetime < :before ",
                       [':before' => date('Y-m-d H:i:s', strtotime('-15 day', G5_SERVER_TIME))], false);
     } else {
-        if(!sql_query(" DESC {$g5['g5_shop_post_log_table']} ", false)) {
-            sql_query(" CREATE TABLE IF NOT EXISTS `{$g5['g5_shop_post_log_table']}` (
+        if(!sql_pdo_query(" DESC {$g5['g5_shop_post_log_table']} ", false)) {
+            sql_pdo_query(" CREATE TABLE IF NOT EXISTS `{$g5['g5_shop_post_log_table']}` (
                           `log_id` int(11) NOT NULL AUTO_INCREMENT,
                           `oid` bigint(20) unsigned NOT NULL,
                           `mb_id` varchar(255) NOT NULL DEFAULT '',

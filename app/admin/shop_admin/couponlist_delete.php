@@ -21,7 +21,7 @@ for ($i=0; $i<$count; $i++)
     $k = isset($_POST['chk'][$i]) ? (int) $_POST['chk'][$i] : 0;
 
     $sql = " delete from {$g5['g5_shop_coupon_table']} where cp_id = '".preg_replace('/[^a-z0-9_\-]/i', '', $_POST['cp_id'][$k])."' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 goto_url('./couponlist.php?'.$qstr);

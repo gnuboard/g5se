@@ -19,7 +19,7 @@ if($w == 'd') {
     if(!$row['pp_id'])
         alert('삭제하시려는 자료가 존재하지 않습니다.');
 
-    sql_query(" delete from {$g5['g5_shop_personalpay_table']} where pp_id = '{$pp_id}' ");
+    sql_pdo_query(" delete from {$g5['g5_shop_personalpay_table']} where pp_id = '{$pp_id}' ");
 
     goto_url('./personalpaylist.php?'.$qstr);
 } else {
@@ -66,7 +66,7 @@ if($w == '') {
                     $sql_common ,
                     pp_ip   = '{$_SERVER['REMOTE_ADDR']}',
                     pp_time = '".G5_TIME_YMDHIS."' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 } else if($w == 'u') {
     $sql = " select pp_id from {$g5['g5_shop_personalpay_table']} where pp_id = '{$pp_id}' ";
     $row = sql_fetch($sql);
@@ -76,7 +76,7 @@ if($w == '') {
     $sql = " update {$g5['g5_shop_personalpay_table']}
                 set $sql_common
                 where pp_id = '{$pp_id}' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 if($popup == 'yes')

@@ -21,7 +21,7 @@ if ($od_send_mail)
                from {$g5['g5_shop_cart_table']}
               where od_id = '{$od['od_id']}'
               order by ct_id ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     for ($j=0; $ct=sql_fetch_array($result); $j++) {
         $cart_list[$j]['it_id']   = $ct['it_id'];
         $cart_list[$j]['it_name'] = $ct['it_name'];
@@ -101,7 +101,7 @@ if ($od_send_mail)
             $od_shop_memo .= ", 송장번호";
         */
 
-        sql_query(" update {$g5['g5_shop_order_table']} set od_shop_memo = '$od_shop_memo' where od_id = '$od_id' ");
+        sql_pdo_query(" update {$g5['g5_shop_order_table']} set od_shop_memo = '$od_shop_memo' where od_id = '$od_id' ");
 
         mailer($config['cf_admin_email_name'], $config['cf_admin_email'], $email, $title, $content, 1);
     }

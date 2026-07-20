@@ -62,7 +62,7 @@ if ($act_button === "선택수정") {
                         bo_order            = '" . sql_real_escape_string($post_bo_order) . "'
                   where bo_table            = '" . sql_real_escape_string($post_board_table) . "' ";
 
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 } elseif ($act_button === "선택삭제") {
     if ($is_admin != 'super') {

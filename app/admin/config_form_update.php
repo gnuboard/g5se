@@ -365,9 +365,9 @@ $sql = " update {$g5['config_table']}
                 cf_8 = '{$_POST['cf_8']}',
                 cf_9 = '{$_POST['cf_9']}',
                 cf_10 = '{$_POST['cf_10']}' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
-//sql_query(" OPTIMIZE TABLE `$g5[config_table]` ");
+//sql_pdo_query(" OPTIMIZE TABLE `$g5[config_table]` ");
 
 if (isset($_POST['cf_bbs_rewrite'])) {
     g5_delete_all_cache();

@@ -45,7 +45,7 @@ foreach($fields as $fld) {
 $sql = " insert {$g5['g5_shop_item_table']}
 			set it_id = '$new_it_id'
                 $sql_common ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 // 선택/추가 옵션 copy
 $opt_sql = " insert ignore into {$g5['g5_shop_item_option_table']} ( io_id, io_type, it_id, io_price, io_stock_qty, io_noti_qty, io_use )
@@ -53,7 +53,7 @@ $opt_sql = " insert ignore into {$g5['g5_shop_item_option_table']} ( io_id, io_t
                     from {$g5['g5_shop_item_option_table']}
                     where it_id = '$it_id'
                     order by io_no asc ";
-sql_query($opt_sql);
+sql_pdo_query($opt_sql);
 
 // html 에디터로 첨부된 이미지 파일 복사
 $copied_editor_images = array();
@@ -87,7 +87,7 @@ if($cp['it_explan']) {
     }
 
     $sql = " update {$g5['g5_shop_item_table']} set it_explan = '".addslashes($cp['it_explan'])."' where it_id = '$new_it_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 if($cp['it_mobile_explan']) {
@@ -119,7 +119,7 @@ if($cp['it_mobile_explan']) {
     }
 
     $sql = " update {$g5['g5_shop_item_table']} set it_mobile_explan = '".addslashes($cp['it_mobile_explan'])."' where it_id = '$new_it_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 // 상품이미지 복사
@@ -185,7 +185,7 @@ for($i=1; $i<=10; $i++) {
 $sql = " update {$g5['g5_shop_item_table']}
             set $sql_img
             where it_id = '$new_it_id' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 if( function_exists('shop_seo_title_update') ) shop_seo_title_update($new_it_id, true);
 

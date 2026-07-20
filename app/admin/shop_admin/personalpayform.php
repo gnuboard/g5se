@@ -70,17 +70,17 @@ $pg_anchor = '<ul class="anchor">
 </ul>';
 
 // pg 설정 필드 추가
-if(!sql_query(" select pp_pg from {$g5['g5_shop_personalpay_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_personalpay_table']}`
+if(!sql_pdo_query(" select pp_pg from {$g5['g5_shop_personalpay_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_personalpay_table']}`
                     ADD `pp_pg` varchar(255) NOT NULL DEFAULT '' AFTER `pp_price` ", true);
 
     // 개인결제 PG kcp로 설정
-    sql_query(" update {$g5['g5_shop_personalpay_table']} set pp_pg = 'kcp' ");
+    sql_pdo_query(" update {$g5['g5_shop_personalpay_table']} set pp_pg = 'kcp' ");
 }
 
 // 현금영수증 필드 추가
-if(!sql_query(" select pp_cash from {$g5['g5_shop_personalpay_table']} limit 1 ", false)) {
-    sql_query(" ALTER TABLE `{$g5['g5_shop_personalpay_table']}`
+if(!sql_pdo_query(" select pp_cash from {$g5['g5_shop_personalpay_table']} limit 1 ", false)) {
+    sql_pdo_query(" ALTER TABLE `{$g5['g5_shop_personalpay_table']}`
                     ADD `pp_cash` tinyint(4) NOT NULL DEFAULT '0' AFTER `pp_shop_memo`,
                     ADD `pp_cash_no` varchar(255) NOT NULL DEFAULT '' AFTER `pp_cash`,
                     ADD `pp_cash_info` text NOT NULL AFTER `pp_cash_no`,

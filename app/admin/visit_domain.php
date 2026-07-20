@@ -29,7 +29,7 @@ $arr = array();
 
 $sql = " select * from {$g5['visit_table']}
             where vi_date between '{$fr_date}' and '{$to_date}' ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 while ($row=sql_fetch_array($result)) {
     $str = $row['vi_referer'];
     preg_match("/^http[s]*:\/\/([\.\-\_0-9a-zA-Z]*)\//", $str, $match);

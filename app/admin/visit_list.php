@@ -44,7 +44,7 @@ $sql = " select *
             {$sql_search}
             order by vi_id desc
             limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 ?>
 
 <div class="tbl_head01 tbl_wrap">

@@ -60,7 +60,7 @@ $sql  = " select *
              $sql_common
              $sql_order
              limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $listall = '<a href="'.$_SERVER['SCRIPT_NAME'].'" class="ov_listall">전체목록</a>';
 ?>

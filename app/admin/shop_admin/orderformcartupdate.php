@@ -66,7 +66,7 @@ for ($i=0; $i<$cnt; $i++)
                             where it_id = '{$ct['it_id']}' ";
             }
 
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
 
         // 수량변경
@@ -74,7 +74,7 @@ for ($i=0; $i<$cnt; $i++)
                     set ct_qty = '$ct_qty'
                     where ct_id = '$ct_id'
                       and od_id = '$od_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
         $mod_history .= G5_TIME_YMDHIS.' '.$ct['ct_option'].' 수량변경 '.$ct['ct_qty'].' -> '.$ct_qty."\n";
     }
 
@@ -98,7 +98,7 @@ for ($i=0; $i<$cnt; $i++)
                             where it_id = '{$ct['it_id']}' ";
             }
 
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
     }
     else
@@ -120,14 +120,14 @@ for ($i=0; $i<$cnt; $i++)
                             where it_id = '{$ct['it_id']}' ";
             }
 
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
         /* 주문 수정에서 "품절" 선택시 해당 상품 자동 품절 처리하기
         else if ($ct_status == '품절') {
             $stock_use = 1;
             // 재고에서 뺀다.
             $sql =" update {$g5['g5_shop_item_table']} set it_stock_qty = 0 where it_id = '{$ct['it_id']}' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         } */
     }
 
@@ -153,7 +153,7 @@ for ($i=0; $i<$cnt; $i++)
                     ct_history    = CONCAT(ct_history,'$ct_history')
                 where od_id = '$od_id'
                 and ct_id  = '$ct_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     // it_id를 배열에 저장
     if($ct_status == '주문' || $ct_status == '취소' || $ct_status == '반품' || $ct_status == '품절' || $ct_status == '완료')
@@ -169,7 +169,7 @@ if(is_array($arr_it_id) && !empty($arr_it_id)) {
         $row2 = sql_fetch($sql2);
 
         $sql3 = " update {$g5['g5_shop_item_table']} set it_sum_qty = '{$row2['sum_qty']}' where it_id = '$it_id' ";
-        sql_query($sql3);
+        sql_pdo_query($sql3);
     }
 }
 
@@ -333,7 +333,7 @@ if (in_array($_POST['ct_status'], $status_cancel)) {
                     $sql = " update {$g5['g5_shop_order_table']}
                                 set od_refund_price = '{$od['od_receipt_price']}'
                                 where od_id = '$od_id' ";
-                    sql_query($sql);
+                    sql_pdo_query($sql);
                 }
             }
         }
@@ -373,7 +373,7 @@ if($cancel_change) {
 }
 
 $sql .= " where od_id = '$od_id' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 $qstr = "sort1=$sort1&amp;sort2=$sort2&amp;sel_field=$sel_field&amp;search=$search&amp;page=$page";
 

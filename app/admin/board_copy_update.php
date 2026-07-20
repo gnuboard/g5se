@@ -51,7 +51,7 @@ if ($row['cnt']) {
 // 게시판 테이블 생성 — table 명에 변수 들어가므로 (placeholder 불가) 영숫자 검증된 값만 보간
 $sql = get_table_define($g5['write_prefix'] . $bo_table);
 $sql = str_replace($g5['write_prefix'] . $bo_table, $g5['write_prefix'] . $target_table, $sql);
-sql_query($sql, false);
+sql_pdo_query($sql, false);
 
 // 구조만 복사시에는 공지사항 번호는 복사하지 않는다.
 if ($copy_case == 'schema_only') {
@@ -138,7 +138,7 @@ if ($copy_case == 'schema_data_both') {
 
     // 글복사 — 테이블명 보간 (영숫자 검증된 값)
     $sql = " insert into {$g5['write_prefix']}$target_table select * from {$g5['write_prefix']}$bo_table ";
-    sql_query($sql, false);
+    sql_pdo_query($sql, false);
 
     // 게시글수 저장
     $row = sql_pdo_fetch(" select bo_count_write, bo_count_comment from {$g5['board_table']} where bo_table = :bo_table ",

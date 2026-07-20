@@ -17,7 +17,7 @@ function add_io_stock($it_id, $ct_qty, $io_id="", $io_type=0)
                     set it_stock_qty = it_stock_qty + '{$ct_qty}'
                     where it_id = '{$it_id}' ";
     }
-    return sql_query($sql);
+    return sql_pdo_query($sql);
 }
 
 
@@ -37,7 +37,7 @@ function subtract_io_stock($it_id, $ct_qty, $io_id="", $io_type=0)
                     set it_stock_qty = it_stock_qty - '{$ct_qty}'
                     where it_id = '{$it_id}' ";
     }
-    return sql_query($sql);
+    return sql_pdo_query($sql);
 }
 
 
@@ -47,10 +47,10 @@ function change_status($od_id, $current_status, $change_status)
     global $g5;
 
     $sql = " update {$g5['g5_shop_order_table']} set od_status = '{$change_status}' where od_id = '{$od_id}' and od_status = '{$current_status}' ";
-    sql_query($sql, true);
+    sql_pdo_query($sql, true);
 
     $sql = " update {$g5['g5_shop_cart_table']} set ct_status = '{$change_status}' where od_id = '{$od_id}' and ct_status = '{$current_status}' ";
-    sql_query($sql, true);
+    sql_pdo_query($sql, true);
 }
 
 
@@ -60,7 +60,7 @@ function order_update_receipt($od_id)
     global $g5;
 
     $sql = " update {$g5['g5_shop_order_table']} set od_receipt_price = od_misu, od_misu = 0, od_receipt_time = '".G5_TIME_YMDHIS."' where od_id = '$od_id' and od_status = '입금' ";
-    return sql_query($sql);
+    return sql_pdo_query($sql);
 }
 
 
@@ -73,10 +73,10 @@ function order_update_delivery($od_id, $mb_id, $change_status, $delivery)
         return;
 
     $sql = " update {$g5['g5_shop_order_table']} set od_delivery_company = '".sql_real_escape_string($delivery['delivery_company'])."', od_invoice = '".sql_real_escape_string($delivery['invoice'])."', od_invoice_time = '".sql_real_escape_string($delivery['invoice_time'])."' where od_id = '$od_id' and od_status = '준비' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     $sql = " select * from {$g5['g5_shop_cart_table']} where od_id = '$od_id' ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 
     for ($i=0; $row=sql_fetch_array($result); $i++)
     {
@@ -90,7 +90,7 @@ function order_update_delivery($od_id, $mb_id, $change_status, $delivery)
             $stock_use = 1;
 
             $sql = " update {$g5['g5_shop_cart_table']} set ct_stock_use  = '$stock_use' where ct_id = '{$row['ct_id']}' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
     }
 }
@@ -189,7 +189,7 @@ function check_order_inicis_tmps(){
         if( $default['de_pg_service'] === 'inicis' && empty($default['de_card_test']) ){
             $sql = " select * from {$g5['g5_shop_inicis_log_table']} where P_TID <> '' and P_TYPE in ('CARD', 'ISP', 'BANK') and P_MID <> '' and P_STATUS = '00' and is_mail_send = 0 and substr(P_AUTH_DT, 1, 14) < '".date('YmdHis', strtotime('-3 minutes', G5_SERVER_TIME))."' ";
 
-            $result = sql_query($sql, false);
+            $result = sql_pdo_query($sql, false);
             
             if( !$result ){
                 return;
@@ -206,7 +206,7 @@ function check_order_inicis_tmps(){
                 if( in_array($p_mid, array('iniescrow0', 'inipaytest')) ) continue;
 
                 $sql = "update {$g5['g5_shop_inicis_log_table']} set is_mail_send = 1 where oid = '".$oid."' and P_TID = '".$p_tid."' ";
-                sql_query($sql);
+                sql_pdo_query($sql);
 
                 $sql = " select od_id from {$g5['g5_shop_order_table']} where od_id = '$oid' and od_tno = '$p_tid' ";
                 $tmp = sql_fetch($sql);

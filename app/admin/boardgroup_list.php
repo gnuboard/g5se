@@ -15,7 +15,7 @@ if (!isset($group['gr_device'])) {
     // pc : pc 전용 사용
     // mobile : mobile 전용 사용
     // none : 사용 안함
-    sql_query(" ALTER TABLE  `{$g5['group_table']}` ADD  `gr_device` ENUM(  'both',  'pc',  'mobile' ) NOT NULL DEFAULT  'both' AFTER  `gr_subject` ", false);
+    sql_pdo_query(" ALTER TABLE  `{$g5['group_table']}` ADD  `gr_device` ENUM(  'both',  'pc',  'mobile' ) NOT NULL DEFAULT  'both' AFTER  `gr_subject` ", false);
 }
 
 $sql_common = " from {$g5['group_table']} ";
@@ -64,7 +64,7 @@ if ($page < 1) {
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $sql = " select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/boardgroup_list" class="ov_listall">처음</a>';
 

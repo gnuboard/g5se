@@ -87,7 +87,7 @@ if(isset($sfl) && $sfl && !in_array($sfl, array('vi_ip','vi_date','vi_time','vi_
                 {$sql_search}
                 order by vi_id desc
                 limit {$from_record}, {$rows} ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 
     for ($i=0; $row=sql_fetch_array($result); $i++) {
         $brow = $row['vi_browser'];

@@ -11,7 +11,7 @@ if(empty($_POST))
 /*
 $limit_time = date("Y-m-d H:i:s", (G5_SERVER_TIME - 86400 * 1));
 $sql = " delete from {$g5['g5_shop_order_data_table']} where dt_type = '1' and dt_time < '$limit_time' ";
-sql_query($sql);
+sql_pdo_query($sql);
 */
 
 $od_settle_case = isset($_POST['od_settle_case']) ? clean_xss_tags($_POST['od_settle_case'], 1, 1) : '';

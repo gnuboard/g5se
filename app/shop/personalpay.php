@@ -40,7 +40,7 @@ include_once('./_head.php');
                     $sql_common
                     order by pp_id desc
                     limit $from_record, $items";
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql);
 
         include $list_file;
     }

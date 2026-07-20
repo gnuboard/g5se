@@ -13,7 +13,7 @@ $sql = " select *
             where od_misu = '0'
               and od_status = '준비'
             order by od_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 if(!@sql_num_rows($result))
     alert_close('배송처리할 주문 내역이 없습니다.');

@@ -33,7 +33,7 @@ include_once(G5_PATH.'/head.sub.php');
                    left join {$g5['g5_shop_item_table']} b on (a.it_id=b.it_id)
                   where a.ev_id = '$ev_id'
                   order by b.it_id desc ";
-        $result = sql_query($sql);
+        $result = sql_pdo_query($sql);
         for ($i=0; $row=sql_fetch_array($result); $i++)
         {
             $href = shop_item_url($row['it_id']);

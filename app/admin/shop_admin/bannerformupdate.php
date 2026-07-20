@@ -51,7 +51,7 @@ if ($w=="")
 {
     if (!$bn_bimg_name) alert('배너 이미지를 업로드 하세요.');
 
-    sql_query(" alter table {$g5['g5_shop_banner_table']} auto_increment=1 ");
+    sql_pdo_query(" alter table {$g5['g5_shop_banner_table']} auto_increment=1 ");
 
     $sql = " insert into {$g5['g5_shop_banner_table']}
                 set bn_alt        = '$bn_alt',
@@ -65,7 +65,7 @@ if ($w=="")
                     bn_time       = '".G5_TIME_YMDHIS."',
                     bn_hit        = '0',
                     bn_order      = '$bn_order' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     $bn_id = sql_insert_id();
 }
@@ -82,14 +82,14 @@ else if ($w=="u")
                     bn_time       = '".G5_TIME_YMDHIS."',
                     bn_order      = '$bn_order'
               where bn_id = '$bn_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 else if ($w=="d")
 {
     @unlink(G5_DATA_PATH."/banner/$bn_id");
 
     $sql = " delete from {$g5['g5_shop_banner_table']} where bn_id = $bn_id ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 }
 
 

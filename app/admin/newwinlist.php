@@ -13,11 +13,11 @@ if (!isset($g5['new_win_table'])) {
     die('<meta charset="utf-8">/data/dbconfig.php 파일에 <strong>$g5[\'new_win_table\'] = G5_TABLE_PREFIX.\'new_win\';</strong> 를 추가해 주세요.');
 }
 //내용(컨텐츠)정보 테이블이 있는지 검사한다.
-if (!sql_query(" DESCRIBE {$g5['new_win_table']} ", false)) {
-    if (sql_query(" DESCRIBE {$g5['g5_shop_new_win_table']} ", false)) {
-        sql_query(" ALTER TABLE {$g5['g5_shop_new_win_table']} RENAME TO `{$g5['new_win_table']}` ;", false);
+if (!sql_pdo_query(" DESCRIBE {$g5['new_win_table']} ", false)) {
+    if (sql_pdo_query(" DESCRIBE {$g5['g5_shop_new_win_table']} ", false)) {
+        sql_pdo_query(" ALTER TABLE {$g5['g5_shop_new_win_table']} RENAME TO `{$g5['new_win_table']}` ;", false);
     } else {
-        $query_cp = sql_query(
+        $query_cp = sql_pdo_query(
             " CREATE TABLE IF NOT EXISTS `{$g5['new_win_table']}` (
                       `nw_id` int(11) NOT NULL AUTO_INCREMENT,
                       `nw_division` varchar(10) NOT NULL DEFAULT 'both',
@@ -57,7 +57,7 @@ $row = sql_fetch($sql);
 $total_count = $row['cnt'];
 
 $sql = "select * $sql_common order by nw_id desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 ?>
 
 <div class="local_ov01 local_ov"><span class="btn_ov01"><span class="ov_txt">전체 </span><span class="ov_num"> <?php echo $total_count; ?>건</span></span></div>

@@ -62,7 +62,7 @@ if ($csv == 'csv')
     if ($ct_status)
         $sql .= " and b.ct_status = '$ct_status' ";
     $sql .="  order by od_time asc, b.it_id, b.io_type, b.ct_id ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     $cnt = @sql_num_rows($result);
     if (!$cnt)
         alert("출력할 내역이 없습니다.");
@@ -166,7 +166,7 @@ if ($csv == 'xls')
     if ($ct_status)
         $sql .= " and b.ct_status = '$ct_status' ";
     $sql .="  order by od_time asc, b.it_id, b.io_type, b.ct_id ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     $cnt = @sql_num_rows($result);
     if (!$cnt)
         alert("출력할 내역이 없습니다.");
@@ -287,7 +287,7 @@ if ($ct_status)
     $sql .= " and b.ct_status = '$ct_status' ";
 $sql .= " order by a.od_id ";
 
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 if (sql_num_rows($result) == 0)
 {
     echo "<script>alert('출력할 내역이 없습니다.'); window.close();</script>";
@@ -382,7 +382,7 @@ if (sql_num_rows($result) == 0)
                 $sql2 .= " and ct_status = '$ct_status' ";
             $sql2 .= "  order by it_id, io_type, ct_id ";
 
-            $res2 = sql_query($sql2);
+            $res2 = sql_pdo_query($sql2);
             $cnt = $sub_tot_qty = $sub_tot_price = 0;
             $save_it_id = '';
 

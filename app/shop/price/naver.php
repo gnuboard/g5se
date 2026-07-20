@@ -41,7 +41,7 @@ ob_start();
 echo "id{$tab}title{$tab}price_pc{$tab}link{$tab}image_link{$tab}category_name1{$tab}category_name2{$tab}category_name3{$tab}category_name4{$tab}brand{$tab}maker{$tab}origin{$tab}point{$tab}review_count{$tab}shipping{$tab}class{$tab}update_time";
 
 $sql =" select * from {$g5['g5_shop_item_table']} where it_use = '1' and it_soldout = '0' and it_tel_inq = '0' and it_price > '0' order by ca_id";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 for ($i=0; $row=sql_fetch_array($result); $i++)
 {

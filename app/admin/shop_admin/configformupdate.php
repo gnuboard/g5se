@@ -368,10 +368,10 @@ if (defined('G5_SHOP_DIRECT_NAVERPAY') && G5_SHOP_DIRECT_NAVERPAY) {
                 de_naverpay_mb_id             = '{$de_naverpay_mb_id}',
                 de_naverpay_sendcost          = '{$de_naverpay_sendcost}' ";
 }
-sql_query($sql);
+sql_pdo_query($sql);
 
 // 환경설정 > 포인트 사용
-sql_query(" update {$g5['config_table']} set cf_use_point = '{$cf_use_point}' ");
+sql_pdo_query(" update {$g5['config_table']} set cf_use_point = '{$cf_use_point}' ");
 
 // LG, 아이코드 설정
 $sql = " update {$g5['config_table']}
@@ -386,7 +386,7 @@ $sql = " update {$g5['config_table']}
                 cf_lg_mert_key          = '{$cf_lg_mert_key}',
                 cf_toss_client_key      = '{$cf_toss_client_key}',
                 cf_toss_secret_key      = '{$cf_toss_secret_key}' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 run_event('shop_admin_configformupdate');
 

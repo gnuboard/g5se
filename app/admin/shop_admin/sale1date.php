@@ -59,7 +59,7 @@ $sql = " select od_id,
        from {$g5['g5_shop_order_table']}
       where SUBSTRING(od_time,1,10) between '$fr_date' and '$to_date'
       order by od_time desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 ?>
 
 <div class="tbl_head01 tbl_wrap">

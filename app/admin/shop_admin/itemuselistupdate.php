@@ -37,12 +37,12 @@ for ($i=0; $i<$count_post_chk; $i++)
                    set is_score   = '{$iis_score}',
                        is_confirm = '{$iis_confirm}'
                  where is_id      = '{$iis_id}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
     else if ($_POST['act_button'] == "선택삭제")
     {
         $sql = "delete from {$g5['g5_shop_item_use_table']} where is_id = '{$iis_id}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
         run_event('shop_admin_item_use_deleted', $iis_id);
     }
     

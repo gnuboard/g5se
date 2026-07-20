@@ -11,7 +11,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 
     <?php
     $sql = " select * $sql_common and cz_type = '0' $sql_order ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 
     $coupon = '';
     $coupon_info_class = '';
@@ -103,7 +103,7 @@ add_stylesheet('<link rel="stylesheet" href="'.G5_SHOP_CSS_URL.'/style.css">', 0
 
     <?php
     $sql = " select * $sql_common and cz_type = '1' $sql_order ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
 
     $coupon = '';
     $coupon_info_class = '';

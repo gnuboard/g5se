@@ -32,7 +32,7 @@ $sql = " select WEEKDAY(vs_date) as weekday_date, SUM(vs_count) as cnt
             where vs_date between '{$fr_date}' and '{$to_date}'
             group by weekday_date
             order by weekday_date ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $arr[$row['weekday_date']] = $row['cnt'];
 

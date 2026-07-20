@@ -27,7 +27,7 @@ $sql = " select cp_id
             where mb_id IN ( '{$member['mb_id']}', '전체회원' )
               and cp_start <= '".G5_TIME_YMD."'
               and cp_end >= '".G5_TIME_YMD."' ";
-$res = sql_query($sql);
+$res = sql_pdo_query($sql);
 
 for($k=0; $cp=sql_fetch_array($res); $k++) {
     if(!is_used_coupon($member['mb_id'], $cp['cp_id']))
@@ -114,7 +114,7 @@ for($k=0; $cp=sql_fetch_array($res); $k++) {
                         and a.it_id  = b.it_id
                       order by a.wi_id desc
                       limit 0, 8 ";
-            $result = sql_query($sql);
+            $result = sql_pdo_query($sql);
             for ($i=0; $row = sql_fetch_array($result); $i++)
             {
                 $image = get_it_image($row['it_id'], 230, 230, true);

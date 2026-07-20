@@ -64,7 +64,7 @@ $sql  = " select a.*, b.ev_id
           $sql_common
           order by $sort1 $sort2
           limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 //$qstr1 = 'sel_ca_id='.$sel_ca_id.'&amp;sel_field='.$sel_field.'&amp;search='.$search;
 $qstr1 = 'ev_id='.$ev_id.'&amp;sel_ca_id='.$sel_ca_id.'&amp;sel_field='.$sel_field.'&amp;search='.$search;
@@ -92,7 +92,7 @@ if($ev_id) {
     // 이벤트 옵션처리
     $event_option = "<option value=''>이벤트를 선택하세요</option>";
     $sql1 = " select ev_id, ev_subject from {$g5['g5_shop_event_table']} order by ev_id desc ";
-    $result1 = sql_query($sql1);
+    $result1 = sql_pdo_query($sql1);
     while ($row1=sql_fetch_array($result1))
         $event_option .= '<option value="'.$row1['ev_id'].'" '.get_selected($ev_id, $row1['ev_id']).' >'.conv_subject($row1['ev_subject'], 20,"…").'</option>';
     echo $event_option;
@@ -111,7 +111,7 @@ if($ev_id) {
     <option value=''>전체분류</option>
     <?php
     $sql1 = " select ca_id, ca_name from {$g5['g5_shop_category_table']} order by ca_order, ca_id ";
-    $result1 = sql_query($sql1);
+    $result1 = sql_pdo_query($sql1);
     for ($i=0; $row1=sql_fetch_array($result1); $i++)
     {
         $len = strlen($row1['ca_id']) / 2 - 1;

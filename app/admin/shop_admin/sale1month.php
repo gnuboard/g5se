@@ -60,7 +60,7 @@ $sql = " select od_id,
        from {$g5['g5_shop_order_table']}
       where SUBSTRING(od_time,1,7) between '$fr_month' and '$to_month'
       order by od_time desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 ?>
 
 <div class="tbl_head01 tbl_wrap">

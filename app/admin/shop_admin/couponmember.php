@@ -38,7 +38,7 @@ $sql = " select mb_id, mb_name
             $sql_where
             order by mb_id
             limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $qstr1 = 'mb_name='.urlencode($mb_name);
 ?>

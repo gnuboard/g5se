@@ -83,7 +83,7 @@ if ($_POST['act_button'] == "선택수정") {
                             {$sql_sms_date}
                             {$sql_agree_log}
                         where mb_id = '" . sql_real_escape_string($mb['mb_id']) . "' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
     }
 } elseif ($_POST['act_button'] == "선택삭제") {

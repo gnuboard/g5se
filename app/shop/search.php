@@ -126,7 +126,7 @@ $total_count = $row['cnt'];
 $total_page  = ceil($total_count / $items); // 전체 페이지 계산
 
 $sql = " select b.ca_id, b.ca_name, count(*) as cnt $sql_common $sql_where group by b.ca_id order by b.ca_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $categorys = array();
 // 검색된 분류를 배열에 저장

@@ -22,7 +22,7 @@ for ($i=0; $i<$count; $i++)
     $ccz_id = isset($_POST['cz_id'][$k]) ? (int) $_POST['cz_id'][$k] : 0;
 
     $sql = " delete from {$g5['g5_shop_coupon_zone_table']} where cz_id = '{$ccz_id}' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 goto_url('./couponzonelist.php?'.$qstr);

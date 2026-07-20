@@ -8,7 +8,7 @@ $sql = "SELECT a.ca_id,
                 IF( SUBSTR(a.ca_id, 7) != \"\", (SELECT ca_adult_use FROM `{$g5['g5_shop_category_table']}` WHERE ca_id = SUBSTR(a.ca_id, 7)), 0) AS ca_adult_parent3, 
                 IF( SUBSTR(a.ca_id, 9) != \"\", (SELECT ca_adult_use FROM `{$g5['g5_shop_category_table']}` WHERE ca_id = SUBSTR(a.ca_id, 9)), 0) AS ca_adult_parent4
                 FROM `{$g5['g5_shop_category_table']}` AS a";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $category_adult_array = array();
 for ($i = 0; $row = sql_fetch_array($result); $i++ ) {
@@ -22,7 +22,7 @@ for ($i = 0; $row = sql_fetch_array($result); $i++ ) {
 $sql =" SELECT a.*, IFNULL((SELECT MAX(`io_stock_qty`) FROM `{$g5['g5_shop_item_option_table']}` WHERE `it_id` = a.`it_id` GROUP BY `it_id`), a.`it_stock_qty`) AS in_stock
         FROM `{$g5['g5_shop_item_table']}` as a
         where a.`it_use` = '1' and a.`it_soldout` = '0' and a.`it_tel_inq` = '0' and a.`it_price` > '0' order by a.`ca_id`";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $xml = new SimpleXMLElement("<rss/>");
 $xml->addAttribute("xmlns:xmlns:g", "http://base.google.com/ns/1.0");

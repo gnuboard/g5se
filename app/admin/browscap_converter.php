@@ -49,7 +49,7 @@ $sql = " select vi_id, vi_agent, vi_browser, vi_os, vi_device
             $sql_common
             $sql_order
             $sql_limit ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $cnt = 0;
 for ($i = 0; $row = sql_fetch_array($result); $i++) {
@@ -75,7 +75,7 @@ for ($i = 0; $row = sql_fetch_array($result); $i++) {
                     vi_os       = '$os',
                     vi_device   = '$device'
                 where vi_id = '{$row['vi_id']}' ";
-    sql_query($sql2);
+    sql_pdo_query($sql2);
 
     $cnt++;
 }

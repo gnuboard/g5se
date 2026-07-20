@@ -240,7 +240,7 @@ function member_export_get_data($params)
 
     $sql = "SELECT {$field_list} FROM {$g5['member_table']} {$where} ORDER BY mb_no DESC LIMIT {$offset}, " . MEMBER_EXPORT_PAGE_SIZE;
     
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     if (!$result) {
         throw new Exception("데이터 조회에 실패하였습니다");
     }

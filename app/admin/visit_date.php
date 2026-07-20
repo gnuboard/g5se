@@ -31,7 +31,7 @@ $sql = " select vs_date, vs_count as cnt
             from {$g5['visit_sum_table']}
             where vs_date between '{$fr_date}' and '{$to_date}'
             order by vs_date desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $arr[$row['vs_date']] = $row['cnt'];
 

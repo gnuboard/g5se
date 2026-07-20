@@ -22,7 +22,7 @@ for ($i=0; $i<$count; $i++)
     $ppp_id = isset($_POST['pp_id'][$i]) ? preg_replace('/[^0-9]/', '', $_POST['pp_id'][$k]) : 0;
 
     $sql = " delete from {$g5['g5_shop_personalpay_table']} where pp_id = '{$ppp_id}' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 goto_url('./personalpaylist.php');

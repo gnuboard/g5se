@@ -42,26 +42,26 @@ if (!function_exists("itemdelete")) {
 
         // 장바구니 삭제
         $sql = " delete from {$g5['g5_shop_cart_table']} where it_id = '$it_id' and ct_status = '쇼핑' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         // 이벤트삭제
         $sql = " delete from {$g5['g5_shop_event_item_table']} where it_id = '$it_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         // 사용후기삭제
         $sql = " delete from {$g5['g5_shop_item_use_table']} where it_id = '$it_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         // 상품문의삭제
         $sql = " delete from {$g5['g5_shop_item_qa_table']} where it_id = '$it_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         // 관련상품삭제
         $sql = " delete from {$g5['g5_shop_item_relation_table']} where it_id = '$it_id' or it_id2 = '$it_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
 
         // 옵션삭제
-        sql_query(" delete from {$g5['g5_shop_item_option_table']} where it_id = '$it_id' ");
+        sql_pdo_query(" delete from {$g5['g5_shop_item_option_table']} where it_id = '$it_id' ");
 
 
         //------------------------------------------------------------------------
@@ -107,7 +107,7 @@ if (!function_exists("itemdelete")) {
 
         // 상품 삭제
         $sql = " delete from {$g5['g5_shop_item_table']} where it_id = '$it_id' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 }
 

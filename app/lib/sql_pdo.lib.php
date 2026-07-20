@@ -2,8 +2,9 @@
 /*
  * /lib/sql_pdo.lib.php — PDO prepared-statement 헬퍼.
  *
- * 기존 sql_query() / sql_fetch() (raw SQL) 와 별개로 변수 바인딩이 필요한
- * 신규 코드용. SQL 인젝션 위험을 placeholder 로 차단.
+ * 애플리케이션 SQL 실행을 단일 prepared-statement 경로로 통합한다.
+ * 값은 placeholder 로 바인딩하고, 테이블/컬럼 등 식별자는 호출자가
+ * 신뢰 가능한 설정값 또는 명시적 허용 목록으로 제한해야 한다.
  *
  * 사용 예:
  *   $stmt = sql_pdo_query("select * from {$g5['member_table']} where mb_id = ?", [$mb_id]);
@@ -21,17 +22,30 @@
 if (!defined('_GNUBOARD_')) exit;
 
 /**
- * Prepared statement 실행 — sql_query 의 PDO 버전.
+ * Prepared statement 실행.
  *
  * @param string     $sql     SQL with `?` 또는 `:name` placeholder
- * @param array      $params  positional 배열 또는 named 연관배열
+ * @param array|bool $params  positional/named 배열. 이전 중인 레거시 호출은 error bool 허용
  * @param bool       $error   에러 발생 시 die 여부 (sql_query 의 두 번째 인자와 동일 의미)
  * @param PDO|null   $link    DB 핸들 (생략 시 $g5['connect_db'])
  * @return PDOStatement|false
  */
-function sql_pdo_query($sql, array $params = [], $error = G5_DISPLAY_SQL_ERROR, $link = null)
+function sql_pdo_query($sql, $params = [], $error = G5_DISPLAY_SQL_ERROR, $link = null)
 {
     global $g5, $g5_debug;
+
+    // Legacy sql_query($sql, $error, $link) 호출을 단계적으로 이전할 수
+    // 있도록 두 번째 인자가 bool인 형태도 수용한다. 모든 호출처가 명시적
+    // params 배열로 전환되면 이 호환 분기는 제거할 수 있다.
+    if (is_bool($params)) {
+        $link = $error instanceof PDO ? $error : $link;
+        $error = $params;
+        $params = [];
+    }
+
+    if (!is_array($params)) {
+        throw new InvalidArgumentException('SQL parameters must be an array.');
+    }
 
     if (!$link) $link = $g5['connect_db'];
 

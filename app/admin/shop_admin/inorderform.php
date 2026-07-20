@@ -184,7 +184,7 @@ $order_price   = $tot_od_price + $od_send_cost + $od_send_cost2 - $tot_sc_cp_pri
 
 // 상품목록
 $sql = " select it_id, it_name, ct_notax, ct_send_cost, it_sc_type $sql_common group by it_id order by ct_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $pg_anchor = '<ul class="anchor">
 <li><a href="#anc_sodr_list">주문상품 목록</a></li>
@@ -230,7 +230,7 @@ $pg_anchor = '<ul class="anchor">
 
             // 상품의 옵션정보
             $sql = " select ct_id, it_id, ct_price, ct_point, ct_qty, ct_option, ct_status, cp_price, ct_stock_use, ct_point_use, ct_send_cost, io_type, io_price $sql_common and it_id = '{$row['it_id']}' order by io_type asc, ct_id asc ";
-            $res = sql_query($sql);
+            $res = sql_pdo_query($sql);
             $rowspan = sql_num_rows($res);
 
             // 합계금액 계산
@@ -399,7 +399,7 @@ $pg_anchor = '<ul class="anchor">
     // 이니시스를 사용하고 있다면
     if( $default['de_pg_service'] === 'inicis' && empty($default['de_card_test']) ){
         $sql = " select * from {$g5['g5_shop_inicis_log_table']} where P_TID <> '' and P_TYPE in ('CARD', 'ISP', 'BANK') and P_MID <> '' and P_STATUS = '00' and oid = '".$od['od_id']."' ";
-        $results = sql_query($sql);
+        $results = sql_pdo_query($sql);
 
         $tmps = array();
 

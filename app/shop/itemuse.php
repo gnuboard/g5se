@@ -68,7 +68,7 @@ if ($page < 1) $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 $from_record = ($page - 1) * $rows; // 시작 레코드 구함
 
 $sql = "select * $sql_common order by is_id desc limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $itemuse_skin = G5_SHOP_SKIN_PATH.'/itemuse.skin.php';
 

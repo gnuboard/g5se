@@ -39,7 +39,7 @@ for ($i = 0; $i < $count; $i++) {
     $au_menu = isset($_POST['au_menu'][$k]) ? preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['au_menu'][$k]) : '';
 
     $sql = " delete from {$g5['auth_table']} where mb_id = '" . $mb_id . "' and au_menu = '" . $au_menu . "' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     run_event('adm_auth_delete_member', $mb_id, $au_menu);
 }

@@ -42,7 +42,7 @@ $sql = " insert into {$g5['g5_shop_personalpay_table']}
                 pp_price        = '{$_POST['pp_price']}',
                 pp_ip           = '{$_SERVER['REMOTE_ADDR']}',
                 pp_time         = '".G5_TIME_YMDHIS."' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 $g5['title'] = '개인결제 복사';
 include_once(G5_PATH.'/head.sub.php');

@@ -36,7 +36,7 @@ if ($w == '') {
 }
 
 if (!array_key_exists('gr_device', $group)) {
-    sql_query(" ALTER TABLE `{$g5['group_table']}` ADD `gr_device` ENUM('both','pc','mobile') NOT NULL DEFAULT 'both' AFTER `gr_subject` ", false);
+    sql_pdo_query(" ALTER TABLE `{$g5['group_table']}` ADD `gr_device` ENUM('both','pc','mobile') NOT NULL DEFAULT 'both' AFTER `gr_subject` ", false);
 }
 
 // 접근회원수

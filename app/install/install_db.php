@@ -117,7 +117,7 @@ unset($row);
 <?php
 install_flush();
 // $table_prefix 는 위에서 [^0-9a-z_] 검사 거침 — 식별자 보간 안전
-// 기존: sql_query()->num_rows (mysqli 잔재) → PDOStatement 호환 sql_num_rows() 사용
+// 기존: sql_pdo_query()->num_rows (mysqli 잔재) → PDOStatement 호환 sql_num_rows() 사용
 $check_stmt = sql_pdo_query("SHOW TABLES LIKE '{$table_prefix}config'", [], false, $dblink);
 $is_install = sql_num_rows($check_stmt) > 0;
 

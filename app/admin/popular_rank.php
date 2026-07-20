@@ -27,7 +27,7 @@ $sql_group = " group by pp_word ";
 $sql_order = " order by cnt desc ";
 
 $sql = " select pp_word {$sql_common} {$sql_search} {$sql_group} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 $total_count = sql_num_rows($result);
 
 $rows = $config['cf_page_rows'];
@@ -38,7 +38,7 @@ if ($page < 1) {
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $sql = " select pp_word, count(*) as cnt {$sql_common} {$sql_search} {$sql_group} {$sql_order} limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/popular_rank" class="ov_listall">전체목록</a>';
 

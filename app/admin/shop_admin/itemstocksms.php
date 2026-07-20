@@ -21,8 +21,8 @@ admin_layout_start($g5["title"], "shop");
 if(!isset($g5['g5_shop_item_stocksms_table']))
     die('<meta charset="utf-8">dbconfig.php 파일에 <strong>$g5[\'g5_shop_item_stocksms_table\'] = G5_SHOP_TABLE_PREFIX.\'item_stocksms\';</strong> 를 추가해 주세요.');
 
-if(!sql_query(" select ss_id from {$g5['g5_shop_item_stocksms_table']} limit 1", false)) {
-    sql_query(" CREATE TABLE IF NOT EXISTS `{$g5['g5_shop_item_stocksms_table']}` (
+if(!sql_pdo_query(" select ss_id from {$g5['g5_shop_item_stocksms_table']} limit 1", false)) {
+    sql_pdo_query(" CREATE TABLE IF NOT EXISTS `{$g5['g5_shop_item_stocksms_table']}` (
                   `ss_id` int(11) NOT NULL AUTO_INCREMENT,
                   `it_id` varchar(20) NOT NULL DEFAULT '',
                   `ss_hp` varchar(255) NOT NULL DEFAULT '',
@@ -69,7 +69,7 @@ $sql  = " select *
            $sql_search
           order by $sort1 $sort2
           limit $from_record, $rows ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $qstr1 = 'sel_field='.$sel_field.'&amp;search='.$search;
 $qstr = $qstr1.'&amp;sort1='.$sort1.'&amp;sort2='.$sort2.'&amp;page='.$page;

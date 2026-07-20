@@ -51,7 +51,7 @@ $sql = " select *
             {$sql_search}
             {$sql_order}
             limit {$from_record}, {$rows} ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $g5['title'] = '쿠폰관리';
 admin_layout_start($g5["title"], "shop");

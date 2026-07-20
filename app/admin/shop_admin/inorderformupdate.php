@@ -27,7 +27,7 @@ if (! (isset($od['od_id']) && $od['od_id'])) {
 
 if($w == 'd') {
     $sql = " delete from {$g5['g5_shop_order_data_table']} where od_id = '$od_id' ";
-    sql_query($sql, true);
+    sql_pdo_query($sql, true);
     goto_url("./inorderlist.php?$qstr");
 }
 
@@ -302,7 +302,7 @@ $sql = " insert {$g5['g5_shop_order_table']}
                 od_settle_case    = '{$data['od_settle_case']}',
                 od_test           = '{$data['od_test']}'
                 ";
-$result = sql_query($sql, true);
+$result = sql_pdo_query($sql, true);
 
 $sql_card_point = "";
 if ($od_receipt_price > 0 && !$default['de_card_point']) {
@@ -314,7 +314,7 @@ $sql = "update {$g5['g5_shop_cart_table']}
                $sql_card_point
          where od_id = '{$od['cart_id']}'
            and ct_select = '1' ";
-$result = sql_query($sql, true);
+$result = sql_pdo_query($sql, true);
 
 // 회원이면서 포인트를 사용했다면 테이블에 사용을 추가
 if ($od['mb_id'] && $od_receipt_point)
@@ -335,7 +335,7 @@ if($od['mb_id']) {
                             od_id       = '$od_id',
                             cp_price    = '$cp_prc',
                             cl_datetime = '{$od['dt_time']}' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
 
         // 쿠폰사용금액 cart에 기록
@@ -346,7 +346,7 @@ if($od['mb_id']) {
                       and ct_select = '1'
                     order by ct_id asc
                     limit 1 ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 
     if(isset($data['od_cp_id']) && $data['od_cp_id']) {
@@ -356,7 +356,7 @@ if($od['mb_id']) {
                         od_id       = '$od_id',
                         cp_price    = '$tot_od_cp_price',
                         cl_datetime = '{$od['dt_time']}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 
     if(isset($data['sc_cp_id']) && $data['sc_cp_id']) {
@@ -366,7 +366,7 @@ if($od['mb_id']) {
                         od_id       = '$od_id',
                         cp_price    = '$tot_sc_cp_price',
                         cl_datetime = '{$od['dt_time']}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 }
 
@@ -381,11 +381,11 @@ $sql = " update {$g5['g5_shop_order_table']}
                 od_free_mny     = '{$info['od_free_mny']}',
                 od_status       = '$od_status'
             where od_id = '$od_id' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 // 임시 주문정보 삭제
 $sql = " delete from {$g5['g5_shop_order_data_table']} where od_id = '$od_id' and dt_pg = '$od_pg' ";
-sql_query($sql, true);
+sql_pdo_query($sql, true);
 
 echo '<meta http-equiv="content-type" content="text/html; charset=utf-8">'.PHP_EOL;
 echo '<script>'.PHP_EOL;

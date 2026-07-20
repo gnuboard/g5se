@@ -32,7 +32,7 @@ $sql = " select SUBSTRING(vs_date,1,7) as vs_month, SUM(vs_count) as cnt
             where vs_date between '{$fr_date}' and '{$to_date}'
             group by vs_month
             order by vs_month desc ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 for ($i=0; $row=sql_fetch_array($result); $i++) {
     $arr[$row['vs_month']] = $row['cnt'];
 

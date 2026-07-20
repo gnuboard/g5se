@@ -47,7 +47,7 @@ $sql = " select *, sum(ct_qty) as sum_ct_qty
             where od_id = '$tmp_cart_id'
               and ct_select = '1'
               and ct_status = '쇼핑' GROUP BY od_id, it_id, it_name, ct_option, io_id, io_type ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 for($i=0; $row=sql_fetch_array($result); $i++) {
     $ct_qty = $row['sum_ct_qty'];
@@ -61,7 +61,7 @@ for($i=0; $row=sql_fetch_array($result); $i++) {
     // 분류에서 판매가능한지 체크합니다.
     if( $item['it_use'] && ($item['ca_id'] || $item['ca_id2'] || $item['ca_id3']) ){
         $sql = " select ca_use from {$g5['g5_shop_category_table']} where (ca_id = '".$item['ca_id']."' or ca_id = '".$item['ca_id2']."' or ca_id = '".$item['ca_id3']."') ";
-        $result2 = sql_query($sql);
+        $result2 = sql_pdo_query($sql);
 
         while($ca=sql_fetch_array($result2)){
             if ( ! $ca['ca_use']) {

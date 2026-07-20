@@ -394,7 +394,7 @@ function get_max_value($arr)
                             and qa_type = '0'
                           order by qa_num
                           limit $max_limit ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql);
                 for ($i=0; $row=sql_fetch_array($result); $i++)
                 {
                     $sql1 = " select * from {$g5['member_table']} where mb_id = '{$row['mb_id']}' ";
@@ -432,7 +432,7 @@ function get_max_value($arr)
                           where iq_answer = ''
                           order by iq_id desc
                           limit $max_limit ";
-                $result = sql_query($sql);
+                $result = sql_pdo_query($sql);
                 for ($i=0; $row=sql_fetch_array($result); $i++)
                 {
                     $sql1 = " select * from {$g5['member_table']} where mb_id = '{$row['mb_id']}' ";
@@ -469,7 +469,7 @@ function get_max_value($arr)
                       where is_confirm = 0
                       order by is_id desc
                       limit $max_limit ";
-            $result = sql_query($sql);
+            $result = sql_pdo_query($sql);
             for ($i=0; $row=sql_fetch_array($result); $i++)
             {
                 $sql1 = " select * from {$g5['member_table']} where mb_id = '{$row['mb_id']}' ";

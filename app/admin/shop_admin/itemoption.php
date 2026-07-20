@@ -13,7 +13,7 @@ if(isset($it['it_id']) && $it['it_id']) {
     $opt3_subject = isset($opt_subject[2]) ? $opt_subject[2] : '';
 
     $sql = " select * from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = '{$it['it_id']}' order by io_no asc ";
-    $result = sql_query($sql);
+    $result = sql_pdo_query($sql);
     if(sql_num_rows($result))
         $po_run = true;
 } else if(!empty($_POST)) {

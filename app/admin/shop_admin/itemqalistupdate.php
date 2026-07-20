@@ -25,7 +25,7 @@ if ($_POST['act_button'] == "선택삭제") {
         $iiq_id = isset($_POST['iq_id'][$i]) ? (int) $_POST['iq_id'][$k] : 0;
 
         $sql = "delete from {$g5['g5_shop_item_qa_table']} where iq_id = '{$iiq_id}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
         run_event('shop_admin_item_qa_deleted', $iiq_id);
     }
 }

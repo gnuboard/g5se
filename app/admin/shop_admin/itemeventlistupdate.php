@@ -20,14 +20,14 @@ for ($i=0; $i<$post_it_id_count; $i++)
     $sql = " delete from {$g5['g5_shop_event_item_table']}
               where ev_id = '$ev_id'
                 and it_id = '{$iit_id}' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     if (isset($_POST['ev_chk'][$i]) && $_POST['ev_chk'][$i])
     {
         $sql = "insert into {$g5['g5_shop_event_item_table']}
                    set ev_id = '$ev_id',
                        it_id = '{$iit_id}' ";
-        sql_query($sql);
+        sql_pdo_query($sql);
     }
 
 }

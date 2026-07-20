@@ -76,7 +76,7 @@ if ($post_act_button == "선택수정") {
                        it_update_time = '".G5_TIME_YMDHIS."'
                  where it_id   = '".$p_it_id."' ";
 
-        sql_query($sql);
+        sql_pdo_query($sql);
 
 		if( function_exists('shop_seo_title_update') ) shop_seo_title_update($p_it_id, true);
     }

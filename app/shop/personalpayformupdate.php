@@ -198,7 +198,7 @@ $sql = " update {$g5['g5_shop_personalpay_table']}
                 pp_cash_no          = '{$pg_receipt_infos['od_cash_no']}',
                 pp_cash_info        = '{$pg_receipt_infos['od_cash_info']}'
             where pp_id = '{$pp['pp_id']}' ";
-$result = sql_query($sql, false);
+$result = sql_pdo_query($sql, false);
 
 // 결제정보 입력 오류시 결제 취소
 if(!$result) {
@@ -239,7 +239,7 @@ if($pp_receipt_price > 0 && $pp['pp_id'] && $pp['od_id']) {
                     od_cash_info        = '{$pg_receipt_infos['od_cash_info']}',
                     od_shop_memo = concat(od_shop_memo, \"\\n개인결제 ".$pp['pp_id']." 로 결제완료 - ".$pp_receipt_time."\")
                 where od_id = '{$pp['od_id']}' ";
-    $result = sql_query($sql, false);
+    $result = sql_pdo_query($sql, false);
 
     // 결제정보 입력 오류시 결제 취소
     if(!$result) {
@@ -270,14 +270,14 @@ if($pp_receipt_price > 0 && $pp['pp_id'] && $pp['od_id']) {
     if($info['od_misu'] == 0)
         $sql .= " , od_status = '입금' ";
     $sql .= " where od_id = '{$pp['od_id']}' ";
-    sql_query($sql, FALSE);
+    sql_pdo_query($sql, FALSE);
 
     // 장바구니 상태변경
     if($info['od_misu'] == 0) {
         $sql = " update {$g5['g5_shop_cart_table']}
                     set ct_status = '입금'
                     where od_id = '{$pp['od_id']}' ";
-        sql_query($sql, FALSE);
+        sql_pdo_query($sql, FALSE);
     }
 }
 

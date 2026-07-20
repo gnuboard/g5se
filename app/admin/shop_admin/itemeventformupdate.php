@@ -65,7 +65,7 @@ if ($w == "")
     $sql = " insert {$g5['g5_shop_event_table']}
                     $sql_common
                   , ev_id = '$ev_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_event_created', $ev_id);
 }
 else if ($w == "u")
@@ -73,7 +73,7 @@ else if ($w == "u")
     $sql = " update {$g5['g5_shop_event_table']}
                 $sql_common
               where ev_id = '$ev_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_event_updated', $ev_id);
 }
 else if ($w == "d")
@@ -84,11 +84,11 @@ else if ($w == "d")
 
     // 이벤트상품삭제
     $sql = " delete from {$g5['g5_shop_event_item_table']} where ev_id = '$ev_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
     run_event('shop_admin_event_deleted', $ev_id);
 
     $sql = " delete from {$g5['g5_shop_event_table']} where ev_id = '$ev_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 if ($w == "" || $w == "u")
@@ -99,7 +99,7 @@ if ($w == "" || $w == "u")
 
     // 등록된 이벤트 상품 먼저 삭제
     $sql = " delete from {$g5['g5_shop_event_item_table']} where ev_id = '$ev_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 
     // 이벤트 상품등록
     $item = explode(',', $ev_item);
@@ -111,7 +111,7 @@ if ($w == "" || $w == "u")
             $sql = " insert into {$g5['g5_shop_event_item_table']}
                         set ev_id = '$ev_id',
                             it_id = '$it_id' ";
-            sql_query($sql);
+            sql_pdo_query($sql);
         }
     }
 

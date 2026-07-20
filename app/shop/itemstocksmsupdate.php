@@ -37,6 +37,6 @@ $sql = " insert into {$g5['g5_shop_item_stocksms_table']}
                 ss_hp       = '$ss_hp',
                 ss_ip       = '{$_SERVER['REMOTE_ADDR']}',
                 ss_datetime = '".G5_TIME_YMDHIS."' ";
-sql_query($sql);
+sql_pdo_query($sql);
 
 alert_close('재입고SMS 알림 요청 등록이 완료됐습니다.');

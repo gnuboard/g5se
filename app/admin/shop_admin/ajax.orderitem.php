@@ -26,7 +26,7 @@ $sql = " select it_id,
           where od_id = '$od_id'
           group by it_id
           order by ct_id ";
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 ?>
 
 <section id="cart_list">
@@ -60,7 +60,7 @@ $result = sql_query($sql);
                         where od_id = '$od_id'
                           and it_id = '{$row['it_id']}'
                         order by io_type asc, ct_id asc ";
-            $res = sql_query($sql);
+            $res = sql_pdo_query($sql);
             $rowspan = sql_num_rows($res);
 
             // 배송비

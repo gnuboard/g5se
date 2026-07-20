@@ -56,7 +56,7 @@ $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $sql = $sql_select . $sql_common . $sql_where . $sql_order . " limit $from_record, $rows ";
 
-$result = sql_query($sql);
+$result = sql_pdo_query($sql);
 
 $qstr1 = 'sch_target='.$sch_target.'&amp;sch_word='.urlencode($sch_word);
 ?>

@@ -1893,7 +1893,7 @@ function html_symbol($str)
 
 // DB 연결
 // PDO 기반 SQL 함수군 — 시그니처/리턴 의미는 그대로 유지하여 기존 호출처 무수정.
-// $g5['connect_db'] 는 PDO 인스턴스, sql_query() 결과는 PDOStatement.
+// $g5['connect_db'] 는 PDO 인스턴스, sql_pdo_query() 결과는 PDOStatement.
 function sql_connect($host, $user, $pass, $db=G5_MYSQL_DB)
 {
     if (!class_exists('PDO')) {
@@ -2074,7 +2074,7 @@ function sql_fetch($sql, $error=G5_DISPLAY_SQL_ERROR, $link=null)
     if(!$link)
         $link = $g5['connect_db'];
 
-    $result = sql_query($sql, $error, $link);
+    $result = sql_pdo_query($sql, [], $error, $link);
     $row = sql_fetch_array($result);
     return $row;
 }
@@ -2148,7 +2148,7 @@ function sql_field_names($table, $link=null)
     if (!$link) $link = $g5['connect_db'];
 
     $columns = array();
-    $result  = sql_query(" select * from `{$table}` limit 1 ", G5_DISPLAY_SQL_ERROR, $link);
+    $result  = sql_pdo_query(" select * from `{$table}` limit 1 ", [], G5_DISPLAY_SQL_ERROR, $link);
     if ($result instanceof PDOStatement) {
         $cnt = $result->columnCount();
         for ($i = 0; $i < $cnt; $i++) {
@@ -4373,7 +4373,7 @@ class str_encrypt
     }
 }
 
-// PDO 에는 connection 단위 affected_rows 가 없음 — sql_query() 가 마지막 PDOStatement 를
+// PDO 에는 connection 단위 affected_rows 가 없음 — sql_pdo_query() 가 마지막 PDOStatement 를
 // $g5['last_stmt'] 에 저장하므로 그 rowCount() 를 반환.
 function get_sql_affected_rows($link=null)
 {

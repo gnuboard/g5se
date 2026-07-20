@@ -227,16 +227,16 @@ if(($it_point_type == 1 || $it_point_type == 2) && ($it_point < 0  || $it_point 
     alert("포인트 비율을 0과 99 사이의 값으로 입력해 주십시오.");
 
 // 관련상품을 우선 삭제함
-sql_query(" delete from {$g5['g5_shop_item_relation_table']} where it_id = '$it_id' ");
+sql_pdo_query(" delete from {$g5['g5_shop_item_relation_table']} where it_id = '$it_id' ");
 
 // 관련상품의 반대도 삭제
-sql_query(" delete from {$g5['g5_shop_item_relation_table']} where it_id2 = '$it_id' ");
+sql_pdo_query(" delete from {$g5['g5_shop_item_relation_table']} where it_id2 = '$it_id' ");
 
 // 이벤트상품을 우선 삭제함
-sql_query(" delete from {$g5['g5_shop_event_item_table']} where it_id = '$it_id' ");
+sql_pdo_query(" delete from {$g5['g5_shop_event_item_table']} where it_id = '$it_id' ");
 
 // 선택옵션
-sql_query(" delete from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = '$it_id' "); // 기존선택옵션삭제
+sql_pdo_query(" delete from {$g5['g5_shop_item_option_table']} where io_type = '0' and it_id = '$it_id' "); // 기존선택옵션삭제
 
 // 금지할 패턴 목록
 $forbidden_patterns = array(
@@ -285,7 +285,7 @@ if($option_count) {
 }
 
 // 추가옵션
-sql_query(" delete from {$g5['g5_shop_item_option_table']} where io_type = '1' and it_id = '$it_id' "); // 기존추가옵션삭제
+sql_pdo_query(" delete from {$g5['g5_shop_item_option_table']} where io_type = '1' and it_id = '$it_id' "); // 기존추가옵션삭제
 
 $supply_count = (isset($_POST['spl_id']) && is_array($_POST['spl_id'])) ? count($_POST['spl_id']) : array();
 if($supply_count) {
@@ -475,7 +475,7 @@ if ($w == "")
     $sql = " insert {$g5['g5_shop_item_table']}
                 set it_id = '$it_id',
 					$sql_common	";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 else if ($w == "u")
 {
@@ -483,7 +483,7 @@ else if ($w == "u")
     $sql = " update {$g5['g5_shop_item_table']}
                 set $sql_common
               where it_id = '$it_id' ";
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 /*
 else if ($w == "d")
@@ -515,14 +515,14 @@ if ($w == "" || $w == "u")
                         set it_id  = '$it_id',
                             it_id2 = '".sql_real_escape_string($it_id2[$i])."',
                             ir_no = '$i' ";
-            sql_query($sql, false);
+            sql_pdo_query($sql, false);
 
             // 관련상품의 반대로도 등록
             $sql = " insert into {$g5['g5_shop_item_relation_table']}
                         set it_id  = '".sql_real_escape_string($it_id2[$i])."',
                             it_id2 = '$it_id',
                             ir_no = '$i' ";
-            sql_query($sql, false);
+            sql_pdo_query($sql, false);
         }
     }
 
@@ -535,7 +535,7 @@ if ($w == "" || $w == "u")
             $sql = " insert into {$g5['g5_shop_event_item_table']}
                         set ev_id = '".sql_real_escape_string($ev_id[$i])."',
                             it_id = '$it_id' ";
-            sql_query($sql, false);
+            sql_pdo_query($sql, false);
         }
     }
 }
@@ -551,7 +551,7 @@ if($option_count) {
         $comma = ' , ';
     }
 
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 // 추가옵션등록
@@ -565,7 +565,7 @@ if($supply_count) {
         $comma = ' , ';
     }
 
-    sql_query($sql);
+    sql_pdo_query($sql);
 }
 
 // 동일 분류내 상품 동일 옵션 적용
@@ -610,11 +610,11 @@ if(is_checked('chk_ca_9'))                      $ca_fields .= " , it_9_subj = '$
 if(is_checked('chk_ca_10'))                     $ca_fields .= " , it_10_subj = '$it_10_subj', it_10 = '$it_10' ";
 
 if($ca_fields) {
-    sql_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$ca_fields} where ca_id = '$ca_id' ");
+    sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$ca_fields} where ca_id = '$ca_id' ");
     if($ca_id2)
-        sql_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$ca_fields} where ca_id2 = '$ca_id2' ");
+        sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$ca_fields} where ca_id2 = '$ca_id2' ");
     if($ca_id3)
-        sql_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$ca_fields} where ca_id3 = '$ca_id3' ");
+        sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$ca_fields} where ca_id3 = '$ca_id3' ");
 }
 
 // 모든 상품 동일 옵션 적용
@@ -659,7 +659,7 @@ if(is_checked('chk_all_9'))                      $all_fields .= " , it_9_subj = 
 if(is_checked('chk_all_10'))                     $all_fields .= " , it_10_subj = '$it_10_subj', it_10 = '$it_10' ";
 
 if($all_fields) {
-    sql_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$all_fields} ");
+    sql_pdo_query(" update {$g5['g5_shop_item_table']} set it_name = it_name {$all_fields} ");
 }
 
 $is_seo_title_edit = $w ? true : false;
