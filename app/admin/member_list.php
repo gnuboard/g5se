@@ -80,6 +80,76 @@ $listall = '<a href="'.G5_ADMIN_URL.'/member_list" class="ov_listall">전체목�
 $g5['title'] = '회원관리';
 admin_layout_start($g5['title'], 'member');
 ?>
+<style>
+    .member-mobile-header,
+    .member-mobile-row {
+        display: none;
+    }
+
+    @media (max-width: 640px) {
+        #fsearch {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 0.375rem;
+            width: 100%;
+        }
+        #fsearch select {
+            flex: 0 0 36%;
+            min-width: 0;
+        }
+        #fsearch .frm_input {
+            flex: 1 1 auto;
+            width: auto;
+            min-width: 0;
+        }
+        #fsearch .btn_submit {
+            flex: 0 0 auto;
+            padding-right: 0.875rem;
+            padding-left: 0.875rem;
+        }
+        #fmemberlist .tbl_wrap {
+            overflow-x: visible;
+        }
+        #fmemberlist table {
+            table-layout: fixed;
+        }
+        #fmemberlist .member-desktop-header,
+        #fmemberlist .member-desktop-row {
+            display: none;
+        }
+        #fmemberlist .member-mobile-header {
+            display: table-row;
+        }
+        #fmemberlist .member-mobile-row {
+            display: table-row;
+        }
+        #fmemberlist .member-mobile-header th,
+        #fmemberlist .member-mobile-row td {
+            padding: 0.625rem 0.4rem;
+            text-align: left;
+            white-space: nowrap;
+            word-break: keep-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #fmemberlist .member-mobile-header th:nth-child(1) { width: 32%; }
+        #fmemberlist .member-mobile-header th:nth-child(2) { width: 20%; }
+        #fmemberlist .member-mobile-header th:nth-child(3) { width: 30%; }
+        #fmemberlist .member-mobile-header th:last-child,
+        #fmemberlist .member-mobile-row td:last-child {
+            width: 3rem;
+            text-align: center;
+        }
+        #fmemberlist .member-mobile-edit {
+            color: var(--admin-primary-400);
+            font-size: 0.8125rem;
+            text-decoration: underline;
+        }
+        #fmemberlist .member-bulk-action {
+            display: none;
+        }
+    }
+</style>
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
@@ -122,13 +192,6 @@ $colspan = 16;
 
 </form>
 
-<div class="local_desc01 local_desc">
-    <p>
-        회원자료 삭제 시 다른 회원이 기존 회원아이디를 사용하지 못하도록 회원아이디, 이름, 닉네임은 삭제하지 않고 영구 보관합니다.
-    </p>
-</div>
-
-
 <form name="fmemberlist" id="fmemberlist" action="<?php echo G5_ADMIN_URL; ?>/member_list_update" onsubmit="return fmemberlist_submit(this);" method="post">
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
@@ -141,7 +204,7 @@ $colspan = 16;
         <table>
             <caption><?php echo $g5['title']; ?> 목록</caption>
             <thead>
-                <tr>
+                <tr class="member-desktop-header">
                     <th scope="col" id="mb_list_chk" rowspan="2">
                         <label for="chkall" class="sound_only">회원 전체</label>
                         <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
@@ -157,7 +220,7 @@ $colspan = 16;
                     <th scope="col" id="mb_list_grp">접근그룹</th>
                     <th scope="col" rowspan="2" id="mb_list_mng">관리</th>
                 </tr>
-                <tr>
+                <tr class="member-desktop-header">
                     <th scope="col" id="mb_list_name"><?php echo subject_sort_link('mb_name') ?>이름</a></th>
                     <th scope="col" id="mb_list_nick"><?php echo subject_sort_link('mb_nick') ?>닉네임</a></th>
                     <th scope="col" id="mb_list_adultc"><?php echo subject_sort_link('mb_adult', '', 'desc') ?>성인인증</a></th>
@@ -167,6 +230,12 @@ $colspan = 16;
                     <th scope="col" id="mb_list_tel">전화번호</th>
                     <th scope="col" id="mb_list_join"><?php echo subject_sort_link('mb_datetime', '', 'desc') ?>가입일</a></th>
                     <th scope="col" id="mb_list_point"><?php echo subject_sort_link('mb_point', '', 'desc') ?> 포인트</a></th>
+                </tr>
+                <tr class="member-mobile-header">
+                    <th scope="col"><?php echo subject_sort_link('mb_id') ?>아이디</a></th>
+                    <th scope="col"><?php echo subject_sort_link('mb_name') ?>이름</a></th>
+                    <th scope="col"><?php echo subject_sort_link('mb_nick') ?>닉네임</a></th>
+                    <th scope="col">관리</th>
                 </tr>
             </thead>
             <tbody>
@@ -182,8 +251,10 @@ $colspan = 16;
 
                     if ($is_admin == 'group') {
                         $s_mod = '';
+                        $s_mod_mobile = '-';
                     } else {
                         $s_mod = '<a href="'.G5_ADMIN_URL.'/member_form?' . $qstr . '&amp;w=u&amp;mb_id=' . $row['mb_id'] . '" class="btn btn_03">수정</a>';
+                        $s_mod_mobile = '<a href="'.G5_ADMIN_URL.'/member_form?' . $qstr . '&amp;w=u&amp;mb_id=' . urlencode($row['mb_id']) . '" class="member-mobile-edit">수정</a>';
                     }
                     $s_grp = '<a href="'.G5_ADMIN_URL.'/boardgroupmember_form?mb_id=' . $row['mb_id'] . '" class="btn btn_02">그룹</a>';
 
@@ -236,7 +307,7 @@ $colspan = 16;
                     }
                 ?>
 
-                    <tr class="<?php echo $bg; ?>">
+                    <tr class="member-desktop-row <?php echo $bg; ?>">
                         <td headers="mb_list_chk" class="td_chk" rowspan="2">
                             <input type="hidden" name="mb_id[<?php echo $i ?>]" value="<?php echo $row['mb_id'] ?>" id="mb_id_<?php echo $i ?>">
                             <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo get_text($row['mb_name']); ?> <?php echo get_text($row['mb_nick']); ?>님</label>
@@ -299,7 +370,7 @@ $colspan = 16;
                         <td headers="mb_list_grp" class="td_numsmall"><?php echo $group ?></td>
                         <td headers="mb_list_mng" rowspan="2" class="td_mng td_mng_s"><?php echo $s_mod ?><?php echo $s_grp ?></td>
                     </tr>
-                    <tr class="<?php echo $bg; ?>">
+                    <tr class="member-desktop-row <?php echo $bg; ?>">
                         <td headers="mb_list_name" class="td_mbname"><?php echo get_text($row['mb_name']); ?></td>
                         <td headers="mb_list_nick" class="td_name sv_use">
                             <div><?php echo $mb_nick ?></div>
@@ -327,6 +398,12 @@ $colspan = 16;
                         <td headers="mb_list_point" class="td_num"><a href="point_list.php?sfl=mb_id&amp;stx=<?php echo $row['mb_id'] ?>"><?php echo number_format($row['mb_point']) ?></a></td>
 
                     </tr>
+                    <tr class="member-mobile-row <?php echo $bg; ?>">
+                        <td><?php echo get_text($row['mb_id']); ?></td>
+                        <td><?php echo get_text($row['mb_name']); ?></td>
+                        <td><?php echo get_text($row['mb_nick']); ?></td>
+                        <td><?php echo $s_mod_mobile; ?></td>
+                    </tr>
 
                 <?php
                 }
@@ -339,8 +416,8 @@ $colspan = 16;
     </div>
 
     <div class="btn_fixed_top">
-        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02">
-        <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02">
+        <input type="submit" name="act_button" value="선택수정" onclick="document.pressed=this.value" class="btn btn_02 member-bulk-action">
+        <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02 member-bulk-action">
         <?php if ($is_admin == 'super') { ?>
             <a href="<?php echo G5_ADMIN_URL ?>/member_form" id="member_add" class="btn btn_01">회원추가</a>
         <?php } ?>
@@ -351,6 +428,12 @@ $colspan = 16;
 </form>
 
 <?php echo get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, '?' . $qstr . '&amp;page='); ?>
+
+<div class="local_desc01 local_desc">
+    <p>
+        회원자료 삭제 시 다른 회원이 기존 회원아이디를 사용하지 못하도록 회원아이디, 이름, 닉네임은 삭제하지 않고 영구 보관합니다.
+    </p>
+</div>
 
 <script>
     function fmemberlist_submit(f) {

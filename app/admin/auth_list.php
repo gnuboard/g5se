@@ -17,18 +17,14 @@ require_once __DIR__.'/admin.lib.php';
 $sql_common = " from {$g5['auth_table']} a left join {$g5['member_table']} b on (a.mb_id=b.mb_id) ";
 
 $sql_search = " where (1) ";
+$sql_params = array();
 // 검색 컬럼 화이트리스트 — sfl 이 컬럼명으로 보간되므로 임의 값 차단
 $allowed_sfl = array('a.mb_id');
 if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'a.mb_id';
 
 if ($stx) {
-    $sql_search .= " and ( ";
-    switch ($sfl) {
-        default:
-            $sql_search .= " ({$sfl} like '%{$stx}%') ";
-            break;
-    }
-    $sql_search .= " ) ";
+    $sql_search .= " and {$sfl} like :stx ";
+    $sql_params[':stx'] = '%'.$stx.'%';
 }
 
 if (!$sst) {
@@ -44,7 +40,7 @@ $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search}
             {$sql_order} ";
-$row = sql_pdo_fetch($sql);
+$row = sql_pdo_fetch($sql, $sql_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -59,7 +55,7 @@ $sql = " select *
             {$sql_search}
             {$sql_order}
             limit {$from_record}, {$rows} ";
-$result = sql_pdo_query($sql);
+$result = sql_pdo_query($sql, $sql_params);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/auth_list" class="ov_listall btn_ov02">전체목록</a>';
 
@@ -120,13 +116,13 @@ $colspan = 5;
                     $is_continue = false;
                     // 회원아이디가 없는 메뉴는 삭제함
                     if ($row['mb_id'] == '' && $row['mb_nick'] == '') {
-                        sql_pdo_query(" delete from {$g5['auth_table']} where au_menu = '{$row['au_menu']}' ");
+                        sql_pdo_query(" delete from {$g5['auth_table']} where au_menu = :au_menu ", array(':au_menu' => $row['au_menu']));
                         $is_continue = true;
                     }
 
                     // 메뉴번호가 바뀌는 경우에 현재 없는 저장된 메뉴는 삭제함
                     if (!isset($auth_menu[$row['au_menu']])) {
-                        sql_pdo_query(" delete from {$g5['auth_table']} where au_menu = '{$row['au_menu']}' ");
+                        sql_pdo_query(" delete from {$g5['auth_table']} where au_menu = :au_menu ", array(':au_menu' => $row['au_menu']));
                         $is_continue = true;
                     }
 
@@ -165,7 +161,8 @@ $colspan = 5;
         </table>
     </div>
 
-    <div class="btn_list01 btn_list">
+    <div class="btn_list01 btn_list" style="justify-content:space-between">
+        <a href="<?php echo G5_ADMIN_URL; ?>/auth_list_excel_download?<?php echo htmlspecialchars(http_build_query(array('stx' => $stx, 'sst' => $sst, 'sod' => $sod)), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn_02">엑셀 다운로드</a>
         <input type="submit" name="act_button" value="선택삭제" onclick="document.pressed=this.value" class="btn btn_02">
     </div>
 

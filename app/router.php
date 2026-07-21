@@ -61,6 +61,9 @@ class Router
         '/formmail'               => 'bbs/formmail.php',
         '/formmail_send'          => 'bbs/formmail_send.php',
 
+        // 정보메일 수신거부 (메일 본문의 공개 링크)
+        '/email_stop'             => 'bbs/email_stop.php',
+
         // 프로필 / 자기소개 (popup)
         '/profile'                => 'bbs/profile.php',
 

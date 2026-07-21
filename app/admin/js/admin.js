@@ -219,6 +219,9 @@ function initAdminFloatingActions()
     var actionLabels = ["확인", "저장", "추가", "수정"];
 
     forms.forEach(function(form) {
+        if (form.getAttribute("data-floating-actions") === "off") {
+            return;
+        }
         if (form.querySelector(".admin-floating-actions")) {
             return;
         }
@@ -278,8 +281,9 @@ function initAdminFloatingActions()
     });
 }
 
-// "맨 위로" 버튼. 하단 플로팅 저장 바가 있으면 그 '안 우측 끝'에 항상 표시(겹침 원천 차단),
-// 없으면 우하단 코너에 고정. (initAdminFloatingActions 이후에 호출되어야 함)
+// "맨 위로" 버튼. 하단 플로팅 저장 바가 있으면 그 안 우측 끝에 배치하고,
+// 없으면 우하단 코너에 고정한다. 실제 표시는 스크롤 이후에만 한다.
+// (initAdminFloatingActions 이후에 호출되어야 함)
 function initAdminScrollTop()
 {
     if (document.getElementById("admin-scroll-top")) {
@@ -300,11 +304,18 @@ function initAdminScrollTop()
 
     var bar = document.querySelector("main .admin-floating-actions");
     if (bar) {
-        btn.classList.add("in-bar");   // 바 안 우측 끝, 항상 표시
+        btn.classList.add("in-bar");   // 바 안 우측 끝
         bar.appendChild(btn);
     } else {
         document.body.appendChild(btn); // 바 없는 페이지: 우하단 코너
     }
+
+    // 페이지 상단에서는 불필요하므로 충분히 스크롤한 뒤에만 표시한다.
+    var syncScrollTopVisibility = function() {
+        btn.classList.toggle("is-hidden", window.scrollY < 240);
+    };
+    window.addEventListener("scroll", syncScrollTopVisibility, { passive: true });
+    syncScrollTopVisibility();
 }
 
 // 관리자 폼 입력에 브라우저 autocomplete/오토필 차단 (라벨에 주소/메일/이름 키워드가

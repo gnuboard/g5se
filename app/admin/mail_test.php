@@ -41,8 +41,19 @@ $content = preg_replace("/{이메일}/", $email, (string)$content);
 
 $mb_md5 = md5($member['mb_id'] . $member['mb_email'] . $member['mb_datetime']);
 
-$content = $content . '<p>더 이상 정보 수신을 원치 않으시면 [<a href="' . G5_BBS_URL . '/email_stop.php?mb_id=' . $mb_id . '&amp;mb_md5=' . $mb_md5 . '" target="_blank">수신거부</a>] 해 주십시오.</p>';
+$content = $content . '<p>더 이상 정보 수신을 원치 않으시면 [<a href="' . G5_URL . '/email_stop?mb_id=' . rawurlencode($mb_id) . '&amp;mb_md5=' . $mb_md5 . '" target="_blank">수신거부</a>] 해 주십시오.</p>';
 
-mailer($config['cf_title'], $member['mb_email'], $member['mb_email'], $subject, $content, 1);
+$sent = mailer(
+    $config['cf_admin_email_name'],
+    $config['cf_admin_email'],
+    $member['mb_email'],
+    $subject,
+    $content,
+    1
+);
+
+if (!$sent) {
+    alert('테스트 메일 발송에 실패했습니다. SMTP 설정과 관리자 메일 주소를 확인해 주십시오.');
+}
 
 alert($member['mb_nick'] . '(' . $member['mb_email'] . ')님께 테스트 메일을 발송하였습니다. 확인하여 주십시오.');

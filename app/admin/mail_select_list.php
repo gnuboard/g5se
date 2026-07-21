@@ -24,6 +24,7 @@ $mb_email       = isset($_POST['mb_email'])     ? clean_xss_tags(stripslashes($_
 $mb_mailling    = isset($_POST['mb_mailling'])  ? clean_xss_tags(stripslashes($_POST['mb_mailling']), 1, 1, 100) : '';
 $mb_level_from  = isset($_POST['mb_level_from'])? (int) $_POST['mb_level_from'] : 1;
 $mb_level_to    = isset($_POST['mb_level_to'])  ? (int) $_POST['mb_level_to'] : 10;
+$gr_id           = isset($_POST['gr_id'])        ? clean_xss_tags(stripslashes($_POST['gr_id']), 1, 1, 20) : '';
 
 // 회원ID ..에서 ..까지
 if ($mb_id1 != 1) {
@@ -91,13 +92,13 @@ sql_pdo_query(" update {$g5['mail_table']} set ma_last_option = :ma_last_option 
 $g5['title'] = "메일발송 대상 회원";
 admin_layout_start($g5['title'], 'mail');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="mail-recipient-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
 <div class="legacy-admin-content space-y-4">
 
-<form name="fmailselectlist" id="fmailselectlist" method="post" action="<?php echo G5_ADMIN_URL; ?>/mail_select_update">
+<form name="fmailselectlist" id="fmailselectlist" method="post" action="<?php echo G5_ADMIN_URL; ?>/mail_select_update" data-floating-actions="off">
     <input type="hidden" name="token" value="">
     <input type="hidden" name="ma_id" value="<?php echo get_text($ma_id); ?>">
 
@@ -106,17 +107,17 @@ admin_layout_start($g5['title'], 'mail');
             <caption><?php echo $g5['title']; ?> 목록</caption>
             <thead>
                 <tr>
-                    <th scope="col">번호</th>
-                    <th scope="col">회원아이디</th>
-                    <th scope="col">이름</th>
-                    <th scope="col">닉네임</th>
-                    <th scope="col">E-mail</th>
+                    <th scope="col" class="mail-col-number">번호</th>
+                    <th scope="col" class="mail-col-id">회원아이디</th>
+                    <th scope="col" class="mail-col-name">이름</th>
+                    <th scope="col" class="mail-col-nick">닉네임</th>
+                    <th scope="col" class="mail-col-email">E-mail</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $sql = " select mb_id, mb_name, mb_nick, mb_email, mb_datetime $sql_common $sql_where order by mb_id ";
-                $result = sql_pdo_query($sql);
+                $result = sql_pdo_query($sql, $where_params);
                 $i = 0;
                 $ma_list = "";
                 $cr = "";
@@ -128,11 +129,11 @@ admin_layout_start($g5['title'], 'mail');
                     $bg = 'bg' . ($i % 2);
                     ?>
                     <tr class="<?php echo $bg; ?>">
-                        <td class="td_num"><?php echo $i ?></td>
-                        <td class="td_mbid"><?php echo $row['mb_id'] ?></td>
-                        <td class="td_mbname"><?php echo get_text($row['mb_name']); ?></td>
-                        <td class="td_mbname"><?php echo $row['mb_nick'] ?></td>
-                        <td><?php echo $row['mb_email'] ?></td>
+                        <td class="td_num mail-col-number"><?php echo $i ?></td>
+                        <td class="td_mbid mail-col-id"><?php echo $row['mb_id'] ?></td>
+                        <td class="td_mbname mail-col-name"><?php echo get_text($row['mb_name']); ?></td>
+                        <td class="td_mbname mail-col-nick"><?php echo $row['mb_nick'] ?></td>
+                        <td class="mail-col-email"><?php echo $row['mb_email'] ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -140,9 +141,9 @@ admin_layout_start($g5['title'], 'mail');
         <textarea name="ma_list" style="display:none"><?php echo html_purifier($ma_list); ?></textarea>
     </div>
 
-    <div class="btn_confirm01 btn_confirm">
-        <input type="submit" value="메일보내기" class="btn_submit">
-        <a href="<?php echo G5_ADMIN_URL ?>/mail_select_form?ma_id=<?php echo $ma_id ?>">뒤로</a>
+    <div class="btn_confirm01 btn_confirm mail-recipient-actions">
+        <a href="<?php echo G5_ADMIN_URL ?>/mail_select_form?ma_id=<?php echo $ma_id ?>" class="btn btn_02">뒤로</a>
+        <input type="submit" value="메일보내기" class="btn_submit btn">
     </div>
 
 </form>

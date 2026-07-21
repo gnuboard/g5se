@@ -10,7 +10,7 @@ auth_check_menu($auth, $sub_menu, "r");
 $g5['title'] = '매출현황';
 admin_layout_start($g5["title"], "shop");
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="sale-dashboard-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5["title"]) ?></h2>
 </header>
@@ -22,43 +22,47 @@ include_once(G5_PLUGIN_PATH.'/jquery-ui/datepicker.php');
 <div class="local_sch03 local_sch">
 
     <div>
-        <form name="frm_sale_today" action="./sale1today" method="get">
+        <form name="frm_sale_today" action="./sale1today" method="get" class="sale-query-form" data-floating-actions="off">
         <strong>일일 매출</strong>
-        <input type="text" name="date" value="<?php echo date("Ymd", G5_SERVER_TIME); ?>" id="date" required class="required frm_input" size="8" maxlength="8">
-        <label for="date">일 하루</label>
+        <div class="sale-query-fields sale-query-single">
+        <input type="text" name="date" value="<?php echo date("Ymd", G5_SERVER_TIME); ?>" id="date" required class="required frm_input" size="8" maxlength="8" inputmode="numeric" aria-label="조회일">
+        </div>
         <input type="submit" value="확인" class="btn_submit">
         </form>
     </div>
 
     <div>
-        <form name="frm_sale_date" action="./sale1date" method="get">
+        <form name="frm_sale_date" action="./sale1date" method="get" class="sale-query-form" data-floating-actions="off">
         <strong>일간 매출</strong>
-        <input type="text" name="fr_date" value="<?php echo date("Ym01", G5_SERVER_TIME); ?>" id="fr_date" required class="required frm_input" size="8" maxlength="8">
-        <label for="fr_date">일 ~</label>
-        <input type="text" name="to_date" value="<?php echo date("Ymd", G5_SERVER_TIME); ?>" id="to_date" required class="required frm_input" size="8" maxlength="8">
-        <label for="to_date">일</label>
+        <div class="sale-query-fields">
+        <input type="text" name="fr_date" value="<?php echo date("Ym01", G5_SERVER_TIME); ?>" id="fr_date" required class="required frm_input" size="8" maxlength="8" inputmode="numeric" aria-label="조회 시작일">
+        <span class="sale-query-separator" aria-hidden="true">~</span>
+        <input type="text" name="to_date" value="<?php echo date("Ymd", G5_SERVER_TIME); ?>" id="to_date" required class="required frm_input" size="8" maxlength="8" inputmode="numeric" aria-label="조회 종료일">
+        </div>
         <input type="submit" value="확인" class="btn_submit">
         </form>
     </div>
 
     <div>
-        <form name="frm_sale_month" action="./sale1month" method="get">
+        <form name="frm_sale_month" action="./sale1month" method="get" class="sale-query-form" data-floating-actions="off">
         <strong>월간 매출</strong>
-        <input type="text" name="fr_month" value="<?php echo date("Y01", G5_SERVER_TIME); ?>" id="fr_month" required class="required frm_input" size="6" maxlength="6">
-        <label for="fr_month">월 ~</label>
-        <input type="text" name="to_month" value="<?php echo date("Ym", G5_SERVER_TIME); ?>" id="to_month" required class="required frm_input" size="6" maxlength="6">
-        <label for="to_month">월</label>
+        <div class="sale-query-fields">
+        <input type="text" name="fr_month" value="<?php echo date("Y01", G5_SERVER_TIME); ?>" id="fr_month" required class="required frm_input" size="6" maxlength="6" inputmode="numeric" aria-label="조회 시작월">
+        <span class="sale-query-separator" aria-hidden="true">~</span>
+        <input type="text" name="to_month" value="<?php echo date("Ym", G5_SERVER_TIME); ?>" id="to_month" required class="required frm_input" size="6" maxlength="6" inputmode="numeric" aria-label="조회 종료월">
+        </div>
         <input type="submit" value="확인" class="btn_submit">
         </form>
     </div>
 
     <div class="sch_last">
-        <form name="frm_sale_year" action="./sale1year" method="get">
+        <form name="frm_sale_year" action="./sale1year" method="get" class="sale-query-form" data-floating-actions="off">
         <strong>연간 매출</strong>
-        <input type="text" name="fr_year" value="<?php echo date("Y", G5_SERVER_TIME)-1; ?>" id="fr_year" required class="required frm_input" size="4" maxlength="4">
-        <label for="fr_year">년 ~</label>
-        <input type="text" name="to_year" value="<?php echo date("Y", G5_SERVER_TIME); ?>" id="to_year" required class="required frm_input" size="4" maxlength="4">
-        <label for="to_year">년</label>
+        <div class="sale-query-fields">
+        <input type="text" name="fr_year" value="<?php echo date("Y", G5_SERVER_TIME)-1; ?>" id="fr_year" required class="required frm_input" size="4" maxlength="4" inputmode="numeric" aria-label="조회 시작연도">
+        <span class="sale-query-separator" aria-hidden="true">~</span>
+        <input type="text" name="to_year" value="<?php echo date("Y", G5_SERVER_TIME); ?>" id="to_year" required class="required frm_input" size="4" maxlength="4" inputmode="numeric" aria-label="조회 종료연도">
+        </div>
         <input type="submit" value="확인" class="btn_submit">
         </form>
     </div>

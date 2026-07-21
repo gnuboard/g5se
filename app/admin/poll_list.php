@@ -12,18 +12,14 @@ auth_check_menu($auth, $sub_menu, 'r');
 $sql_common = " from {$g5['poll_table']} ";
 
 $sql_search = " where (1) ";
+$sql_params = array();
 // 검색 컬럼 화이트리스트 — sfl 이 컬럼명으로 보간되므로 임의 값 차단
 $allowed_sfl = array('po_subject');
 if (!in_array($sfl, $allowed_sfl, true)) $sfl = 'po_subject';
 
 if ($stx) {
-    $sql_search .= " and ( ";
-    switch ($sfl) {
-        default:
-            $sql_search .= " ({$sfl} like '%{$stx}%') ";
-            break;
-    }
-    $sql_search .= " ) ";
+    $sql_search .= " and {$sfl} like :stx ";
+    $sql_params[':stx'] = '%'.$stx.'%';
 }
 
 if (!$sst) {
@@ -39,7 +35,7 @@ $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search}
             {$sql_order} ";
-$row = sql_pdo_fetch($sql);
+$row = sql_pdo_fetch($sql, $sql_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -49,18 +45,106 @@ if ($page < 1) {
 }
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
-$sql = " select *
+$sql = " select *, (po_cnt1+po_cnt2+po_cnt3+po_cnt4+po_cnt5+po_cnt6+po_cnt7+po_cnt8+po_cnt9) as sum_po_cnt
             {$sql_common}
             {$sql_search}
             {$sql_order}
             limit {$from_record}, {$rows} ";
-$result = sql_pdo_query($sql);
+$result = sql_pdo_query($sql, $sql_params);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/poll_list" class="ov_listall">전체목록</a>';
 
 $g5['title'] = '투표관리';
 admin_layout_start($g5['title'], 'poll');
 ?>
+<style>
+@media (max-width: 640px) {
+    #fsearch,
+    #fsearch .sch_last {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.375rem;
+        width: 100%;
+    }
+    #fsearch select {
+        flex: 0 0 28%;
+        min-width: 0;
+    }
+    #fsearch .frm_input {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+    }
+    #fsearch .btn_submit {
+        flex: 0 0 auto;
+        padding-right: 0.875rem;
+        padding-left: 0.875rem;
+    }
+    #fpolllist .btn_fixed_top {
+        flex-wrap: nowrap;
+        justify-content: flex-start !important;
+        gap: 0.375rem;
+    }
+    #fpolllist .btn_fixed_top > div {
+        flex-wrap: nowrap;
+        gap: 0.375rem;
+    }
+    #fpolllist .btn_fixed_top .btn {
+        flex: 0 0 auto;
+        padding-right: 0.625rem;
+        padding-left: 0.625rem;
+        white-space: nowrap;
+    }
+    #fpolllist .tbl_wrap {
+        overflow-x: visible;
+    }
+    #fpolllist table {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
+    }
+    #fpolllist th:nth-child(2),
+    #fpolllist td:nth-child(2),
+    #fpolllist th:nth-child(4),
+    #fpolllist td:nth-child(4),
+    #fpolllist th:nth-child(5),
+    #fpolllist td:nth-child(5),
+    #fpolllist th:nth-child(6),
+    #fpolllist td:nth-child(6),
+    #fpolllist th:nth-child(7),
+    #fpolllist td:nth-child(7) {
+        display: none;
+    }
+    #fpolllist th:first-child,
+    #fpolllist td:first-child:not(.empty_table) {
+        width: 2.75rem;
+        padding-right: 0.4rem;
+        padding-left: 0.4rem;
+        text-align: center;
+    }
+    #fpolllist th:last-child,
+    #fpolllist td:last-child {
+        width: 3.75rem;
+        padding-right: 0.35rem;
+        padding-left: 0.35rem;
+        text-align: center;
+    }
+    #fpolllist th:nth-child(3),
+    #fpolllist td:nth-child(3) {
+        width: auto;
+        white-space: normal;
+        word-break: break-word;
+    }
+    #fpolllist td:last-child .btn {
+        height: auto;
+        padding: 0.25rem 0.375rem;
+        font-size: 0.75rem;
+        line-height: 1.25;
+        white-space: nowrap;
+    }
+}
+</style>
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
@@ -118,8 +202,6 @@ $colspan = 8;
             <tbody>
                 <?php
                 for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
-                    $sql2 = " select sum(po_cnt1+po_cnt2+po_cnt3+po_cnt4+po_cnt5+po_cnt6+po_cnt7+po_cnt8+po_cnt9) as sum_po_cnt from {$g5['poll_table']} where po_id = '{$row['po_id']}' ";
-                    $row2 = sql_pdo_fetch($sql2);
                     $po_etc = ($row['po_etc']) ? "사용" : "미사용";
                     $po_use = ($row['po_use']) ? "사용" : "미사용";
 
@@ -136,7 +218,7 @@ $colspan = 8;
                         <td class="td_num"><?php echo $row['po_id'] ?></td>
                         <td class="td_left"><?php echo cut_str(get_text($row['po_subject']), 70) ?></td>
                         <td class="td_num"><?php echo $row['po_level'] ?></td>
-                        <td class="td_num"><?php echo $row2['sum_po_cnt'] ?></td>
+                        <td class="td_num"><?php echo $row['sum_po_cnt'] ?></td>
                         <td class="td_etc"><?php echo $po_etc ?></td>
                         <td class="td_use"><?php echo $po_use ?></td>
                         <td class="td_mng td_mng_s"><?php echo $s_mod ?></td>
@@ -153,9 +235,12 @@ $colspan = 8;
         </table>
     </div>
 
-    <div class="btn_fixed_top">
-        <input type="submit" value="선택삭제" class="btn btn_02">
-        <a href="<?php echo G5_ADMIN_URL ?>/poll_form" id="poll_add" class="btn btn_01">투표 추가</a>
+    <div class="btn_fixed_top" style="justify-content:space-between">
+        <a href="<?php echo G5_ADMIN_URL; ?>/poll_list_excel_download?<?php echo htmlspecialchars(http_build_query(array('stx' => $stx, 'sst' => $sst, 'sod' => $sod)), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn_02">엑셀 다운로드</a>
+        <div class="flex items-center gap-2">
+            <input type="submit" value="선택삭제" class="btn btn_02">
+            <a href="<?php echo G5_ADMIN_URL ?>/poll_form" id="poll_add" class="btn btn_01">투표 추가</a>
+        </div>
     </div>
 </form>
 

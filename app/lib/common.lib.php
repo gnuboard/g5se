@@ -2684,6 +2684,11 @@ function check_request_origin($redirect_url = '')
 
 /**
  * 브라우저 검증을 위한 세션 반환 및 재생성
+ *
+ * 로그인 세션과 별도로 발급한 mb_client_key 쿠키를 결합해 관리자 클라이언트를
+ * 검증한다. User-Agent 는 모바일 에뮬레이션, 브라우저 업데이트와 일부 프록시에서
+ * 정상 사용 중에도 바뀔 수 있고 클라이언트가 임의로 지정할 수도 있으므로 보안키에
+ * 포함하지 않는다.
  * @param array $member 로그인 된 회원의 정보. 가입일시(mb_datetime)를 반드시 포함해야 한다.
  * @param bool $regenerate true 이면 재생성
  * @return string
@@ -2697,7 +2702,7 @@ function ss_mb_key($member, $regenerate = false)
         set_cookie('mb_client_key', $client_key, G5_SERVER_TIME * -1);
     }
 
-    $mb_key = md5($member['mb_datetime'] . $client_key) . run_replace('ss_mb_key_user_agent', md5($_SERVER['HTTP_USER_AGENT']));
+    $mb_key = md5($member['mb_datetime'] . $client_key);
 
     return $mb_key;
 }
@@ -2710,7 +2715,19 @@ function ss_mb_key($member, $regenerate = false)
 function verify_mb_key($member)
 {
     $mb_key = ss_mb_key($member);
-    $verified = get_session('ss_mb_key') === $mb_key;
+    $session_mb_key = (string) get_session('ss_mb_key');
+
+    // 이전 키는 "client key hash(32자) + User-Agent hash(32자)" 형식이었다.
+    // 앞 32자는 현재 방식과 동일하므로 이를 검증한 뒤 새 형식으로 자동 전환한다.
+    // 이 호환 처리가 없으면 배포 시 로그인 중인 모든 관리자의 세션이 끊긴다.
+    $candidate_mb_key = strlen($session_mb_key) === 64
+        ? substr($session_mb_key, 0, 32)
+        : $session_mb_key;
+    $verified = strlen($candidate_mb_key) === 32 && hash_equals($mb_key, $candidate_mb_key);
+
+    if ($verified && $session_mb_key !== $mb_key) {
+        set_session('ss_mb_key', $mb_key);
+    }
 
     if (!$verified) {
         ss_mb_key($member, true);

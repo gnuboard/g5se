@@ -51,7 +51,7 @@ $ago = static function (string $datetime): string {
 admin_layout_start('현재 접속자', 'mb_connect');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="connect-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <div>
@@ -90,16 +90,16 @@ admin_layout_start('현재 접속자', 'mb_connect');
         <?php endforeach; ?>
     </nav>
 
-    <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
-        <div class="overflow-x-auto">
+    <div class="connect-list-shell rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+        <div class="connect-list-scroll overflow-x-auto">
         <table class="min-w-full text-sm">
             <thead class="bg-slate-50 dark:bg-slate-800/60 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <tr>
-                    <th class="px-3 py-2.5 text-center w-12">#</th>
-                    <th class="px-3 py-2.5 text-left whitespace-nowrap">회원</th>
-                    <th class="px-3 py-2.5 text-left whitespace-nowrap">IP</th>
-                    <th class="px-3 py-2.5 text-left">현재 위치</th>
-                    <th class="px-3 py-2.5 text-left whitespace-nowrap">접속 시각</th>
+                    <th class="connect-col-number px-3 py-2.5 text-center w-12">#</th>
+                    <th class="connect-col-member px-3 py-2.5 text-left whitespace-nowrap">회원</th>
+                    <th class="connect-col-ip px-3 py-2.5 text-left whitespace-nowrap">IP</th>
+                    <th class="connect-col-location px-3 py-2.5 text-left">현재 위치</th>
+                    <th class="connect-col-time px-3 py-2.5 text-left whitespace-nowrap">접속 시각</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -111,16 +111,13 @@ admin_layout_start('현재 접속자', 'mb_connect');
                 $url = trim($row['lo_url']) ?: '—';
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
-                    <td class="px-3 py-2 text-center text-slate-400 text-xs"><?php echo $i + 1 ?></td>
-                    <td class="px-3 py-2 whitespace-nowrap">
+                    <td class="connect-col-number px-3 py-2 text-center text-slate-400 text-xs"><?php echo $i + 1 ?></td>
+                    <td class="connect-col-member px-3 py-2 whitespace-nowrap">
                         <?php if ($is_member): ?>
                             <span class="inline-flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                                 <a href="/admin/member_form?w=u&amp;mb_id=<?php echo urlencode($row['mb_id']) ?>" class="font-mono text-xs text-admin-primary-700 dark:text-admin-primary-300 hover:underline"><?php echo $h($row['mb_id']) ?></a>
-                                <span class="text-slate-700 dark:text-slate-300"><?php echo $h($row['mb_nick']) ?></span>
-                                <?php if ((int)$row['mb_level'] >= 9): ?>
-                                <span class="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium rounded bg-rose-50 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300">관리자</span>
-                                <?php endif; ?>
+                                <span class="connect-member-nick text-slate-700 dark:text-slate-300"><?php echo $h($row['mb_nick']) ?></span>
                             </span>
                         <?php else: ?>
                             <span class="inline-flex items-center gap-1.5 text-slate-500">
@@ -129,14 +126,14 @@ admin_layout_start('현재 접속자', 'mb_connect');
                             </span>
                         <?php endif; ?>
                     </td>
-                    <td class="px-3 py-2 whitespace-nowrap font-mono text-xs text-slate-600 dark:text-slate-400"><?php echo $h($row['lo_ip']) ?></td>
-                    <td class="px-3 py-2">
+                    <td class="connect-col-ip px-3 py-2 whitespace-nowrap font-mono text-xs text-slate-600 dark:text-slate-400"><?php echo $h($row['lo_ip']) ?></td>
+                    <td class="connect-col-location px-3 py-2">
                         <div class="text-slate-700 dark:text-slate-300 truncate max-w-md"><?php echo $h($loc) ?></div>
                         <?php if ($url !== '—'): ?>
-                        <div class="text-xs text-slate-400 font-mono truncate max-w-md"><?php echo $h($url) ?></div>
+                        <div class="connect-location-url text-xs text-slate-400 font-mono truncate max-w-md"><?php echo $h($url) ?></div>
                         <?php endif; ?>
                     </td>
-                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                    <td class="connect-col-time px-3 py-2 whitespace-nowrap text-xs">
                         <span class="text-slate-700 dark:text-slate-300"><?php echo $h($ago($row['lo_datetime'])) ?></span>
                         <span class="text-slate-400 ml-1"><?php echo $h(substr($row['lo_datetime'], 11, 5)) ?></span>
                     </td>
@@ -150,6 +147,12 @@ admin_layout_start('현재 접속자', 'mb_connect');
             </tbody>
         </table>
         </div>
+    </div>
+
+    <div class="mt-4 flex justify-start">
+        <a href="/admin/connect_list_excel_download?filter=<?php echo urlencode($filter); ?>" class="inline-flex items-center justify-center h-9 px-3.5 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+            엑셀 다운로드
+        </a>
     </div>
 
     <p class="mt-4 text-xs text-slate-500">

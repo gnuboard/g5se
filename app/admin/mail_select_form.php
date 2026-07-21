@@ -57,11 +57,12 @@ if (!isset($mb_mailling)) {
 $mb_id1_from = isset($mb_id1_from) ? clean_xss_tags($mb_id1_from, 1, 1, 30) : '';
 $mb_id1_to = isset($mb_id1_to) ? clean_xss_tags($mb_id1_to, 1, 1, 30) : '';
 $mb_email = isset($mb_email) ? clean_xss_tags($mb_email, 1, 1, 100) : '';
+$gr_id = isset($gr_id) ? clean_xss_tags($gr_id, 1, 1, 20) : '';
 
 $g5['title'] = '회원메일발송';
 admin_layout_start($g5['title'], 'mail');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="mail-select-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -71,7 +72,7 @@ admin_layout_start($g5['title'], 'mail');
     전체회원 <?php echo number_format($tot_cnt) ?>명 , 탈퇴대기회원 <?php echo number_format($finish_cnt) ?>명, 정상회원 <?php echo number_format($tot_cnt - $finish_cnt) ?>명 중 메일 발송 대상 선택
 </div>
 
-<form name="frmsendmailselectform" id="frmsendmailselectform" action="<?php echo G5_ADMIN_URL; ?>/mail_select_list" method="post" autocomplete="off">
+<form name="frmsendmailselectform" id="frmsendmailselectform" action="<?php echo G5_ADMIN_URL; ?>/mail_select_list" method="post" autocomplete="off" data-floating-actions="off">
     <input type="hidden" name="ma_id" value="<?php echo $ma_id ?>">
 
     <div class="tbl_frm01 tbl_wrap">
@@ -81,10 +82,16 @@ admin_layout_start($g5['title'], 'mail');
                 <tr>
                     <th scope="row">회원 ID</th>
                     <td>
-                        <input type="radio" name="mb_id1" value="1" id="mb_id1_all" <?php echo $mb_id1 ? "checked" : ""; ?>> <label for="mb_id1_all">전체</label>
-                        <input type="radio" name="mb_id1" value="0" id="mb_id1_section" <?php echo !$mb_id1 ? "checked" : ""; ?>> <label for="mb_id1_section">구간</label>
-                        <input type="text" name="mb_id1_from" value="<?php echo get_sanitize_input($mb_id1_from); ?>" id="mb_id1_from" title="시작구간" class="frm_input"> 에서
-                        <input type="text" name="mb_id1_to" value="<?php echo get_sanitize_input($mb_id1_to); ?>" id="mb_id1_to" title="종료구간" class="frm_input"> 까지
+                        <div class="mail-id-mode">
+                            <label><input type="radio" name="mb_id1" value="1" id="mb_id1_all" <?php echo $mb_id1 ? "checked" : ""; ?>> 전체</label>
+                            <label><input type="radio" name="mb_id1" value="0" id="mb_id1_section" <?php echo !$mb_id1 ? "checked" : ""; ?>> 구간</label>
+                        </div>
+                        <div class="mail-range mail-id-range">
+                            <input type="text" name="mb_id1_from" value="<?php echo get_sanitize_input($mb_id1_from); ?>" id="mb_id1_from" title="시작구간" placeholder="시작 ID" class="frm_input">
+                            <span>에서</span>
+                            <input type="text" name="mb_id1_to" value="<?php echo get_sanitize_input($mb_id1_to); ?>" id="mb_id1_to" title="종료구간" placeholder="종료 ID" class="frm_input">
+                            <span>까지</span>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -98,26 +105,30 @@ admin_layout_start($g5['title'], 'mail');
                     <th scope="row"><label for="mb_mailling">메일링</label></th>
                     <td>
                         <select name="mb_mailling" id="mb_mailling">
-                            <option value="1">수신동의한 회원만
-                            <option value="">전체
+                            <option value="1" <?php echo (string) $mb_mailling === '1' ? 'selected' : ''; ?>>수신동의한 회원만</option>
+                            <option value="" <?php echo (string) $mb_mailling === '' ? 'selected' : ''; ?>>전체</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">권한</th>
                     <td>
-                        <label for="mb_level_from" class="sound_only">최소권한</label>
-                        <select name="mb_level_from" id="mb_level_from">
-                            <?php for ($i = 1; $i <= 10; $i++) { ?>
-                                <option value="<?php echo $i ?>"><?php echo $i ?></option>
-                            <?php } ?>
-                        </select> 에서
-                        <label for="mb_level_to" class="sound_only">최대권한</label>
-                        <select name="mb_level_to" id="mb_level_to">
-                            <?php for ($i = 1; $i <= 10; $i++) { ?>
-                                <option value="<?php echo $i ?>" <?php echo $i == 10 ? " selected" : ""; ?>><?php echo $i ?></option>
-                            <?php } ?>
-                        </select> 까지
+                        <div class="mail-range">
+                            <label for="mb_level_from" class="sound_only">최소권한</label>
+                            <select name="mb_level_from" id="mb_level_from">
+                                <?php for ($i = 1; $i <= 10; $i++) { ?>
+                                    <option value="<?php echo $i ?>" <?php echo $i == (int) $mb_level_from ? 'selected' : ''; ?>><?php echo $i ?></option>
+                                <?php } ?>
+                            </select>
+                            <span>에서</span>
+                            <label for="mb_level_to" class="sound_only">최대권한</label>
+                            <select name="mb_level_to" id="mb_level_to">
+                                <?php for ($i = 1; $i <= 10; $i++) { ?>
+                                    <option value="<?php echo $i ?>" <?php echo $i == (int) $mb_level_to ? 'selected' : ''; ?>><?php echo $i ?></option>
+                                <?php } ?>
+                            </select>
+                            <span>까지</span>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -129,7 +140,8 @@ admin_layout_start($g5['title'], 'mail');
                             $sql = " select gr_id, gr_subject from {$g5['group_table']} order by gr_subject ";
                             $result = sql_pdo_query($sql);
                             for ($i = 0; $row = sql_pdo_fetch_array($result); $i++) {
-                                echo '<option value="' . $row['gr_id'] . '">' . $row['gr_subject'] . '</option>';
+                                $selected = ((string) $gr_id === (string) $row['gr_id']) ? ' selected' : '';
+                                echo '<option value="' . $row['gr_id'] . '"' . $selected . '>' . $row['gr_subject'] . '</option>';
                             }
                             ?>
                         </select>
@@ -139,9 +151,9 @@ admin_layout_start($g5['title'], 'mail');
         </table>
     </div>
 
-    <div class="btn_confirm01 btn_confirm">
-        <input type="submit" value="확인" class="btn_submit">
-        <a href="<?php echo G5_ADMIN_URL ?>/mail_list">목록 </a>
+    <div class="btn_confirm01 btn_confirm mail-select-actions">
+        <a href="<?php echo G5_ADMIN_URL ?>/mail_list" class="btn btn_02">목록</a>
+        <input type="submit" value="확인" class="btn_submit btn" accesskey="s">
     </div>
 </form>
 

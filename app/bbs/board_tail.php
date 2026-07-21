@@ -2,15 +2,10 @@
 if (!defined('_GNUBOARD_')) exit; // 개별 페이지 접근 불가
 
 $board_skin = $board['bo_skin'];
-// 모던 스킨(자기 tail 을 직접 그리는 스킨) 여부 판정.
-//
-// 'theme/basic' 이라는 스킨 값은 특정 테마가 아니라
-// "현재 활성 테마(cf_theme)의 basic 스킨" 을 의미한다. (get_skin_path() 참고)
-// basic 을 복사해 만든 테마도 스킨 값은 그대로 theme/basic 이고, 자기 테마의
-// modern/_tail.inc.php 로 하단을 직접 그리는 모던 스킨이다. 따라서 테마 이름('basic')이
-// 아니라 모던 스킨의 실체 마커인 modern/_head.inc.php 존재 여부로 판정한다.
-// 모던 인프라가 없는 테마의 클래식 theme/basic 스킨은 종전대로 기본 하단(_tail.php)이 인클루드된다.
-$is_modern_theme_board = ($board_skin === 'theme/basic' && is_file(G5_THEME_PATH.'/modern/_head.inc.php'));
+// 활성 테마의 게시판 스킨(theme/*)이 모던 레이아웃을 직접 출력하는지 판정한다.
+// 복사하거나 추가한 테마 스킨도 동일하게 기존 하단 출력을 생략해야 한다.
+$is_modern_theme_board = (strpos($board_skin, 'theme/') === 0
+    && is_file(G5_THEME_PATH.'/modern/_head.inc.php'));
 $g5['board_content_tail_html'] = isset($g5['board_content_tail_html']) ? $g5['board_content_tail_html'] : '';
 
 // 게시판 관리의 하단 파일 경로

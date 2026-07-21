@@ -24,14 +24,17 @@ include __DIR__.'/visit.sub.php';
 $colspan = 6;
 
 $sql_common = " from {$g5['visit_table']} ";
-$sql_search = " where vi_date between '{$fr_date}' and '{$to_date}' ";
-if (isset($domain))
-    $sql_search .= " and vi_referer like '%{$domain}%' ";
+$sql_search = " where vi_date between :fr_date and :to_date ";
+$sql_params = array(':fr_date' => $fr_date, ':to_date' => $to_date);
+if (isset($domain) && $domain !== '') {
+    $sql_search .= " and vi_referer like :domain ";
+    $sql_params[':domain'] = '%'.$domain.'%';
+}
 
 $sql = " select count(*) as cnt
             {$sql_common}
             {$sql_search} ";
-$row = sql_pdo_fetch($sql);
+$row = sql_pdo_fetch($sql, $sql_params);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
@@ -44,7 +47,7 @@ $sql = " select *
             {$sql_search}
             order by vi_id desc
             limit {$from_record}, {$rows} ";
-$result = sql_pdo_query($sql);
+$result = sql_pdo_query($sql, $sql_params);
 ?>
 
 <div class="tbl_head01 tbl_wrap">
@@ -129,7 +132,16 @@ $pagelist = get_paging($config['cf_write_pages'], $page, $total_page, G5_ADMIN_U
 echo $pagelist;
 
 ?>
+<form class="local_sch01 local_sch" method="get" action="<?php echo G5_ADMIN_URL; ?>/visit_excel_download">
+    <input type="hidden" name="mode" value="list">
+    <input type="hidden" name="fr_date" value="<?php echo htmlspecialchars($fr_date, ENT_QUOTES, 'UTF-8'); ?>">
+    <input type="hidden" name="to_date" value="<?php echo htmlspecialchars($to_date, ENT_QUOTES, 'UTF-8'); ?>">
+    <?php if (isset($domain) && $domain !== '') { ?>
+    <input type="hidden" name="domain" value="<?php echo htmlspecialchars($domain, ENT_QUOTES, 'UTF-8'); ?>">
+    <?php } ?>
+    <button type="submit" class="btn btn_02">엑셀 다운로드</button>
+</form>
 </div><!-- /.legacy-admin-content -->
 </main>
 <?php admin_layout_end(); ?>
-<?php 
+<?php

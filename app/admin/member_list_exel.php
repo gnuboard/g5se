@@ -25,7 +25,7 @@ try {
 $g5['title'] = '회원관리파일';
 admin_layout_start($g5['title'], 'member_list_exel');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="member-export-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -34,7 +34,7 @@ admin_layout_start($g5['title'], 'member_list_exel');
 $colspan = 14;
 ?>
 
-<h2>회원 엑셀 생성</h2>
+<h2 class="member-export-section-title">회원 엑셀 생성</h2>
 
 <div class="local_desc01 local_desc">
     <p><b>회원수 <?php echo number_format(MEMBER_EXPORT_PAGE_SIZE);?>건 초과 시</b> <?php echo number_format(MEMBER_EXPORT_PAGE_SIZE);?>건 단위로 분리 저장되며, <b>엑셀 생성 최대 건수는 <?php echo number_format(MEMBER_EXPORT_MAX_SIZE);?>건</b>입니다. 초과 시 조건 추가 설정 후 재시도하시기 바랍니다.</p>
@@ -169,7 +169,7 @@ $colspan = 14;
                 </div>
                 <!-- 안내 문구 -->
                 <div class="field">
-                    <p class="sch_notice">「정보통신망이용촉진및정보보호등에관한법률」에 따라 <b>광고성 정보 수신동의 여부</b>를 <b>매2년</b>마다 확인해야 합니다.</p>
+                    <p class="sch_notice">「정보통신망 이용촉진 및 정보보호 등에 관한 법률」에 따라 광고성 정보 수신동의일로부터 <b>2년마다 수신동의 여부를 확인하여 안내</b>해야 합니다.</p>
                 </div>
             </div>
 
@@ -328,6 +328,7 @@ function showDownloadPopup() {
     `;
 
     PopupManager.render('엑셀 다운로드 진행 중', bodyHTML, '', { disableOutsideClose: true });
+    document.getElementById('popupOverlay')?.classList.add('member-export-popup');
 
     // 닫기 버튼 이벤트 핸들링
     const closeBtn = document.querySelector('.popup-close-btn');

@@ -2,15 +2,16 @@
 include_once('./_common.php');
 
 $mb_id = isset($_REQUEST['mb_id']) ? clean_xss_tags(stripslashes($_REQUEST['mb_id']), 1, 1) : '';
+$mb_md5 = isset($_REQUEST['mb_md5']) ? strtolower(trim((string) $_REQUEST['mb_md5'])) : '';
 
 $row = sql_pdo_fetch(" select mb_id, mb_email, mb_datetime from {$g5['member_table']} where mb_id = :mb_id ",
                      [':mb_id' => $mb_id]);
 if (!$row['mb_id'])
     alert('존재하는 회원이 아닙니다.', G5_URL);
 
-if ($mb_md5) {
+if (preg_match('/^[a-f0-9]{32}$/', $mb_md5)) {
     $tmp_md5 = md5($row['mb_id'].$row['mb_email'].$row['mb_datetime']);
-    if ($mb_md5 == $tmp_md5) {
+    if (hash_equals($tmp_md5, $mb_md5)) {
         sql_pdo_query(" update {$g5['member_table']} set mb_mailling = 0 where mb_id = :mb_id ",
                       [':mb_id' => $mb_id]);
 

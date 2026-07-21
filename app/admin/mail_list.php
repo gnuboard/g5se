@@ -24,7 +24,7 @@ $result = sql_pdo_query($sql);
 $g5['title'] = '회원메일발송';
 admin_layout_start($g5['title'], 'mail');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="mail-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -49,13 +49,13 @@ $colspan = 7;
             <caption><?php echo $g5['title']; ?> 목록</caption>
             <thead>
                 <tr>
-                    <th scope="col"><input type="checkbox" name="chkall" value="1" id="chkall" title="현재 페이지 목록 전체선택" onclick="check_all(this.form)"></th>
-                    <th scope="col">번호</th>
-                    <th scope="col">제목</th>
-                    <th scope="col">작성일시</th>
-                    <th scope="col">테스트</th>
-                    <th scope="col">보내기</th>
-                    <th scope="col">미리보기</th>
+                    <th scope="col" class="mail-col-check"><input type="checkbox" name="chkall" value="1" id="chkall" title="현재 페이지 목록 전체선택" onclick="check_all(this.form)"></th>
+                    <th scope="col" class="mail-col-number">번호</th>
+                    <th scope="col" class="mail-col-subject">제목</th>
+                    <th scope="col" class="mail-col-date">작성일시</th>
+                    <th scope="col" class="mail-col-test">테스트</th>
+                    <th scope="col" class="mail-col-send">보내기</th>
+                    <th scope="col" class="mail-col-preview">미리보기</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,16 +69,16 @@ $colspan = 7;
                 ?>
 
                     <tr class="<?php echo $bg; ?>">
-                        <td class="td_chk">
+                        <td class="td_chk mail-col-check">
                             <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo $row['ma_subject']; ?> 메일</label>
                             <input type="checkbox" id="chk_<?php echo $i ?>" name="chk[]" value="<?php echo $row['ma_id'] ?>">
                         </td>
-                        <td class="td_num_c"><?php echo $num ?></td>
-                        <td class="td_left"><a href="<?php echo G5_ADMIN_URL ?>/mail_form?w=u&amp;ma_id=<?php echo $row['ma_id'] ?>"><?php echo $row['ma_subject'] ?></a></td>
-                        <td class="td_datetime"><?php echo $row['ma_time'] ?></td>
-                        <td class="td_test"><a href="<?php echo G5_ADMIN_URL ?>/mail_test?ma_id=<?php echo $row['ma_id'] ?>">테스트</a></td>
-                        <td class="td_send"><a href="<?php echo G5_ADMIN_URL ?>/mail_select_form?ma_id=<?php echo $row['ma_id'] ?>">보내기</a></td>
-                        <td class="td_mng"><?php echo $s_vie ?></td>
+                        <td class="td_num_c mail-col-number"><?php echo $num ?></td>
+                        <td class="td_left mail-col-subject"><a href="<?php echo G5_ADMIN_URL ?>/mail_form?w=u&amp;ma_id=<?php echo $row['ma_id'] ?>"><?php echo $row['ma_subject'] ?></a></td>
+                        <td class="td_datetime mail-col-date"><?php echo $row['ma_time'] ?></td>
+                        <td class="td_test mail-col-test"><a href="<?php echo G5_ADMIN_URL ?>/mail_test?ma_id=<?php echo $row['ma_id'] ?>">테스트</a></td>
+                        <td class="td_send mail-col-send"><a href="<?php echo G5_ADMIN_URL ?>/mail_select_form?ma_id=<?php echo $row['ma_id'] ?>">보내기</a></td>
+                        <td class="td_mng mail-col-preview"><?php echo $s_vie ?></td>
                     </tr>
 
                 <?php
