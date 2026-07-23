@@ -17,7 +17,7 @@ require_once __DIR__.'/admin.lib.php';
 $g5['title'] = '회원관리파일 일괄삭제';
 admin_layout_start($g5['title'], 'member_list_file_delete');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="maintenance-result-page member-file-delete-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -63,12 +63,20 @@ if (is_array($files)) {
 
         if (is_file($member_list_file) && $ext !== 'log') {
             unlink($member_list_file);
-            echo '<li>파일 삭제: ' . $member_list_file . '</li>' . PHP_EOL;
             $cnt++;
+            echo '<li class="session-del-item">';
+            echo '<span class="session-del-index">'.$cnt.'</span>';
+            echo '<span class="session-del-file"><span class="session-del-kind">파일</span>'.htmlspecialchars($basename, ENT_QUOTES, 'UTF-8').'</span>';
+            echo '<code class="session-del-path">'.htmlspecialchars($member_list_file, ENT_QUOTES, 'UTF-8').'</code>';
+            echo '</li>'.PHP_EOL;
         } elseif (is_dir($member_list_file) && $basename !== 'log') {
             deleteFolder($member_list_file);
-            echo '<li>폴더 삭제: ' . $member_list_file . '</li>' . PHP_EOL;
             $cnt++;
+            echo '<li class="session-del-item">';
+            echo '<span class="session-del-index">'.$cnt.'</span>';
+            echo '<span class="session-del-file"><span class="session-del-kind session-del-kind-folder">폴더</span>'.htmlspecialchars($basename, ENT_QUOTES, 'UTF-8').'</span>';
+            echo '<code class="session-del-path">'.htmlspecialchars($member_list_file, ENT_QUOTES, 'UTF-8').'</code>';
+            echo '</li>'.PHP_EOL;
         }
 
         flush();
@@ -78,7 +86,7 @@ if (is_array($files)) {
         }
     }
 }
-echo '<li>완료됨</li></ul>' . PHP_EOL;
+echo '<li class="session-del-complete"><span aria-hidden="true">✓</span> 완료됨</li></ul>' . PHP_EOL;
 echo '<div class="local_desc01 local_desc"><p><strong>회원관리파일 ' . $cnt . '건 삭제 완료됐습니다.</strong><br>프로그램의 실행을 끝마치셔도 좋습니다.</p></div>' . PHP_EOL;
 ?>
 
