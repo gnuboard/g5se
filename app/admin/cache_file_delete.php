@@ -23,7 +23,7 @@ run_event('adm_cache_file_delete_before');
 $g5['title'] = '캐시파일 일괄삭제';
 admin_layout_start($g5['title'], 'cache_file_delete');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="maintenance-result-page cache-delete-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -53,7 +53,12 @@ if (is_array($files)) {
     foreach ($files as $cache_file) {
         $cnt++;
         unlink($cache_file);
-        echo '<li>' . $cache_file . '</li>' . PHP_EOL;
+        $cache_name = basename($cache_file);
+        echo '<li class="session-del-item">';
+        echo '<span class="session-del-index">' . $cnt . '</span>';
+        echo '<span class="session-del-file">' . htmlspecialchars($cache_name, ENT_QUOTES, 'UTF-8') . '</span>';
+        echo '<code class="session-del-path">' . htmlspecialchars($cache_file, ENT_QUOTES, 'UTF-8') . '</code>';
+        echo '</li>' . PHP_EOL;
 
         flush();
 
@@ -65,7 +70,7 @@ if (is_array($files)) {
 
 run_event('adm_cache_file_delete');
 
-echo '<li>완료됨</li></ul>' . PHP_EOL;
+echo '<li class="session-del-complete"><span aria-hidden="true">✓</span> 완료됨</li></ul>' . PHP_EOL;
 echo '<div class="local_desc01 local_desc"><p><strong>최신글 캐시파일 ' . $cnt . '건 삭제 완료됐습니다.</strong><br>프로그램의 실행을 끝마치셔도 좋습니다.</p></div>' . PHP_EOL;
 ?>
 
