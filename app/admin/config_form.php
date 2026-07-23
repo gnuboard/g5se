@@ -1763,6 +1763,72 @@ if ($config['cf_sms_use'] && $config['cf_icode_id'] && $config['cf_icode_pw']) {
         // 추가 script, css 변경시
         $(document).on('input', '#cf_add_script', check_config_captcha_open);
     });
+
+    // 모바일 섹션 탭: 현재 hash에 해당하는 탭을 활성화하고 해당 섹션의 탭 바
+    // 첫 위치로 이동한다. 페이지 세로 위치에는 영향을 주지 않고 가로 탭만 조정.
+    (function () {
+        var defaultHash = '#anc_cf_basic';
+
+        function syncConfigAnchor(animate) {
+            var hash = window.location.hash || defaultHash;
+            if (!/^#anc_cf_/.test(hash)) return;
+
+            var targetSection = document.querySelector(hash);
+
+            // 탭 바는 섹션마다 반복되므로 URL hash를 모든 탭 바에 똑같이 적용하지 않는다.
+            // 각 탭 바가 속한 section의 ID와 일치하는 항목만 활성화한다.
+            document.querySelectorAll('.config-page ul.anchor').forEach(function (tabBar) {
+                var section = tabBar.closest('section[id^="anc_cf_"]');
+                var sectionHash = section ? '#' + section.id : '';
+
+                tabBar.querySelectorAll('a').forEach(function (link) {
+                    var selected = link.getAttribute('href') === sectionHash;
+                    link.classList.toggle('active', selected);
+                    if (selected) link.setAttribute('aria-current', 'location');
+                    else link.removeAttribute('aria-current');
+                });
+            });
+
+            if (!targetSection || window.matchMedia('(min-width: 641px)').matches) return;
+
+            var tabBar = targetSection.querySelector('ul.anchor');
+            var activeTab = tabBar && tabBar.querySelector('a[href="' + hash + '"]');
+            if (!tabBar || !activeTab) return;
+
+            // getBoundingClientRect 차이를 사용하면 offsetParent 구조와 관계없이 정확히
+            // 탭 바의 왼쪽 시작점에 선택 항목을 맞출 수 있다.
+            var barRect = tabBar.getBoundingClientRect();
+            var tabRect = activeTab.parentElement.getBoundingClientRect();
+            var nextLeft = tabBar.scrollLeft + tabRect.left - barRect.left;
+            tabBar.scrollTo({
+                left: Math.max(0, nextLeft),
+                behavior: animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                    ? 'smooth'
+                    : 'auto'
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            var link = event.target.closest('.config-page ul.anchor a[href^="#anc_cf_"]');
+            if (!link) return;
+
+            // 같은 탭을 다시 누르면 hashchange가 발생하지 않으므로 클릭 후에도 동기화.
+            window.requestAnimationFrame(function () {
+                syncConfigAnchor(true);
+            });
+        });
+        window.addEventListener('hashchange', function () {
+            window.requestAnimationFrame(function () {
+                syncConfigAnchor(true);
+            });
+        });
+        window.addEventListener('resize', function () {
+            syncConfigAnchor(false);
+        });
+        window.requestAnimationFrame(function () {
+            syncConfigAnchor(false);
+        });
+    })();
 </script>
 
 <?php
