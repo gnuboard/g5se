@@ -2701,6 +2701,158 @@ main .admin-floating-actions {
     color: var(--slate-300);
 }
 
+/* 메일 테스트 (/admin/sendmail_test) */
+.sendmail-test-page .sendmail-test-form {
+    margin: 0.75rem 0 1rem;
+}
+.sendmail-test-page #fsendmailtest {
+    padding: 1rem;
+    border: 1px solid var(--slate-200);
+    border-radius: 0.75rem;
+    background: #fff;
+}
+[data-theme="dark"] .sendmail-test-page #fsendmailtest {
+    border-color: var(--slate-800);
+    background: var(--slate-900);
+}
+.sendmail-test-page #fsendmailtest legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+.sendmail-test-page #fsendmailtest > label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--slate-800);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+[data-theme="dark"] .sendmail-test-page #fsendmailtest > label {
+    color: var(--slate-200);
+}
+.sendmail-test-page .sendmail-input-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 5rem;
+    gap: 0.5rem;
+}
+.sendmail-test-page .sendmail-input-row .frm_input,
+.sendmail-test-page .sendmail-input-row .btn_submit {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 2.75rem;
+    margin: 0;
+}
+.sendmail-test-page .sendmail-field-help {
+    margin: 0.5rem 0 0;
+    color: var(--slate-500);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+.sendmail-test-page .sendmail-result-list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.75rem 0 1rem;
+}
+.sendmail-test-page .sendmail-result-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 0.5rem;
+    background: rgba(16, 185, 129, 0.06);
+    color: var(--slate-700);
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+}
+[data-theme="dark"] .sendmail-test-page .sendmail-result-list li {
+    border-color: rgba(52, 211, 153, 0.25);
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--slate-300);
+}
+.sendmail-test-page .sendmail-result-check {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 999px;
+    background: #059669;
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+}
+
+@media (max-width: 640px) {
+    .sendmail-test-page {
+        min-width: 0;
+        padding: 1rem 0.875rem 5rem;
+        overflow-x: clip;
+    }
+    .sendmail-test-page > header {
+        margin-bottom: 1rem;
+    }
+    .sendmail-test-page > header h2 {
+        font-size: 1.125rem;
+    }
+    .sendmail-test-page .legacy-admin-content {
+        gap: 0.75rem;
+        min-width: 0;
+    }
+    .sendmail-test-page .legacy-admin-content .h2_frm {
+        margin: 1.25rem 0 0.625rem;
+        padding-left: 0.625rem;
+        font-size: 1rem;
+    }
+    .sendmail-test-page .legacy-admin-content section:first-child > .h2_frm {
+        margin-top: 0;
+    }
+    .sendmail-test-page .local_desc {
+        margin: 0.625rem 0;
+        padding: 0.75rem 0.75rem 0.75rem 2.375rem;
+        font-size: 0.75rem;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+    .sendmail-test-page .local_desc::before {
+        top: 0.8rem;
+        left: 0.7rem;
+        width: 1rem;
+        height: 1rem;
+    }
+    .sendmail-test-page #fsendmailtest {
+        padding: 0.875rem;
+    }
+    .sendmail-test-page #fsendmailtest > label {
+        font-size: 0.8125rem;
+    }
+    .sendmail-test-page .sendmail-input-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.625rem;
+    }
+    .sendmail-test-page .sendmail-input-row .frm_input,
+    .sendmail-test-page .sendmail-input-row .btn_submit {
+        height: 2.75rem !important;
+        min-height: 2.75rem;
+        max-height: 2.75rem;
+        padding-top: 0;
+        padding-bottom: 0;
+        font-size: 1rem;
+    }
+    .sendmail-test-page .sendmail-input-row .btn_submit {
+        line-height: 2.75rem;
+    }
+    .sendmail-test-page .sendmail-result-list {
+        margin-top: 0.625rem;
+    }
+}
+
 /* 회원관리파일 모바일 UI */
 @media (max-width: 640px) {
     .member-export-page {

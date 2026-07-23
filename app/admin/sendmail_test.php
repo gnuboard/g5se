@@ -17,7 +17,7 @@ require_once G5_LIB_PATH.'/mailer.lib.php';
 $g5['title'] = '메일 테스트';
 admin_layout_start($g5['title'], 'sendmail_test');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="sendmail-test-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -42,13 +42,13 @@ if (isset($_POST['email'])) {
 
     if( $real_email ){
         echo '<section>';
-        echo '<h2>결과메세지</h2>';
+        echo '<h2 class="h2_frm">결과메세지</h2>';
         echo '<div class="local_desc01 local_desc"><p>';
         echo '다음 '.count($real_email).'개의 메일 주소로 테스트 메일 발송이 완료되었습니다.';
         echo '</p></div>';
-        echo '<ul>';
+        echo '<ul class="sendmail-result-list">';
         for ($i=0;$i<count($real_email);$i++) {
-            echo '<li>'.$real_email[$i].'</li>';
+            echo '<li><span class="sendmail-result-check" aria-hidden="true">✓</span>'.$real_email[$i].'</li>';
         }
         echo '</ul>';
         echo '<div class="local_desc02 local_desc"><p>';
@@ -63,7 +63,7 @@ if (isset($_POST['email'])) {
 ?>
 
 <section>
-    <h2>테스트 메일 발송</h2>
+    <h2 class="h2_frm">테스트 메일 발송</h2>
     <div class="local_desc02 local_desc">
         <p>
             메일서버가 정상적으로 동작 중인지 확인할 수 있습니다.<br>
@@ -74,13 +74,16 @@ if (isset($_POST['email'])) {
             <?php } ?>
         </p>
     </div>
-    <form name="fsendmailtest" method="post">
+    <form name="fsendmailtest" method="post" class="sendmail-test-form">
     <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
     <fieldset id="fsendmailtest">
         <legend>테스트메일 발송</legend>
         <label for="email">받는 메일주소<strong class="sound_only"> 필수</strong></label>
-        <input type="text" name="email" value="<?php echo $member['mb_email'] ?>" id="email" required class="required email frm_input" size="80">
+        <div class="sendmail-input-row">
+        <input type="text" name="email" value="<?php echo $member['mb_email'] ?>" id="email" required class="required email frm_input" size="80" inputmode="email" aria-describedby="sendmail-email-help">
         <input type="submit" value="발송" class="btn_submit">
+        </div>
+        <p id="sendmail-email-help" class="sendmail-field-help">여러 주소는 쉼표(,)로 구분하여 입력할 수 있습니다.</p>
     </fieldset>
     </form>
     <div class="local_desc02 local_desc">
