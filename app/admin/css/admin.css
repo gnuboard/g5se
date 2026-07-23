@@ -4106,6 +4106,300 @@ main .admin-floating-actions {
     }
 }
 
+/* 메뉴 설정 검색 결과 — 데스크톱/모바일 공통 카드 목록 */
+.menu-pick-list {
+    display: grid;
+    gap: 0.625rem;
+}
+.menu-pick-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.25rem 0.75rem;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid var(--slate-200);
+    border-radius: 0.625rem;
+}
+[data-theme="dark"] .menu-pick-item {
+    border-color: var(--slate-700);
+}
+.menu-pick-title {
+    grid-column: 1;
+    min-width: 0;
+    font-size: 0.875rem;
+}
+.menu-pick-link {
+    grid-column: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--slate-500);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+}
+.menu-pick-action {
+    grid-column: 2;
+    grid-row: 1 / 3;
+}
+
+/* 메뉴 설정 (/admin/menu_list) 모바일 */
+@media (max-width: 640px) {
+    .menu-list-page {
+        min-width: 0;
+        padding: 1rem 0.875rem 5.5rem;
+        overflow-x: clip;
+    }
+    .menu-list-page > header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .menu-list-page > header h2 {
+        font-size: 1.125rem;
+    }
+    .menu-list-page > header p {
+        line-height: 1.5;
+    }
+    .menu-list-page > header .ml-auto {
+        width: 100%;
+        margin-left: 0;
+    }
+    .menu-list-page #btn-add-parent {
+        justify-content: center;
+        width: 100%;
+        min-height: 2.75rem;
+        font-size: 0.9375rem;
+    }
+    .menu-list-page #fmenulist {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+    .menu-list-page #fmenulist > .overflow-x-auto {
+        overflow: visible;
+    }
+    .menu-list-page #menu-table,
+    .menu-list-page #menu-tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+    .menu-list-page #menu-table thead {
+        display: none;
+    }
+    .menu-list-page #menu-tbody {
+        display: grid;
+        gap: 0.875rem;
+    }
+    .menu-list-page #menu-tbody .menu-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+    [data-theme="dark"] .menu-list-page #menu-tbody .menu-row {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+    }
+    .menu-list-page #menu-tbody .menu-row.is-sub {
+        margin-left: 0.75rem;
+        width: calc(100% - 0.75rem);
+        border-left: 3px solid var(--slate-300);
+        background: var(--slate-50);
+    }
+    [data-theme="dark"] .menu-list-page #menu-tbody .menu-row.is-sub {
+        border-left-color: var(--slate-600);
+        background: #111c29;
+    }
+    .menu-list-page #menu-tbody .menu-row > td {
+        display: block;
+        box-sizing: border-box;
+        width: auto;
+        min-width: 0;
+        padding: 0.625rem 0.75rem;
+        border: 0;
+        text-align: left;
+    }
+    .menu-list-page #menu-tbody .menu-cell-name,
+    .menu-list-page #menu-tbody .menu-cell-link,
+    .menu-list-page #menu-tbody .menu-cell-actions {
+        grid-column: 1 / -1;
+    }
+    .menu-list-page #menu-tbody .menu-cell-name {
+        padding-top: 0.75rem;
+        padding-bottom: 0.375rem;
+    }
+    .menu-list-page #menu-tbody .menu-cell-name > div {
+        min-width: 0;
+    }
+    .menu-list-page #menu-tbody .menu-cell-name input,
+    .menu-list-page #menu-tbody .menu-cell-link input {
+        box-sizing: border-box;
+        min-width: 0;
+        height: 2.75rem;
+        font-size: 1rem;
+    }
+    .menu-list-page #menu-tbody .menu-cell-link {
+        padding-top: 0.375rem;
+    }
+    .menu-list-page #menu-tbody .menu-cell-target,
+    .menu-list-page #menu-tbody .menu-cell-order,
+    .menu-list-page #menu-tbody .menu-cell-use {
+        position: relative;
+        padding-top: 1.75rem;
+        border-top: 1px solid var(--slate-100);
+        background: var(--slate-50);
+    }
+    [data-theme="dark"] .menu-list-page #menu-tbody .menu-cell-target,
+    [data-theme="dark"] .menu-list-page #menu-tbody .menu-cell-order,
+    [data-theme="dark"] .menu-list-page #menu-tbody .menu-cell-use {
+        border-top-color: var(--slate-800);
+        background: var(--slate-800);
+    }
+    .menu-list-page #menu-tbody .menu-cell-target::before,
+    .menu-list-page #menu-tbody .menu-cell-order::before,
+    .menu-list-page #menu-tbody .menu-cell-use::before {
+        content: attr(data-label);
+        position: absolute;
+        top: 0.45rem;
+        left: 0.75rem;
+        color: var(--slate-500);
+        font-size: 0.6875rem;
+        font-weight: 600;
+    }
+    .menu-list-page #menu-tbody .menu-cell-target select,
+    .menu-list-page #menu-tbody .menu-cell-order input,
+    .menu-list-page #menu-tbody .menu-cell-use select {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        height: 2.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        font-size: 0.8125rem;
+    }
+    .menu-list-page #menu-tbody .menu-cell-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--slate-200);
+    }
+    [data-theme="dark"] .menu-list-page #menu-tbody .menu-cell-actions {
+        border-top-color: var(--slate-700);
+    }
+    .menu-list-page #menu-tbody .menu-cell-actions button {
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 2.5rem;
+        margin: 0;
+    }
+    .menu-list-page #menu-tbody .is-sub .btn-del-row {
+        grid-column: 1 / -1;
+    }
+    .menu-list-page #empty-row {
+        display: block;
+        overflow: hidden;
+        border: 1px dashed var(--slate-300);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+    [data-theme="dark"] .menu-list-page #empty-row {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+    }
+    .menu-list-page #empty-row td {
+        display: block;
+        width: 100%;
+        padding: 2.5rem 1rem;
+    }
+    .menu-list-page #fmenulist > div:last-child {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.625rem;
+        padding: 0.75rem;
+        margin-top: 0.875rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: var(--slate-50);
+    }
+    [data-theme="dark"] .menu-list-page #fmenulist > div:last-child {
+        border-color: var(--slate-700);
+        background: var(--slate-800);
+    }
+    .menu-list-page #fmenulist > div:last-child span {
+        margin-left: 0;
+        line-height: 1.5;
+        text-align: center;
+    }
+    .menu-list-page #fmenulist > div:last-child button {
+        width: 100%;
+        min-height: 2.75rem;
+        font-size: 1rem;
+    }
+
+    #menu-modal {
+        align-items: flex-start;
+        padding: 0.75rem;
+    }
+    #menu-modal > div {
+        max-height: calc(100dvh - 1.5rem);
+        overflow: hidden;
+    }
+    #menu-modal > div > div:first-child {
+        padding: 0.75rem 1rem;
+    }
+    #menu-modal > div > div:nth-child(2) {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        overflow-x: auto;
+    }
+    #menu-modal #modal-tabs {
+        width: max-content;
+        min-width: 100%;
+    }
+    #menu-modal .tab-btn {
+        flex: 0 0 auto;
+        padding: 0.625rem 0.75rem;
+        white-space: nowrap;
+    }
+    #menu-modal > div > div:last-child {
+        padding: 1rem;
+        max-height: calc(100dvh - 9rem);
+    }
+    #menu-modal #manual-name,
+    #menu-modal #manual-link {
+        box-sizing: border-box;
+        min-height: 2.75rem;
+        font-size: 1rem;
+    }
+    #menu-modal #btn-add-manual {
+        width: 100%;
+        min-height: 2.75rem;
+        font-size: 0.9375rem;
+    }
+    .menu-pick-item {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.375rem;
+    }
+    .menu-pick-title,
+    .menu-pick-link,
+    .menu-pick-action {
+        grid-column: 1;
+        grid-row: auto;
+    }
+    .menu-pick-action .js-pick {
+        width: 100%;
+        min-height: 2.5rem;
+    }
+}
+
 /* 부가서비스 (/admin/service) — gnuboard 의 .service_wrap / .sevice_1 / .svc_*
  * 클래스를 admin 톤의 카드 그리드로 매핑. 외부 결제·인증·SMS 서비스 신청 링크 모음. */
 .legacy-admin-content .local_desc02 {

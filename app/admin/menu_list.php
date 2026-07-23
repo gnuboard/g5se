@@ -47,12 +47,12 @@ $menu_form_search_url = G5_ADMIN_URL.'/menu_form_search';
 admin_layout_start('메뉴 설정', 'menus');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="menu-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <div>
             <h2 class="text-xl font-bold tracking-tight">메뉴 설정</h2>
-            <p class="text-xs text-slate-500 mt-0.5">메인 메뉴 (대분류) + 서브 메뉴 2단 구조 — <strong class="text-amber-600 dark:text-amber-400">저장 누르기 전엔 변경이 반영되지 않습니다</strong></p>
+            <p class="text-sm text-slate-500 mt-0.5">메인 메뉴 (대분류) + 서브 메뉴 2단 구조 — <strong class="text-amber-600 dark:text-amber-400">저장 누르기 전엔 변경이 반영되지 않습니다</strong></p>
         </div>
         <div class="ml-auto flex items-center gap-2">
             <button type="button" id="btn-add-parent" class="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium">
@@ -94,7 +94,7 @@ admin_layout_start('메뉴 설정', 'menus');
             foreach ($rows_data as $r):
                 ?>
                 <tr class="menu-row <?php echo $r['is_sub']?'is-sub bg-slate-50/50 dark:bg-slate-800/20':'is-parent' ?>" data-code="<?php echo $h($r['code']) ?>">
-                    <td class="px-3 py-2 align-middle">
+                    <td class="menu-cell-name px-3 py-2 align-middle" data-label="메뉴">
                         <div class="flex items-center gap-2">
                             <?php if ($r['is_sub']): ?>
                                 <svg class="shrink-0 w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -107,21 +107,21 @@ admin_layout_start('메뉴 설정', 'menus');
                             <input type="text" name="me_name[]" value="<?php echo $h($r['name']) ?>" required class="<?php echo $input_cls ?>">
                         </div>
                     </td>
-                    <td class="px-3 py-2"><input type="text" name="me_link[]" value="<?php echo $h($r['link']) ?>" required class="<?php echo $input_cls ?> font-mono text-xs"></td>
-                    <td class="px-3 py-2 text-center">
+                    <td class="menu-cell-link px-3 py-2" data-label="링크"><input type="text" name="me_link[]" value="<?php echo $h($r['link']) ?>" required class="<?php echo $input_cls ?> font-mono text-xs"></td>
+                    <td class="menu-cell-target px-3 py-2 text-center" data-label="새창">
                         <select name="me_target[]" class="<?php echo $select_cls ?>">
                             <option value="self"  <?php echo $r['target']==='self'?'selected':'' ?>>현재창</option>
                             <option value="blank" <?php echo $r['target']==='blank'?'selected':'' ?>>새창</option>
                         </select>
                     </td>
-                    <td class="px-3 py-2 text-center"><input type="text" name="me_order[]" value="<?php echo (int)$r['order'] ?>" class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2 text-center">
+                    <td class="menu-cell-order px-3 py-2 text-center" data-label="순서"><input type="text" name="me_order[]" value="<?php echo (int)$r['order'] ?>" class="<?php echo $num_cls ?>"></td>
+                    <td class="menu-cell-use px-3 py-2 text-center" data-label="사용">
                         <select name="me_use[]" class="<?php echo $select_cls ?>">
                             <option value="1" <?php echo $r['use']==1?'selected':'' ?>>사용</option>
                             <option value="0" <?php echo $r['use']==0?'selected':'' ?>>안함</option>
                         </select>
                     </td>
-                    <td class="px-3 py-2 text-right whitespace-nowrap">
+                    <td class="menu-cell-actions px-3 py-2 text-right whitespace-nowrap" data-label="관리">
                         <?php if (!$r['is_sub']): ?>
                         <button type="button" class="btn-add-sub inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">+ 서브</button>
                         <?php endif; ?>
@@ -139,7 +139,7 @@ admin_layout_start('메뉴 설정', 'menus');
         </div>
 
         <div class="flex flex-wrap items-center gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
-            <span class="ml-auto text-xs text-slate-500">변경/삭제/추가 후 저장을 눌러야 반영됩니다 —</span>
+            <span class="ml-auto text-sm text-slate-500">변경/삭제/추가 후 저장을 눌러야 반영됩니다 —</span>
             <button type="submit" class="h-9 px-5 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-sm font-semibold">저장</button>
         </div>
     </form>
@@ -233,14 +233,14 @@ admin_layout_start('메뉴 설정', 'menus');
         var selectCls = 'h-9 pl-2.5 pr-7 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm';
         var numCls    = 'w-14 h-9 px-2 text-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm';
         var html =
-            '<td class="px-3 py-2 align-middle"><div class="flex items-center gap-2">'+icon+
+            '<td class="menu-cell-name px-3 py-2 align-middle" data-label="메뉴"><div class="flex items-center gap-2">'+icon+
               '<input type="hidden" name="code[]" value="'+escAttr(code)+'">'+
               '<input type="text" name="me_name[]" value="'+escAttr(name)+'" required class="'+inputCls+'"></div></td>'+
-            '<td class="px-3 py-2"><input type="text" name="me_link[]" value="'+escAttr(link)+'" required class="'+inputCls+' font-mono text-xs"></td>'+
-            '<td class="px-3 py-2 text-center"><select name="me_target[]" class="'+selectCls+'"><option value="self">현재창</option><option value="blank">새창</option></select></td>'+
-            '<td class="px-3 py-2 text-center"><input type="text" name="me_order[]" value="0" class="'+numCls+'"></td>'+
-            '<td class="px-3 py-2 text-center"><select name="me_use[]" class="'+selectCls+'"><option value="1">사용</option><option value="0">안함</option></select></td>'+
-            '<td class="px-3 py-2 text-right whitespace-nowrap">'+
+            '<td class="menu-cell-link px-3 py-2" data-label="링크"><input type="text" name="me_link[]" value="'+escAttr(link)+'" required class="'+inputCls+' font-mono text-xs"></td>'+
+            '<td class="menu-cell-target px-3 py-2 text-center" data-label="새창"><select name="me_target[]" class="'+selectCls+'"><option value="self">현재창</option><option value="blank">새창</option></select></td>'+
+            '<td class="menu-cell-order px-3 py-2 text-center" data-label="순서"><input type="text" name="me_order[]" value="0" class="'+numCls+'"></td>'+
+            '<td class="menu-cell-use px-3 py-2 text-center" data-label="사용"><select name="me_use[]" class="'+selectCls+'"><option value="1">사용</option><option value="0">안함</option></select></td>'+
+            '<td class="menu-cell-actions px-3 py-2 text-right whitespace-nowrap" data-label="관리">'+
               (isSub ? '' : '<button type="button" class="btn-add-sub inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">+ 서브</button> ')+
               '<button type="button" class="btn-del-row inline-flex items-center h-8 px-2.5 rounded-md border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-900/30">삭제</button>'+
             '</td>';
@@ -311,14 +311,14 @@ admin_layout_start('메뉴 설정', 'menus');
                 var rows = data.items.map(function (it) {
                     var sub = it.subject || '';
                     var grp = it.group ? '<span class="text-xs text-slate-500 ml-2">'+escAttr(it.group)+'</span>' : '';
-                    return '<tr class="border-b border-slate-100 dark:border-slate-800">'+
-                        '<td class="px-3 py-2"><span class="font-medium">'+escAttr(sub)+'</span>'+grp+'</td>'+
-                        '<td class="px-3 py-2 font-mono text-xs text-slate-500">'+escAttr(it.link)+'</td>'+
-                        '<td class="px-3 py-2 text-right">'+
+                    return '<div class="menu-pick-item">'+
+                        '<div class="menu-pick-title"><span class="font-medium">'+escAttr(sub)+'</span>'+grp+'</div>'+
+                        '<div class="menu-pick-link">'+escAttr(it.link)+'</div>'+
+                        '<div class="menu-pick-action">'+
                             '<button type="button" class="js-pick h-8 px-3 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-xs font-medium" data-name="'+escAttr(sub)+'" data-link="'+escAttr(it.link)+'">선택</button>'+
-                        '</td></tr>';
+                        '</div></div>';
                 }).join('');
-                resBox.innerHTML = '<table class="min-w-full text-sm"><thead class="text-xs uppercase tracking-wider text-slate-500"><tr><th class="px-3 py-2 text-left">제목</th><th class="px-3 py-2 text-left">링크</th><th class="px-3 py-2"></th></tr></thead><tbody>'+rows+'</tbody></table>';
+                resBox.innerHTML = '<div class="menu-pick-list">'+rows+'</div>';
             })
             .catch(function () {
                 loadEl.classList.add('hidden');
