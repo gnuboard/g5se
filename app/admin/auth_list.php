@@ -62,7 +62,7 @@ $listall = '<a href="'.G5_ADMIN_URL.'/auth_list" class="ov_listall btn_ov02">전
 $g5['title'] = "관리권한설정";
 admin_layout_start($g5['title'], 'auth');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="auth-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -141,20 +141,20 @@ $colspan = 5;
                             <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo $row['mb_nick'] ?>님 권한</label>
                             <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
                         </td>
-                        <td class="td_mbid"><a href="?sfl=a.mb_id&amp;stx=<?php echo $row['mb_id'] ?>"><?php echo $row['mb_id'] ?></a></td>
-                        <td class="td_auth_mbnick"><?php echo $mb_nick ?></td>
-                        <td class="td_menu">
-                            <?php echo $row['au_menu'] ?>
-                            <?php echo $auth_menu[$row['au_menu']] ?>
+                        <td class="td_mbid" data-label="회원아이디"><a href="?sfl=a.mb_id&amp;stx=<?php echo $row['mb_id'] ?>"><?php echo $row['mb_id'] ?></a></td>
+                        <td class="td_auth_mbnick" data-label="닉네임"><?php echo $mb_nick ?></td>
+                        <td class="td_menu" data-label="메뉴">
+                            <span class="auth-menu-code"><?php echo $row['au_menu'] ?></span>
+                            <span class="auth-menu-name"><?php echo $auth_menu[$row['au_menu']] ?></span>
                         </td>
-                        <td class="td_auth"><?php echo $row['au_auth'] ?></td>
+                        <td class="td_auth" data-label="권한"><?php echo $row['au_auth'] ?></td>
                     </tr>
                 <?php
                     $count++;
                 }
 
                 if ($count == 0) {
-                    echo '<tr><td colspan="' . $colspan . '" class="empty_table">자료가 없습니다.</td></tr>';
+                    echo '<tr class="auth-empty-row"><td colspan="' . $colspan . '" class="empty_table">자료가 없습니다.</td></tr>';
                 }
                 ?>
             </tbody>
@@ -232,7 +232,7 @@ echo $pagelist;
                     </tr>
                     <tr>
                         <th scope="row">권한지정</th>
-                        <td>
+                        <td class="auth-permissions">
                             <input type="checkbox" name="r" value="r" id="r" checked>
                             <label for="r">r (읽기)</label>
                             <input type="checkbox" name="w" value="w" id="w">

@@ -3775,6 +3775,337 @@ main .admin-floating-actions {
     margin-top: 0.875rem;
 }
 
+/* 관리권한설정 (/admin/auth_list) 모바일 */
+@media (max-width: 640px) {
+    .auth-list-page {
+        min-width: 0;
+        padding: 1rem 0.875rem 5.5rem;
+        overflow-x: clip;
+    }
+    .auth-list-page > header {
+        margin-bottom: 1rem;
+    }
+    .auth-list-page > header h2 {
+        font-size: 1.125rem;
+    }
+    .auth-list-page .legacy-admin-content,
+    .auth-list-page .legacy-admin-content form {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .auth-list-page .local_ov {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 0.5rem;
+        padding: 0.625rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    .auth-list-page .local_ov .btn_ov01 {
+        min-width: 0;
+        text-align: right;
+    }
+    .auth-list-page .local_sch {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 4.5rem;
+        gap: 0.5rem;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .auth-list-page #fsearch #stx,
+    .auth-list-page #fsearch #fsearch_submit {
+        appearance: none;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        height: 2.75rem !important;
+        min-height: 2.75rem;
+        max-height: 2.75rem;
+        margin: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        line-height: 2.75rem;
+        font-size: 1rem;
+    }
+    .auth-list-page #fsearch #stx {
+        line-height: normal;
+    }
+
+    /* 전체 선택은 카드 목록 위의 독립적인 터치 행처럼 표시한다. */
+    .auth-list-page #fauthlist .tbl_head01 {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+    .auth-list-page #fauthlist table,
+    .auth-list-page #fauthlist thead,
+    .auth-list-page #fauthlist tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+    .auth-list-page #fauthlist thead {
+        margin-bottom: 0.625rem;
+    }
+    .auth-list-page #fauthlist thead tr {
+        display: block;
+    }
+    .auth-list-page #fauthlist thead th {
+        display: none;
+    }
+    .auth-list-page #fauthlist thead th:first-child {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2.75rem;
+        padding: 0.625rem 0.75rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.625rem;
+        background: var(--slate-50);
+    }
+    [data-theme="dark"] .auth-list-page #fauthlist thead th:first-child {
+        border-color: var(--slate-700);
+        background: var(--slate-800);
+    }
+    .auth-list-page #fauthlist thead th:first-child .sound_only {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        clip: auto !important;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0;
+    }
+    .auth-list-page #chkall {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0;
+    }
+
+    .auth-list-page #fauthlist tbody {
+        display: grid;
+        gap: 0.75rem;
+    }
+    .auth-list-page #fauthlist tbody tr {
+        display: grid;
+        grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+    [data-theme="dark"] .auth-list-page #fauthlist tbody tr {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+    }
+    .auth-list-page #fauthlist tbody td {
+        display: block;
+        box-sizing: border-box;
+        width: auto;
+        min-width: 0;
+        padding: 0.625rem 0.75rem;
+        border: 0;
+        overflow-wrap: anywhere;
+    }
+    .auth-list-page #fauthlist .td_chk {
+        grid-column: 1;
+        grid-row: 1 / 4;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 0.875rem 0.5rem;
+        border-right: 1px solid var(--slate-200);
+    }
+    [data-theme="dark"] .auth-list-page #fauthlist .td_chk {
+        border-right-color: var(--slate-700);
+    }
+    .auth-list-page #fauthlist .td_chk input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0;
+    }
+    .auth-list-page #fauthlist .td_mbid {
+        grid-column: 2;
+        grid-row: 1;
+        padding-bottom: 0.2rem;
+        font-weight: 700;
+    }
+    .auth-list-page #fauthlist .td_auth_mbnick {
+        grid-column: 2;
+        grid-row: 2;
+        padding-top: 0;
+        padding-bottom: 0.5rem;
+        color: var(--slate-500);
+        font-size: 0.8125rem;
+    }
+    .auth-list-page #fauthlist .td_menu {
+        grid-column: 2 / -1;
+        grid-row: 3;
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--slate-100);
+        font-size: 0.8125rem;
+    }
+    [data-theme="dark"] .auth-list-page #fauthlist .td_menu {
+        border-top-color: var(--slate-800);
+    }
+    .auth-list-page .auth-menu-code {
+        flex: 0 0 auto;
+        padding: 0.1rem 0.35rem;
+        border-radius: 0.25rem;
+        background: var(--slate-100);
+        color: var(--slate-600);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.6875rem;
+    }
+    [data-theme="dark"] .auth-list-page .auth-menu-code {
+        background: var(--slate-800);
+        color: var(--slate-400);
+    }
+    .auth-list-page .auth-menu-name {
+        min-width: 0;
+    }
+    .auth-list-page #fauthlist .td_auth {
+        grid-column: 3;
+        grid-row: 1 / 3;
+        align-self: center;
+        margin-right: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        background: var(--admin-primary-50);
+        color: var(--admin-primary-700);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    [data-theme="dark"] .auth-list-page #fauthlist .td_auth {
+        background: var(--admin-primary-950);
+        color: var(--admin-primary-300);
+    }
+    .auth-list-page #fauthlist tbody tr.auth-empty-row {
+        display: block;
+    }
+    .auth-list-page #fauthlist .empty_table {
+        width: 100%;
+        padding: 2.5rem 1rem;
+        text-align: center;
+    }
+
+    .auth-list-page #fauthlist .btn_list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.625rem;
+    }
+    .auth-list-page #fauthlist .btn_list .btn {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 2.75rem;
+        margin: 0;
+    }
+    .auth-list-page .pg_wrap {
+        justify-content: flex-start;
+        max-width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+    }
+
+    .auth-list-page #add_admin .h2_frm {
+        margin-top: 1.5rem;
+        font-size: 1rem;
+    }
+    .auth-list-page #add_admin .local_desc {
+        margin: 0.75rem 0;
+        padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+        line-height: 1.55;
+    }
+    .auth-list-page #add_admin .tbl_frm01 {
+        margin: 0 0 1rem;
+    }
+    .auth-list-page #add_admin table,
+    .auth-list-page #add_admin tbody,
+    .auth-list-page #add_admin tr,
+    .auth-list-page #add_admin th,
+    .auth-list-page #add_admin td {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+    .auth-list-page #add_admin colgroup {
+        display: none;
+    }
+    .auth-list-page #add_admin tr {
+        border-bottom: 1px solid var(--slate-200);
+    }
+    .auth-list-page #add_admin tr:last-child {
+        border-bottom: 0;
+    }
+    [data-theme="dark"] .auth-list-page #add_admin tr {
+        border-bottom-color: var(--slate-800);
+    }
+    .auth-list-page #add_admin th,
+    .auth-list-page #add_admin td {
+        box-sizing: border-box;
+        border: 0;
+    }
+    .auth-list-page #add_admin th {
+        padding: 0.75rem 0.875rem 0.35rem;
+        background: var(--slate-50);
+        font-size: 0.8125rem;
+    }
+    [data-theme="dark"] .auth-list-page #add_admin th {
+        background: #111c29;
+    }
+    .auth-list-page #add_admin td {
+        padding: 0.5rem 0.875rem 0.875rem;
+    }
+    .auth-list-page #add_admin .frm_input,
+    .auth-list-page #add_admin select {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        height: 2.75rem;
+        font-size: 1rem;
+    }
+    .auth-list-page .auth-permissions {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem 0.375rem;
+    }
+    .auth-list-page .auth-permissions input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0 0 0 0.5rem;
+    }
+    .auth-list-page .auth-permissions input[type="checkbox"]:first-child {
+        margin-left: 0;
+    }
+    .auth-list-page .auth-permissions label {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.25rem;
+        margin-right: 0.375rem;
+    }
+    .auth-list-page #fauthlist2 .btn_confirm {
+        margin-top: 0.75rem;
+    }
+    .auth-list-page #fauthlist2 .btn_submit {
+        width: 100%;
+        min-height: 2.75rem;
+        font-size: 1rem;
+    }
+}
+
 /* 부가서비스 (/admin/service) — gnuboard 의 .service_wrap / .sevice_1 / .svc_*
  * 클래스를 admin 톤의 카드 그리드로 매핑. 외부 결제·인증·SMS 서비스 신청 링크 모음. */
 .legacy-admin-content .local_desc02 {
