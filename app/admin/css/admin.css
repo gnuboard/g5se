@@ -1901,6 +1901,178 @@ main .admin-floating-actions {
         bottom: 0.75rem;
         left: 0.75rem;
     }
+
+    /* 기본 환경설정: 데스크톱의 4열 th/td 표를 모바일용 세로 폼으로 전환한다.
+     * 가로 스크롤로 표를 축소하지 않고 각 설정의 라벨과 입력값을 한 묶음으로 표시. */
+    .config-page {
+        min-width: 0;
+        padding: 1rem 0.875rem 6.5rem;
+        overflow-x: clip;
+    }
+    .config-page > header {
+        margin-bottom: 1rem;
+    }
+    .config-page .legacy-admin-content,
+    .config-page .legacy-admin-content section,
+    .config-page .legacy-admin-content form {
+        min-width: 0;
+        max-width: 100%;
+    }
+    .config-page .legacy-admin-content .h2_frm {
+        margin: 1.5rem 0 0.625rem;
+        padding-left: 0.625rem;
+        font-size: 1rem;
+        line-height: 1.45;
+    }
+    .config-page .legacy-admin-content section:first-child > .h2_frm {
+        margin-top: 0;
+    }
+
+    /* 많은 섹션 링크는 한 줄 가로 스크롤 탭으로 유지해 세로 공간을 절약한다. */
+    .config-page .legacy-admin-content ul.anchor {
+        flex-wrap: nowrap;
+        gap: 0.25rem;
+        margin: 0.5rem 0 0.75rem;
+        padding: 0.25rem;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
+    }
+    .config-page .legacy-admin-content ul.anchor li {
+        flex: 0 0 auto;
+    }
+    .config-page .legacy-admin-content ul.anchor::after {
+        content: "";
+        flex: 0 0 calc(100% - 3rem);
+    }
+    .config-page .legacy-admin-content ul.anchor a {
+        height: 2.125rem;
+        padding: 0 0.75rem;
+        white-space: nowrap;
+    }
+
+    .config-page .legacy-admin-content .tbl_frm01 {
+        margin: 0 0 1rem;
+        overflow: hidden;
+        border-radius: 0.625rem;
+    }
+    .config-page .legacy-admin-content .tbl_frm01 table,
+    .config-page .legacy-admin-content .tbl_frm01 tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+    .config-page .legacy-admin-content .tbl_frm01 colgroup {
+        display: none;
+    }
+    .config-page .legacy-admin-content .tbl_frm01 tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+        min-width: 0;
+        border-bottom: 1px solid var(--slate-200);
+    }
+    .config-page .legacy-admin-content .tbl_frm01 tbody tr:last-child {
+        border-bottom: 0;
+    }
+    [data-theme="dark"] .config-page .legacy-admin-content .tbl_frm01 tbody tr {
+        border-bottom-color: var(--slate-800);
+    }
+    .config-page .legacy-admin-content .tbl_frm01 tbody th,
+    .config-page .legacy-admin-content .tbl_frm01 tbody td {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        border: 0;
+    }
+    .config-page .legacy-admin-content .tbl_frm01 tbody th {
+        padding: 0.75rem 0.875rem 0.4rem;
+        background: var(--slate-50);
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+    [data-theme="dark"] .config-page .legacy-admin-content .tbl_frm01 tbody th {
+        background: #111c29;
+    }
+    .config-page .legacy-admin-content .tbl_frm01 tbody td {
+        padding: 0.625rem 0.875rem 0.875rem;
+        overflow-wrap: anywhere;
+    }
+    /* 한 행에 설정이 두 개 있으면 두 번째 th 앞에서 묶음을 시각적으로 구분한다. */
+    .config-page .legacy-admin-content .tbl_frm01 tbody td + th {
+        padding-top: 0.75rem;
+        border-top: 1px dashed var(--slate-200);
+    }
+    [data-theme="dark"] .config-page .legacy-admin-content .tbl_frm01 tbody td + th {
+        border-top-color: var(--slate-700);
+    }
+
+    .config-page .legacy-admin-content .frm_info {
+        padding-bottom: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+    }
+    .config-page .legacy-admin-content input[type="text"]:not([size="3"]):not([size="5"]),
+    .config-page .legacy-admin-content input[type="password"],
+    .config-page .legacy-admin-content input[type="email"],
+    .config-page .legacy-admin-content input[type="url"],
+    .config-page .legacy-admin-content select,
+    .config-page .legacy-admin-content textarea {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+    }
+    .config-page .legacy-admin-content input[size="3"],
+    .config-page .legacy-admin-content input[size="5"] {
+        width: 5.5rem;
+        max-width: 100%;
+    }
+    .config-page .legacy-admin-content select,
+    .config-page .legacy-admin-content .frm_input {
+        min-height: 2.5rem;
+        font-size: 1rem;
+    }
+    .config-page .legacy-admin-content input[type="checkbox"],
+    .config-page .legacy-admin-content input[type="radio"] {
+        width: 1.125rem;
+        height: 1.125rem;
+        vertical-align: -0.2rem;
+    }
+    .config-page .legacy-admin-content .i-chk-label {
+        display: inline-flex;
+        min-height: 2.25rem;
+        align-items: center;
+        padding: 0 0.375rem;
+    }
+    .config-page .legacy-admin-content .btn_frmline {
+        margin: 0.5rem 0 0;
+        min-height: 2.5rem;
+        white-space: normal;
+        text-align: center;
+    }
+    .config-page .legacy-admin-content .social_config_explain .explain_box > div {
+        padding-left: 0;
+    }
+    .config-page .legacy-admin-content .td_extra label {
+        display: block;
+        margin: 0 0 0.35rem;
+    }
+    .config-page .legacy-admin-content .td_extra .extra-value-input {
+        margin-top: 0.5rem;
+    }
+
+    .config-page .admin-floating-actions {
+        padding: 0.5rem;
+    }
+    .config-page .admin-floating-actions .btn_submit {
+        flex: 1 1 auto;
+        width: 100%;
+        min-height: 2.75rem;
+        font-size: 1rem;
+    }
 }
 
 /* 맨 위로 버튼 — 기본은 플로팅 저장 바 안 우측 끝(.in-bar)에 항상 표시. */
