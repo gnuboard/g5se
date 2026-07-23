@@ -50,6 +50,11 @@ foreach ($check_keys as $key => $val) {
     }
 }
 
+// datetime-local 은 날짜와 시간 사이를 "T"로 전송한다.
+// DB DATETIME 및 기존 표시 형식과 호환되도록 공백 구분 형식으로 정규화.
+$posts['nw_begin_time'] = str_replace('T', ' ', substr((string)$posts['nw_begin_time'], 0, 19));
+$posts['nw_end_time']   = str_replace('T', ' ', substr((string)$posts['nw_end_time'], 0, 19));
+
 $sql_common = " nw_division = :nw_division,
                 nw_begin_time = :nw_begin_time,
                 nw_end_time = :nw_end_time,

@@ -42,7 +42,7 @@ if (!sql_pdo_query(" DESCRIBE {$g5['new_win_table']} ", false)) {
 $g5['title'] = '팝업레이어 관리';
 admin_layout_start($g5['title'], 'newwin');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="newwin-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -89,16 +89,16 @@ $result = sql_pdo_query($sql);
                 $bg = 'bg' . ($i % 2);
             ?>
                 <tr class="<?php echo $bg; ?>">
-                    <td class="td_num"><?php echo $row['nw_id']; ?></td>
-                    <td class="td_left"><?php echo $row['nw_subject']; ?></td>
-                    <td class="td_datetime"><?php echo substr($row['nw_begin_time'], 2, 14); ?></td>
-                    <td class="td_datetime"><?php echo substr($row['nw_end_time'], 2, 14); ?></td>
-                    <td class="td_num"><?php echo $row['nw_disable_hours']; ?>시간</td>
-                    <td class="td_num"><?php echo $row['nw_left']; ?>px</td>
-                    <td class="td_num"><?php echo $row['nw_top']; ?>px</td>
-                    <td class="td_num"><?php echo $row['nw_width']; ?>px</td>
-                    <td class="td_num"><?php echo $row['nw_height']; ?>px</td>
-                    <td class="td_mng td_mng_m">
+                    <td class="newwin-cell-id td_num" data-label="번호"><?php echo $row['nw_id']; ?></td>
+                    <td class="newwin-cell-subject td_left" data-label="제목"><?php echo $row['nw_subject']; ?></td>
+                    <td class="newwin-cell-begin td_datetime" data-label="시작일시"><?php echo substr($row['nw_begin_time'], 2, 14); ?></td>
+                    <td class="newwin-cell-end td_datetime" data-label="종료일시"><?php echo substr($row['nw_end_time'], 2, 14); ?></td>
+                    <td class="newwin-cell-hours td_num" data-label="숨김"><?php echo $row['nw_disable_hours']; ?>시간</td>
+                    <td class="newwin-cell-left td_num" data-label="Left"><?php echo $row['nw_left']; ?>px</td>
+                    <td class="newwin-cell-top td_num" data-label="Top"><?php echo $row['nw_top']; ?>px</td>
+                    <td class="newwin-cell-width td_num" data-label="Width"><?php echo $row['nw_width']; ?>px</td>
+                    <td class="newwin-cell-height td_num" data-label="Height"><?php echo $row['nw_height']; ?>px</td>
+                    <td class="newwin-cell-actions td_mng td_mng_m">
                         <a href="<?php echo G5_ADMIN_URL ?>/newwinform?w=u&amp;nw_id=<?php echo $row['nw_id']; ?>" class="btn btn_03"><span class="sound_only"><?php echo $row['nw_subject']; ?> </span>수정</a>
                         <a href="<?php echo G5_ADMIN_URL ?>/newwinformupdate?w=d&amp;nw_id=<?php echo $row['nw_id']; ?>" onclick="return delete_confirm(this);" class="btn btn_02"><span class="sound_only"><?php echo $row['nw_subject']; ?> </span>삭제</a>
                     </td>
@@ -107,7 +107,7 @@ $result = sql_pdo_query($sql);
             }
 
             if ($i == 0) {
-                echo '<tr><td colspan="10" class="empty_table">자료가 한건도 없습니다.</td></tr>';
+                echo '<tr class="newwin-empty-row"><td colspan="10" class="empty_table">자료가 한건도 없습니다.</td></tr>';
             }
             ?>
         </tbody>

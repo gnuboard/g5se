@@ -44,7 +44,7 @@ if ($w == "u") {
 $g5['title'] = $html_title;
 admin_layout_start($g5['title'], 'newwin');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="newwin-form-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -92,16 +92,16 @@ admin_layout_start($g5['title'], 'newwin');
                 <tr>
                     <th scope="row"><label for="nw_begin_time">시작일시<strong class="sound_only"> 필수</strong></label></th>
                     <td>
-                        <input type="text" name="nw_begin_time" value="<?php echo $nw['nw_begin_time']; ?>" id="nw_begin_time" required class="frm_input required" size="21" maxlength="19">
-                        <input type="checkbox" name="nw_begin_chk" value="<?php echo date("Y-m-d 00:00:00", G5_SERVER_TIME); ?>" id="nw_begin_chk" onclick="if (this.checked == true) this.form.nw_begin_time.value=this.form.nw_begin_chk.value; else this.form.nw_begin_time.value = this.form.nw_begin_time.defaultValue;">
+                        <input type="datetime-local" name="nw_begin_time" value="<?php echo str_replace(' ', 'T', substr((string)$nw['nw_begin_time'], 0, 19)); ?>" id="nw_begin_time" required class="frm_input required newwin-datetime-input" step="1">
+                        <input type="checkbox" name="nw_begin_chk" value="<?php echo date("Y-m-d\\T00:00:00", G5_SERVER_TIME); ?>" id="nw_begin_chk" onclick="if (this.checked == true) this.form.nw_begin_time.value=this.form.nw_begin_chk.value; else this.form.nw_begin_time.value = this.form.nw_begin_time.defaultValue;">
                         <label for="nw_begin_chk">시작일시를 오늘로</label>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="nw_end_time">종료일시<strong class="sound_only"> 필수</strong></label></th>
                     <td>
-                        <input type="text" name="nw_end_time" value="<?php echo $nw['nw_end_time']; ?>" id="nw_end_time" required class="frm_input required" size="21" maxlength="19">
-                        <input type="checkbox" name="nw_end_chk" value="<?php echo date("Y-m-d 23:59:59", G5_SERVER_TIME + (60 * 60 * 24 * 7)); ?>" id="nw_end_chk" onclick="if (this.checked == true) this.form.nw_end_time.value=this.form.nw_end_chk.value; else this.form.nw_end_time.value = this.form.nw_end_time.defaultValue;">
+                        <input type="datetime-local" name="nw_end_time" value="<?php echo str_replace(' ', 'T', substr((string)$nw['nw_end_time'], 0, 19)); ?>" id="nw_end_time" required class="frm_input required newwin-datetime-input" step="1">
+                        <input type="checkbox" name="nw_end_chk" value="<?php echo date("Y-m-d\\T23:59:59", G5_SERVER_TIME + (60 * 60 * 24 * 7)); ?>" id="nw_end_chk" onclick="if (this.checked == true) this.form.nw_end_time.value=this.form.nw_end_chk.value; else this.form.nw_end_time.value = this.form.nw_end_time.defaultValue;">
                         <label for="nw_end_chk">종료일시를 오늘로부터 7일 후로</label>
                     </td>
                 </tr>
