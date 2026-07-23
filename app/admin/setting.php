@@ -201,7 +201,7 @@ if ($_edit_key !== '') {
 
 admin_layout_start($g5['title'], 'core');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="setting-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
 <?php if ($_edit_key === '') { ?>
     <header class="flex items-center gap-3 mb-5">
@@ -282,9 +282,9 @@ admin_layout_start($g5['title'], 'core');
                 <tbody>
                 <?php foreach ($_active_schemas as $_k => $_s) { ?>
                     <tr>
-                        <td><code><?php echo htmlspecialchars($_k); ?></code></td>
-                        <td class="setting-cell-title"><?php echo htmlspecialchars($_s['title']); ?></td>
-                        <td class="setting-cell-desc"><?php echo htmlspecialchars($_s['description'] ?? ''); ?></td>
+                        <td data-label="키"><code><?php echo htmlspecialchars($_k); ?></code></td>
+                        <td data-label="제목" class="setting-cell-title"><?php echo htmlspecialchars($_s['title']); ?></td>
+                        <td data-label="설명" class="setting-cell-desc"><?php echo htmlspecialchars($_s['description'] ?? ''); ?></td>
                         <td class="setting-col-edit">
                             <a href="/admin/setting?key=<?php echo urlencode($_k); ?>" class="setting-btn-edit">편집</a>
                         </td>
@@ -517,6 +517,223 @@ admin_layout_start($g5['title'], 'core');
 
 .setting-error       { padding: 0.6rem 0.8rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #b91c1c; border-radius: 0.375rem; margin-bottom: 0.75rem; font-size: 0.85rem; }
 [data-theme="dark"] .setting-error { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+
+@media (max-width: 640px) {
+    .setting-page {
+        min-width: 0;
+        padding: 1rem 0.875rem 5.5rem;
+        overflow-x: clip;
+    }
+    .setting-page > header {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.625rem;
+        margin-bottom: 1rem;
+    }
+    .setting-page > header h1 {
+        min-width: 0;
+        font-size: 1.125rem;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+    .setting-page > header > form {
+        width: 100%;
+        margin-left: 0;
+    }
+    .setting-btn-sync {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: 0.625rem 0.875rem;
+        white-space: normal;
+        line-height: 1.4;
+    }
+    .setting-back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.5rem;
+        margin-left: -0.5rem;
+        padding: 0 0.5rem;
+        white-space: nowrap;
+    }
+
+    .setting-toast,
+    .setting-empty {
+        padding: 0.875rem;
+        font-size: 0.8125rem;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+    }
+
+    /* 목록 테이블을 모바일 카드 목록으로 변환한다. */
+    .setting-list-wrap {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+    [data-theme="dark"] .setting-list-wrap {
+        background: transparent;
+    }
+    .setting-list,
+    .setting-list tbody {
+        display: block;
+        width: 100%;
+    }
+    .setting-list thead {
+        display: none;
+    }
+    .setting-list tbody {
+        display: grid;
+        gap: 0.75rem;
+    }
+    .setting-list tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+    [data-theme="dark"] .setting-list tbody tr {
+        border-color: var(--slate-700);
+        background: var(--slate-800);
+    }
+    .setting-list tbody tr:hover td,
+    [data-theme="dark"] .setting-list tbody tr:hover td {
+        background: transparent;
+    }
+    .setting-list td {
+        display: block;
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+    }
+    .setting-list td:first-child {
+        grid-column: 1;
+        grid-row: 1;
+        padding: 0.875rem 0.875rem 0.25rem;
+    }
+    .setting-list td:first-child::before {
+        content: attr(data-label);
+        margin-right: 0.4rem;
+        color: var(--slate-500);
+        font-size: 0.6875rem;
+        font-weight: 600;
+    }
+    .setting-list .setting-cell-title {
+        grid-column: 1;
+        grid-row: 2;
+        padding: 0.125rem 0.875rem;
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+    .setting-list .setting-cell-desc {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        padding: 0.35rem 0.875rem 0.875rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+    .setting-list .setting-col-edit {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0.75rem 0.5rem;
+        width: auto;
+    }
+    .setting-btn-edit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 3.75rem;
+        min-height: 2.5rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .setting-card {
+        min-width: 0;
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+    .setting-card-desc {
+        margin-bottom: 0.875rem;
+        font-size: 0.8125rem;
+        line-height: 1.55;
+    }
+    .setting-notes-wrap {
+        margin-bottom: 1rem;
+    }
+    .setting-notes-summary {
+        display: flex;
+        align-items: center;
+        min-height: 2.75rem;
+        padding: 0.625rem 0.75rem;
+    }
+    .setting-notes {
+        padding: 0.875rem;
+        font-size: 0.8125rem;
+        overflow-wrap: anywhere;
+    }
+    .setting-notes ul {
+        margin-left: 1rem;
+    }
+    .setting-notes code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    .setting-form {
+        gap: 1rem;
+    }
+    .setting-field {
+        min-width: 0;
+        gap: 0.4rem;
+    }
+    .setting-label {
+        font-size: 0.8125rem;
+    }
+    .setting-input {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.75rem;
+        padding: 0.625rem 0.75rem;
+        font-size: 1rem;
+    }
+    .setting-help {
+        font-size: 0.75rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+    .setting-check {
+        min-height: 2.75rem;
+        font-size: 0.9375rem;
+    }
+    .setting-check input {
+        flex: 0 0 auto;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0;
+    }
+    .setting-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.625rem;
+        margin-top: 0.25rem;
+    }
+    .setting-btn {
+        width: 100%;
+        min-height: 2.75rem;
+        font-size: 0.9375rem;
+    }
+    .setting-btn-save {
+        order: 1;
+    }
+    .setting-btn-reset {
+        order: 2;
+    }
+}
 </style>
 
 <?php admin_layout_end(); ?>
