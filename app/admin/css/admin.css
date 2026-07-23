@@ -280,6 +280,78 @@ html.dark .nav-icon {
     width: 15rem;
     z-index: 40;
 }
+
+/* 대시보드 반응형 경계.
+ * Chart.js canvas 의 intrinsic width와 flex item의 자동 최소 폭이 모바일 레이아웃을
+ * 밀어내지 않도록 모든 직계 영역을 명시적으로 축소 가능하게 만든다. */
+.admin-dashboard,
+.admin-dashboard > *,
+.admin-dashboard-stats > *,
+.admin-dashboard-recent > *,
+.admin-dashboard-chart,
+.admin-dashboard-chart-body {
+    min-width: 0;
+    max-width: 100%;
+}
+.admin-dashboard {
+    overflow-x: clip;
+}
+.admin-dashboard-chart {
+    width: 100%;
+}
+.admin-dashboard-chart-body {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    contain: inline-size;
+}
+.admin-dashboard-chart-body > canvas {
+    display: block;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+@media (max-width: 1023px) {
+    /* 모바일 브라우저는 overlay scrollbar를 사용하므로 gutter 예약 시 우측에 빈 띠가
+     * 남는다. 데스크톱에서만 안정적인 scrollbar 자리를 유지한다. */
+    html { scrollbar-gutter: auto; }
+}
+
+@media (max-width: 639px) {
+    .admin-dashboard {
+        padding: 1rem;
+    }
+    .admin-dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+    .admin-dashboard-stats > * {
+        padding: 0.875rem;
+    }
+    .admin-dashboard-chart > header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+    .admin-dashboard-chart-body {
+        height: 15rem;
+    }
+    .admin-dashboard-recent li,
+    .admin-dashboard-recent a,
+    .admin-dashboard-recent li > div {
+        min-width: 0;
+    }
+    .admin-dashboard-recent li > span:last-child {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 359px) {
+    .admin-dashboard-stats {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
 @media (min-width: 1024px) {
     #adm-sidebar {
         display: flex !important;

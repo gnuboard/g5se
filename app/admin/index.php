@@ -47,7 +47,7 @@ while ($row = sql_pdo_fetch_array($res)) {
 admin_layout_start('대시보드', 'home');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="admin-dashboard flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
     <header class="flex flex-wrap items-center gap-3 mb-5">
         <div>
@@ -57,7 +57,7 @@ admin_layout_start('대시보드', 'home');
     </header>
 
     <!-- 카운트 카드 6개 -->
-    <section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-6">
+    <section class="admin-dashboard-stats grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-6">
         <?php
         $cards = [
             ['label' => '총 회원',       'value' => number_format($stat_member_total),  'sub' => '오늘 +'.number_format($stat_member_today),   'tone' => 'primary'],
@@ -86,16 +86,16 @@ admin_layout_start('대시보드', 'home');
     </section>
 
     <!-- 7일 추이 차트 -->
-    <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-6 mb-6">
+    <section class="admin-dashboard-chart rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-6 mb-6">
         <header class="flex items-center justify-between mb-3">
             <h2 class="font-semibold">최근 7일 추이</h2>
             <span class="text-xs text-slate-500"><?php echo $days[0] ?> ~ <?php echo end($days) ?></span>
         </header>
-        <div class="h-64 sm:h-72"><canvas id="chart-7days"></canvas></div>
+        <div class="admin-dashboard-chart-body h-64 sm:h-72"><canvas id="chart-7days"></canvas></div>
     </section>
 
     <!-- 최근 가입 + 최근 게시물 -->
-    <section class="grid lg:grid-cols-2 gap-4">
+    <section class="admin-dashboard-recent grid lg:grid-cols-2 gap-4">
         <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-6">
             <header class="flex items-center justify-between mb-3">
                 <h2 class="font-semibold">최근 가입 회원</h2>
