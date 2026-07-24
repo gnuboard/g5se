@@ -6190,6 +6190,333 @@ main .admin-floating-actions {
     background-color: #ffffff !important;
 }
 
+/* 게시판 그룹 목록 모바일 카드 */
+.boardgroup-mobile-pagination {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .boardgroup-list-page {
+        min-width: 0;
+        padding: 0.875rem;
+        overflow-x: hidden;
+    }
+
+    .boardgroup-list-page > header {
+        margin-bottom: 0.875rem;
+    }
+
+    .boardgroup-list-page > header h2 {
+        font-size: 1.125rem;
+    }
+
+    .boardgroup-list-page .local_ov {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.625rem;
+    }
+
+    .boardgroup-list-page .boardgroup-search {
+        display: grid;
+        grid-template-columns: 5.5rem minmax(0, 1fr) 4.25rem;
+        gap: 0.5rem;
+        width: 100%;
+        margin-bottom: 0.875rem;
+        padding: 0;
+        border: 0;
+    }
+
+    .boardgroup-list-page .boardgroup-search select,
+    .boardgroup-list-page .boardgroup-search input {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        height: 2.625rem;
+        margin: 0;
+        padding: 0 0.625rem;
+        font-size: 0.8125rem;
+    }
+
+    .boardgroup-list-page .boardgroup-list-form,
+    .boardgroup-list-page .boardgroup-list-scroll {
+        min-width: 0;
+        overflow: visible;
+    }
+
+    .boardgroup-list-page .boardgroup-list-scroll table,
+    .boardgroup-list-page .boardgroup-list-scroll tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .boardgroup-list-page .boardgroup-list-scroll thead {
+        display: none;
+    }
+
+    .boardgroup-list-page .boardgroup-list-scroll .boardgroup-card {
+        display: grid;
+        grid-template-columns: 2.5rem repeat(2, minmax(0, 1fr));
+        gap: 0;
+        width: 100%;
+        margin-bottom: 0.625rem;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+
+    [data-theme="dark"] .boardgroup-list-page .boardgroup-list-scroll .boardgroup-card {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
+    }
+
+    .boardgroup-list-page .boardgroup-list-scroll .boardgroup-card > td {
+        display: flex;
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 0.625rem;
+        border: 0;
+        flex-direction: column;
+        gap: 0.35rem;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .boardgroup-list-page .boardgroup-list-scroll .boardgroup-card > td::before {
+        content: attr(data-label);
+        color: var(--slate-500);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .boardgroup-list-page .boardgroup-col-check {
+        grid-column: 1;
+        grid-row: 1 / 6;
+        align-items: center;
+        padding: 0.75rem 0.5rem !important;
+        border-right: 1px solid var(--slate-200) !important;
+    }
+
+    [data-theme="dark"] .boardgroup-list-page .boardgroup-col-check {
+        border-right-color: var(--slate-800) !important;
+    }
+
+    .boardgroup-list-page .boardgroup-col-check::before {
+        display: none;
+    }
+
+    .boardgroup-list-page .boardgroup-col-check input {
+        width: 1.125rem;
+        height: 1.125rem;
+        margin: 0;
+    }
+
+    .boardgroup-list-page .boardgroup-col-id {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .boardgroup-list-page .boardgroup-col-subject {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .boardgroup-list-page .boardgroup-col-admin {
+        grid-column: 2 / -1;
+        grid-row: 2;
+    }
+
+    .boardgroup-list-page .boardgroup-col-count {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .boardgroup-list-page .boardgroup-col-members {
+        grid-column: 3;
+        grid-row: 3;
+    }
+
+    .boardgroup-list-page .boardgroup-col-access {
+        grid-column: 2;
+        grid-row: 4;
+        flex-direction: row !important;
+        align-items: center;
+    }
+
+    .boardgroup-list-page .boardgroup-col-access::before {
+        margin-right: auto;
+    }
+
+    .boardgroup-list-page .boardgroup-col-order {
+        grid-column: 3;
+        grid-row: 4;
+    }
+
+    .boardgroup-list-page .boardgroup-col-manage {
+        grid-column: 2 / -1;
+        grid-row: 5;
+        padding-top: 0 !important;
+    }
+
+    .boardgroup-list-page .boardgroup-col-manage::before {
+        display: none;
+    }
+
+    .boardgroup-list-page .boardgroup-col-manage a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 2.375rem;
+        margin: 0;
+    }
+
+    .boardgroup-list-page .boardgroup-card input[type="text"] {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        height: 2.375rem;
+        margin: 0;
+        font-size: 0.8125rem;
+    }
+
+    .boardgroup-list-page .boardgroup-empty {
+        display: block;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+    }
+
+    .boardgroup-list-page .boardgroup-empty td {
+        display: block;
+        padding: 2.5rem 1rem;
+    }
+
+    .boardgroup-list-page .boardgroup-list-actions {
+        position: sticky;
+        right: auto;
+        bottom: 0;
+        left: auto;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin: 0.75rem 0;
+        padding: 0.625rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: rgba(248, 250, 252, 0.96);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(8px);
+    }
+
+    [data-theme="dark"] .boardgroup-list-page .boardgroup-list-actions {
+        border-color: var(--slate-700);
+        background: rgba(15, 23, 42, 0.96);
+    }
+
+    .boardgroup-list-page .boardgroup-list-actions > * {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.5rem;
+        margin: 0;
+        font-size: 0.8125rem;
+    }
+
+    .boardgroup-list-page .boardgroup-list-actions > a {
+        grid-column: 1 / -1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .boardgroup-list-page .boardgroup-desktop-pagination {
+        display: none;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination {
+        display: grid;
+        grid-template-columns: auto auto minmax(4rem, 1fr) auto auto;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 1rem 0;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination a,
+    .boardgroup-list-page .boardgroup-mobile-pagination > span,
+    .boardgroup-list-page .boardgroup-mobile-pagination .current-page {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 0;
+        height: 2.5rem;
+        padding: 0 0.5rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.5rem;
+        background: #fff;
+        color: var(--slate-700);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination .current-page {
+        border-color: var(--admin-primary-600);
+        background: var(--admin-primary-600);
+        color: #fff;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        padding: 0 0.25rem;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: inherit;
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: center;
+        appearance: textfield;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination input::-webkit-inner-spin-button,
+    .boardgroup-list-page .boardgroup-mobile-pagination input::-webkit-outer-spin-button {
+        margin: 0;
+        appearance: none;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination input.is-invalid {
+        border-radius: 0.35rem;
+        box-shadow: inset 0 0 0 2px #ef4444;
+    }
+
+    .boardgroup-list-page .boardgroup-mobile-pagination .is-disabled {
+        color: var(--slate-400);
+        background: var(--slate-50);
+    }
+
+    [data-theme="dark"] .boardgroup-list-page .boardgroup-mobile-pagination a,
+    [data-theme="dark"] .boardgroup-list-page .boardgroup-mobile-pagination > span {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+        color: var(--slate-300);
+    }
+
+    [data-theme="dark"] .boardgroup-list-page .boardgroup-mobile-pagination .is-disabled {
+        color: var(--slate-600);
+        background: var(--slate-950);
+    }
+}
+
 /* 게시판 관리: 모바일에서는 벌크 편집 표를 읽기 쉬운 카드로 표시 */
 .board-mobile-pagination {
     display: none;

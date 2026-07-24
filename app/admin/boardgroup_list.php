@@ -57,21 +57,33 @@ $row = sql_pdo_fetch($sql);
 $total_count = $row['cnt'];
 
 $rows = $config['cf_page_rows'];
-$total_page  = ceil($total_count / $rows);  // 전체 페이지 계산
+$total_page  = max(1, (int)ceil($total_count / max(1, $rows)));  // 전체 페이지 계산
 if ($page < 1) {
     $page = 1; // 페이지가 없으면 첫 페이지 (1 페이지)
 }
+$page = min($page, $total_page);
 $from_record = ($page - 1) * $rows; // 시작 열을 구함
 
 $sql = " select * {$sql_common} {$sql_search} {$sql_order} limit {$from_record}, {$rows} ";
 $result = sql_pdo_query($sql);
 
 $listall = '<a href="'.G5_ADMIN_URL.'/boardgroup_list" class="ov_listall">처음</a>';
+$h = static fn($value) => htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+$page_url = static function ($target) use ($sst, $sod, $sfl, $stx): string {
+    return G5_ADMIN_URL.'/boardgroup_list?'.http_build_query(array_filter([
+        'sst' => $sst,
+        'sod' => $sod,
+        'sfl' => $sfl,
+        'stx' => $stx,
+        'page' => $target,
+    ], static fn($value) => $value !== '' && $value !== null));
+};
+$page_input_url = str_replace('__PAGE__', '', $page_url('__PAGE__'));
 
 $g5['title'] = '게시판그룹설정';
 admin_layout_start($g5['title'], 'boardgroup');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="boardgroup-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -86,7 +98,7 @@ $colspan = 9;
     <span class="btn_ov01"><span class="ov_txt">전체그룹</span><span class="ov_num"> <?php echo number_format($total_count) ?>개</span></span>
 </div>
 
-<form name="fsearch" id="fsearch" class="local_sch01 local_sch" method="get">
+<form name="fsearch" id="fsearch" class="boardgroup-search local_sch01 local_sch" method="get">
     <label for="sfl" class="sound_only">검색대상</label>
     <select name="sfl" id="sfl">
         <option value="gr_subject" <?php echo get_selected($sfl, "gr_subject"); ?>>제목</option>
@@ -99,7 +111,7 @@ $colspan = 9;
 </form>
 
 
-<form name="fboardgrouplist" id="fboardgrouplist" action="<?php echo G5_ADMIN_URL; ?>/boardgroup_list_update" onsubmit="return fboardgrouplist_submit(this);" method="post">
+<form name="fboardgrouplist" id="fboardgrouplist" class="boardgroup-list-form" action="<?php echo G5_ADMIN_URL; ?>/boardgroup_list_update" onsubmit="return fboardgrouplist_submit(this);" method="post" data-floating-actions="off">
     <input type="hidden" name="sst" value="<?php echo $sst ?>">
     <input type="hidden" name="sod" value="<?php echo $sod ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
@@ -107,7 +119,7 @@ $colspan = 9;
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="token" value="">
 
-    <div class="tbl_head01 tbl_wrap">
+    <div class="boardgroup-list-scroll tbl_head01 tbl_wrap">
         <table>
             <caption><?php echo $g5['title']; ?> 목록</caption>
             <thead>
@@ -142,18 +154,18 @@ $colspan = 9;
                     $bg = 'bg' . ($i % 2);
                 ?>
 
-                    <tr class="<?php echo $bg; ?>">
-                        <td class="td_chk">
+                    <tr class="<?php echo $bg; ?> boardgroup-card">
+                        <td class="td_chk boardgroup-col-check" data-label="선택">
                             <input type="hidden" name="group_id[<?php echo $i ?>]" value="<?php echo $row['gr_id'] ?>">
                             <label for="chk_<?php echo $i; ?>" class="sound_only"><?php echo get_text($row['gr_subject']); ?> 그룹</label>
                             <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>">
                         </td>
-                        <td class="td_left"><a href="<?php echo G5_BBS_URL ?>/group.php?gr_id=<?php echo $row['gr_id'] ?>"><?php echo $row['gr_id'] ?></a></td>
-                        <td class="td_input">
+                        <td class="td_left boardgroup-col-id" data-label="그룹 ID"><a href="<?php echo G5_BBS_URL ?>/group.php?gr_id=<?php echo $row['gr_id'] ?>"><?php echo $row['gr_id'] ?></a></td>
+                        <td class="td_input boardgroup-col-subject" data-label="그룹 제목">
                             <label for="gr_subject_<?php echo $i; ?>" class="sound_only">그룹제목</label>
                             <input type="text" name="gr_subject[<?php echo $i ?>]" value="<?php echo get_text($row['gr_subject']) ?>" id="gr_subject_<?php echo $i ?>" class="tbl_input">
                         </td>
-                        <td class="td_mng td_input">
+                        <td class="td_mng td_input boardgroup-col-admin" data-label="그룹 관리자">
                             <?php if ($is_admin == 'super') { ?>
                                 <label for="gr_admin_<?php echo $i; ?>" class="sound_only">그룹관리자</label>
                                 <input type="text" name="gr_admin[<?php echo $i ?>]" value="<?php echo get_sanitize_input($row['gr_admin']); ?>" id="gr_admin_<?php echo $i ?>" class="tbl_input" size="10" maxlength="20">
@@ -161,28 +173,29 @@ $colspan = 9;
                                 <input type="hidden" name="gr_admin[<?php echo $i ?>]" value="<?php echo get_sanitize_input($row['gr_admin']); ?>"><?php echo get_text($row['gr_admin']); ?>
                             <?php } ?>
                         </td>
-                        <td class="td_num"><a href="<?php echo G5_ADMIN_URL ?>/board_list?sfl=a.gr_id&amp;stx=<?php echo $row['gr_id'] ?>"><?php echo $row2['cnt'] ?></a></td>
-                        <td class="td_numsmall">
+                        <td class="td_num boardgroup-col-count" data-label="게시판"><a href="<?php echo G5_ADMIN_URL ?>/board_list?sfl=a.gr_id&amp;stx=<?php echo $row['gr_id'] ?>"><?php echo $row2['cnt'] ?></a></td>
+                        <td class="td_numsmall boardgroup-col-access" data-label="접근 사용">
                             <label for="gr_use_access_<?php echo $i; ?>" class="sound_only">접근회원 사용</label>
                             <input type="checkbox" name="gr_use_access[<?php echo $i ?>]" <?php echo $row['gr_use_access'] ? 'checked' : '' ?> value="1" id="gr_use_access_<?php echo $i ?>">
                         </td>
-                        <td class="td_num"><a href="<?php echo G5_ADMIN_URL ?>/boardgroupmember_list?gr_id=<?php echo $row['gr_id'] ?>"><?php echo $row1['cnt'] ?></a></td>
-                        <td class="td_numsmall">
+                        <td class="td_num boardgroup-col-members" data-label="접근 회원"><a href="<?php echo G5_ADMIN_URL ?>/boardgroupmember_list?gr_id=<?php echo $row['gr_id'] ?>"><?php echo $row1['cnt'] ?></a></td>
+                        <td class="td_numsmall boardgroup-col-order" data-label="출력 순서">
                             <label for="gr_order_<?php echo $i; ?>" class="sound_only">메인메뉴 출력순서</label>
                             <input type="text" name="gr_order[<?php echo $i ?>]" value="<?php echo $row['gr_order'] ?>" id="gr_order_<?php echo $i ?>" class="tbl_input" size="2">
                         </td>
-                        <td class="td_mng td_mng_s"><?php echo $s_upd ?></td>
+                        <td class="td_mng td_mng_s boardgroup-col-manage"><?php echo $s_upd ?></td>
                     </tr>
                 <?php
                 }
                 if ($i == 0) {
-                    echo '<tr><td colspan="' . $colspan . '" class="empty_table">자료가 없습니다.</td></tr>';
+                    echo '<tr class="boardgroup-empty"><td colspan="' . $colspan . '" class="empty_table">자료가 없습니다.</td></tr>';
                 }
                 ?>
+            </tbody>
         </table>
     </div>
 
-    <div class="btn_fixed_top">
+    <div class="boardgroup-list-actions btn_fixed_top">
         <input type="submit" name="act_button" onclick="document.pressed=this.value" value="선택수정" class="btn btn_02">
         <input type="submit" name="act_button" onclick="document.pressed=this.value" value="선택삭제" class="btn btn_02">
         <a href="<?php echo G5_ADMIN_URL ?>/boardgroup_form" class="btn btn_01">게시판그룹 추가</a>
@@ -198,8 +211,31 @@ $colspan = 9;
 
 <?php
 $pagelist = get_paging(G5_IS_MOBILE ? $config['cf_mobile_pages'] : $config['cf_write_pages'], $page, $total_page, G5_ADMIN_URL.'/boardgroup_list?'.$qstr.'&amp;page=');
-echo $pagelist;
 ?>
+<div class="boardgroup-desktop-pagination"><?php echo $pagelist; ?></div>
+<?php if ($total_page > 1): ?>
+<nav class="boardgroup-mobile-pagination" aria-label="게시판 그룹 페이지 이동">
+    <?php if ($page > 1): ?>
+        <a href="<?php echo $h($page_url(1)) ?>">처음</a>
+        <a href="<?php echo $h($page_url($page - 1)) ?>">이전</a>
+    <?php else: ?>
+        <span class="is-disabled">처음</span>
+        <span class="is-disabled">이전</span>
+    <?php endif; ?>
+    <label class="current-page">
+        <input type="number" value="<?php echo (int)$page ?>" min="1" max="<?php echo (int)$total_page ?>"
+               inputmode="numeric" data-current-page="<?php echo (int)$page ?>"
+               data-page-url="<?php echo $h($page_input_url) ?>" aria-label="이동할 페이지">
+    </label>
+    <?php if ($page < $total_page): ?>
+        <a href="<?php echo $h($page_url($page + 1)) ?>">다음</a>
+        <a href="<?php echo $h($page_url($total_page)) ?>">맨끝</a>
+    <?php else: ?>
+        <span class="is-disabled">다음</span>
+        <span class="is-disabled">맨끝</span>
+    <?php endif; ?>
+</nav>
+<?php endif; ?>
 
 <script>
     function fboardgrouplist_submit(f) {
@@ -216,6 +252,30 @@ echo $pagelist;
 
         return true;
     }
+
+    document.querySelectorAll('.boardgroup-mobile-pagination .current-page input').forEach(function (input) {
+        function moveToPage() {
+            var current = Number(input.dataset.currentPage);
+            var target = Number(input.value);
+            var max = Number(input.max);
+
+            if (!Number.isInteger(target) || target < 1 || target > max) {
+                input.value = current;
+                input.classList.add('is-invalid');
+                window.setTimeout(function () { input.classList.remove('is-invalid'); }, 700);
+                return;
+            }
+            if (target !== current) window.location.href = input.dataset.pageUrl + target;
+        }
+
+        input.addEventListener('change', moveToPage);
+        input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                moveToPage();
+            }
+        });
+    });
 </script>
 
 <?php
