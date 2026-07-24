@@ -37,15 +37,19 @@ if ($w === 'u') {
 }
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$editor_without_markers = static function (string $id, string $content): string {
+    $html = editor_html($id, $content);
+    return preg_replace('/<span class="sound_only">웹\s*에디터\s*(?:시작|끝)<\/span>/', '', $html) ?? $html;
+};
 $himg_exists = $fm['fm_id'] && file_exists(G5_DATA_PATH.'/faq/'.$fm['fm_id'].'_h');
 $timg_exists = $fm['fm_id'] && file_exists(G5_DATA_PATH.'/faq/'.$fm['fm_id'].'_t');
 
 admin_layout_start($page_title, 'scf_faq');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="faq-master-form-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
-    <header class="flex items-center gap-3 mb-6">
+    <header class="faq-master-form-header flex items-center gap-3 mb-6">
         <a href="/admin/faqmasterlist" class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="목록으로">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         </a>
@@ -55,7 +59,7 @@ admin_layout_start($page_title, 'scf_faq');
         </div>
     </header>
 
-    <form id="frmfaqmasterform" action="/admin/faqmasterformupdate" method="post" enctype="multipart/form-data" class="space-y-4">
+    <form id="frmfaqmasterform" action="/admin/faqmasterformupdate" method="post" enctype="multipart/form-data" class="faq-master-form space-y-4">
         <input type="hidden" name="w"     value="<?php echo $h($w) ?>">
         <input type="hidden" name="fm_id" value="<?php echo (int)$fm['fm_id'] ?>">
         <input type="hidden" name="token" value="<?php echo get_admin_token() ?>">
@@ -111,22 +115,22 @@ admin_layout_start($page_title, 'scf_faq');
 
         <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
             <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">PC 상단 내용</h3>
-            <?php echo editor_html('fm_head_html', get_text(html_purifier($fm['fm_head_html']), 0)) ?>
+            <?php echo $editor_without_markers('fm_head_html', get_text(html_purifier($fm['fm_head_html']), 0)) ?>
         </section>
         <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
             <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">PC 하단 내용</h3>
-            <?php echo editor_html('fm_tail_html', get_text(html_purifier($fm['fm_tail_html']), 0)) ?>
+            <?php echo $editor_without_markers('fm_tail_html', get_text(html_purifier($fm['fm_tail_html']), 0)) ?>
         </section>
         <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
             <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">모바일 상단 내용</h3>
-            <?php echo editor_html('fm_mobile_head_html', get_text(html_purifier($fm['fm_mobile_head_html']), 0)) ?>
+            <?php echo $editor_without_markers('fm_mobile_head_html', get_text(html_purifier($fm['fm_mobile_head_html']), 0)) ?>
         </section>
         <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
             <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">모바일 하단 내용</h3>
-            <?php echo editor_html('fm_mobile_tail_html', get_text(html_purifier($fm['fm_mobile_tail_html']), 0)) ?>
+            <?php echo $editor_without_markers('fm_mobile_tail_html', get_text(html_purifier($fm['fm_mobile_tail_html']), 0)) ?>
         </section>
 
-        <div class="flex items-center justify-end gap-2">
+        <div class="faq-master-form-actions flex items-center justify-end gap-2">
             <a href="/admin/faqmasterlist" class="h-10 px-5 inline-flex items-center rounded-md border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">취소</a>
             <button type="submit" class="h-10 px-6 inline-flex items-center rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-sm font-semibold">저장</button>
         </div>
