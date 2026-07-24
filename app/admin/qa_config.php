@@ -14,7 +14,7 @@ auth_check_menu($auth, $sub_menu, 'r');
 $g5['title'] = '1:1문의 설정';
 admin_layout_start($g5['title'], 'qa_config');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="qa-config-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -143,13 +143,13 @@ if (!isset($qaconfig['qa_include_head'])) {
 }
 ?>
 
-<form name="fqaconfigform" id="fqaconfigform" method="post" onsubmit="return fqaconfigform_submit(this);" autocomplete="off">
+<form name="fqaconfigform" id="fqaconfigform" class="qa-config-form" method="post" onsubmit="return fqaconfigform_submit(this);" autocomplete="off">
     <input type="hidden" name="token" value="" id="token">
 
     <section id="anc_cf_qa_config">
         <h2 class="h2_frm">1:1문의 설정</h2>
 
-        <div class="tbl_frm01 tbl_wrap">
+        <div class="qa-config-table tbl_frm01 tbl_wrap">
             <table>
                 <caption>1:1문의 설정</caption>
                 <colgroup>
@@ -321,7 +321,7 @@ if (!isset($qaconfig['qa_include_head'])) {
         </div>
     </section>
 
-    <div class="btn_fixed_top">
+    <div class="qa-config-actions btn_fixed_top">
         <input type="submit" value="확인" class="btn_submit btn" accesskey="s">
     </div>
 
