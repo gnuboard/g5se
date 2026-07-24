@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 56" role="img" aria-labelledby="title">
+  <title id="title">NHN KCP</title>
+  <rect width="180" height="56" rx="10" fill="#fff"/>
+  <rect x="1" y="1" width="178" height="54" rx="9" fill="none" stroke="#e2e8f0"/>
+  <text x="90" y="35" text-anchor="middle" fill="#172b4d" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" letter-spacing="-.5">NHN KCP</text>
+</svg>

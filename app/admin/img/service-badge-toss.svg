@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 56" role="img" aria-labelledby="title">
+  <title id="title">토스페이먼츠</title>
+  <rect width="180" height="56" rx="10" fill="#fff"/>
+  <rect x="1" y="1" width="178" height="54" rx="9" fill="none" stroke="#e2e8f0"/>
+  <text x="90" y="34" text-anchor="middle" fill="#3182f6" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="20" font-weight="700" letter-spacing="-1">토스페이먼츠</text>
+</svg>

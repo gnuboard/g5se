@@ -13,8 +13,12 @@ $g5['title'] = '부가서비스';
 admin_layout_start($g5['title'], 'service');
 ?>
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
-<header class="flex items-center gap-3 mb-5">
+<header class="flex flex-col items-start gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
+    <a href="https://sir.kr/services" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-md bg-blue-600 hover:bg-blue-700 text-sm font-medium text-white no-underline transition-colors" aria-label="PG 서비스 전체보기">
+        PG 서비스 전체보기
+        <span aria-hidden="true">↗</span>
+    </a>
 </header>
 <div class="legacy-admin-content space-y-4">
 
@@ -27,9 +31,10 @@ admin_layout_start($g5['title'], 'service');
         <h3>신용카드 전자결제 서비스<br><span>(계좌이체, 가상계좌 결제 포함)</span></h3>
 
         <ul>
-            <li><a href="http://sir.kr/main/service/p_pg.php" target="_blank"><img src="<?php echo G5_ADMIN_URL ?>/img/svc_btn_01.jpg" alt="KCP 신용카드 전자결제 신청하기"></a></li>
-            <li><a href="http://sir.kr/main/service/lg_pg.php" target="_blank"><img src="<?php echo G5_ADMIN_URL ?>/img/svc_btn_02.jpg?v2" alt="토스페이먼츠 전자결제 신청하기"></a></li>
-            <li class="last"><a href="http://sir.kr/main/service/inicis_pg.php" target="_blank"><img src="<?php echo G5_ADMIN_URL ?>/img/svc_btn_06.jpg" alt="KG 이니시스 전자결제 신청하기"></a></li>
+            <li><a href="https://sir.kr/services/pg/inicis" target="_blank" rel="noopener noreferrer"><img src="<?php echo G5_ADMIN_URL ?>/img/service-badge-inicis.svg" alt="KG이니시스 전자결제 서비스"></a></li>
+            <li><a href="https://sir.kr/services/pg/kcp" target="_blank" rel="noopener noreferrer"><img src="<?php echo G5_ADMIN_URL ?>/img/service-badge-kcp.svg" alt="NHN KCP 전자결제 서비스"></a></li>
+            <li><a href="https://sir.kr/services/pg/nice" target="_blank" rel="noopener noreferrer"><img src="<?php echo G5_ADMIN_URL ?>/img/service-badge-nice.svg" alt="나이스페이먼츠 전자결제 서비스"></a></li>
+            <li><a href="https://sir.kr/services/pg/toss" target="_blank" rel="noopener noreferrer"><img src="<?php echo G5_ADMIN_URL ?>/img/service-badge-toss.svg" alt="토스페이먼츠 전자결제 서비스"></a></li>
         </ul>
     </div>
 
@@ -37,8 +42,8 @@ admin_layout_start($g5['title'], 'service');
         <h3>본인확인 서비스</h3>
 
         <ul>
-            <li><a href="http://sir.kr/main/service/p_cert.php" target="_blank"><img src="<?php echo G5_ADMIN_URL ?>/img/svc_btn_01.jpg" alt="KCP 신청하기"></a></li>
-            <li><a href="http://sir.kr/main/service/inicis_cert.php" target="_blank"><img src="<?php echo G5_ADMIN_URL ?>/img/svc_btn_06.jpg" alt="KG이니시스 신청하기"></a></li>
+            <li><a href="https://sir.kr/services/auth/kcp" target="_blank" rel="noopener noreferrer"><img src="<?php echo G5_ADMIN_URL ?>/img/service-badge-kcp.svg" alt="NHN KCP 휴대폰 본인확인"></a></li>
+            <li><a href="https://sir.kr/services/auth/inicis" target="_blank" rel="noopener noreferrer"><img src="<?php echo G5_ADMIN_URL ?>/img/service-badge-inicis.svg" alt="KG이니시스 통합인증"></a></li>
         </ul>
     </div>
 
@@ -48,7 +53,7 @@ admin_layout_start($g5['title'], 'service');
                 <h3>SMS 문자 서비스</h3>
                 <p>주문이나 배송시에 상점운영자 또는 고객에게 휴대폰으로 단문메세지 (최대 한글 40자, 영문 80자)를 발송합니다.</p>
             </div>
-            <div class="svc_btn2"><a href="http://icodekorea.com/res/join_company_fix_a.php?sellid=sir2" target="_blank"><img src="<?php echo G5_ADMIN_URL ?>/img/svc_btn_05.jpg" alt="아이코드 SMS 서비스 신청하기"></a></div>
+            <div class="svc_btn2"><a href="https://sir.kr/services/message/icode" target="_blank" rel="noopener noreferrer" aria-label="아이코드 SMS/LMS 문자서비스 자세히 보기">아이코드 <span aria-hidden="true">→</span></a></div>
         </div>
 
     </div>
