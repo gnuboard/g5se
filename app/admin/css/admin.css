@@ -6190,6 +6190,180 @@ main .admin-floating-actions {
     background-color: #ffffff !important;
 }
 
+/* 게시판 그룹 생성·수정 모바일 폼 */
+@media (max-width: 640px) {
+    .boardgroup-form-page {
+        min-width: 0;
+        padding: 0.875rem 0.875rem 6.5rem;
+        overflow-x: hidden;
+    }
+
+    .boardgroup-form-page > header {
+        margin-bottom: 0.875rem;
+    }
+
+    .boardgroup-form-page > header h2 {
+        font-size: 1.125rem;
+    }
+
+    .boardgroup-form-page .legacy-admin-content,
+    .boardgroup-form-page .boardgroup-form,
+    .boardgroup-form-page .boardgroup-form-table {
+        min-width: 0;
+        width: 100%;
+        overflow: visible;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table table,
+    .boardgroup-form-page .boardgroup-form-table tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table colgroup {
+        display: none;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table tr {
+        display: block;
+        margin-bottom: 0.625rem;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+
+    [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table tr {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
+    }
+
+    .boardgroup-form-page .boardgroup-form-table th,
+    .boardgroup-form-page .boardgroup-form-table td {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        border: 0;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table th {
+        padding: 0.75rem 0.875rem 0.4rem;
+        background: var(--slate-50);
+        font-size: 0.8125rem;
+        line-height: 1.35;
+    }
+
+    [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table th {
+        background: #111c29;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table td {
+        padding: 0.625rem 0.875rem 0.875rem;
+        font-size: 0.8125rem;
+        overflow-wrap: anywhere;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table input[type="text"] {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        min-height: 2.625rem;
+        margin: 0;
+        font-size: 0.8125rem;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table .btn_frmline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 2.5rem;
+        margin: 0.5rem 0 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        text-align: center;
+        white-space: normal;
+        word-break: keep-all;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table .frm_info {
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table input[type="checkbox"] {
+        width: 1.125rem;
+        height: 1.125rem;
+        margin: 0 0.25rem 0 0;
+        vertical-align: -0.2rem;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table .i-chk-label {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.25rem;
+        padding: 0 0.25rem;
+        font-size: 0.8125rem;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table .td_extra label {
+        display: block;
+        margin: 0 0 0.375rem;
+        color: var(--slate-600);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table .td_extra label {
+        color: var(--slate-400);
+    }
+
+    .boardgroup-form-page .boardgroup-form-table .td_extra input + label {
+        margin-top: 0.75rem;
+    }
+
+    .boardgroup-form-page .boardgroup-form-description {
+        margin-top: 0.875rem;
+        padding: 0.875rem;
+        font-size: 0.75rem;
+        line-height: 1.55;
+    }
+
+    .boardgroup-form-page .admin-floating-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding: 0.625rem;
+    }
+
+    .boardgroup-form-page .admin-floating-actions > a,
+    .boardgroup-form-page .admin-floating-actions > input[type="submit"] {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.75rem;
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 700;
+    }
+
+    .boardgroup-form-page .admin-floating-actions > a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .boardgroup-form-page .admin-floating-actions #admin-scroll-top {
+        display: none;
+    }
+}
+
 /* 게시판 그룹 목록 모바일 카드 */
 .boardgroup-mobile-pagination {
     display: none;

@@ -47,13 +47,13 @@ $group_member_count = $row1['cnt'];
 $g5['title'] = $html_title;
 admin_layout_start($g5['title'], 'boardgroup');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="boardgroup-form-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
 <div class="legacy-admin-content space-y-4">
 
-<form name="fboardgroup" id="fboardgroup" action="<?php echo G5_ADMIN_URL; ?>/boardgroup_form_update" onsubmit="return fboardgroup_check(this);" method="post" autocomplete="off">
+<form name="fboardgroup" id="fboardgroup" class="boardgroup-form" action="<?php echo G5_ADMIN_URL; ?>/boardgroup_form_update" onsubmit="return fboardgroup_check(this);" method="post" autocomplete="off">
     <input type="hidden" name="w" value="<?php echo $w ?>">
     <input type="hidden" name="sfl" value="<?php echo $sfl ?>">
     <input type="hidden" name="stx" value="<?php echo $stx ?>">
@@ -62,7 +62,7 @@ admin_layout_start($g5['title'], 'boardgroup');
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="token" value="">
 
-    <div class="tbl_frm01 tbl_wrap">
+    <div class="boardgroup-form-table tbl_frm01 tbl_wrap">
         <table>
             <caption><?php echo $g5['title']; ?></caption>
             <colgroup>
@@ -144,14 +144,14 @@ admin_layout_start($g5['title'], 'boardgroup');
         </table>
     </div>
 
-    <div class="btn_fixed_top">
+    <div class="boardgroup-form-actions btn_fixed_top">
         <a href="<?php echo G5_ADMIN_URL ?>/boardgroup_list?<?php echo $qstr ?>" class="btn btn_02">목록</a>
         <input type="submit" class="btn_submit btn" accesskey="s" value="확인">
     </div>
 
 </form>
 
-<div class="local_desc01 local_desc">
+<div class="boardgroup-form-description local_desc01 local_desc">
     <p>
         게시판을 생성하시려면 1개 이상의 게시판그룹이 필요합니다.<br>
         게시판그룹을 이용하시면 더 효과적으로 게시판을 관리할 수 있습니다.
