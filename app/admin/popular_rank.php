@@ -73,8 +73,7 @@ $colspan = 3;
             changeYear: true,
             dateFormat: "yy-mm-dd",
             showButtonPanel: true,
-            yearRange: "c-99:c+99",
-            maxDate: "+0d"
+            yearRange: "c-99:c+99"
         });
     });
 </script>
@@ -84,17 +83,17 @@ $colspan = 3;
     <span class="btn_ov01"><span class="ov_txt">건수</span><span class="ov_num"> <?php echo number_format($total_count) ?>개</span></span>
 </div>
 
-<form name="fsearch" id="fsearch" class="popular-rank-search local_sch02 local_sch" method="get">
+<form name="fsearch" id="fsearch" class="popular-rank-search local_sch03 local_sch" method="get">
     <div class="popular-rank-search-fields sch_last">
         <strong>기간별검색</strong>
         <div class="popular-rank-date-range">
             <label for="fr_date" class="sound_only">시작일</label>
-            <input type="text" name="fr_date" value="<?php echo $h($fr_date) ?>" id="fr_date" class="frm_input" size="11" maxlength="10">
+            <input type="text" name="fr_date" value="<?php echo $h($fr_date) ?>" id="fr_date" class="frm_input" size="11" maxlength="10" autocomplete="off" inputmode="numeric">
             <span aria-hidden="true">~</span>
             <label for="to_date" class="sound_only">종료일</label>
-            <input type="text" name="to_date" value="<?php echo $h($to_date) ?>" id="to_date" class="frm_input" size="11" maxlength="10">
+            <input type="text" name="to_date" value="<?php echo $h($to_date) ?>" id="to_date" class="frm_input" size="11" maxlength="10" autocomplete="off" inputmode="numeric">
         </div>
-        <input type="submit" class="btn_sch2" value="검색">
+        <input type="submit" class="btn_submit" value="검색">
     </div>
 </form>
 
