@@ -6713,6 +6713,11 @@ main .admin-floating-actions {
         color: var(--slate-600);
         background: var(--slate-950);
     }
+
+    body:has(.popular-list-page) #admin-scroll-top:not(.in-bar) {
+        right: 0.875rem;
+        bottom: 4.5rem;
+    }
 }
 
 /* 게시판 그룹 생성·수정 모바일 폼 */
