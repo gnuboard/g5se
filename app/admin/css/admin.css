@@ -6217,8 +6217,21 @@ main .admin-floating-actions {
     .boardgroup-form-page .boardgroup-form-table table,
     .boardgroup-form-page .boardgroup-form-table tbody {
         display: block;
+        box-sizing: border-box;
         width: 100%;
         min-width: 0;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table table {
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+
+    [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table table {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
     }
 
     .boardgroup-form-page .boardgroup-form-table colgroup {
@@ -6227,16 +6240,21 @@ main .admin-floating-actions {
 
     .boardgroup-form-page .boardgroup-form-table tr {
         display: block;
-        margin-bottom: 0.625rem;
-        overflow: hidden;
-        border: 1px solid var(--slate-200);
-        border-radius: 0.75rem;
-        background: #fff;
+        margin: 0;
+        padding: 0.75rem 0.875rem 0.875rem;
+        border: 0;
+        border-bottom: 1px solid var(--slate-200);
+        border-radius: 0;
+        background: transparent;
     }
 
     [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table tr {
-        border-color: var(--slate-800);
-        background: var(--slate-900);
+        border-bottom-color: var(--slate-800);
+        background: transparent;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table tr:last-child {
+        border-bottom: 0;
     }
 
     .boardgroup-form-page .boardgroup-form-table th,
@@ -6249,20 +6267,30 @@ main .admin-floating-actions {
     }
 
     .boardgroup-form-page .boardgroup-form-table th {
-        padding: 0.75rem 0.875rem 0.4rem;
-        background: var(--slate-50);
-        font-size: 0.8125rem;
+        padding: 0 0 0.5rem;
+        background: transparent;
+        color: var(--slate-600);
+        font-size: 0.75rem;
+        font-weight: 700;
         line-height: 1.35;
     }
 
     [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table th {
-        background: #111c29;
+        background: transparent;
+        color: var(--slate-300);
     }
 
     .boardgroup-form-page .boardgroup-form-table td {
-        padding: 0.625rem 0.875rem 0.875rem;
+        padding: 0;
         font-size: 0.8125rem;
         overflow-wrap: anywhere;
+    }
+
+    .boardgroup-form-page .boardgroup-form-table th label {
+        display: inline-flex;
+        align-items: center;
+        color: inherit;
+        font: inherit;
     }
 
     .boardgroup-form-page .boardgroup-form-table input[type="text"] {
@@ -6315,9 +6343,9 @@ main .admin-floating-actions {
     .boardgroup-form-page .boardgroup-form-table .td_extra label {
         display: block;
         margin: 0 0 0.375rem;
-        color: var(--slate-600);
-        font-size: 0.75rem;
-        font-weight: 600;
+        color: var(--slate-500);
+        font-size: 0.6875rem;
+        font-weight: 700;
     }
 
     [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table .td_extra label {
