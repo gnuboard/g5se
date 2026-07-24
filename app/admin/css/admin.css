@@ -6471,10 +6471,13 @@ main .admin-floating-actions {
         box-sizing: border-box;
         width: 100% !important;
         min-width: 0 !important;
-        height: 2.625rem;
+        height: 2.625rem !important;
+        min-height: 2.625rem !important;
         margin: 0;
         padding: 0 0.625rem;
         font-size: 0.8125rem;
+        line-height: 1.2;
+        vertical-align: middle;
     }
 
     .popular-list-page .popular-search-fields input[type="submit"] {
