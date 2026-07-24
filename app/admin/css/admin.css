@@ -6424,6 +6424,277 @@ main .admin-floating-actions {
     background-color: #ffffff !important;
 }
 
+/* 인기검색어 순위 모바일 UI */
+.popular-rank-mobile-pagination {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .popular-rank-page {
+        min-width: 0;
+        padding: 0.875rem;
+        overflow-x: hidden;
+    }
+
+    .popular-rank-page > header {
+        margin-bottom: 0.875rem;
+    }
+
+    .popular-rank-page > header h2 {
+        font-size: 1.125rem;
+    }
+
+    .popular-rank-page .local_ov {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.625rem;
+    }
+
+    .popular-rank-page .popular-rank-search {
+        width: 100%;
+        margin-bottom: 0.875rem;
+        padding: 0;
+        border: 0;
+    }
+
+    .popular-rank-page .popular-rank-search-fields {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 4rem;
+        gap: 0.625rem 0.5rem;
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: var(--slate-50);
+    }
+
+    [data-theme="dark"] .popular-rank-page .popular-rank-search-fields {
+        border-color: var(--slate-700);
+        background: var(--slate-800);
+    }
+
+    .popular-rank-page .popular-rank-search-fields > strong {
+        grid-column: 1 / -1;
+        font-size: 0.8125rem;
+    }
+
+    .popular-rank-page .popular-rank-date-range {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 0.375rem;
+        min-width: 0;
+    }
+
+    .popular-rank-page .popular-rank-date-range input,
+    .popular-rank-page .popular-rank-search-fields input[type="submit"] {
+        box-sizing: border-box;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 2.625rem !important;
+        min-height: 2.625rem !important;
+        margin: 0;
+        padding: 0 0.5rem;
+        font-size: 0.8125rem;
+        line-height: 1.2;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .popular-rank-page .popular-rank-list,
+    .popular-rank-page .popular-rank-scroll {
+        min-width: 0;
+        overflow: visible;
+    }
+
+    .popular-rank-page .popular-rank-scroll table,
+    .popular-rank-page .popular-rank-scroll tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .popular-rank-page .popular-rank-scroll thead {
+        display: none;
+    }
+
+    .popular-rank-page .popular-rank-card {
+        display: grid;
+        grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 0.625rem;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+
+    [data-theme="dark"] .popular-rank-page .popular-rank-card {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
+    }
+
+    .popular-rank-page .popular-rank-card > td {
+        display: flex;
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 0.75rem 0.625rem;
+        border: 0;
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: left;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .popular-rank-page .popular-rank-card > td::before {
+        content: attr(data-label);
+        color: var(--slate-500);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .popular-rank-page .popular-rank-number {
+        align-items: center;
+        align-self: stretch;
+        justify-content: center;
+        border-right: 1px solid var(--slate-200) !important;
+        color: var(--admin-primary-700);
+        font-size: 1rem;
+        font-weight: 800;
+        text-align: center !important;
+    }
+
+    [data-theme="dark"] .popular-rank-page .popular-rank-number {
+        border-right-color: var(--slate-800) !important;
+        color: var(--admin-primary-300);
+    }
+
+    .popular-rank-page .popular-rank-number::before {
+        display: none;
+    }
+
+    .popular-rank-page .popular-rank-word {
+        font-size: 0.9375rem;
+        font-weight: 700;
+    }
+
+    .popular-rank-page .popular-rank-count {
+        align-items: flex-end;
+        color: var(--slate-700);
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-align: right !important;
+    }
+
+    [data-theme="dark"] .popular-rank-page .popular-rank-count {
+        color: var(--slate-200);
+    }
+
+    .popular-rank-page .popular-rank-empty {
+        display: block;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+    }
+
+    .popular-rank-page .popular-rank-empty td {
+        display: block;
+        padding: 2.5rem 1rem;
+    }
+
+    .popular-rank-page .popular-rank-desktop-pagination {
+        display: none;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination {
+        display: grid;
+        grid-template-columns: auto auto minmax(4rem, 1fr) auto auto;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 1rem 0;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination a,
+    .popular-rank-page .popular-rank-mobile-pagination > span,
+    .popular-rank-page .popular-rank-mobile-pagination .current-page {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 0;
+        height: 2.5rem;
+        padding: 0 0.5rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.5rem;
+        background: #fff;
+        color: var(--slate-700);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination .current-page {
+        border-color: var(--admin-primary-600);
+        background: var(--admin-primary-600);
+        color: #fff;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination .current-page input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        padding: 0 0.25rem;
+        border: 0 !important;
+        outline: 0;
+        box-shadow: none !important;
+        background: transparent !important;
+        color: inherit !important;
+        font: inherit;
+        font-size: 1rem;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+        appearance: textfield;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination input::-webkit-inner-spin-button,
+    .popular-rank-page .popular-rank-mobile-pagination input::-webkit-outer-spin-button {
+        margin: 0;
+        appearance: none;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination input.is-invalid {
+        border-radius: 0.35rem;
+        box-shadow: inset 0 0 0 2px #ef4444 !important;
+    }
+
+    .popular-rank-page .popular-rank-mobile-pagination .is-disabled {
+        color: var(--slate-400);
+        background: var(--slate-50);
+    }
+
+    [data-theme="dark"] .popular-rank-page .popular-rank-mobile-pagination a,
+    [data-theme="dark"] .popular-rank-page .popular-rank-mobile-pagination > span {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+        color: var(--slate-300);
+    }
+
+    [data-theme="dark"] .popular-rank-page .popular-rank-mobile-pagination .is-disabled {
+        color: var(--slate-600);
+        background: var(--slate-950);
+    }
+
+    body:has(.popular-rank-page) #admin-scroll-top:not(.in-bar) {
+        right: 0.875rem;
+        bottom: 4.5rem;
+    }
+}
+
 /* 인기검색어 목록 모바일 카드 */
 .popular-mobile-pagination {
     display: none;
