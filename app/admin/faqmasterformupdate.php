@@ -26,8 +26,6 @@ $fm_timg_del = isset($_POST['fm_timg_del']) ? (int) $_POST['fm_timg_del'] : 0;
 $fm_subject = isset($_POST['fm_subject']) ? strip_tags(clean_xss_attributes($_POST['fm_subject'])) : '';
 $fm_head_html = isset($_POST['fm_head_html']) ? $_POST['fm_head_html'] : '';
 $fm_tail_html = isset($_POST['fm_tail_html']) ? $_POST['fm_tail_html'] : '';
-$fm_mobile_head_html = isset($_POST['fm_mobile_head_html']) ? $_POST['fm_mobile_head_html'] : '';
-$fm_mobile_tail_html = isset($_POST['fm_mobile_tail_html']) ? $_POST['fm_mobile_tail_html'] : '';
 $fm_order = isset($_POST['fm_order']) ? (int) $_POST['fm_order'] : 0;
 
 if ($fm_himg_del) {
@@ -47,8 +45,8 @@ $common_params = [
     ':fm_subject'          => $fm_subject,
     ':fm_head_html'        => $fm_head_html,
     ':fm_tail_html'        => $fm_tail_html,
-    ':fm_mobile_head_html' => $fm_mobile_head_html,
-    ':fm_mobile_tail_html' => $fm_mobile_tail_html,
+    ':fm_mobile_head_html' => $fm_head_html,
+    ':fm_mobile_tail_html' => $fm_tail_html,
     ':fm_order'            => $fm_order,
 ];
 

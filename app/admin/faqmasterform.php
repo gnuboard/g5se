@@ -114,20 +114,12 @@ admin_layout_start($page_title, 'scf_faq');
         </section>
 
         <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
-            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">PC 상단 내용</h3>
+            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">상단 내용</h3>
             <?php echo $editor_without_markers('fm_head_html', get_text(html_purifier($fm['fm_head_html']), 0)) ?>
         </section>
         <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
-            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">PC 하단 내용</h3>
+            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">하단 내용</h3>
             <?php echo $editor_without_markers('fm_tail_html', get_text(html_purifier($fm['fm_tail_html']), 0)) ?>
-        </section>
-        <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
-            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">모바일 상단 내용</h3>
-            <?php echo $editor_without_markers('fm_mobile_head_html', get_text(html_purifier($fm['fm_mobile_head_html']), 0)) ?>
-        </section>
-        <section class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6">
-            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">모바일 하단 내용</h3>
-            <?php echo $editor_without_markers('fm_mobile_tail_html', get_text(html_purifier($fm['fm_mobile_tail_html']), 0)) ?>
         </section>
 
         <div class="faq-master-form-actions flex items-center justify-end gap-2">
