@@ -62,6 +62,8 @@ admin_layout_start($g5['title'], 'boardgroup');
     <input type="hidden" name="page" value="<?php echo $page ?>">
     <input type="hidden" name="token" value="">
 
+    <section class="boardgroup-form-section" aria-labelledby="boardgroup-basic-title">
+    <h2 id="boardgroup-basic-title" class="h2_frm">게시판 그룹 기본 설정</h2>
     <div class="boardgroup-form-table tbl_frm01 tbl_wrap">
         <table>
             <caption><?php echo $g5['title']; ?></caption>
@@ -143,6 +145,7 @@ admin_layout_start($g5['title'], 'boardgroup');
             </tbody>
         </table>
     </div>
+    </section>
 
     <div class="boardgroup-form-actions btn_fixed_top">
         <a href="<?php echo G5_ADMIN_URL ?>/boardgroup_list?<?php echo $qstr ?>" class="btn btn_02">목록</a>
