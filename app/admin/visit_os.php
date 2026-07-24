@@ -13,7 +13,7 @@ $to_date = isset($_REQUEST['to_date']) ? preg_replace('/[^0-9 :\-]/i', '', $_REQ
 $g5['title'] = 'OS별 접속자집계';
 admin_layout_start($g5['title'], 'visit');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="visit-stats-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -120,4 +120,4 @@ while ($row=sql_pdo_fetch_array($result)) {
 </div><!-- /.legacy-admin-content -->
 </main>
 <?php admin_layout_end(); ?>
-<?php 
+<?php
