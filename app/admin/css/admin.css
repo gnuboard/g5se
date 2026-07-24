@@ -6671,17 +6671,19 @@ main .admin-floating-actions {
         color: #fff;
     }
 
-    .popular-list-page .popular-mobile-pagination input {
+    .popular-list-page .popular-mobile-pagination .current-page input {
         box-sizing: border-box;
         width: 100%;
         height: 100%;
         padding: 0 0.25rem;
-        border: 0;
+        border: 0 !important;
         outline: 0;
-        background: transparent;
-        color: inherit;
+        box-shadow: none !important;
+        background: transparent !important;
+        color: inherit !important;
+        font: inherit;
         font-size: 1rem;
-        font-weight: 700;
+        font-variant-numeric: tabular-nums;
         text-align: center;
         appearance: textfield;
     }
