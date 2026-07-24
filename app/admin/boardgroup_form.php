@@ -129,16 +129,8 @@ admin_layout_start($g5['title'], 'boardgroup');
                         ?>
                     </td>
                 </tr>
-                <tr class="boardgroup-extra-toggle-row">
-                    <td colspan="2">
-                        <button type="button" class="boardgroup-extra-toggle admin-rounded" aria-expanded="false">
-                            여분필드 열기
-                            <span aria-hidden="true">⌄</span>
-                        </button>
-                    </td>
-                </tr>
                 <?php for ($i = 1; $i <= 10; $i++) { ?>
-                    <tr class="boardgroup-extra-row">
+                    <tr>
                         <th scope="row">여분필드<?php echo $i ?></th>
                         <td class="td_extra">
                             <label for="gr_<?php echo $i ?>_subj">여분필드 <?php echo $i ?> 제목</label>
@@ -167,18 +159,6 @@ admin_layout_start($g5['title'], 'boardgroup');
 </div>
 
 <script>
-    (function () {
-        var table = document.querySelector('.boardgroup-form-table');
-        var toggle = document.querySelector('.boardgroup-extra-toggle');
-        if (!table || !toggle) return;
-
-        toggle.addEventListener('click', function () {
-            var expanded = table.classList.toggle('is-extra-open');
-            toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-            toggle.firstChild.nodeValue = expanded ? '여분필드 닫기 ' : '여분필드 열기 ';
-        });
-    })();
-
     function fboardgroup_check(f) {
         f.action = <?php echo json_encode(G5_ADMIN_URL.'/boardgroup_form_update') ?>;
         return true;
