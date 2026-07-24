@@ -433,12 +433,35 @@ function initAdminCheckboxLabels()
     });
 }
 
+// 설정 섹션마다 반복되는 탭 바에서 현재 섹션과 같은 탭을 선택 상태로 표시한다.
+function initAdminSectionAnchors()
+{
+    document.querySelectorAll(".legacy-admin-content section[id] > ul.anchor").forEach(function(tabBar) {
+        var section = tabBar.closest("section[id]");
+        if (!section) {
+            return;
+        }
+
+        var sectionHash = "#" + section.id;
+        tabBar.querySelectorAll('a[href^="#"]').forEach(function(link) {
+            var selected = link.getAttribute("href") === sectionHash;
+            link.classList.toggle("active", selected);
+            if (selected) {
+                link.setAttribute("aria-current", "location");
+            } else {
+                link.removeAttribute("aria-current");
+            }
+        });
+    });
+}
+
 $(function() {
     initAdminFloatingActions();
     initAdminScrollTop();
     initAdminPwMaskFallback();
     initAdminFormAutocomplete();
     initAdminCheckboxLabels();
+    initAdminSectionAnchors();
 
     $(document).on("click", "form input:submit, form button:submit", function() {
         var f = this.form;
