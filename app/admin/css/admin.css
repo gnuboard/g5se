@@ -6097,6 +6097,10 @@ main .admin-floating-actions {
 }
 
 /* 게시판 관리: 모바일에서는 벌크 편집 표를 읽기 쉬운 카드로 표시 */
+.board-mobile-pagination {
+    display: none;
+}
+
 @media (max-width: 640px) {
     .board-list-page {
         padding: 1rem 0.75rem;
@@ -6173,7 +6177,7 @@ main .admin-floating-actions {
     .board-list-page .board-list-table tbody tr {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.75rem;
+        gap: 0.625rem 0.75rem;
         margin-bottom: 0.75rem;
         padding: 0.875rem;
         border: 1px solid #e2e8f0;
@@ -6225,12 +6229,52 @@ main .admin-floating-actions {
     }
 
     .board-list-page .board-col-check {
-        align-items: flex-start;
+        order: 1;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .board-list-page .board-col-check::before {
+        margin-right: 0.5rem;
+    }
+
+    .board-list-page .board-col-table {
+        order: 2;
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .board-list-page .board-col-subject {
+        order: 3;
+    }
+
+    .board-list-page .board-col-group {
+        order: 4;
+    }
+
+    .board-list-page .board-col-skin {
+        order: 5;
+    }
+
+    .board-list-page .board-col-point {
+        order: 6;
+    }
+
+    .board-list-page .board-col-toggle {
+        order: 7;
+    }
+
+    .board-list-page .board-col-order {
+        order: 8;
     }
 
     .board-list-page .board-col-subject,
     .board-list-page .board-col-manage {
         grid-column: 1 / -1;
+    }
+
+    .board-list-page .board-col-manage {
+        order: 9;
     }
 
     .board-list-page .board-col-group select,
@@ -6297,7 +6341,85 @@ main .admin-floating-actions {
         text-align: center;
     }
 
-    .board-list-page > nav {
-        margin-top: 0.75rem;
+    .board-list-page .board-desktop-pagination {
+        display: none;
+    }
+
+    .board-list-page .board-mobile-pagination {
+        display: grid;
+        grid-template-columns: auto auto minmax(4rem, 1fr) auto auto;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 0.75rem 0 0;
+    }
+
+    .board-list-page .board-mobile-pagination a,
+    .board-list-page .board-mobile-pagination > span,
+    .board-list-page .board-mobile-pagination .current-page {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 0;
+        height: 2.5rem;
+        padding: 0 0.5rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.5rem;
+        background: #fff;
+        color: var(--slate-700);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .board-list-page .board-mobile-pagination .current-page {
+        border-color: var(--admin-primary-600);
+        background: var(--admin-primary-600);
+        color: #fff;
+    }
+
+    .board-list-page .board-mobile-pagination .current-page input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        padding: 0 0.25rem;
+        border: 0;
+        outline: 0;
+        box-shadow: none;
+        background: transparent;
+        color: inherit;
+        font-size: 1rem !important;
+        font-weight: 700;
+        text-align: center;
+        appearance: textfield;
+    }
+
+    .board-list-page .board-mobile-pagination .current-page input::-webkit-inner-spin-button,
+    .board-list-page .board-mobile-pagination .current-page input::-webkit-outer-spin-button {
+        margin: 0;
+        appearance: none;
+    }
+
+    .board-list-page .board-mobile-pagination .current-page input.is-invalid {
+        border-radius: 0.35rem;
+        box-shadow: inset 0 0 0 2px #ef4444;
+    }
+
+    .board-list-page .board-mobile-pagination .is-disabled {
+        color: var(--slate-400);
+        background: var(--slate-50);
+    }
+
+    [data-theme="dark"] .board-list-page .board-mobile-pagination a,
+    [data-theme="dark"] .board-list-page .board-mobile-pagination > span {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+        color: var(--slate-300);
+    }
+
+    [data-theme="dark"] .board-list-page .board-mobile-pagination .is-disabled {
+        color: var(--slate-600);
+        background: var(--slate-950);
     }
 }
