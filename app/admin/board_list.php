@@ -56,6 +56,7 @@ $total_count = (int)$row['cnt'];
 
 $rows        = (int)$config['cf_page_rows'];
 $total_page  = max(1, (int)ceil($total_count / max(1, $rows)));
+$page        = min($page, $total_page);
 $from_record = ($page - 1) * $rows;
 
 // LIMIT 의 from_record / rows 는 (int) 캐스트된 정수라 보간 안전
@@ -87,15 +88,15 @@ $sort_link = function (string $col, string $default = 'asc') use ($sst, $sod, $s
 admin_layout_start('게시판 관리', 'bbs_board');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="board-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
-    <header class="flex flex-wrap items-center gap-3 mb-5">
+    <header class="board-list-header flex flex-wrap items-center gap-3 mb-5">
         <div>
             <h2 class="text-xl font-bold tracking-tight">게시판 관리</h2>
             <p class="text-xs text-slate-500 mt-0.5">총 <strong class="text-slate-700 dark:text-slate-300"><?php echo number_format($total_count) ?></strong>개 게시판 · 정렬·스킨·포인트 등을 일괄 수정</p>
         </div>
-        <div class="ml-auto flex items-center gap-2">
-            <form method="get" action="/admin/board_list" class="flex items-center gap-2">
+        <div class="board-list-actions ml-auto flex items-center gap-2">
+            <form method="get" action="/admin/board_list" class="board-list-search flex items-center gap-2">
                 <select name="sfl" class="h-9 pl-3 pr-8 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
                     <option value="bo_subject" <?php echo $sfl==='bo_subject'?'selected':'' ?>>제목</option>
                     <option value="bo_table"   <?php echo $sfl==='bo_table'?'selected':'' ?>>TABLE</option>
@@ -109,7 +110,7 @@ admin_layout_start('게시판 관리', 'bbs_board');
                 <?php endif; ?>
             </form>
             <?php if ($is_admin === 'super'): ?>
-            <a href="/admin/board_form" class="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium">
+            <a href="/admin/board_form" class="board-list-add inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 게시판 추가
             </a>
@@ -118,7 +119,7 @@ admin_layout_start('게시판 관리', 'bbs_board');
     </header>
 
     <form name="fboardlist" id="fboardlist" action="/admin/board_list_update" method="post"
-          class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          class="board-list-form rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <input type="hidden" name="sst"   value="<?php echo $h($sst) ?>">
         <input type="hidden" name="sod"   value="<?php echo $h($sod) ?>">
         <input type="hidden" name="sfl"   value="<?php echo $h($sfl) ?>">
@@ -126,8 +127,8 @@ admin_layout_start('게시판 관리', 'bbs_board');
         <input type="hidden" name="page"  value="<?php echo (int)$page ?>">
         <input type="hidden" name="token" value="<?php echo get_admin_token() ?>">
 
-        <div class="overflow-x-auto">
-        <table class="min-w-full text-sm border-collapse">
+        <div class="board-list-scroll overflow-x-auto">
+        <table class="board-list-table min-w-full text-sm border-collapse">
             <thead class="bg-slate-50 dark:bg-slate-800/60 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <tr>
                     <th class="w-10 px-3 py-2.5 text-center">
@@ -156,10 +157,10 @@ admin_layout_start('게시판 관리', 'bbs_board');
             while ($row = sql_pdo_fetch_array($result)) {
                 ?>
                 <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
-                    <td class="px-3 py-2 text-center">
+                    <td class="board-col-check px-3 py-2 text-center" data-label="선택">
                         <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_<?php echo $i ?>" class="rounded border-slate-300">
                     </td>
-                    <td class="px-3 py-2 whitespace-nowrap">
+                    <td class="board-col-group px-3 py-2 whitespace-nowrap" data-label="그룹">
                         <?php if ($is_admin === 'super'): ?>
                             <?php echo str_replace('<select ', '<select class="'.$select_cls.'" ', get_group_select("gr_id[$i]", $row['gr_id'])) ?>
                         <?php else: ?>
@@ -167,24 +168,24 @@ admin_layout_start('게시판 관리', 'bbs_board');
                             <span class="text-slate-700 dark:text-slate-300"><?php echo $h($row['gr_subject'] ?? $row['gr_id']) ?></span>
                         <?php endif; ?>
                     </td>
-                    <td class="px-3 py-2 whitespace-nowrap font-mono text-xs">
+                    <td class="board-col-table px-3 py-2 whitespace-nowrap font-mono text-xs" data-label="TABLE">
                         <input type="hidden" name="board_table[<?php echo $i ?>]" value="<?php echo $h($row['bo_table']) ?>">
                         <a href="<?php echo $h(get_pretty_url($row['bo_table'])) ?>" class="text-admin-primary-700 dark:text-admin-primary-300 hover:underline" target="_blank"><?php echo $h($row['bo_table']) ?></a>
                     </td>
-                    <td class="px-3 py-2 whitespace-nowrap">
+                    <td class="board-col-skin px-3 py-2 whitespace-nowrap" data-label="스킨">
                         <?php echo str_replace('<select ', '<select class="'.$select_cls.'" ', get_skin_select('board', 'bo_skin_'.$i, "bo_skin[$i]", $row['bo_skin'])) ?>
                     </td>
-                    <td class="px-3 py-2">
+                    <td class="board-col-subject px-3 py-2" data-label="제목">
                         <input type="text" name="bo_subject[<?php echo $i ?>]" value="<?php echo $h($row['bo_subject']) ?>" required class="<?php echo $input_cls ?>" maxlength="255">
                     </td>
-                    <td class="px-3 py-2"><input type="text" name="bo_read_point[<?php echo $i ?>]"     value="<?php echo (int)$row['bo_read_point'] ?>"     class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2"><input type="text" name="bo_write_point[<?php echo $i ?>]"    value="<?php echo (int)$row['bo_write_point'] ?>"    class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2"><input type="text" name="bo_comment_point[<?php echo $i ?>]"  value="<?php echo (int)$row['bo_comment_point'] ?>"  class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2"><input type="text" name="bo_download_point[<?php echo $i ?>]" value="<?php echo (int)$row['bo_download_point'] ?>" class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2 text-center"><input type="checkbox" name="bo_use_sns[<?php echo $i ?>]"    value="1" <?php echo $row['bo_use_sns']?'checked':'' ?> class="rounded border-slate-300"></td>
-                    <td class="px-3 py-2 text-center"><input type="checkbox" name="bo_use_search[<?php echo $i ?>]" value="1" <?php echo $row['bo_use_search']?'checked':'' ?> class="rounded border-slate-300"></td>
-                    <td class="px-3 py-2"><input type="text" name="bo_order[<?php echo $i ?>]" value="<?php echo (int)$row['bo_order'] ?>" class="<?php echo $num_cls ?>"></td>
-                    <td class="px-3 py-2 text-right whitespace-nowrap">
+                    <td class="board-col-point px-3 py-2" data-label="읽기 포인트"><input type="text" name="bo_read_point[<?php echo $i ?>]"     value="<?php echo (int)$row['bo_read_point'] ?>"     class="<?php echo $num_cls ?>"></td>
+                    <td class="board-col-point px-3 py-2" data-label="쓰기 포인트"><input type="text" name="bo_write_point[<?php echo $i ?>]"    value="<?php echo (int)$row['bo_write_point'] ?>"    class="<?php echo $num_cls ?>"></td>
+                    <td class="board-col-point px-3 py-2" data-label="댓글 포인트"><input type="text" name="bo_comment_point[<?php echo $i ?>]"  value="<?php echo (int)$row['bo_comment_point'] ?>"  class="<?php echo $num_cls ?>"></td>
+                    <td class="board-col-point px-3 py-2" data-label="다운 포인트"><input type="text" name="bo_download_point[<?php echo $i ?>]" value="<?php echo (int)$row['bo_download_point'] ?>" class="<?php echo $num_cls ?>"></td>
+                    <td class="board-col-toggle px-3 py-2 text-center" data-label="SNS"><input type="checkbox" name="bo_use_sns[<?php echo $i ?>]"    value="1" <?php echo $row['bo_use_sns']?'checked':'' ?> class="rounded border-slate-300"></td>
+                    <td class="board-col-toggle px-3 py-2 text-center" data-label="검색 사용"><input type="checkbox" name="bo_use_search[<?php echo $i ?>]" value="1" <?php echo $row['bo_use_search']?'checked':'' ?> class="rounded border-slate-300"></td>
+                    <td class="board-col-order px-3 py-2" data-label="순서"><input type="text" name="bo_order[<?php echo $i ?>]" value="<?php echo (int)$row['bo_order'] ?>" class="<?php echo $num_cls ?>"></td>
+                    <td class="board-col-manage px-3 py-2 text-right whitespace-nowrap">
                         <a href="/admin/board_form?w=u&amp;bo_table=<?php echo urlencode($row['bo_table']) ?>" class="inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">수정</a>
                     </td>
                 </tr>
@@ -192,13 +193,13 @@ admin_layout_start('게시판 관리', 'bbs_board');
                 $i++;
             }
             if ($i === 0): ?>
-                <tr><td colspan="15" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">자료가 없습니다.</td></tr>
+                <tr class="board-list-empty"><td colspan="15" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">자료가 없습니다.</td></tr>
             <?php endif; ?>
             </tbody>
         </table>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+        <div class="board-list-footer flex flex-wrap items-center gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
             <button type="submit" name="act_button" value="선택수정" class="h-9 px-3.5 rounded-md bg-admin-primary-600 hover:bg-admin-primary-700 text-white text-sm font-medium" onclick="window.__pressed=this.value">선택 수정</button>
             <?php if ($is_admin === 'super'): ?>
             <button type="submit" name="act_button" value="선택삭제" class="h-9 px-3.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium" onclick="window.__pressed=this.value">선택 삭제</button>
