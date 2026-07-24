@@ -40,6 +40,7 @@ $sql_order = " order by {$sst} {$sod} ";
 $total_count = (int)sql_pdo_fetch(" select count(*) as cnt {$sql_common} {$sql_search} ", $params)['cnt'];
 $rows = (int)$config['cf_page_rows'];
 $total_page = max(1, (int)ceil($total_count / max(1, $rows)));
+$page = min($page, $total_page);
 $from = ($page - 1) * $rows;
 
 $result = sql_pdo_query(" select po.*, mb.mb_name, mb.mb_nick, mb.mb_email, mb.mb_homepage, mb.mb_point
@@ -204,15 +205,19 @@ admin_layout_start('포인트 내역', 'mb_point');
         </div>
     </form>
 
-    <?php if ($total_page > 1): ?>
-    <nav class="point-pagination mb-6 flex items-center gap-1 justify-center text-sm">
-        <?php
+    <?php if ($total_page > 1):
         $pgCls = 'inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
         $pgActive = 'inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md bg-admin-primary-600 text-white font-semibold';
         $pgUrl = function ($p) use ($sfl, $stx, $sst, $sod) {
             $params = array_filter(['sfl'=>$sfl,'stx'=>$stx,'sst'=>$sst,'sod'=>$sod,'page'=>$p], static fn($v) => $v !== '' && $v !== null);
             return '/admin/point_list?'.http_build_query($params);
         };
+        $pgInputParams = array_filter(['sfl'=>$sfl, 'stx'=>$stx, 'sst'=>$sst, 'sod'=>$sod], static fn($v) => $v !== '' && $v !== null);
+        $pgInputQuery = http_build_query($pgInputParams);
+        $pgInputUrl = '/admin/point_list?'.($pgInputQuery !== '' ? $pgInputQuery.'&' : '').'page=';
+    ?>
+    <nav class="point-pagination point-desktop-pagination mb-6 flex items-center gap-1 justify-center text-sm">
+        <?php
         $size = G5_IS_MOBILE ? (int)$config['cf_mobile_pages'] : (int)$config['cf_write_pages'];
         if ($size < 1) $size = 10;
         $start = max(1, $page - (int)floor($size/2));
@@ -225,6 +230,33 @@ admin_layout_start('포인트 내역', 'mb_point');
                 <a class="<?php echo $pgCls ?>" href="<?php echo $h($pgUrl($p)) ?>"><?php echo $p ?></a>
             <?php endif;
         endfor; ?>
+    </nav>
+    <nav class="point-mobile-pagination" aria-label="포인트 내역 페이지 이동">
+        <?php if ($page > 1): ?>
+            <a href="<?php echo $h($pgUrl(1)) ?>">처음</a>
+            <a href="<?php echo $h($pgUrl($page - 1)) ?>">이전</a>
+        <?php else: ?>
+            <span class="is-disabled">처음</span>
+            <span class="is-disabled">이전</span>
+        <?php endif; ?>
+        <label class="current-page">
+            <input type="number"
+                   class="current-page-input rounded"
+                   value="<?php echo (int)$page ?>"
+                   min="1"
+                   max="<?php echo (int)$total_page ?>"
+                   inputmode="numeric"
+                   data-current-page="<?php echo (int)$page ?>"
+                   data-page-url="<?php echo $h($pgInputUrl) ?>"
+                   aria-label="이동할 페이지">
+        </label>
+        <?php if ($page < $total_page): ?>
+            <a href="<?php echo $h($pgUrl($page + 1)) ?>">다음</a>
+            <a href="<?php echo $h($pgUrl($total_page)) ?>">맨끝</a>
+        <?php else: ?>
+            <span class="is-disabled">다음</span>
+            <span class="is-disabled">맨끝</span>
+        <?php endif; ?>
     </nav>
     <?php endif; ?>
 
@@ -459,6 +491,33 @@ $(function () {
         if (!confirm('선택한 자료를 정말 삭제하시겠습니까?')) e.preventDefault();
     });
 })();
+
+document.querySelectorAll('.point-mobile-pagination .current-page input').forEach(function (input) {
+    function moveToPage() {
+        var current = Number(input.dataset.currentPage);
+        var target = Number(input.value);
+        var max = Number(input.max);
+
+        if (!Number.isInteger(target) || target < 1 || target > max) {
+            input.value = current;
+            input.classList.add('is-invalid');
+            window.setTimeout(function () { input.classList.remove('is-invalid'); }, 700);
+            return;
+        }
+
+        if (target !== current) {
+            window.location.href = input.dataset.pageUrl + target;
+        }
+    }
+
+    input.addEventListener('change', moveToPage);
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            moveToPage();
+        }
+    });
+});
 </script>
 
 <?php
