@@ -2445,6 +2445,12 @@ main .admin-floating-actions {
 [data-theme="dark"] .legacy-admin-content form.visit_del .visit_del_bt label {
     color: var(--slate-300);
 }
+@media (max-width: 640px) {
+    .legacy-admin-content form.visit_del .visit_del_bt label {
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+}
 
 /* 회원관리파일 (/admin/member_list_exel) — 검색 필터 + 엑셀 다운로드 */
 .legacy-admin-content .member_list_data,
