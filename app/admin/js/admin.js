@@ -451,6 +451,12 @@ function initAdminSectionAnchors()
             } else {
                 link.removeAttribute("aria-current");
             }
+
+            if (selected && window.matchMedia("(max-width: 640px)").matches) {
+                var barRect = tabBar.getBoundingClientRect();
+                var linkRect = link.parentElement.getBoundingClientRect();
+                tabBar.scrollLeft += linkRect.left - barRect.left;
+            }
         });
     });
 }
