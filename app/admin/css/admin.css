@@ -6461,7 +6461,7 @@ main .admin-floating-actions {
 
     .popular-list-page .popular-search-fields {
         display: grid;
-        grid-template-columns: 5.5rem minmax(0, 1fr) 4.25rem;
+        grid-template-columns: 5rem minmax(0, 1fr) 4rem;
         gap: 0.5rem;
         width: 100%;
     }
@@ -6469,12 +6469,17 @@ main .admin-floating-actions {
     .popular-list-page .popular-search-fields select,
     .popular-list-page .popular-search-fields input {
         box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
+        width: 100% !important;
+        min-width: 0 !important;
         height: 2.625rem;
         margin: 0;
         padding: 0 0.625rem;
         font-size: 0.8125rem;
+    }
+
+    .popular-list-page .popular-search-fields input[type="submit"] {
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
     }
 
     .popular-list-page .popular-list-form,
