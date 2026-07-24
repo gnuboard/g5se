@@ -60,23 +60,7 @@ admin_layout_start($g5['title'], 'popular_rank');
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
 <div class="legacy-admin-content space-y-4">
-<?php
-require_once G5_PLUGIN_PATH . '/jquery-ui/datepicker.php';
-
-$colspan = 3;
-?>
-
-<script>
-    $(function() {
-        $("#fr_date, #to_date").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            dateFormat: "yy-mm-dd",
-            showButtonPanel: true,
-            yearRange: "c-99:c+99"
-        });
-    });
-</script>
+<?php $colspan = 3; ?>
 
 <div class="local_ov01 local_ov">
     <?php echo $listall ?>
@@ -169,6 +153,22 @@ $colspan = 3;
 <?php endif; ?>
 
 <script>
+$(function () {
+    if ($.fn.datepicker) {
+        $("#fr_date, #to_date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "yy-mm-dd",
+            showButtonPanel: true,
+            yearRange: "c-99:c+99"
+        });
+    } else {
+        document.querySelectorAll("#fr_date, #to_date").forEach(function (input) {
+            input.type = "date";
+        });
+    }
+});
+
 document.querySelectorAll('.popular-rank-mobile-pagination .current-page input').forEach(function (input) {
     function moveToPage() {
         var current = Number(input.dataset.currentPage);
