@@ -39,7 +39,10 @@ function get_list_thumbnail($bo_table, $wr_id, $thumb_width, $thumb_height, $is_
                 else
                     $data_path = $p['path'];
 
-                $srcfile = G5_PATH.$data_path;
+                // g5se는 data 디렉터리가 app 밖(docroot 직속)에 있으므로
+                // URL 경로를 G5_PATH에 붙이지 않고 실제 data 경로로 변환한다.
+                $data_relative_path = preg_replace('#^/'.preg_quote(G5_DATA_DIR, '#').'#', '', $data_path);
+                $srcfile = G5_DATA_PATH.$data_relative_path;
 
                 if(preg_match("/\.({$config['cf_image_extension']})$/i", $srcfile) && is_file($srcfile)) {
                     $size = @getimagesize($srcfile);
