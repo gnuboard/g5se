@@ -204,7 +204,7 @@ if ($is_admin != 'super') {
 $g5['title'] = $html_title;
 admin_layout_start($g5['title'], 'board');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="board-form-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>

@@ -276,6 +276,29 @@ function initAdminFloatingActions()
             el.removeAttribute("id");
         });
 
+        if (form.id === "fboardform") {
+            floating.classList.add("board-form-floating-actions");
+
+            var secondary = document.createElement("div");
+            secondary.className = "board-floating-secondary";
+            floating.querySelectorAll("a").forEach(function(link) {
+                secondary.appendChild(link);
+            });
+            floating.insertBefore(secondary, floating.firstChild);
+
+            var menuToggle = document.createElement("button");
+            menuToggle.type = "button";
+            menuToggle.className = "board-floating-menu admin-rounded";
+            menuToggle.textContent = "메뉴";
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.addEventListener("click", function() {
+                var expanded = floating.classList.toggle("is-menu-open");
+                menuToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+                menuToggle.textContent = expanded ? "닫기" : "메뉴";
+            });
+            floating.appendChild(menuToggle);
+        }
+
         form.classList.add("has-admin-floating-actions");
         form.insertBefore(floating, form.firstChild);
     });
