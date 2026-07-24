@@ -3791,7 +3791,7 @@ main .admin-floating-actions {
         width: 100%;
         min-width: 0;
         height: 2.625rem;
-        font-size: 1rem; /* iOS 입력 포커스 자동 확대 방지 */
+        font-size: 0.875rem; /* 데스크톱과 동일 크기 */
     }
     .member-export-page .sch_row .field input[type="date"] {
         min-width: 0;
