@@ -6424,6 +6424,284 @@ main .admin-floating-actions {
     background-color: #ffffff !important;
 }
 
+/* FAQ 분류 목록 모바일 카드 */
+.faq-master-mobile-pagination {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .faq-master-list-page {
+        min-width: 0;
+        padding: 0.875rem;
+        overflow-x: hidden;
+    }
+
+    .faq-master-list-page .faq-master-list-header {
+        display: block;
+        margin-bottom: 0.875rem;
+    }
+
+    .faq-master-list-page .faq-master-list-header h2 {
+        font-size: 1.125rem;
+    }
+
+    .faq-master-list-page .faq-master-add-wrap {
+        width: 100%;
+        margin: 0.75rem 0 0;
+    }
+
+    .faq-master-list-page .faq-master-add {
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 2.625rem;
+        font-size: 0.8125rem;
+    }
+
+    .faq-master-list-page .faq-master-description {
+        margin-bottom: 0.75rem;
+        padding: 0.75rem 0.875rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.625rem;
+        background: var(--slate-50);
+        font-size: 0.75rem;
+        line-height: 1.55;
+        word-break: keep-all;
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-description {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
+    }
+
+    .faq-master-list-page .faq-master-list-shell,
+    .faq-master-list-page .faq-master-list-scroll {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+
+    .faq-master-list-page .faq-master-list-scroll table,
+    .faq-master-list-page .faq-master-list-scroll tbody {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .faq-master-list-page .faq-master-list-scroll thead {
+        display: none;
+    }
+
+    .faq-master-list-page .faq-master-card {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        margin-bottom: 0.625rem;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-card {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
+    }
+
+    .faq-master-list-page .faq-master-card > td {
+        display: flex;
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 0.625rem 0.875rem;
+        border: 0;
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: left;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .faq-master-list-page .faq-master-card > td::before {
+        content: attr(data-label);
+        color: var(--slate-500);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .faq-master-list-page .faq-master-id {
+        grid-column: 1;
+        grid-row: 1;
+        color: var(--admin-primary-700);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-id {
+        color: var(--admin-primary-300);
+    }
+
+    .faq-master-list-page .faq-master-subject {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        padding-top: 0.375rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+
+    .faq-master-list-page .faq-master-subject a {
+        font-size: 0.9375rem;
+        font-weight: 700;
+    }
+
+    .faq-master-list-page .faq-master-count {
+        grid-column: 2;
+        grid-row: 1;
+        align-items: flex-end;
+        text-align: right !important;
+    }
+
+    .faq-master-list-page .faq-master-order {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        border-top: 1px solid var(--slate-100) !important;
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-order {
+        border-top-color: var(--slate-800) !important;
+    }
+
+    .faq-master-list-page .faq-master-manage {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding-top: 0.75rem !important;
+        border-top: 1px solid var(--slate-100) !important;
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-manage {
+        border-top-color: var(--slate-800) !important;
+    }
+
+    .faq-master-list-page .faq-master-manage::before {
+        display: none;
+    }
+
+    .faq-master-list-page .faq-master-manage a {
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        min-height: 2.375rem;
+        margin: 0 !important;
+        padding: 0.375rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .faq-master-list-page .faq-master-empty {
+        display: block;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+    }
+
+    .faq-master-list-page .faq-master-empty td {
+        display: block;
+        padding: 2.5rem 1rem;
+    }
+
+    .faq-master-list-page .faq-master-desktop-pagination {
+        display: none;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination {
+        display: grid;
+        grid-template-columns: auto auto minmax(4rem, 1fr) auto auto;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 1rem 0;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination a,
+    .faq-master-list-page .faq-master-mobile-pagination > span,
+    .faq-master-list-page .faq-master-mobile-pagination .current-page {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 0;
+        height: 2.5rem;
+        padding: 0 0.5rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.5rem;
+        background: #fff;
+        color: var(--slate-700);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination .current-page {
+        border-color: var(--admin-primary-600);
+        background: var(--admin-primary-600);
+        color: #fff;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination .current-page input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        padding: 0 0.25rem;
+        border: 0 !important;
+        outline: 0;
+        box-shadow: none !important;
+        background: transparent !important;
+        color: inherit !important;
+        font: inherit;
+        font-size: 1rem;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+        appearance: textfield;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination input::-webkit-inner-spin-button,
+    .faq-master-list-page .faq-master-mobile-pagination input::-webkit-outer-spin-button {
+        margin: 0;
+        appearance: none;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination input.is-invalid {
+        border-radius: 0.35rem;
+        box-shadow: inset 0 0 0 2px #ef4444 !important;
+    }
+
+    .faq-master-list-page .faq-master-mobile-pagination .is-disabled {
+        color: var(--slate-400);
+        background: var(--slate-50);
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-mobile-pagination a,
+    [data-theme="dark"] .faq-master-list-page .faq-master-mobile-pagination > span {
+        border-color: var(--slate-700);
+        background: var(--slate-900);
+        color: var(--slate-300);
+    }
+
+    [data-theme="dark"] .faq-master-list-page .faq-master-mobile-pagination .is-disabled {
+        color: var(--slate-600);
+        background: var(--slate-950);
+    }
+
+    body:has(.faq-master-list-page) #admin-scroll-top:not(.in-bar) {
+        right: 0.875rem;
+        bottom: 4.5rem;
+    }
+}
+
 /* 내용 관리 생성·수정 모바일 폼 */
 @media (max-width: 640px) {
     .content-form-page {

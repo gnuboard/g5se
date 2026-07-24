@@ -47,36 +47,39 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $rows = (int)$config['cf_page_rows'];
 $total_count = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['faq_master_table']} ")['cnt'];
 $total_page  = max(1, (int)ceil($total_count / max(1, $rows)));
+$page        = min($page, $total_page);
 $from        = ($page - 1) * $rows;
 // LIMIT 의 from/rows 는 (int) 캐스트 정수라 보간 안전
 $result = sql_pdo_query(" select * from {$g5['faq_master_table']} order by fm_order, fm_id limit {$from}, {$rows} ");
 
 $h = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+$page_url = static fn($target): string => '/admin/faqmasterlist?'.http_build_query(['page' => $target]);
+$page_input_url = str_replace('__PAGE__', '', $page_url('__PAGE__'));
 
 admin_layout_start('FAQ 관리', 'scf_faq');
 ?>
 
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="faq-master-list-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 
-    <header class="flex flex-wrap items-center gap-3 mb-5">
+    <header class="faq-master-list-header flex flex-wrap items-center gap-3 mb-5">
         <div>
             <h2 class="text-xl font-bold tracking-tight">FAQ 관리</h2>
             <p class="text-xs text-slate-500 mt-0.5">총 <strong class="text-slate-700 dark:text-slate-300"><?php echo number_format($total_count) ?></strong>개 분류 · 분류(Master) 안에 Q&amp;A 항목을 등록</p>
         </div>
-        <div class="ml-auto">
-            <a href="/admin/faqmasterform" class="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium">
+        <div class="faq-master-add-wrap ml-auto">
+            <a href="/admin/faqmasterform" class="faq-master-add inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 FAQ 분류 추가
             </a>
         </div>
     </header>
 
-    <p class="mb-4 text-xs text-slate-500">
+    <p class="faq-master-description mb-4 text-xs text-slate-500">
         먼저 <strong>FAQ 분류</strong>(자주하시는 질문, 이용안내 등)를 만들고, 분류의 <strong>제목</strong>을 클릭해 Q&amp;A 세부 항목을 관리합니다.
     </p>
 
-    <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
-        <div class="overflow-x-auto">
+    <div class="faq-master-list-shell rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+        <div class="faq-master-list-scroll overflow-x-auto">
         <table class="min-w-full text-sm">
             <thead class="bg-slate-50 dark:bg-slate-800/60 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <tr>
@@ -93,14 +96,14 @@ admin_layout_start('FAQ 관리', 'scf_faq');
             while ($row = sql_pdo_fetch_array($result)):
                 $cnt = (int)sql_pdo_fetch(" select count(*) as cnt from {$g5['faq_table']} where fm_id = :fm_id ", [':fm_id' => (int)$row['fm_id']])['cnt'];
                 ?>
-                <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
-                    <td class="px-4 py-3 text-center font-mono text-xs text-slate-500"><?php echo (int)$row['fm_id'] ?></td>
-                    <td class="px-4 py-3">
+                <tr class="faq-master-card hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
+                    <td class="faq-master-id px-4 py-3 text-center font-mono text-xs text-slate-500" data-label="ID"><?php echo (int)$row['fm_id'] ?></td>
+                    <td class="faq-master-subject px-4 py-3" data-label="제목">
                         <a href="/admin/faqlist?fm_id=<?php echo (int)$row['fm_id'] ?>&amp;fm_subject=<?php echo urlencode($row['fm_subject']) ?>" class="text-admin-primary-700 dark:text-admin-primary-300 hover:underline font-medium"><?php echo $h($row['fm_subject']) ?></a>
                     </td>
-                    <td class="px-4 py-3 text-center"><?php echo number_format($cnt) ?></td>
-                    <td class="px-4 py-3 text-center text-slate-500"><?php echo (int)$row['fm_order'] ?></td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap space-x-1">
+                    <td class="faq-master-count px-4 py-3 text-center" data-label="FAQ 수"><?php echo number_format($cnt) ?></td>
+                    <td class="faq-master-order px-4 py-3 text-center text-slate-500" data-label="순서"><?php echo (int)$row['fm_order'] ?></td>
+                    <td class="faq-master-manage px-4 py-3 text-right whitespace-nowrap space-x-1">
                         <a href="/admin/faqmasterform?w=u&amp;fm_id=<?php echo (int)$row['fm_id'] ?>" class="inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">수정</a>
                         <a href="<?php echo G5_BBS_URL ?>/faq.php?fm_id=<?php echo (int)$row['fm_id'] ?>" target="_blank" class="inline-flex items-center h-8 px-2.5 rounded-md border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">보기</a>
                         <a href="/admin/faqmasterformupdate?w=d&amp;fm_id=<?php echo (int)$row['fm_id'] ?>&amp;token=<?php echo get_admin_token() ?>" data-confirm="이 분류와 안의 모든 Q&amp;A 가 삭제됩니다. 계속할까요?" class="js-confirm inline-flex items-center h-8 px-2.5 rounded-md border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-900/30">삭제</a>
@@ -110,7 +113,7 @@ admin_layout_start('FAQ 관리', 'scf_faq');
                 $i++;
             endwhile;
             if ($i === 0): ?>
-                <tr><td colspan="5" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">자료가 없습니다.</td></tr>
+                <tr class="faq-master-empty"><td colspan="5" class="px-4 py-12 text-center text-slate-400 dark:text-slate-500">자료가 없습니다.</td></tr>
             <?php endif; ?>
             </tbody>
         </table>
@@ -118,7 +121,7 @@ admin_layout_start('FAQ 관리', 'scf_faq');
     </div>
 
     <?php if ($total_page > 1): ?>
-    <nav class="mt-4 flex items-center gap-1 justify-center text-sm">
+    <nav class="faq-master-desktop-pagination mt-4 flex items-center gap-1 justify-center text-sm">
         <?php
         $pgCls = 'inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
         $pgActive = 'inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md bg-admin-primary-600 text-white font-semibold';
@@ -130,6 +133,27 @@ admin_layout_start('FAQ 관리', 'scf_faq');
             <?php endif;
         endfor; ?>
     </nav>
+    <nav class="faq-master-mobile-pagination" aria-label="FAQ 분류 페이지 이동">
+        <?php if ($page > 1): ?>
+            <a href="<?php echo $h($page_url(1)) ?>">처음</a>
+            <a href="<?php echo $h($page_url($page - 1)) ?>">이전</a>
+        <?php else: ?>
+            <span class="is-disabled">처음</span>
+            <span class="is-disabled">이전</span>
+        <?php endif; ?>
+        <label class="current-page">
+            <input type="number" value="<?php echo (int)$page ?>" min="1" max="<?php echo (int)$total_page ?>"
+                   inputmode="numeric" data-current-page="<?php echo (int)$page ?>"
+                   data-page-url="<?php echo $h($page_input_url) ?>" aria-label="이동할 페이지">
+        </label>
+        <?php if ($page < $total_page): ?>
+            <a href="<?php echo $h($page_url($page + 1)) ?>">다음</a>
+            <a href="<?php echo $h($page_url($total_page)) ?>">맨끝</a>
+        <?php else: ?>
+            <span class="is-disabled">다음</span>
+            <span class="is-disabled">맨끝</span>
+        <?php endif; ?>
+    </nav>
     <?php endif; ?>
 
 </main>
@@ -138,6 +162,30 @@ admin_layout_start('FAQ 관리', 'scf_faq');
 document.querySelectorAll('a.js-confirm').forEach(function (a) {
     a.addEventListener('click', function (e) {
         if (!confirm(a.dataset.confirm || '정말 진행하시겠습니까?')) e.preventDefault();
+    });
+});
+
+document.querySelectorAll('.faq-master-mobile-pagination .current-page input').forEach(function (input) {
+    function moveToPage() {
+        var current = Number(input.dataset.currentPage);
+        var target = Number(input.value);
+        var max = Number(input.max);
+
+        if (!Number.isInteger(target) || target < 1 || target > max) {
+            input.value = current;
+            input.classList.add('is-invalid');
+            window.setTimeout(function () { input.classList.remove('is-invalid'); }, 700);
+            return;
+        }
+        if (target !== current) window.location.href = input.dataset.pageUrl + target;
+    }
+
+    input.addEventListener('change', moveToPage);
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            moveToPage();
+        }
     });
 });
 </script>
