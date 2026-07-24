@@ -215,7 +215,7 @@ $_pk_date_count = (int)($_pk_r['c'] ?? 0);
 $_sm = sql_pdo_fetch("SELECT @@sql_mode AS m");
 $_sql_mode = $_sm['m'] ?? '';
 
-admin_layout_start($g5['title'], 'core');
+admin_layout_start($g5['title'], 'dbmigrate');
 ?>
 <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
@@ -255,16 +255,16 @@ admin_layout_start($g5['title'], 'core');
         <?php } ?>
 
         <?php if ($_tables_utf8mb3) { ?>
-        <div class="tbl_head01 tbl_wrap">
+        <div class="tbl_head01 tbl_wrap dbm-rtable">
             <table>
                 <thead><tr><th>테이블</th><th>현재 collation</th><th>예상 행수</th><th>액션</th></tr></thead>
                 <tbody>
                     <?php foreach ($_tables_utf8mb3 as $r) { ?>
                     <tr>
-                        <td><code><?php echo htmlspecialchars($r['tbl']); ?></code></td>
-                        <td><?php echo htmlspecialchars($r['coll']); ?></td>
-                        <td class="td_num_right"><?php echo number_format((int)$r['rows_est']); ?></td>
-                        <td>
+                        <td data-label="테이블"><code><?php echo htmlspecialchars($r['tbl']); ?></code></td>
+                        <td data-label="현재 collation"><?php echo htmlspecialchars($r['coll']); ?></td>
+                        <td data-label="예상 행수" class="td_num_right"><?php echo number_format((int)$r['rows_est']); ?></td>
+                        <td data-label="">
                             <form method="post" class="dbm-action" onsubmit="return confirm('테이블 <?php echo htmlspecialchars($r['tbl']); ?> 을 utf8mb4 로 변환합니다.\n장시간 락이 걸릴 수 있습니다 (행수 비례).\n계속하시겠습니까?');">
                                 <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
                                 <input type="hidden" name="action" value="charset_table">
@@ -304,7 +304,7 @@ admin_layout_start($g5['title'], 'core');
         <?php } ?>
 
         <?php if ($_zd_pending) { ?>
-        <div class="tbl_head01 tbl_wrap">
+        <div class="tbl_head01 tbl_wrap dbm-rtable">
             <table>
                 <thead>
                     <tr><th>테이블</th><th>컬럼</th><th>타입</th><th>NULL?</th><th>default</th><th>액션</th></tr>
@@ -312,12 +312,12 @@ admin_layout_start($g5['title'], 'core');
                 <tbody>
                     <?php foreach ($_zd_pending as $r) { ?>
                     <tr>
-                        <td><code><?php echo htmlspecialchars($r['tbl']); ?></code></td>
-                        <td><code><?php echo htmlspecialchars($r['col']); ?></code></td>
-                        <td><?php echo htmlspecialchars(strtoupper($r['type'])); ?></td>
-                        <td><?php echo $r['nullable'] === 'YES' ? 'YES' : '<span class="dbm-warn">NO</span>'; ?></td>
-                        <td><?php echo $r['def'] === null ? '<em>NULL</em>' : '<code>'.htmlspecialchars($r['def']).'</code>'; ?></td>
-                        <td>
+                        <td data-label="테이블"><code><?php echo htmlspecialchars($r['tbl']); ?></code></td>
+                        <td data-label="컬럼"><code><?php echo htmlspecialchars($r['col']); ?></code></td>
+                        <td data-label="타입"><?php echo htmlspecialchars(strtoupper($r['type'])); ?></td>
+                        <td data-label="NULL?"><?php echo $r['nullable'] === 'YES' ? 'YES' : '<span class="dbm-warn">NO</span>'; ?></td>
+                        <td data-label="default"><?php echo $r['def'] === null ? '<em>NULL</em>' : '<code>'.htmlspecialchars($r['def']).'</code>'; ?></td>
+                        <td data-label="">
                             <form method="post" class="dbm-action" onsubmit="return confirm('<?php echo htmlspecialchars($r['tbl']); ?>.<?php echo htmlspecialchars($r['col']); ?> 을 NULL 허용 + 0000 값 NULL 변환합니다.\n계속하시겠습니까?');">
                                 <input type="hidden" name="token" value="<?php echo get_admin_token(); ?>">
                                 <input type="hidden" name="action" value="zerodate_column">
@@ -376,6 +376,49 @@ admin_layout_start($g5['title'], 'core');
 [data-theme="dark"] .dbm-desc { color: var(--slate-400); }
 .legacy-admin-content code { padding: 0.1em 0.3em; background: var(--slate-100); border-radius: 0.25rem; font-size: 0.92em; }
 [data-theme="dark"] .legacy-admin-content code { background: var(--slate-800); color: var(--slate-200); }
+
+/* 모바일: 데이터 테이블을 카드형으로 스택 (열이 많아 좁은 화면에서 짓눌림 방지) */
+@media (max-width: 640px) {
+    .dbm-rtable table,
+    .dbm-rtable thead,
+    .dbm-rtable tbody,
+    .dbm-rtable tr,
+    .dbm-rtable td { display: block; width: 100%; }
+    .dbm-rtable thead { display: none; }
+    .dbm-rtable tr {
+        margin-bottom: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.5rem;
+        background: var(--slate-50);
+    }
+    .dbm-rtable td {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--slate-200);
+        text-align: left;  /* td_num_right 등 우측정렬 무효화 */
+    }
+    .dbm-rtable td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--slate-500);
+        flex: 0 0 auto;
+    }
+    /* 액션 셀: 라벨 없이 버튼이 전체폭으로 (터치 친화) */
+    .dbm-rtable td:last-child {
+        border-bottom: none;
+        display: block;
+    }
+    .dbm-rtable td:last-child::before { display: none; }
+    .dbm-rtable td .dbm-action { display: block; }
+    .dbm-rtable td .dbm-btn { width: 100%; min-height: 44px; }
+    [data-theme="dark"] .dbm-rtable tr { border-color: var(--slate-700); background: var(--slate-800); }
+    [data-theme="dark"] .dbm-rtable td { border-bottom-color: var(--slate-700); }
+    [data-theme="dark"] .dbm-rtable td::before { color: var(--slate-400); }
+}
 </style>
 
 <?php admin_layout_end(); ?>
