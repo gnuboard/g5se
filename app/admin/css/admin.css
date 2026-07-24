@@ -6503,27 +6503,29 @@ main .admin-floating-actions {
     .boardgroup-form-page .boardgroup-form-table td {
         display: block;
         box-sizing: border-box;
-        width: 100%;
-        min-width: 0;
-        border: 0;
+        width: 100% !important;
+        min-width: 0 !important;
+        border: 0 !important;
     }
 
     .boardgroup-form-page .boardgroup-form-table th {
-        padding: 0 0 0.5rem;
-        background: transparent;
+        padding: 0 0 0.5rem !important;
+        background: transparent !important;
         color: var(--slate-600);
-        font-size: 0.75rem;
+        font-size: 0.875rem;
         font-weight: 700;
         line-height: 1.35;
+        text-align: left;
     }
 
     [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table th {
-        background: transparent;
-        color: var(--slate-300);
+        background: transparent !important;
+        color: var(--slate-100);
     }
 
     .boardgroup-form-page .boardgroup-form-table td {
-        padding: 0;
+        padding: 0 !important;
+        background: transparent !important;
         font-size: 0.8125rem;
         overflow-wrap: anywhere;
     }
@@ -6546,13 +6548,13 @@ main .admin-floating-actions {
     }
 
     .boardgroup-form-page .boardgroup-form-table input[readonly] {
-        color: var(--slate-500);
-        background: var(--slate-50);
+        color: var(--slate-700);
+        background: var(--slate-100);
     }
 
     [data-theme="dark"] .boardgroup-form-page .boardgroup-form-table input[readonly] {
-        color: var(--slate-400);
-        background: var(--slate-950);
+        color: var(--slate-100);
+        background: var(--slate-800);
     }
 
     .boardgroup-form-page .boardgroup-form-table .btn_frmline {
@@ -6560,11 +6562,12 @@ main .admin-floating-actions {
         align-items: center;
         justify-content: center;
         box-sizing: border-box;
-        width: 100%;
+        width: auto;
+        max-width: 100%;
         min-height: 2.5rem;
-        margin: 0.5rem 0 0;
+        margin: 0.5rem 0.25rem 0 0;
         padding: 0.5rem 0.75rem;
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
         line-height: 1.3;
         text-align: center;
         white-space: normal;
