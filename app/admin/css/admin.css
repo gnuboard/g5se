@@ -6424,6 +6424,227 @@ main .admin-floating-actions {
     background-color: #ffffff !important;
 }
 
+/* 내용 관리 생성·수정 모바일 폼 */
+@media (max-width: 640px) {
+    .content-form-page {
+        min-width: 0;
+        padding: 0.875rem 0.875rem 6.5rem;
+        overflow-x: hidden;
+    }
+
+    .content-form-page > header {
+        margin-bottom: 0.875rem;
+    }
+
+    .content-form-page > header h2 {
+        font-size: 1.125rem;
+    }
+
+    .content-form-page .legacy-admin-content,
+    .content-form-page .content-form,
+    .content-form-page .content-form-section,
+    .content-form-page .content-form-table {
+        min-width: 0;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .content-form-page .content-form-section .h2_frm {
+        margin: 0 0 0.625rem;
+        padding-left: 0.625rem;
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .content-form-page .content-form-table > table,
+    .content-form-page .content-form-table > table > tbody {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .content-form-page .content-form-table > table {
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 0.75rem;
+        background: #fff;
+    }
+
+    [data-theme="dark"] .content-form-page .content-form-table > table {
+        border-color: var(--slate-800);
+        background: var(--slate-900);
+    }
+
+    .content-form-page .content-form-table > table > colgroup,
+    .content-form-page .content-form-table > table > thead {
+        display: none;
+    }
+
+    .content-form-page .content-form-table > table > tbody > tr {
+        display: block;
+        margin: 0;
+        padding: 0.75rem 0.875rem 0.875rem;
+        border: 0;
+        border-bottom: 1px solid var(--slate-200);
+        background: transparent;
+    }
+
+    [data-theme="dark"] .content-form-page .content-form-table > table > tbody > tr {
+        border-bottom-color: var(--slate-800);
+        background: transparent;
+    }
+
+    .content-form-page .content-form-table > table > tbody > tr:last-child {
+        border-bottom: 0;
+    }
+
+    .content-form-page .content-form-table > table > tbody > tr > th,
+    .content-form-page .content-form-table > table > tbody > tr > td {
+        display: block;
+        box-sizing: border-box;
+        width: 100% !important;
+        min-width: 0 !important;
+        border: 0 !important;
+    }
+
+    .content-form-page .content-form-table > table > tbody > tr > th {
+        padding: 0 0 0.5rem !important;
+        background: transparent !important;
+        color: var(--slate-600);
+        font-size: 0.875rem;
+        font-weight: 700;
+        line-height: 1.35;
+        text-align: left;
+    }
+
+    [data-theme="dark"] .content-form-page .content-form-table > table > tbody > tr > th {
+        background: transparent !important;
+        color: var(--slate-100);
+    }
+
+    .content-form-page .content-form-table > table > tbody > tr > td {
+        padding: 0 !important;
+        background: transparent !important;
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .content-form-page .content-form-table input[type="text"],
+    .content-form-page .content-form-table input[type="file"],
+    .content-form-page .content-form-table select,
+    .content-form-page .content-form-table textarea {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 2.625rem;
+        font-size: 0.8125rem;
+    }
+
+    .content-form-page .content-form-table input[readonly] {
+        color: var(--slate-700);
+        background: var(--slate-100);
+    }
+
+    [data-theme="dark"] .content-form-page .content-form-table input[readonly] {
+        color: var(--slate-100);
+        background: var(--slate-800);
+    }
+
+    .content-form-page .content-form-table input[type="checkbox"],
+    .content-form-page .content-form-table input[type="radio"] {
+        width: 1.125rem;
+        height: 1.125rem;
+        margin: 0.5rem 0.25rem 0 0;
+        vertical-align: -0.2rem;
+    }
+
+    .content-form-page .content-form-table input[type="checkbox"] + label,
+    .content-form-page .content-form-table input[type="radio"] + label {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.25rem;
+        font-size: 0.8125rem;
+    }
+
+    .content-form-page .content-form-table .frm_info {
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .content-form-page .content-form-table .btn_frmline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: auto;
+        max-width: 100%;
+        min-height: 2.5rem;
+        margin: 0.5rem 0.25rem 0 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+        line-height: 1.3;
+        text-align: center;
+        white-space: normal;
+        word-break: keep-all;
+    }
+
+    .content-form-page .content-form-table .cke,
+    .content-form-page .content-form-table [id^="cke_"],
+    .content-form-page .content-form-table iframe {
+        max-width: 100% !important;
+    }
+
+    .content-form-page .content-form-table .banner_or_img {
+        max-width: 100%;
+        margin-top: 0.75rem;
+        overflow: hidden;
+        border-radius: 0.5rem;
+    }
+
+    .content-form-page .content-form-table .banner_or_img img {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .content-form-page .admin-floating-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem;
+    }
+
+    .content-form-page .admin-floating-actions > a,
+    .content-form-page .admin-floating-actions > input[type="submit"] {
+        flex: 1 1 0;
+        box-sizing: border-box;
+        width: auto;
+        min-width: 0;
+        min-height: 2.75rem;
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 700;
+    }
+
+    .content-form-page .admin-floating-actions > a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .content-form-page .admin-floating-actions #admin-scroll-top {
+        flex: 0 0 2.75rem;
+        width: 2.75rem;
+        height: 2.75rem;
+        margin: 0;
+    }
+}
+
 /* 내용 관리 목록 모바일 카드 */
 .content-list-mobile-pagination {
     display: none;

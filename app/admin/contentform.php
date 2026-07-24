@@ -81,7 +81,7 @@ if ($w == "u") {
 
 admin_layout_start($g5['title'], 'content');
 ?>
-<main class="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+<main class="content-form-page flex-1 p-4 sm:p-6 lg:p-8 w-full">
 <header class="flex items-center gap-3 mb-5">
     <h2 class="text-xl font-bold tracking-tight"><?php echo get_text($g5['title']) ?></h2>
 </header>
@@ -89,12 +89,14 @@ admin_layout_start($g5['title'], 'content');
 <?php
 ?>
 
-<form name="frmcontentform" action="<?php echo G5_ADMIN_URL; ?>/contentformupdate" onsubmit="return frmcontentform_check(this);" method="post" enctype="MULTIPART/FORM-DATA">
+<form name="frmcontentform" id="frmcontentform" class="content-form" action="<?php echo G5_ADMIN_URL; ?>/contentformupdate" onsubmit="return frmcontentform_check(this);" method="post" enctype="MULTIPART/FORM-DATA">
     <input type="hidden" name="w" value="<?php echo $w; ?>">
     <input type="hidden" name="co_html" value="1">
     <input type="hidden" name="token" value="">
 
-    <div class="tbl_frm01 tbl_wrap">
+    <section class="content-form-section" aria-labelledby="content-basic-title">
+    <h2 id="content-basic-title" class="h2_frm">내용 기본 설정</h2>
+    <div class="content-form-table tbl_frm01 tbl_wrap">
         <table>
             <caption><?php echo $g5['title']; ?> 목록</caption>
             <colgroup>
@@ -221,8 +223,9 @@ admin_layout_start($g5['title'], 'content');
             </tbody>
         </table>
     </div>
+    </section>
 
-    <div class="btn_fixed_top">
+    <div class="content-form-actions btn_fixed_top">
         <a href="<?php echo G5_ADMIN_URL ?>/contentlist" class="btn btn_02">목록</a>
         <input type="submit" value="확인" class="btn btn_submit" accesskey="s">
     </div>
